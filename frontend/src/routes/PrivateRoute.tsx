@@ -1,25 +1,21 @@
 import { ReactNode, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { useAppSelector } from "../redux/hooks";
 import Loader from "../components/Loader";
+import { useLoggedInUserQuery } from "../features/user/userApi";
 
 type IProps = {
   children: ReactNode;
 };
 
 const PrivateRoute = ({ children }: IProps) => {
-  const userState = useAppSelector((state) => state);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useLoggedInUserQuery({});
+  const user = data?.data;
 
-  setTimeout(() => {
-    setLoading(false);
-  }, 3000);
-
-  if (loading) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (!userState?.user?.user?.email) {
+  if (!user?.email) {
     return <Navigate to="/login" />;
   }
   return <div>{children}</div>;

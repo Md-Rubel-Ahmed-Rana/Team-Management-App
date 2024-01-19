@@ -1,18 +1,13 @@
-import { useAppSelector } from "../../redux/hooks";
 import { useState } from "react";
 import AddMemberModal from "../admin/createTeam/AddMemberModal";
-import {
-  useGetActiveMembersQuery,
-  useGetPendingMembersQuery,
-} from "../../features/team/teamApi";
 
 const MyTeamMembers = () => {
-  const user: any = useAppSelector((state) => state.user.user);
+  const user: any = {};
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState("active");
   const team = user?.notifications[0];
-  const { data: activeMembers } = useGetActiveMembersQuery(team?._id);
-  const { data: pendingMembers } = useGetPendingMembersQuery(team?._id);
+  const activeMembers: any = {};
+  const pendingMembers: any = {};
 
   const handleFilterMembers = (filter: string) => {
     if (filter === "active") {

@@ -65,6 +65,24 @@ const getSpecificTeam = async (
   }
 };
 
+const getUserTeams = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const result = await TeamService.getUserTeams(req.params.memberId);
+    res.json({
+      statusCode: 200,
+      success: true,
+      message: "Successfully found team",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await TeamService.updateTeam(req.params.id, req.body);
@@ -94,6 +112,7 @@ const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+
 const removeMember = async (
   req: Request,
   res: Response,
@@ -123,4 +142,5 @@ export const TeamController = {
   deleteTeam,
   allTeams,
   removeMember,
+  getUserTeams,
 };

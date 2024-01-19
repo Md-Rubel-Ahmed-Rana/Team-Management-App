@@ -13,6 +13,7 @@ router.post(
   validateRequest(UserValidationSchema.registerZodSchema),
   UserController.register
 );
+
 router.get("/", UserController.getAllUsers);
 
 router.get("/auth", verifyJwt, UserController.auth);

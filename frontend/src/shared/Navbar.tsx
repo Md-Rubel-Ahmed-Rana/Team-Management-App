@@ -1,41 +1,48 @@
-import { Link } from "react-router-dom";
-import { useAppSelector } from "../redux/hooks";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/m.png";
 import moskot from "../assets/moskot.png";
 import { FaUser, FaRegBell, FaBars } from "react-icons/fa";
 import { BiX } from "react-icons/bi";
-import { useContext, useEffect, useState } from "react";
 import NotificationModal from "../pages/notifications/NotificationModal";
-import { SocketContext } from "../context/SocketContext";
+import { useState } from "react";
+import { useLoggedInUserQuery } from "../features/user/userApi";
+import Cookies from "js-cookie";
+import { IUser } from "../interfaces/user.interface";
 
 const Navbar = () => {
-  const user: any = useAppSelector((state) => state.user.user);
-  const socket: any = useContext(SocketContext);
+  const { data }: any = useLoggedInUserQuery({});
+  const user: IUser = data?.data;
+  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
+  const notifications = [];
   const handleLogOut = () => {
-    localStorage.removeItem("accessToken");
+    Cookies.remove("tmAccessToken");
     window.location.replace("/");
   };
 
-  useEffect(() => {
-    socket.on("receiveNotification", (data: any) => {
-      console.log(data);
-    });
-  }, [socket]);
+  const handleNavigate = () => {
+    if (user.role === "user") {
+      navigate("/profile");
+    } else {
+      navigate("/dashboard");
+    }
+  };
 
   return (
     <nav className="lg:flex justify-between items-center py-5">
-      <div className="lg:flex hidden lg:block items-center gap-3">
-        <img src={logo} alt="" />
-        <img src={moskot} alt="" />
+      <div>
+        <Link className="lg:flex hidden  items-center gap-3" to={"/"}>
+          <img src={logo} alt="" />
+          <img src={moskot} alt="" />
+        </Link>
       </div>
-      <div className="lg:flex hidden lg:block items-center gap-4">
+      <div className="lg:flex hidden  items-center gap-4">
         <button className="m-2">Availability</button>
         <button className="m-2">Integration</button>
         <button className="m-2">Community</button>
-        {!user?.username && (
+        {!user?.email && (
           <>
             <Link className="m-2" to="/signup">
               Signup
@@ -45,34 +52,47 @@ const Navbar = () => {
             </Link>
           </>
         )}
-        {user?.username && (
+        {user?.email && (
           <button className="m-2" onClick={handleLogOut}>
             Logout
           </button>
         )}
 
-        {user?.username && (
-          <Link className="m-2" to="/team-members">
-            My Team
+        {user?.email && (
+          <Link className="m-2" to="/teams">
+            My Teams
           </Link>
         )}
 
-        {user?.username && (
+        {user?.email && (
           <button
             onClick={() => setIsOpen(true)}
             className="relative m-2 p-2 border-2 rounded-full"
           >
             <FaRegBell />
             <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-              {user?.notifications?.length ? user?.notifications?.length : 0}
+              {notifications?.length || 0}
             </small>
           </button>
         )}
 
-        {user?.username && (
-          <Link to="/dashboard" className="border m-2 p-2 rounded-full">
-            <FaUser />
-          </Link>
+        {user?.email && (
+          <button
+            onClick={handleNavigate}
+            className={`${
+              !user.profile_picture && "border m-2 p-2 rounded-full"
+            }`}
+          >
+            {user.profile_picture ? (
+              <img
+                className="w-10 h-10 rounded-full"
+                src={user.profile_picture}
+                alt=""
+              />
+            ) : (
+              <FaUser />
+            )}
+          </button>
         )}
       </div>
       <div className="flex lg:hidden items-center justify-between px-5">
@@ -89,22 +109,25 @@ const Navbar = () => {
           )}
         </div>
         <div className="flex">
-          {user?.username && (
+          {user?.email && (
             <button
               onClick={() => setIsOpen(true)}
               className="relative m-2 p-2 border-2 rounded-full"
             >
               <FaRegBell />
               <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-                {user?.notifications?.length ? user?.notifications?.length : 0}
+                {notifications?.length || 0}
               </small>
             </button>
           )}
 
-          {user?.username && (
-            <Link to="/dashboard" className="border m-2 p-2 rounded-full">
+          {user?.email && (
+            <button
+              onClick={handleNavigate}
+              className="border m-2 p-2 rounded-full"
+            >
               <FaUser />
-            </Link>
+            </button>
           )}
         </div>
       </div>
@@ -113,7 +136,7 @@ const Navbar = () => {
           <button>Availability</button>
           <button>Integration</button>
           <button>Community</button>
-          {!user?.username && (
+          {!user?.email && (
             <>
               <button>
                 <Link to="/signup">Signup</Link>
@@ -123,11 +146,11 @@ const Navbar = () => {
               </button>
             </>
           )}
-          {user?.username && <button onClick={handleLogOut}>Logout</button>}
+          {user?.email && <button onClick={handleLogOut}>Logout</button>}
 
-          {user?.username && (
+          {user?.email && (
             <button>
-              <Link to="/team-members">My Team</Link>
+              <Link to="/teams">My Teams</Link>
             </button>
           )}
         </div>

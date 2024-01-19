@@ -1,28 +1,23 @@
-import { useState, Fragment, SetStateAction, useContext } from "react";
+import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import customStyles from "../../../utils/reactSelectCustomStyle";
 import Select from "react-select";
-import { useNavigate } from "react-router-dom";
 import {
   useGetUsersQuery,
   useLoggedInUserQuery,
 } from "../../../features/user/userApi";
 import { useSendInvitationMutation } from "../../../features/invitation/invitationApi";
 import Swal from "sweetalert2";
-import { useGetTeamsQuery } from "../../../features/team/teamApi";
 
 type ISelectType = { label: string; value: string };
 
-const AddMemberModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
+const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
   const [newMember, setNewMember] = useState({ label: "", value: "" });
   const [page, setPage] = useState(1);
-  const navigate = useNavigate();
   const { data: users } = useGetUsersQuery([]);
   const [sendInvitation] = useSendInvitationMutation();
-  const { data: userData, isLoading } = useLoggedInUserQuery({});
+  const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
-  const { data } = useGetTeamsQuery(user?._id);
-  const team = data?.data[data?.data.length - 1];
 
   const closeModal = () => {
     setIsOpen(false);
@@ -32,18 +27,15 @@ const AddMemberModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
     setNewMember(user);
   };
   const selectedMember = users?.data.find(
-    (usr: any) => usr.username === newMember?.value
+    (usr: any) => usr.name === newMember?.value
   );
 
-  const invitation = {
-    team: team?._id,
-    user: selectedMember?._id,
-  };
-
   const handleSendInvitation = async () => {
-    const result: any = await sendInvitation(invitation);
+    const result: any = await sendInvitation({
+      teamId: team._id,
+      memberId: selectedMember._id,
+    });
     if (result?.data?.success) {
-      // send the invitation notification to the user
       closeModal();
       Swal.fire({
         position: "center",
@@ -52,7 +44,6 @@ const AddMemberModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
         showConfirmButton: false,
         timer: 1500,
       });
-      navigate("/team-members");
     }
     if (!result?.data?.success) {
       Swal.fire({
@@ -141,8 +132,8 @@ const AddMemberModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
                           options={
                             users?.data &&
                             users?.data?.map((user: any) => ({
-                              value: user?.username,
-                              label: user?.username,
+                              value: user?.name,
+                              label: user?.name,
                             }))
                           }
                           styles={customStyles}
@@ -156,25 +147,23 @@ const AddMemberModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
                           }}
                         />
                         {selectedMember && (
-                          <div className="my-5 flex items-center gap-5 ">
-                            <div className="flex justify-center items-center w-12 h-12 bg-gray-400 rounded-full">
-                              {selectedMember?.image ? (
+                          <div className="my-5 flex items-center gap-5 bg-gray-100 px-3 py-2 rounded-md">
+                            <div className="flex justify-center items-center bg-gray-400 rounded-full">
+                              {selectedMember?.profile_picture ? (
                                 <img
-                                  className="w-full"
-                                  src={selectedMember?.image}
+                                  className="w-14 h-14 rounded-full"
+                                  src={selectedMember?.profile_picture}
                                   alt=""
                                 />
                               ) : (
                                 <div className="flex justify-center items-center w-12 h-12 bg-gray-400 rounded-full">
-                                  <h4>
-                                    {selectedMember?.username.slice(0, 1)}
-                                  </h4>
+                                  <h4>{selectedMember?.name.slice(0, 1)}</h4>
                                 </div>
                               )}
                             </div>
                             <div>
                               <h4 className="text-lg font-bold">
-                                {selectedMember?.username}
+                                {selectedMember?.name}
                               </h4>
                               <p className="text-sm text-stone-400">
                                 {selectedMember?.email}

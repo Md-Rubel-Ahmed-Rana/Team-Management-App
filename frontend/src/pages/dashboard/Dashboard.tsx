@@ -1,11 +1,20 @@
-import { useAppSelector } from "../../redux/hooks";
-import CreateTeam from "../admin/createTeam/CreateTeam";
-import UserDashboard from "../user/UserDashboard";
+import { useState } from "react";
+import Sidebar from "./Sidebar";
+import ProfilePage from "../Profile/ProfilePage";
+import AdminTeamDashboard from "./AdminTeams";
 
 const Dashboard = () => {
-  const user: any = useAppSelector((state) => state?.user?.user);
+  const [activeView, setActiveView] = useState("teams");
   return (
-    <div>{user?.role === "admin" ? <CreateTeam /> : <UserDashboard />}</div>
+    <div className="flex h-screen bg-gray-100">
+      <Sidebar setActiveView={setActiveView} />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
+          {activeView === "teams" && <AdminTeamDashboard />}
+          {activeView === "profile" && <ProfilePage />}
+        </main>
+      </div>
+    </div>
   );
 };
 

@@ -3,9 +3,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://little-programmer.vercel.app/",
+    baseUrl: "http://localhost:5000",
   }),
-  tagTypes: ["team"] as any,
+  tagTypes: ["user", "team"] as any,
   endpoints: () => ({}),
 });
 

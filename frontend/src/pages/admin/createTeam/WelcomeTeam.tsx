@@ -3,20 +3,15 @@ import channel from "../../../assets/channel.png";
 import faqs from "../../../assets/faqs.png";
 import { useState } from "react";
 import AddMemberModal from "./AddMemberModal";
-import {
-  useGetActiveMembersQuery,
-  useGetTeamsQuery,
-  useGetPendingMembersQuery,
-} from "../../../features/team/teamApi";
-import { useAppSelector } from "../../../redux/hooks";
+import { useGetTeamsQuery } from "../../../features/team/teamApi";
+import { useLoggedInUserQuery } from "../../../features/user/userApi";
 
 const WelcomeTeam = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const user: any = useAppSelector((state) => state.user.user);
+  const { data: userData, isLoading } = useLoggedInUserQuery({});
+  const user = userData?.data;
   const { data } = useGetTeamsQuery(user?._id);
   const team = data?.data[data?.data.length - 1];
-  const { data: activeMembers } = useGetActiveMembersQuery(team?._id);
-  const { data: pendingMembers } = useGetPendingMembersQuery(team?._id);
 
   return (
     <div className="my-10 p-5 lg:p-0">

@@ -7,9 +7,12 @@ import { TeamValidationSchema } from "../validation/team.validation";
 const router = Router();
 
 router.get("/my-teams/:adminId", TeamController.myTeams);
+
 router.get("/", TeamController.allTeams);
 
 router.get("/:id", TeamController.getSpecificTeam);
+
+router.get("/userTeams/:memberId", TeamController.getUserTeams);
 
 router.patch(
   "/:id",

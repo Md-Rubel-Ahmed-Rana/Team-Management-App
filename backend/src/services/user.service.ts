@@ -9,6 +9,7 @@ const getAllUsers = async () => {
     email: 1,
     department: 1,
     designation: 1,
+    profile_picture: 1,
   });
   return result;
 };
@@ -72,7 +73,9 @@ const login = async (email: string, password: string) => {
   if (!isExist) {
     throw new ApiError(404, "User not found!");
   }
-  if (password !== isExist.password) {
+
+  const isMatchedPassword = await bcrypt.compare(password, isExist.password);
+  if (!isMatchedPassword) {
     throw new ApiError(401, "Password doesn't match");
   }
 

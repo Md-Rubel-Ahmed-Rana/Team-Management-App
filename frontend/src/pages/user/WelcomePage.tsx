@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import LoginLogo from "../../assets/login.png";
-import { useAppSelector } from "../../redux/hooks";
+import { useLoggedInUserQuery } from "../../features/user/userApi";
+import { IUser } from "../../interfaces/user.interface";
 
 const WelcomePage = () => {
-  const user: any = useAppSelector((state) => state.user.user);
+  const { data }: any = useLoggedInUserQuery({});
+  const user: IUser = data?.data;
 
   return (
     <div className="flex items-center h-screen justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -14,21 +16,32 @@ const WelcomePage = () => {
               <img className="mx-auto w-20" src={LoginLogo} alt="" />
             </div>
             <h2 className="mb-2 font-semibold text-center text-2xl leading-9 text-gray-900">
-              Welcome to Little Programmer
+              Welcome to Team Manager
             </h2>
             <h4 className="mb-4 font-semibold text-center text-2xl leading-9 text-gray-900">
               Manage your team efficiently
             </h4>
           </div>
           <div className="mt-6 flex justify-center gap-5">
-            <Link to="/dashboard">
-              <button
-                type="button"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-2"
-              >
-                Go Dashboard
-              </button>
-            </Link>
+            {user.role === "user" ? (
+              <Link to="/profile">
+                <button
+                  type="button"
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-2"
+                >
+                  Go Profile
+                </button>
+              </Link>
+            ) : (
+              <Link to="/dashboard">
+                <button
+                  type="button"
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-2"
+                >
+                  Go Dashboard
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       ) : (

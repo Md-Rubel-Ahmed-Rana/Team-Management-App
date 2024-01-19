@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useGetUserQuery } from "../../features/user/userApi";
-import { useGetPendingMembersQuery } from "../../features/team/teamApi";
 import { useAppSelector } from "../../redux/hooks";
 import {
   useAcceptInvitationMutation,
@@ -14,12 +13,13 @@ const SingleNotification = ({ openModal, setOpanModal, notification }: any) => {
   const closeModal = () => {
     setOpanModal(false);
   };
-  const user: any = useAppSelector((state) => state.user.user);
+  const user: any = {};
   const { data } = useGetUserQuery(notification?.admin);
-  const { data: pendingMembers } = useGetPendingMembersQuery(notification?._id);
   const [acceptInvitation] = useAcceptInvitationMutation();
   const [rejectInvitation] = useRejectInvitationMutation();
   const navigate = useNavigate();
+
+  const pendingMembers = {};
 
   const findInvitation = pendingMembers?.invitations?.find(
     (invite: any) => invite?.user?._id === user._id

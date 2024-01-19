@@ -2,25 +2,24 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useCreateUserMutation } from "../../features/user/userApi";
-
-type FormData = {
-  username: string;
-  email: string;
-  password: string;
-  role: string;
-};
+import { IUser } from "../../interfaces/user.interface";
+import useUploadFile from "../../hooks/useUploadFile";
+import { useState } from "react";
 
 const Signup = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<IUser>();
   const navigate = useNavigate();
   const [createUser] = useCreateUserMutation();
+  const [profilePicture, setProfilePicture] = useState("");
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
+  const handleRegister: SubmitHandler<IUser> = async (data) => {
+    data.profile_picture = profilePicture;
     const result: any = await createUser(data);
+    console.log("Register", result);
     if (result?.data?.success) {
       if (result?.data?.success) {
         Swal.fire({
@@ -43,105 +42,185 @@ const Signup = () => {
     }
   };
 
+  const uploadFile = useUploadFile();
+
+  const handleFileChange = async (e: any) => {
+    const selectedFile = e.target.files[0];
+    const uploadedFile: any = await uploadFile(selectedFile);
+    setProfilePicture(uploadedFile?.url);
+  };
+
   const handleGoogleLogin = async () => {
     window.open("https://little-programmer.vercel.app/auth/google", "_self");
   };
 
   return (
-    <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
+    <div className="flex items-center justify-center py-5 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[620px] w-full">
         <form
           className="shadow-2xl lg:px-10 px-5 py-5 rounded-md"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(handleRegister)}
         >
           <div>
             <h2 className="mb-4 text-center text-3xl leading-9 font-extrabold text-gray-900">
               Create account
             </h2>
           </div>
-          <div className="rounded-md shadow-sm">
-            <div>
-              <label htmlFor="username">Name</label>
-              <input
-                aria-label="username"
-                type="text"
-                {...register("username", { required: "Name is required" })}
-                className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
-                  errors.username ? "border-red-500" : "border-gray-300"
-                } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                placeholder="Name"
-              />
-              {errors.username && (
-                <p className="mt-2 text-sm text-red-500">
-                  {errors.username.message}
-                </p>
-              )}
+          <div className="lg:flex w-full justify-between items-center gap-5">
+            <div className="rounded-md shadow-sm w-1/2">
+              <div>
+                <label htmlFor="username">Name</label>
+                <input
+                  aria-label="name"
+                  type="text"
+                  {...register("name", { required: "Name is required" })}
+                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                    errors.name ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  placeholder="Name"
+                />
+                {errors.name && (
+                  <p className="mt-2 text-sm text-red-500">
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+              <div className="my-5">
+                <label htmlFor="department">Department</label>
+                <input
+                  aria-label="department"
+                  type="text"
+                  {...register("department", {
+                    required: "Department is required",
+                  })}
+                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                    errors.department ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  placeholder="Department (Engineering)"
+                />
+                {errors.department && (
+                  <p className="mt-2 text-sm text-red-500">
+                    {errors.department.message}
+                  </p>
+                )}
+              </div>
+              <div className="my-5">
+                <label htmlFor="email">Select role</label>
+                <select
+                  {...register("role")}
+                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                    errors.role ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  placeholder="Select role"
+                  name="role"
+                  id="role"
+                >
+                  <option selected value="user">
+                    User
+                  </option>
+                  <option value="admin">Admin</option>
+                </select>
+                {errors.role && (
+                  <p className="mt-2 text-sm text-red-500">
+                    {errors.role.message}
+                  </p>
+                )}
+              </div>
+              <div className="-mt-px">
+                <label htmlFor="password">Password</label>
+                <input
+                  aria-label="Password"
+                  type="password"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
+                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                    errors.password ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  placeholder="Password"
+                />
+                {errors.password && (
+                  <p className="mt-2 text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="my-5">
-              <label htmlFor="email">Email</label>
-              <input
-                aria-label="Email address"
-                type="email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /\S+@\S+\.\S+/,
-                    message: "Invalid email address",
-                  },
-                })}
-                className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
-                  errors.email ? "border-red-500" : "border-gray-300"
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                placeholder="Email address"
-              />
-              {errors.email && (
-                <p className="mt-2 text-sm text-red-500">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-            <div className="my-5">
-              <label htmlFor="email">Select role</label>
-              <select
-                {...register("role")}
-                className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
-                  errors.role ? "border-red-500" : "border-gray-300"
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                placeholder="Select role"
-                name="role"
-                id="role"
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
-              {errors.role && (
-                <p className="mt-2 text-sm text-red-500">
-                  {errors.role.message}
-                </p>
-              )}
-            </div>
-            <div className="-mt-px">
-              <label htmlFor="password">Password</label>
-              <input
-                aria-label="Password"
-                type="password"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                })}
-                className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
-                  errors.password ? "border-red-500" : "border-gray-300"
-                } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                placeholder="Password"
-              />
-              {errors.password && (
-                <p className="mt-2 text-sm text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
+            <div className="rounded-md shadow-sm w-1/2">
+              <div>
+                <label htmlFor="username">Email</label>
+                <input
+                  aria-label="email"
+                  type="text"
+                  {...register("email", { required: "email is required" })}
+                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  placeholder="Email"
+                />
+                {errors.email && (
+                  <p className="mt-2 text-sm text-red-500">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+              <div className="my-5">
+                <label htmlFor="Designation">Designation</label>
+                <input
+                  aria-label="Designation"
+                  type="text"
+                  {...register("designation", {
+                    required: "Designation is required",
+                  })}
+                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                    errors.designation ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  placeholder="Designation (Full Stack Developer)"
+                />
+                {errors.designation && (
+                  <p className="mt-2 text-sm text-red-500">
+                    {errors.designation.message}
+                  </p>
+                )}
+              </div>
+              <div className="my-5">
+                <label htmlFor="profile_picture">Profile Picture</label>
+                <input
+                  aria-label="Profile Image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                    errors.profile_picture
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  placeholder="Email address"
+                />
+              </div>
+              <div className="-mt-px">
+                <label htmlFor="Confirm password">Confirm Password</label>
+                <input
+                  aria-label="Confirm Password"
+                  type="password"
+                  {...register("confirm_password", {
+                    required: "Confirm Password is required",
+                  })}
+                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                    errors.password ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  placeholder="Confirm Password"
+                />
+                {errors.confirm_password && (
+                  <p className="mt-2 text-sm text-red-500">
+                    {errors.confirm_password.message}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 

@@ -1,14 +1,11 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useCreateUserMutation } from "../../features/user/userApi";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
 import LoginLogo from "../../assets/login.png";
-import { useDispatch } from "react-redux";
-import { loginUser } from "../../features/user/userSlice";
-import { AppDispatch } from "../../app/store";
+import { useLoginUserMutation } from "../../features/user/userApi";
+import Cookies from "js-cookie";
 
 type FormData = {
-  name: string;
   email: string;
   password: string;
 };
@@ -20,25 +17,26 @@ const Login = () => {
     formState: { errors },
   } = useForm<FormData>();
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+
+  const [loginUser] = useLoginUserMutation();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const result: any = await dispatch(loginUser(data));
-    console.log(result);
-    if (result?.payload?.data?.success) {
+    const result: any = await loginUser(data);
+    Cookies.set("tmAccessToken", result?.data?.data, { expires: 6 });
+    if (result?.data?.success) {
       Swal.fire({
         position: "center",
         icon: "success",
-        title: result?.payload?.data?.message,
+        title: result?.data?.message,
         showConfirmButton: false,
         timer: 1500,
       });
-      navigate("/dashboard");
+      window.location.replace("/teams");
     } else {
       Swal.fire({
         position: "center",
         icon: "error",
-        title: result?.payload?.data?.message,
+        title: result?.error?.message,
         showConfirmButton: false,
         timer: 1500,
       });
@@ -91,10 +89,6 @@ const Login = () => {
                 type="password"
                 {...register("password", {
                   required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
                 })}
                 className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
                   errors.password ? "border-red-500" : "border-gray-300"

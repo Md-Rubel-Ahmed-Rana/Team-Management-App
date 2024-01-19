@@ -1,23 +1,23 @@
 import { FaPlus } from "react-icons/fa";
 import { useState } from "react";
-import CreateTeamModal from "./CreateTeamModal";
-import { useMyTeamsQuery } from "../../../features/team/teamApi";
-import { useLoggedInUserQuery } from "../../../features/user/userApi";
-import { ITeam } from "../../../interfaces/team.interface";
 import { Link } from "react-router-dom";
+import { useLoggedInUserQuery } from "../../../features/user/userApi";
+import { useGetUserTeamsQuery } from "../../../features/team/teamApi";
+import { ITeam } from "../../../interfaces/team.interface";
+import CreateTeamModal from "../teamCreation/CreateTeam";
 
-const CreateTeam = () => {
+const UserTeams = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
   const [isOpen, setIsOpen] = useState(false);
-  const { data: teamData } = useMyTeamsQuery(user?._id);
+  const { data: teamData } = useGetUserTeamsQuery(user?._id);
 
   return (
     <section className="my-10 p-5">
       <div className="lg:flex justify-between">
         <div>
           <h1 className="lg:text-3xl font-bold">
-            Management Your Teams Professionally
+            Collaborate With Your Teams Professionally
           </h1>
         </div>
         <div>
@@ -31,7 +31,10 @@ const CreateTeam = () => {
       </div>
       <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 py-10 gap-10">
         {teamData?.data?.map((team: ITeam) => (
-          <div className="border p-8 rounded-md border-blue-400 relative">
+          <div
+            key={team._id}
+            className="border p-8 rounded-md border-blue-400 relative"
+          >
             <img
               className="w-24 h-24 rounded-full border-2"
               src={team?.image}
@@ -51,7 +54,7 @@ const CreateTeam = () => {
               <p className="absolute bottom-5 right-8">
                 <Link
                   className="bg-blue-300 font-medium px-5 py-2 rounded-md"
-                  to={`teams/${team._id}`}
+                  to={`/teams/${team._id}`}
                 >
                   View team
                 </Link>
@@ -72,4 +75,4 @@ const CreateTeam = () => {
   );
 };
 
-export default CreateTeam;
+export default UserTeams;

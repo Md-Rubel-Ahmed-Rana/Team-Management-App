@@ -92,11 +92,34 @@ const allTeams = async () => {
 };
 
 const getTeam = async (id: string) => {
-  const result = await Team.findById(id);
+  const result = await Team.findById(id).populate([
+    {
+      path: "activeMembers",
+      model: "User",
+      select: ["name", "profile_picture", "email", "department", "designation"],
+    },
+    {
+      path: "pendingMembers",
+      model: "User",
+      select: ["name", "profile_picture", "email", "department", "designation"],
+    },
+    {
+      path: "admin",
+      model: "User",
+      select: ["name", "profile_picture", "email", "department", "designation"],
+    },
+  ]);
   if (!result) {
     throw new ApiError(404, "Team not found!");
   }
   return result;
+};
+
+const getUserTeams = async (memberId: string) => {
+  const teams = await Team.find({
+    $or: [{ activeMembers: memberId }, { pendingMembers: memberId }],
+  });
+  return teams;
 };
 
 const updateTeam = async (id: string, data: any) => {
@@ -137,4 +160,5 @@ export const TeamService = {
   deleteTeam,
   allTeams,
   removeMember,
+  getUserTeams,
 };

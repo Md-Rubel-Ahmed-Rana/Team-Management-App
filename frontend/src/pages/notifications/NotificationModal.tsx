@@ -2,18 +2,17 @@ import { Fragment, SetStateAction, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { BsCheckCircle, BsFillChatLeftTextFill } from "react-icons/bs";
 import SingleNotification from "./SingleNotification";
-import { useAppSelector } from "../../redux/hooks";
 
 const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
   const closeModal = () => {
     setIsOpen(false);
   };
-  const [openModal, setOpanModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [notification, setNotification] = useState("");
-  const user: any = useAppSelector((state) => state.user.user);
+  const user: any = {};
 
   const handleOpenModal = (not: any) => {
-    setOpanModal(true);
+    setOpenModal(true);
     setNotification(not);
   };
   return (
@@ -112,7 +111,7 @@ const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
                   {openModal && (
                     <SingleNotification
                       openModal={openModal}
-                      setOpanModal={setOpanModal}
+                      setOpanModal={setOpenModal}
                       notification={notification}
                     />
                   )}

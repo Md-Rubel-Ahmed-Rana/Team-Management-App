@@ -1,18 +1,36 @@
 import apiSlice from "../api/apiSlice";
+import Cookies from "js-cookie";
 
 const userApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createUser: builder.mutation({
       query: (data) => ({
         method: "POST",
-        url: "/api/auth/register",
+        url: "/user/register",
         body: data,
       }),
     }),
+    loginUser: builder.mutation({
+      query: (data) => ({
+        method: "POST",
+        url: "/user/login",
+        body: data,
+      }),
+      invalidatesTags: ["user", "team"] as any,
+    }),
     getUsers: builder.query({
       query: () => ({
-        url: "/api/auth/users",
+        url: "/user",
       }),
+    }),
+    loggedInUser: builder.query({
+      query: () => ({
+        url: "/user/auth",
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
+      }),
+      providesTags: ["user", "team"] as any,
     }),
     getUser: builder.query({
       query: (id) => ({
@@ -22,5 +40,10 @@ const userApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useCreateUserMutation, useGetUsersQuery, useGetUserQuery } =
-  userApi;
+export const {
+  useCreateUserMutation,
+  useGetUsersQuery,
+  useGetUserQuery,
+  useLoginUserMutation,
+  useLoggedInUserQuery,
+} = userApi;
