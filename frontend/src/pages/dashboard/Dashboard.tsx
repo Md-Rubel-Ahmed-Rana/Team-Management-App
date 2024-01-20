@@ -5,7 +5,7 @@ import AdminTeamDashboard from "./AdminTeams";
 import PaymentPage from "./PaymentPage";
 
 const Dashboard = () => {
-  const [activeView, setActiveView] = useState("teams");
+  const [activeView, setActiveView] = useState("profile");
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar setActiveView={setActiveView} />

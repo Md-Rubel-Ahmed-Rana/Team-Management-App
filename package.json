@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "daisyui": "^4.6.0"
+  "dependencies": {
+    "concurrently": "^8.2.2"
   }
 }

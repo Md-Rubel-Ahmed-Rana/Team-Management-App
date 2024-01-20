@@ -5,6 +5,7 @@ import { TeamRouter } from "./routes/team.route";
 import { InvitationRoutes } from "./routes/invitation.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import { NotificationRoutes } from "./routes/notification.route";
+import { PaymentRoutes } from "./routes/payment.route";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/user", UserRouter);
 app.use("/team", TeamRouter);
 app.use("/invitation", InvitationRoutes);
+app.use("/payment", PaymentRoutes);
 app.use("/notification", NotificationRoutes);
 
 app.get("/", (req, res) => {
