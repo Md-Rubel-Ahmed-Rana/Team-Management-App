@@ -1,6 +1,7 @@
 import React from "react";
 import TestimonialCard from "./TestimonialCard";
 import testimonialData from "../../../constants/testimonialData";
+import { Link } from "react-router-dom";
 
 const TestimonialsSection = () => {
   return (
@@ -20,7 +21,7 @@ const TestimonialsSection = () => {
         ))}
       </div>
       <button className="bg-blue-500 text-white py-2 px-4 rounded-full mt-8 hover:bg-blue-700">
-        Start Your Free Trial
+        <Link to={"/signup"}>Start Your Free Trial</Link>
       </button>
     </section>
   );

@@ -11,6 +11,7 @@ import TeamPage from "../pages/teams/showTeam/TeamPage";
 import ProfilePage from "../pages/Profile/ProfilePage";
 import EditTeamPage from "../pages/dashboard/EditTeam";
 import FeaturesSection from "../pages/LandingPage/features/FeaturePage";
+import CheckoutPage from "../pages/checkout/Checkout";
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <ProfilePage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/checkout/:id",
+        element: (
+          <PrivateRoute>
+            <CheckoutPage />
           </PrivateRoute>
         ),
       },

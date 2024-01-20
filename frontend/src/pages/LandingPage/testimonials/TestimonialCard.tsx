@@ -13,7 +13,7 @@ const TestimonialCard = ({ quote, name, position, userImage }: Props) => {
       <p className="text-lg mb-4">"{quote}"</p>
       <div className="flex items-center justify-center space-x-4">
         <img src={userImage} alt={name} className="w-12 h-12 rounded-full" />
-        <div>
+        <div className="text-left">
           <p className="font-bold">{name}</p>
           <p>{position}</p>
         </div>

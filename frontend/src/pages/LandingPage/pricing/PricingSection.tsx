@@ -1,6 +1,7 @@
 import React from "react";
 import PricingCard from "./PricingCard";
 import pricingData from "../../../constants/pricingData";
+import { IPrice } from "../../../interfaces/price.interface";
 
 const PricingSection = () => {
   return (
@@ -9,7 +10,7 @@ const PricingSection = () => {
         Choose the Right Plan for Your Team
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {pricingData.map((price, index) => (
+        {pricingData.map((price: IPrice, index) => (
           <PricingCard key={index} data={price} />
         ))}
       </div>

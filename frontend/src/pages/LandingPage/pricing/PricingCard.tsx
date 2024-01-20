@@ -1,20 +1,18 @@
 import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
+import { IPrice } from "../../../interfaces/price.interface";
+import { Link } from "react-router-dom";
 
 type Props = {
-  data: {
-    plan: string;
-    price: string;
-    features: string[];
-  };
+  data: IPrice;
 };
 
 const PricingCard = ({ data }: Props) => {
-  const { plan, price, features } = data;
+  const { _id, plan, price, features } = data;
   return (
     <div className="bg-gray-100 p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-bold mb-4">{plan}</h3>
-      <p className="text-2xl mb-4">{price}</p>
+      <p className="text-2xl mb-4 font-bold">${price} /month</p>
       <ul className="text-left">
         {features.map((feature, index) => (
           <li key={index} className="mb-2 flex items-center gap-3">
@@ -24,7 +22,7 @@ const PricingCard = ({ data }: Props) => {
         ))}
       </ul>
       <button className="bg-blue-500 text-white py-2 px-4 rounded-full mt-6 hover:bg-blue-700">
-        Get Started
+        <Link to={`/checkout/${_id}`}>Get Started</Link>
       </button>
     </div>
   );

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const WelcomePage = () => {
   return (
@@ -9,7 +10,7 @@ const WelcomePage = () => {
         Manager.
       </p>
       <button className="bg-purple-700 text-white py-2 px-4 rounded-full hover:bg-purple-900 hover:text-white">
-        Get Started
+        <Link to={"/signup"}>Get Started</Link>
       </button>
     </section>
   );
