@@ -10,6 +10,7 @@ import TeamDetails from "../pages/teams/showTeam/TeamDetails";
 import TeamPage from "../pages/teams/showTeam/TeamPage";
 import ProfilePage from "../pages/Profile/ProfilePage";
 import EditTeamPage from "../pages/dashboard/EditTeam";
+import FeaturesSection from "../pages/LandingPage/features/FeaturePage";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Signup />,
+      },
+      {
+        path: "/features",
+        element: <FeaturesSection limit={100} />,
       },
       {
         path: "/login",
