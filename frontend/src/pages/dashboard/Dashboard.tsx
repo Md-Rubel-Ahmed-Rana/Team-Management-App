@@ -2,6 +2,7 @@ import { useState } from "react";
 import Sidebar from "./Sidebar";
 import ProfilePage from "../Profile/ProfilePage";
 import AdminTeamDashboard from "./AdminTeams";
+import PaymentPage from "./PaymentPage";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("teams");
@@ -12,6 +13,7 @@ const Dashboard = () => {
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
           {activeView === "teams" && <AdminTeamDashboard />}
           {activeView === "profile" && <ProfilePage />}
+          {activeView === "payments" && <PaymentPage />}
         </main>
       </div>
     </div>

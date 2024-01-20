@@ -22,11 +22,7 @@ const Navbar = () => {
   };
 
   const handleNavigate = () => {
-    if (user.role === "user") {
-      navigate("/profile");
-    } else {
-      navigate("/dashboard");
-    }
+    navigate("/dashboard");
   };
 
   return (
@@ -75,8 +71,8 @@ const Navbar = () => {
         )}
 
         {user?.email && (
-          <button
-            onClick={handleNavigate}
+          <Link
+            to={"/dashboard"}
             className={`${
               !user.profile_picture && "border m-2 p-2 rounded-full"
             }`}
@@ -90,7 +86,7 @@ const Navbar = () => {
             ) : (
               <FaUser />
             )}
-          </button>
+          </Link>
         )}
       </div>
       <div className="flex lg:hidden items-center justify-between px-5">
@@ -120,12 +116,9 @@ const Navbar = () => {
           )}
 
           {user?.email && (
-            <button
-              onClick={handleNavigate}
-              className="border m-2 p-2 rounded-full"
-            >
+            <Link to={"/dashboard"} className="border m-2 p-2 rounded-full">
               <FaUser />
-            </button>
+            </Link>
           )}
         </div>
       </div>
