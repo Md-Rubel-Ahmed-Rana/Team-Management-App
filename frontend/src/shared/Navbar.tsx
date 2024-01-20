@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/m.png";
-import moskot from "../assets/moskot.png";
+import logo from "../assets/logo.png";
 import { FaUser, FaRegBell, FaBars } from "react-icons/fa";
 import { BiX } from "react-icons/bi";
 import NotificationModal from "../pages/notifications/NotificationModal";
@@ -34,8 +33,7 @@ const Navbar = () => {
     <nav className="lg:flex justify-between items-center py-5">
       <div>
         <Link className="lg:flex hidden  items-center gap-3" to={"/"}>
-          <img src={logo} alt="" />
-          <img src={moskot} alt="" />
+          <img className="w-18 h-14 rounded-full" src={logo} alt="" />
         </Link>
       </div>
       <div className="lg:flex hidden  items-center gap-4">
