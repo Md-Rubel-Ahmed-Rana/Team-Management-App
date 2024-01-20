@@ -1,4 +1,3 @@
-// HowItWorksSection.js
 import React from "react";
 import howItWorkData from "../../../constants/howItWorkData";
 import HowItWorksCard from "./HowItWorksCard";

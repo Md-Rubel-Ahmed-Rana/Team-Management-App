@@ -1,11 +1,10 @@
-// TestimonialsSection.js
 import React from "react";
 import TestimonialCard from "./TestimonialCard";
 import testimonialData from "../../../constants/testimonialData";
 
 const TestimonialsSection = () => {
   return (
-    <section className="bg-gray-100 py-16 text-center">
+    <section className="bg-gray-100 p-16 text-center">
       <h2 className="text-3xl font-bold mb-8">
         See What Our Users Have to Say
       </h2>
