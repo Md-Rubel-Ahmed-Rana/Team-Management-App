@@ -39,8 +39,23 @@ const getProjectsByTeamId = async (
     next(error);
   }
 };
+const myProjects = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.params.userId;
+    const projects = await ProjectService.myProjects(userId);
+
+    res.json({
+      statusCode: 200,
+      success: true,
+      data: projects,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const ProjectController = {
   createProject,
   getProjectsByTeamId,
+  myProjects,
 };

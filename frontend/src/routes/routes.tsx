@@ -14,6 +14,8 @@ import FeaturesSection from "../pages/LandingPage/features/FeaturePage";
 import CheckoutPage from "../pages/checkout/Checkout";
 import PaymentSuccess from "../pages/checkout/Success";
 import PaymentCancel from "../pages/checkout/Cancel";
+import RoutePreventer from "./RoutePreventer";
+import ProjectPage from "../pages/projects/ProjectPage";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +29,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/signup",
-        element: <Signup />,
+        element: (
+          <RoutePreventer>
+            <Signup />
+          </RoutePreventer>
+        ),
       },
       {
         path: "/features",
@@ -35,13 +41,25 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <Login />,
+        element: (
+          <RoutePreventer>
+            <Login />
+          </RoutePreventer>
+        ),
       },
       {
         path: "/dashboard",
         element: (
           <PrivateRoute>
             <Dashboard />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/projects",
+        element: (
+          <PrivateRoute>
+            <ProjectPage />
           </PrivateRoute>
         ),
       },

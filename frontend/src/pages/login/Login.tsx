@@ -31,7 +31,7 @@ const Login = () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      window.location.replace("/teams");
+      navigate("/dashboard");
     } else {
       Swal.fire({
         position: "center",

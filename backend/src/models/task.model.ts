@@ -15,6 +15,10 @@ const taskSchema = new Schema<ITask>(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    assignedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     status: {
       type: String,
       enum: ["todo", "ongoing", "completed"],

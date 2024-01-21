@@ -17,7 +17,6 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
   const { data: users } = useGetUsersQuery([]);
   const [sendInvitation] = useSendInvitationMutation();
   const { data: userData } = useLoggedInUserQuery({});
-  const user = userData?.data;
 
   const closeModal = () => {
     setIsOpen(false);
@@ -176,16 +175,16 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
                         <button
                           onClick={closeModal}
                           type="button"
-                          className="border-2 mx-auto outline-none border-black rounded-full px-10 py-2  text-sm flex items-center gap-2"
+                          className="border-2 mx-auto outline-none border-black hover:bg-gray-300 rounded-full px-10 py-2  text-sm flex items-center gap-2"
                         >
                           Cancel
                         </button>
                         <button
                           onClick={handleSendInvitation}
                           type="button"
-                          className="border mt-4 lg:mt-0 mx-auto outline-none rounded-full px-10 py-2 bg-blue-700 text-white text-md flex items-center gap-2"
+                          className="border mt-4 lg:mt-0 mx-auto outline-none rounded-full px-10 py-2 bg-blue-600 hover:bg-blue-700 text-white text-md flex items-center gap-2"
                         >
-                          Add Member
+                          Invite
                         </button>
                       </div>
                     </div>

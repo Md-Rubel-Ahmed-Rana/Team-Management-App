@@ -1,5 +1,6 @@
 import React from "react";
 import Cookies from "js-cookie";
+import { Link } from "react-router-dom";
 
 const Sidebar = ({ setActiveView, activeView }: any) => {
   const handleSidebarNavigate = (text: string) => {
@@ -9,6 +10,7 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
     Cookies.remove("tmAccessToken");
     window.location.replace("/");
   };
+
   return (
     <div className="bg-gray-400 flex flex-col gap-2 text-white w-1/5">
       <button
@@ -36,6 +38,16 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
         Joined Teams
       </button>
 
+      <button>
+        <Link
+          className={`py-2 px-4 block w-full text-left focus:outline-none ${
+            activeView === "projects" ? "bg-gray-700" : "hover:bg-gray-700"
+          }`}
+          to={"/projects"}
+        >
+          Projects
+        </Link>
+      </button>
       <button
         className={`py-2 px-4 block w-full text-left focus:outline-none ${
           activeView === "payments" ? "bg-gray-700" : "hover:bg-gray-700"

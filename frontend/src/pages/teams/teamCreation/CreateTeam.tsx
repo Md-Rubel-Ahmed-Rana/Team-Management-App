@@ -24,8 +24,6 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
     admin: user?._id || user?.id,
   });
 
-  console.log(teamData);
-
   const closeModal = () => {
     setIsOpen(false);
   };

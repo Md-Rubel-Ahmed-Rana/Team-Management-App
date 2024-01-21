@@ -104,28 +104,6 @@ const Signup = () => {
                   </p>
                 )}
               </div>
-              <div className="my-5">
-                <label htmlFor="email">Select role</label>
-                <select
-                  {...register("role")}
-                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
-                    errors.role ? "border-red-500" : "border-gray-300"
-                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                  placeholder="Select role"
-                  name="role"
-                  id="role"
-                >
-                  <option selected value="user">
-                    User
-                  </option>
-                  <option value="admin">Admin</option>
-                </select>
-                {errors.role && (
-                  <p className="mt-2 text-sm text-red-500">
-                    {errors.role.message}
-                  </p>
-                )}
-              </div>
               <div className="-mt-px">
                 <label htmlFor="password">Password</label>
                 <input
@@ -201,25 +179,6 @@ const Signup = () => {
                   } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                   placeholder="Email address"
                 />
-              </div>
-              <div className="-mt-px">
-                <label htmlFor="Confirm password">Confirm Password</label>
-                <input
-                  aria-label="Confirm Password"
-                  type="password"
-                  {...register("confirm_password", {
-                    required: "Confirm Password is required",
-                  })}
-                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
-                    errors.password ? "border-red-500" : "border-gray-300"
-                  } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                  placeholder="Confirm Password"
-                />
-                {errors.confirm_password && (
-                  <p className="mt-2 text-sm text-red-500">
-                    {errors.confirm_password.message}
-                  </p>
-                )}
               </div>
             </div>
           </div>
