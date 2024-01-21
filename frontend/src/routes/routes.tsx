@@ -12,6 +12,8 @@ import ProfilePage from "../pages/Profile/ProfilePage";
 import EditTeamPage from "../pages/dashboard/EditTeam";
 import FeaturesSection from "../pages/LandingPage/features/FeaturePage";
 import CheckoutPage from "../pages/checkout/Checkout";
+import PaymentSuccess from "../pages/checkout/Success";
+import PaymentCancel from "../pages/checkout/Cancel";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +50,22 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <TeamPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/success",
+        element: (
+          <PrivateRoute>
+            <PaymentSuccess />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/cancel",
+        element: (
+          <PrivateRoute>
+            <PaymentCancel />
           </PrivateRoute>
         ),
       },

@@ -14,8 +14,9 @@ const Footer = () => {
           <p className="text-sm">Streamlining teamwork for success.</p>
         </div>
         <div className="flex space-x-4">
-          {icons.map((icon) => (
+          {icons.map((icon, index) => (
             <SocialIcon
+              key={index}
               style="text-blue-400 hover:text-gray-500 transition duration-300 text-4xl"
               icon={icon}
               link="#"

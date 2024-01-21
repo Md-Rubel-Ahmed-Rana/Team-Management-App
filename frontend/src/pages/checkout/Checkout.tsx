@@ -1,22 +1,24 @@
 import React from "react";
 import { useLoggedInUserQuery } from "../../features/user/userApi";
 import { useParams } from "react-router-dom";
-import pricingData from "../../constants/pricingData";
 import { IPrice } from "../../interfaces/price.interface";
 import { useCheckoutMutation } from "../../features/payment/paymentApi";
+import { IUser } from "../../interfaces/user.interface";
+import { useGetSinglePricingQuery } from "../../features/pricing/pricingApi";
 
 const CheckoutPage = () => {
   const { data: userData } = useLoggedInUserQuery({});
-  const user = userData?.data;
+  const user: IUser = userData?.data;
   const { id } = useParams();
-  const paymentData = pricingData.find((data: IPrice) => data._id === id);
-  const [checkout] = useCheckoutMutation();
+  const { data: pricingData } = useGetSinglePricingQuery(id);
+  const paymentData: IPrice = pricingData?.data;
+  const [checkout, { isLoading }] = useCheckoutMutation();
 
   const payment = [
     {
+      userId: user._id,
       quantity: 1,
-      name: paymentData?.plan,
-      payment_amount: paymentData?.price,
+      package: id,
     },
   ];
 
@@ -49,10 +51,11 @@ const CheckoutPage = () => {
         </div>
         <div className="flex justify-center">
           <button
+            disabled={isLoading}
             onClick={handleCheckout}
             className="bg-blue-500 w-1/2 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
           >
-            Checkout
+            {isLoading ? "Processing" : "Checkout"}
           </button>
         </div>
       </div>

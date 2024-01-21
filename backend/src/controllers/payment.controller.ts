@@ -10,8 +10,18 @@ const checkout = async (req: Request, res: Response) => {
     data: result,
   });
 };
+const myPayments = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  const result = await PaymentService.myPayments(userId);
 
-const stripWebhook = async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: "Payments found",
+    data: result,
+  });
+};
+
+const webhook = async (req: Request, res: Response) => {
   await PaymentService.webHook(req.body);
 
   res.json({ received: true });
@@ -19,5 +29,6 @@ const stripWebhook = async (req: Request, res: Response) => {
 
 export const PaymentController = {
   checkout,
-  stripWebhook,
+  webhook,
+  myPayments,
 };

@@ -5,18 +5,22 @@ import { IUser } from "../../interfaces/user.interface";
 const Sidebar = ({ setActiveView }: any) => {
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
+
+  const handleSidebarNavigate = (text: string) => {
+    setActiveView(text);
+  };
   return (
     <div className="bg-gray-400 text-white w-1/5">
       <button
         className="py-2 px-4 block w-full text-left focus:outline-none hover:bg-gray-700"
-        onClick={() => setActiveView("profile")}
+        onClick={() => handleSidebarNavigate("profile")}
       >
         Profile
       </button>
       {user.role === "admin" && (
         <button
           className="py-2 px-4 block w-full text-left focus:outline-none hover:bg-gray-700"
-          onClick={() => setActiveView("teams")}
+          onClick={() => handleSidebarNavigate("teams")}
         >
           Teams
         </button>
@@ -24,7 +28,7 @@ const Sidebar = ({ setActiveView }: any) => {
 
       <button
         className="py-2 px-4 block w-full text-left focus:outline-none hover:bg-gray-700"
-        onClick={() => setActiveView("payments")}
+        onClick={() => handleSidebarNavigate("payments")}
       >
         Payments
       </button>

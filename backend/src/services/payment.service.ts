@@ -1,12 +1,15 @@
 import Stripe from "stripe";
 import { config } from "dotenv";
+import { Payment } from "../models/payment.model";
+import { Plan } from "../models/plan.model";
 config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 const checkout = async (items: any) => {
-  console.log(process.env.STRIPE_SECRET_KEY);
+  const plan = await Plan.findById(items[0].package);
   const storedData = items.map((item: any) => {
-    if (item.quantity) {
+    console.log(item);
+    if (item?.quantity) {
       item.quantity = item.quantity >= 1 ? item.quantity : 1;
     } else {
       item.quantity = 1;
@@ -16,13 +19,15 @@ const checkout = async (items: any) => {
       price_data: {
         currency: "usd",
         product_data: {
-          name: item.name,
+          name: plan?.plan,
         },
-        unit_amount: item.payment_amount * 100,
+        unit_amount: plan && plan?.price * 100,
       },
       quantity: item.quantity,
     };
   });
+
+  console.log({ storedData });
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
@@ -33,6 +38,13 @@ const checkout = async (items: any) => {
   });
 
   // store payment data in database
+  const paymentData = items.map((item: any) => ({
+    userId: item.userId,
+    package: item.package,
+    sessionId: session?.id,
+  }));
+
+  await Payment.create(paymentData);
 
   return { url: session.url };
 };
@@ -47,7 +59,16 @@ const webHook = (event: any) => {
   }
 };
 
+const myPayments = async (userId: string) => {
+  const payments = await Payment.find({ userId }).populate({
+    path: "package",
+    model: "Plan",
+  });
+  return payments;
+};
+
 export const PaymentService = {
   checkout,
   webHook,
+  myPayments,
 };
