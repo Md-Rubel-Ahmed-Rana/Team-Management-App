@@ -12,7 +12,7 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
   const { data: projects } = useMyProjectsQuery(user?._id);
 
   useEffect(() => {
-    setActiveProject(projects?.data[0]);
+    setActiveProject(projects?.data[0]._id);
   }, []);
 
   return (
@@ -22,9 +22,9 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
         {projects?.data?.map((project: IProject) => (
           <button
             key={project?._id}
-            onClick={() => setActiveProject(project)}
+            onClick={() => setActiveProject(project._id)}
             className={`px-4 py-2 w-full text-left  rounded-md ${
-              project?._id == activeProject?._id
+              project?._id == activeProject
                 ? "bg-blue-500 hover:bg-blue-700"
                 : "hover:bg-gray-700"
             }`}

@@ -11,11 +11,17 @@ export type IProject = {
   userId: string;
   name: string;
   category: string;
+  members: [
+    {
+      role: string;
+      member: string;
+    }
+  ];
   createdAt: string;
   updatedAt: string;
 };
 
-export const projectInit = {
+export const projectInit: IProject = {
   _id: "",
   name: "",
   category: "",
@@ -23,4 +29,10 @@ export const projectInit = {
   teamId: "",
   updatedAt: "",
   userId: "",
+  members: [
+    {
+      role: "",
+      member: "",
+    },
+  ],
 };

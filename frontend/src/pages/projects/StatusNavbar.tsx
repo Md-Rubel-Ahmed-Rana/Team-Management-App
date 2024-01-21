@@ -1,5 +1,5 @@
 import React from "react";
-import StatusNavButton from "../../components/StatusnavButton";
+import StatusNavButton from "../../components/StatusNavButton";
 
 type Props = {
   todos: number;

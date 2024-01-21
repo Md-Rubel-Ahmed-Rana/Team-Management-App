@@ -3,6 +3,8 @@ import ProjectSidebar from "./ProjectSidebar";
 import StatusNavbar from "./StatusNavbar";
 import TaskPage from "./TaskPage";
 import { IProject, projectInit } from "../../interfaces/project.interface";
+import AddMemberToProject from "./AddMemberToProject";
+import { useGetSingleProjectQuery } from "../../features/project/projectApi";
 
 const tasksData = [
   {
@@ -248,7 +250,11 @@ const tasksData = [
 ];
 
 const ProjectPage = () => {
-  const [activeProject, setActiveProject] = useState<IProject>(projectInit);
+  const [activeProject, setActiveProject] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { data: projectData } = useGetSingleProjectQuery(activeProject);
+  const project = projectData?.data;
 
   const todosTask = tasksData.filter((task: any) => task.status === "todo");
   const ongoingTask = tasksData.filter(
@@ -266,13 +272,26 @@ const ProjectPage = () => {
       />
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 p-5">
-          <div className="mb-4">
-            <h2 className="text-2xl font-bold mb-2">
-              Project: {activeProject?.name}
-            </h2>
-            <h2 className=" font-semibold">
-              Category: {activeProject?.category}
-            </h2>
+          <div className="flex  justify-between items-center mb-4">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">
+                Project: {project?.name}
+              </h2>
+              <h2 className=" font-semibold">Category: {project?.category}</h2>
+            </div>
+            <div className="flex flex-col gap-4 text-right">
+              <h4 className="text-xl font-semibold">
+                Total Member: {project?.members?.length}
+              </h4>
+              <p>
+                <button
+                  onClick={() => setIsOpen(true)}
+                  className="bg-blue-700 text-white px-4 py-1 rounded-md"
+                >
+                  Add Member
+                </button>
+              </p>
+            </div>
           </div>
           <StatusNavbar
             todos={todosTask?.length}
@@ -286,6 +305,13 @@ const ProjectPage = () => {
           />
         </main>
       </div>
+      {isOpen && (
+        <AddMemberToProject
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          projectId={activeProject}
+        />
+      )}
     </div>
   );
 };
