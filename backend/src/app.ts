@@ -7,6 +7,8 @@ import globalErrorHandler from "./middlewares/globalErrorHandler";
 import { NotificationRoutes } from "./routes/notification.route";
 import { PaymentRoutes } from "./routes/payment.route";
 import { PlanRoutes } from "./routes/plan.route";
+import { ProjectRoutes } from "./routes/project.route";
+import { TaskRoutes } from "./routes/task.route";
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use("/team", TeamRouter);
 app.use("/invitation", InvitationRoutes);
 app.use("/payment", PaymentRoutes);
 app.use("/plan", PlanRoutes);
+app.use("/project", ProjectRoutes);
+app.use("/task", TaskRoutes);
 app.use("/notification", NotificationRoutes);
 
 app.get("/", (req, res) => {
