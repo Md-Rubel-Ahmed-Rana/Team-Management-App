@@ -4,7 +4,7 @@ import User from "../models/user.model";
 import bcrypt from "bcrypt";
 
 const getAllUsers = async () => {
-  const result = await User.find({ role: "user" }).select({
+  const result = await User.find({}).select({
     name: 1,
     email: 1,
     department: 1,
@@ -55,14 +55,14 @@ const auth = async (id: string) => {
     };
   }
 
-  const { _id, name, profile_picture, email, department, designation, role } =
+  const { _id, name, profile_picture, email, department, designation } =
     isExist;
 
   return {
     success: true,
     message: "User found",
     error: null,
-    data: { _id, name, profile_picture, email, department, designation, role },
+    data: { _id, name, profile_picture, email, department, designation },
   };
 };
 
@@ -82,7 +82,6 @@ const login = async (email: string, password: string) => {
   const jwtPayload = {
     id: isExist._id,
     email: isExist.email,
-    role: isExist.role,
   };
 
   const accessToken = jwt.sign(

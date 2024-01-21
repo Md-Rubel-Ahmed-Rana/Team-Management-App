@@ -40,6 +40,38 @@ const myTeams = async (adminId: string) => {
   }
 };
 
+const joinedTeams = async (memberId: string) => {
+  try {
+    const result = await Team.find({ activeMembers: memberId }).populate([
+      {
+        path: "activeMembers",
+        model: "User",
+      },
+      {
+        path: "pendingMembers",
+        model: "User",
+      },
+      {
+        path: "admin",
+        model: "User",
+        select: [
+          "name",
+          "profile_picture",
+          "email",
+          "department",
+          "designation",
+          "createdAt",
+          "updatedAt",
+        ],
+      },
+    ]);
+    return result;
+  } catch (error) {
+    console.error("Error getting teams:", error);
+    throw error;
+  }
+};
+
 const allTeams = async () => {
   try {
     const result = await Team.find().populate([
@@ -161,4 +193,5 @@ export const TeamService = {
   allTeams,
   removeMember,
   getUserTeams,
+  joinedTeams,
 };

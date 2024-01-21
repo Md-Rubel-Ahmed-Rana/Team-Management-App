@@ -31,9 +31,9 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
   };
 
   const handlePageOne = () => {
-    if (!teamData?.name && !teamData.image) {
+    if (teamData?.name === "" && teamData.image === "") {
       setPage(1);
-      toast.error("Team name and image are required");
+      return toast.error("Team name and image are required");
     } else {
       setPage((prev) => prev + 1);
     }
@@ -56,8 +56,6 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
     }
 
     const result: any = await createTeam(teamData);
-
-    console.log("team creation", result);
     if (result?.data?.success) {
       Swal.fire({
         position: "center",
@@ -66,7 +64,7 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
         showConfirmButton: false,
         timer: 1500,
       });
-      navigate("/add-members");
+      navigate("/teams");
     }
     if (!result?.data?.success) {
       Swal.fire({

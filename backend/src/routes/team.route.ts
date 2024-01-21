@@ -14,6 +14,8 @@ router.get("/:id", TeamController.getSpecificTeam);
 
 router.get("/userTeams/:memberId", TeamController.getUserTeams);
 
+router.get("/joined-teams/:memberId", TeamController.joinedTeams);
+
 router.patch(
   "/:id",
   validateRequest(TeamValidationSchema.updateTeamValidation),

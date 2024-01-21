@@ -1,36 +1,54 @@
 import React from "react";
-import { useLoggedInUserQuery } from "../../features/user/userApi";
-import { IUser } from "../../interfaces/user.interface";
+import Cookies from "js-cookie";
 
-const Sidebar = ({ setActiveView }: any) => {
-  const { data }: any = useLoggedInUserQuery({});
-  const user: IUser = data?.data;
-
+const Sidebar = ({ setActiveView, activeView }: any) => {
   const handleSidebarNavigate = (text: string) => {
     setActiveView(text);
   };
+  const handleLogOut = () => {
+    Cookies.remove("tmAccessToken");
+    window.location.replace("/");
+  };
   return (
-    <div className="bg-gray-400 text-white w-1/5">
+    <div className="bg-gray-400 flex flex-col gap-2 text-white w-1/5">
       <button
-        className="py-2 px-4 block w-full text-left focus:outline-none hover:bg-gray-700"
+        className={`py-2 px-4 block w-full text-left focus:outline-none ${
+          activeView === "profile" ? "bg-gray-700" : "hover:bg-gray-700"
+        }`}
         onClick={() => handleSidebarNavigate("profile")}
       >
         Profile
       </button>
-      {user.role === "admin" && (
-        <button
-          className="py-2 px-4 block w-full text-left focus:outline-none hover:bg-gray-700"
-          onClick={() => handleSidebarNavigate("teams")}
-        >
-          Teams
-        </button>
-      )}
+      <button
+        className={`py-2 px-4 block w-full text-left focus:outline-none ${
+          activeView === "my-teams" ? "bg-gray-700" : "hover:bg-gray-700"
+        }`}
+        onClick={() => handleSidebarNavigate("my-teams")}
+      >
+        My Teams
+      </button>
+      <button
+        className={`py-2 px-4 block w-full text-left focus:outline-none ${
+          activeView === "joined-teams" ? "bg-gray-700" : "hover:bg-gray-700"
+        }`}
+        onClick={() => handleSidebarNavigate("joined-teams")}
+      >
+        Joined Teams
+      </button>
 
       <button
-        className="py-2 px-4 block w-full text-left focus:outline-none hover:bg-gray-700"
+        className={`py-2 px-4 block w-full text-left focus:outline-none ${
+          activeView === "payments" ? "bg-gray-700" : "hover:bg-gray-700"
+        }`}
         onClick={() => handleSidebarNavigate("payments")}
       >
         Payments
+      </button>
+      <button
+        className="py-2 px-4 block w-full text-left focus:outline-none  hover:bg-gray-700"
+        onClick={handleLogOut}
+      >
+        Logout
       </button>
     </div>
   );

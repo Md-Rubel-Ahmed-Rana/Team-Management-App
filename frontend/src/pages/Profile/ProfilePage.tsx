@@ -35,9 +35,6 @@ const ProfilePage = () => {
             <p>
               <strong>Designation:</strong> {user.designation}
             </p>
-            <p>
-              <strong>Role:</strong> {user.role}
-            </p>
           </div>
           <div className="mt-4">
             <button

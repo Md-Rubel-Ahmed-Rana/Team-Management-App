@@ -15,7 +15,6 @@ const registerZodSchema = z.object({
     department: z.string().min(1).max(255),
     designation: z.string().min(1).max(255),
     password: z.string().min(6),
-    role: z.enum(["user", "admin"]).optional(),
   }),
 });
 

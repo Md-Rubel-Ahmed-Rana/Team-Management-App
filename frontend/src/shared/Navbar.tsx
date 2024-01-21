@@ -5,25 +5,15 @@ import { BiX } from "react-icons/bi";
 import NotificationModal from "../pages/notifications/NotificationModal";
 import { useState } from "react";
 import { useLoggedInUserQuery } from "../features/user/userApi";
-import Cookies from "js-cookie";
+
 import { IUser } from "../interfaces/user.interface";
 
 const Navbar = () => {
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
-  const navigate = useNavigate();
-
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
   const notifications = [];
-  const handleLogOut = () => {
-    Cookies.remove("tmAccessToken");
-    window.location.replace("/");
-  };
-
-  const handleNavigate = () => {
-    navigate("/dashboard");
-  };
 
   return (
     <nav className="lg:flex justify-between items-center py-5">
@@ -45,11 +35,6 @@ const Navbar = () => {
               Login
             </Link>
           </>
-        )}
-        {user?.email && (
-          <button className="m-2" onClick={handleLogOut}>
-            Logout
-          </button>
         )}
 
         {user?.email && (
@@ -137,7 +122,6 @@ const Navbar = () => {
               </button>
             </>
           )}
-          {user?.email && <button onClick={handleLogOut}>Logout</button>}
 
           {user?.email && (
             <button>

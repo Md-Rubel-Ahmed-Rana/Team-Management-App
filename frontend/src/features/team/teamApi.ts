@@ -16,15 +16,15 @@ const teamApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["team"] as any,
     }),
-    singleTeam: builder.query({
+    joinedTeams: builder.query({
       query: (id) => ({
-        url: `/team/${id}`,
+        url: `/team/joined-teams/${id}`,
       }),
       providesTags: ["team"] as any,
     }),
-    getUserTeams: builder.query({
+    singleTeam: builder.query({
       query: (id) => ({
-        url: `/team/userTeams/${id}`,
+        url: `/team/${id}`,
       }),
       providesTags: ["team"] as any,
     }),
@@ -42,5 +42,5 @@ export const {
   useGetTeamsQuery,
   useMyTeamsQuery,
   useSingleTeamQuery,
-  useGetUserTeamsQuery,
+  useJoinedTeamsQuery,
 } = teamApi;

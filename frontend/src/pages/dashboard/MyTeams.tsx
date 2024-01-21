@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import { useLoggedInUserQuery } from "../../features/user/userApi";
 import { useMyTeamsQuery } from "../../features/team/teamApi";
 import { ITeam } from "../../interfaces/team.interface";
-import AdminTeamDetails from "./AdminTeamDetails";
+import TeamDetails from "./TeamDetails";
 import CreateTeamModal from "../teams/teamCreation/CreateTeam";
 
-const AdminTeamDashboard = () => {
+const MyTeams = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
   const { data: teamData } = useMyTeamsQuery(user?._id);
@@ -23,7 +23,7 @@ const AdminTeamDashboard = () => {
         </button>
       </div>
       {teamData?.data.map((team: ITeam) => (
-        <AdminTeamDetails key={team._id} team={team} />
+        <TeamDetails key={team._id} team={team} />
       ))}
 
       {isOpen && <CreateTeamModal isOpen={isOpen} setIsOpen={setIsOpen} />}
@@ -31,4 +31,4 @@ const AdminTeamDashboard = () => {
   );
 };
 
-export default AdminTeamDashboard;
+export default MyTeams;

@@ -1,8 +1,9 @@
 // src/components/TeamsPage.js
 import React from "react";
 import { Link } from "react-router-dom";
+import { useLoggedInUserQuery } from "../../features/user/userApi";
 
-const AdminTeamDetails = ({ team }: { team: any }) => {
+const TeamDetails = ({ team }: { team: any }) => {
   const {
     _id,
     name,
@@ -14,6 +15,8 @@ const AdminTeamDetails = ({ team }: { team: any }) => {
     pendingMembers,
     createdAt,
   } = team;
+  const { data: userData } = useLoggedInUserQuery({});
+  const user = userData?.data;
 
   return (
     <div className="p-4 border-2 border-blue-300 rounded-lg">
@@ -47,17 +50,19 @@ const AdminTeamDetails = ({ team }: { team: any }) => {
           <strong>Created At:</strong> {createdAt?.toString()?.slice(0, 10)}
         </p>
       </div>
-      <div className="mt-4">
-        <Link
-          to={`/edit-team/${_id}`}
-          state={{ team: team }}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
-        >
-          Edit Team
-        </Link>
-      </div>
+      {admin?._id === user?._id && (
+        <div className="mt-4">
+          <Link
+            to={`/edit-team/${_id}`}
+            state={{ team: team }}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
+          >
+            Edit Team
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
 
-export default AdminTeamDetails;
+export default TeamDetails;

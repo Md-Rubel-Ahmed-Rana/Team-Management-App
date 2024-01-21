@@ -31,6 +31,20 @@ const myTeams = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const joinedTeams = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await TeamService.joinedTeams(req.params.memberId);
+    res.json({
+      statusCode: 200,
+      success: true,
+      message: "Teams found successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const allTeams = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await TeamService.allTeams();
@@ -143,4 +157,5 @@ export const TeamController = {
   allTeams,
   removeMember,
   getUserTeams,
+  joinedTeams,
 };

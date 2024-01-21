@@ -29,7 +29,6 @@ const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
 
     req.id = user.id;
     req.email = user.email;
-    req.role = user.role;
     next();
   } catch (error: any) {
     res.json({

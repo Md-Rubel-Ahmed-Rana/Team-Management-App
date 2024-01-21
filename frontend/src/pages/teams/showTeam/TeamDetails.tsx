@@ -19,7 +19,6 @@ const TeamDetails = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState("active");
   const team = teamData?.data;
-  console.log(team);
 
   const handleFilterMembers = (filter: string) => {
     if (filter === "active") {
@@ -151,13 +150,11 @@ const TeamDetails = () => {
                             <td className="px-6 py-4">{member?.department}</td>
                             <td className="px-6 py-4">Pending</td>
                             <td className="px-6 py-4">{member?.designation}</td>
-                            {user.role === "admin" && (
-                              <td className="px-6 py-4">
-                                <button className="bg-blue-200 px-3 py-1 rounded-md font-semibold">
-                                  Remove
-                                </button>
-                              </td>
-                            )}
+                            <td className="px-6 py-4">
+                              <button className="bg-blue-200 px-3 py-1 rounded-md font-semibold">
+                                Remove
+                              </button>
+                            </td>
                           </tr>
                         ))}
                     </tbody>
