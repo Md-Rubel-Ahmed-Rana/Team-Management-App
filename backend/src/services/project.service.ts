@@ -17,6 +17,16 @@ const getSingleProject = (id: string) => {
   return Project.findById(id);
 };
 
+const updateProject = async (id: string, data: any) => {
+  const { name, category } = data;
+  const result = await Project.findOneAndUpdate(
+    { _id: id },
+    { $set: { name, category } },
+    { new: true }
+  );
+  return result;
+};
+
 const addMember = async (projectId: string, memberId: string, role: string) => {
   const project = await Project.findById(projectId);
 
@@ -44,4 +54,5 @@ export const ProjectService = {
   myProjects,
   addMember,
   getSingleProject,
+  updateProject,
 };

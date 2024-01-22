@@ -55,6 +55,25 @@ const myProjects = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const updateProject = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    const project = await ProjectService.updateProject(id, req.body);
+
+    res.json({
+      statusCode: 200,
+      success: true,
+      message: "Project updated successfully.",
+      data: project,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const getSingleProject = async (
   req: Request,
   res: Response,
@@ -102,4 +121,5 @@ export const ProjectController = {
   myProjects,
   addMember,
   getSingleProject,
+  updateProject,
 };

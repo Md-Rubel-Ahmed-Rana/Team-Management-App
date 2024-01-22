@@ -10,6 +10,14 @@ const projectApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["project"] as any,
     }),
+    updateProject: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/project/update/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["project"] as any,
+    }),
     myProjects: builder.query({
       query: (userId) => ({
         url: `/project/my-projects/${userId}`,
@@ -38,4 +46,5 @@ export const {
   useMyProjectsQuery,
   useAddMemberMutation,
   useGetSingleProjectQuery,
+  useUpdateProjectMutation,
 } = projectApi;
