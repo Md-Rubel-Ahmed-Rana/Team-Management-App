@@ -21,8 +21,13 @@ const MyTeams = () => {
         >
           Create New Team
         </button>
+        {teamData?.data?.length <= 0 && (
+          <h4 className="text-xl font-semibold mt-4">
+            You haven't create team yet.
+          </h4>
+        )}
       </div>
-      {teamData?.data.map((team: ITeam) => (
+      {teamData?.data?.map((team: ITeam) => (
         <TeamDetails key={team._id} team={team} />
       ))}
 

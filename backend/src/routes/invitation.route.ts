@@ -5,6 +5,8 @@ const router = Router();
 
 router.post("/send/:team_id/:member_id", InvitationController.sendInvitation);
 
+router.get("/pending/:member_id", InvitationController.pendingInvitation);
+
 router.post(
   "/reject/:team_id/:member_id",
   InvitationController.rejectInvitation

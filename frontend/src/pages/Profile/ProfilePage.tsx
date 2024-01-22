@@ -1,14 +1,32 @@
-// src/components/ProfilePage.js
 import React, { useState } from "react";
 
-import { useLoggedInUserQuery } from "../../features/user/userApi";
+import {
+  useLoggedInUserQuery,
+  useUpdateUserMutation,
+} from "../../features/user/userApi";
 import { IUser } from "../../interfaces/user.interface";
 import EditProfilePage from "./EditProfile";
+import useUploadFile from "../../hooks/useUploadFile";
 
 const ProfilePage = () => {
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
   const [isEdit, setIsEdit] = useState<any>(false);
+  const [updateUser] = useUpdateUserMutation();
+
+  const uploadFile = useUploadFile();
+
+  const handleChangeProfileImage = async (e: any) => {
+    const result = await uploadFile(e?.target?.files[0]);
+
+    if (result?.url) {
+      const updated = await updateUser({
+        id: user._id,
+        data: { profile_picture: result?.url },
+      });
+      console.log(updated);
+    }
+  };
 
   return (
     <div>
@@ -16,13 +34,27 @@ const ProfilePage = () => {
         <div className="p-4">
           <h1 className="text-2xl font-semibold">Profile</h1>
           <div className="mt-4">
-            <img
-              src={user.profile_picture}
-              alt={user.name}
-              className="w-24 h-24 rounded-full object-cover"
-            />
+            {!user?.profile_picture && (
+              <div className="my-3 border w-64 rounded-md p-4 text-lg">
+                <p className="mb-2 font-semibold">No Profile picture</p>
+                <input
+                  onChange={(e) => handleChangeProfileImage(e)}
+                  type="file"
+                  accept="image/*"
+                  name="profile_picture"
+                  id="profile_picture"
+                />
+              </div>
+            )}
+            {user?.profile_picture && (
+              <img
+                src={user?.profile_picture}
+                alt="Profile picture"
+                className="w-24 h-24 rounded-full object-cover"
+              />
+            )}
           </div>
-          <div className="mt-4">
+          <div className="flex flex-col gap-3">
             <p>
               <strong>Name:</strong> {user.name}
             </p>

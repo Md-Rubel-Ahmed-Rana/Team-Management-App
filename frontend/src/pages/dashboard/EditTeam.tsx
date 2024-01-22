@@ -1,13 +1,15 @@
 // src/components/EditTeamPage.js
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ITeam } from "../../interfaces/team.interface";
 import { useSingleTeamQuery } from "../../features/team/teamApi";
+import { FaCamera } from "react-icons/fa";
 
 const EditTeamPage = () => {
   const { id } = useParams();
   const { data: teamData, isLoading } = useSingleTeamQuery(id);
+  const [isChangeImage, setIsChangeImage] = useState(false);
 
   const { register, handleSubmit, setValue } = useForm<ITeam>({
     defaultValues: teamData?.data,
@@ -20,7 +22,50 @@ const EditTeamPage = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-semibold">Edit Team</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-4 border-2 p-10 rounded-md"
+      >
+        {!isChangeImage && (
+          <div className="mb-4 relative">
+            <label className="block text-sm font-medium text-gray-600">
+              Image
+            </label>
+            <img
+              className="w-20 h-20 rounded-full border-2 "
+              src={teamData?.data?.image}
+              alt="Profile image"
+            />
+
+            <div className="flex justify-center items-center absolute bottom-2 left-12 rounded-full">
+              <button
+                onClick={() => setIsChangeImage(true)}
+                className="bg-gray-600 p-3 rounded-full"
+              >
+                <FaCamera className=" text-white" />
+              </button>
+            </div>
+          </div>
+        )}
+        {isChangeImage && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-600">
+              Image
+            </label>
+            <input
+              type="file"
+              {...register("image")}
+              className="mt-1 p-2 w-full border rounded-md"
+            />
+            <button
+              className="bg-sky-600 px-4 py-1 mt-2 rounded-md text-white"
+              onClick={() => setIsChangeImage(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-600">
             Name

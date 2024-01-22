@@ -21,6 +21,25 @@ const sendInvitation = async (
   }
 };
 
+const pendingInvitation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const member_id = req.params.member_id;
+    const result = await InvitationService.pendingInvitation(member_id);
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Pending invitations found successfully!",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const rejectInvitation = async (
   req: Request,
   res: Response,
@@ -65,4 +84,5 @@ export const InvitationController = {
   sendInvitation,
   rejectInvitation,
   acceptInvitation,
+  pendingInvitation,
 };

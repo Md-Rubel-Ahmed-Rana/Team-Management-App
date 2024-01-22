@@ -7,26 +7,27 @@ const invitationApi = apiSlice.injectEndpoints({
         method: "POST",
         url: `/invitation/send/${teamId}/${memberId}`,
       }),
-      invalidatesTags: ["team"] as any,
+      invalidatesTags: ["team", "invitation"] as any,
     }),
     acceptInvitation: builder.mutation({
       query: ({ teamId, memberId }) => ({
         method: "POST",
         url: `/invitation/accept/${teamId}/${memberId}`,
       }),
-      invalidatesTags: ["team"] as any,
+      invalidatesTags: ["team", "invitation"] as any,
     }),
     rejectInvitation: builder.mutation({
       query: ({ teamId, memberId }) => ({
         method: "POST",
         url: `/invitation/reject/${teamId}/${memberId}`,
       }),
-      invalidatesTags: ["team"] as any,
+      invalidatesTags: ["team", "invitation"] as any,
     }),
-    getUsers: builder.query({
-      query: () => ({
-        url: "/api/auth/users",
+    pendingInvitations: builder.query({
+      query: (memberId) => ({
+        url: `/invitation/pending/${memberId}`,
       }),
+      providesTags: ["team", "invitation"] as any,
     }),
   }),
 });
@@ -35,4 +36,5 @@ export const {
   useSendInvitationMutation,
   useAcceptInvitationMutation,
   useRejectInvitationMutation,
+  usePendingInvitationsQuery,
 } = invitationApi;

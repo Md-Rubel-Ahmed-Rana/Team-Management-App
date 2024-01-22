@@ -66,6 +66,15 @@ const auth = async (id: string) => {
   };
 };
 
+const updateUser = async (id: string, data: any) => {
+  const result = await User.findByIdAndUpdate(
+    id,
+    { $set: { ...data } },
+    { new: true }
+  );
+  return result;
+};
+
 const login = async (email: string, password: string) => {
   const isExist = await User.findOne({
     email,
@@ -101,4 +110,5 @@ export const UserService = {
   getAllUsers,
   getUsers,
   auth,
+  updateUser,
 };

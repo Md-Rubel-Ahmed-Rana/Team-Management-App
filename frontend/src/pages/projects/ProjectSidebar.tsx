@@ -25,9 +25,9 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
   }, []);
 
   return (
-    <div className="bg-gray-800 text-white w-1/5 p-4 ">
+    <div className="bg-gray-800 text-white w-1/5 p-4">
       <h2 className="text-2xl font-semibold mb-4">Projects</h2>
-      <div className="overflow-hidden hover:overflow-auto h-72 scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100">
+      <div className="flex flex-col gap-2 overflow-hidden hover:overflow-auto h-80 scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100">
         {projects?.data?.map((project: IProject) => (
           <p
             key={project?._id}
@@ -54,7 +54,7 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
       </div>
       <button
         onClick={() => setIsOpen(true)}
-        className="px-4 py-2 mt-10 w-full text-center  rounded-md bg-green-600 hover:bg-green-300 hover:text-black font-semibold"
+        className="px-4 py-2 mt-10 w-full text-center  rounded-md bg-green-600 hover:bg-green-500 hover:text-black font-semibold"
       >
         Create Project
       </button>

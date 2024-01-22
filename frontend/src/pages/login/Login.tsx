@@ -24,6 +24,7 @@ const Login = () => {
     const result: any = await loginUser(data);
     Cookies.set("tmAccessToken", result?.data?.data, { expires: 6 });
     if (result?.data?.success) {
+      navigate("/dashboard");
       Swal.fire({
         position: "center",
         icon: "success",
@@ -31,7 +32,6 @@ const Login = () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      navigate("/dashboard");
     } else {
       Swal.fire({
         position: "center",

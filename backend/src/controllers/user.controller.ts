@@ -48,6 +48,20 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+    const result = await UserService.updateUser(id, req.body);
+    res.json({
+      success: true,
+      message: "User updated",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
@@ -69,4 +83,5 @@ export const UserController = {
   login,
   getUsers,
   auth,
+  updateUser,
 };

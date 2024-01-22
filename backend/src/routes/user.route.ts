@@ -18,6 +18,8 @@ router.get("/", UserController.getAllUsers);
 
 router.get("/auth", verifyJwt, UserController.auth);
 
+router.patch("/update/:id", UserController.updateUser);
+
 router.get("/all", UserController.getUsers);
 
 router.post(

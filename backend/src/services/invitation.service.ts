@@ -12,6 +12,33 @@ const sendInvitation = async (team_id: string, member_id: string) => {
   return result;
 };
 
+const pendingInvitation = async (member_id: string) => {
+  const result = await Team.find({ pendingMembers: member_id }).populate([
+    {
+      path: "activeMembers",
+      model: "User",
+    },
+    {
+      path: "pendingMembers",
+      model: "User",
+    },
+    {
+      path: "admin",
+      model: "User",
+      select: [
+        "name",
+        "profile_picture",
+        "email",
+        "department",
+        "designation",
+        "createdAt",
+        "updatedAt",
+      ],
+    },
+  ]);
+  return result;
+};
+
 const rejectInvitation = async (team_id: string, member_id: string) => {
   const result = await Team.findByIdAndUpdate(
     team_id,
@@ -41,4 +68,5 @@ export const InvitationService = {
   sendInvitation,
   rejectInvitation,
   acceptInvitation,
+  pendingInvitation,
 };
