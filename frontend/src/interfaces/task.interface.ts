@@ -3,5 +3,6 @@ export type INewTask = {
   projectId: string;
   assignedMember: string;
   assignedBy: string;
+  deadline: string;
   status: "todo" | "ongoing" | "completed";
 };

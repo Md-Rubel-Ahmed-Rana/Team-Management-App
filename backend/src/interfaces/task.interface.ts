@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 
 export type ITask = {
   name: string;
+  deadline?: string;
   projectId: Types.ObjectId | string;
   assignedMember: Types.ObjectId | string;
   assignedBy: Types.ObjectId | string;

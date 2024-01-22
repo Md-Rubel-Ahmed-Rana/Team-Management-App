@@ -12,7 +12,7 @@ const TaskPage = ({
   // There should be a dropdown button to change status
   // there should be show deadline
   return (
-    <div className="flex justify-between gap-4">
+    <div className="flex justify-between gap-4 items-center">
       <div className="flex flex-col gap-3 mt-3  w-1/3 overflow-hidden hover:overflow-auto h-screen scrollbar scrollbar-w-[0px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100">
         {todosTask.map((task: any, index: number) => (
           <TaskCard

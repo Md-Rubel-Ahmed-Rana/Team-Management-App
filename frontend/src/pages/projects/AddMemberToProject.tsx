@@ -90,7 +90,7 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId }: any) => {
                         }
                         styles={customStyles}
                         onChange={(user: any) => setNewMember(user)}
-                        placeholder="Type a name to assign group member"
+                        placeholder="Type a name to assign a member to project"
                         className="mt-1 w-full"
                         classNamePrefix="select2-selection"
                         components={{

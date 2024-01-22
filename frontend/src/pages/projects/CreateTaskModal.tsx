@@ -93,7 +93,7 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {
                         }
                         styles={customStyles}
                         onChange={(user: any) => setSelectedMember(user)}
-                        placeholder="Type a name to assign group member"
+                        placeholder="Type a name to assign a task to member"
                         className="mt-1 w-full"
                         classNamePrefix="select2-selection"
                         components={{
@@ -109,7 +109,18 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {
                         required
                         type="text"
                         id="taskName"
-                        placeholder="Task Name"
+                        placeholder="Enter your task name (e.g: Develop API)"
+                        className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
+                      />
+                    </div>
+                    <div className="relative w-full py-2">
+                      <p className="text-stone-500 mb-2">Task deadline</p>
+                      <input
+                        {...register("deadline")}
+                        required
+                        type="text"
+                        id="deadline"
+                        placeholder="Enter deadline (e.g: 3 hours/2 days/4 weeks)"
                         className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
                       />
                     </div>

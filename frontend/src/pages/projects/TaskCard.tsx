@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { useUpdateStatusMutation } from "../../features/task/taskApi";
 import toast from "react-hot-toast";
 
-const TaskCard = ({ task, style }: any) => {
-  const { _id, name, status, assignedMember, assignedBy } = task;
+type Props = {
+  task: any;
+  style: string;
+};
+
+const TaskCard = ({ task, style }: Props) => {
+  const { _id, name, deadline, status, assignedMember, assignedBy } = task;
   const [updateStatus] = useUpdateStatusMutation();
+  const [isEdit, setIsEdit] = useState(false);
+  const [editedTask, setEditedTask] = useState("");
 
   const handleChangeStatus = async (text: string) => {
     if (text !== status) {
@@ -15,14 +22,62 @@ const TaskCard = ({ task, style }: any) => {
     }
   };
 
+  const handleEditTask = () => {
+    setIsEdit(false);
+    console.log(editedTask);
+  };
+  const handleDeleteTask = () => {};
+
   return (
     <div className={`${style} flex flex-col gap-3`}>
-      <h3 className="text-xl font-semibold">{name}</h3>
+      {isEdit && (
+        <div className="flex flex-col gap-2">
+          <input
+            type="text"
+            name="name"
+            defaultValue={name}
+            required
+            id="name"
+            onChange={(e) => setEditedTask(e.target.value)}
+            className=" w-full rounded-md bg-white border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-1 outline-none px-2 shadow-sm sm:text-sm"
+          />
+          <div className="flex justify-between">
+            <button
+              onClick={handleDeleteTask}
+              className="bg-red-700 px-2 py-1 rounded-md text-white"
+            >
+              Delete
+            </button>
+            <button
+              onClick={() => setIsEdit(false)}
+              className="bg-sky-600 px-2 py-1 rounded-md text-white"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleEditTask}
+              className="bg-green-700 px-2 py-1 rounded-md text-white"
+            >
+              Save changes
+            </button>
+          </div>
+        </div>
+      )}
+      {!isEdit && (
+        <h3
+          title="Click to edit/delete task"
+          onClick={() => setIsEdit(true)}
+          className="text-xl font-semibold cursor-pointer"
+        >
+          {name}
+        </h3>
+      )}
+
       <div className="flex justify-between items-center">
         <p>Status: {status}</p>
         <select
           onChange={(e) => handleChangeStatus(e.target.value)}
-          className="rounded-md bg-white border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-1 outline-none px-2 shadow-sm sm:text-sm"
+          className="rounded-md bg-white border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-1 outline-none px-2 shadow-sm sm:text-sm cursor-pointer"
           name="status"
           id="status"
         >
@@ -48,6 +103,9 @@ const TaskCard = ({ task, style }: any) => {
             </>
           )}
         </select>
+      </div>
+      <div>
+        <h4>Deadline: {deadline || "No deadline"}</h4>
       </div>
       <div>
         <p>Assigned Member: </p>

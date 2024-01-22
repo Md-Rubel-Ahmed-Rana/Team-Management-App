@@ -7,6 +7,9 @@ const taskSchema = new Schema<ITask>(
       type: String,
       required: true,
     },
+    deadline: {
+      type: String,
+    },
     projectId: {
       type: Schema.Types.ObjectId,
       ref: "Project",
