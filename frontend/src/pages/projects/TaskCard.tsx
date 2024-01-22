@@ -1,5 +1,9 @@
-import React, { useState } from "react";
-import { useUpdateStatusMutation } from "../../features/task/taskApi";
+import { useState } from "react";
+import {
+  useDeleteTaskMutation,
+  useUpdateStatusMutation,
+  useUpdateTaskMutation,
+} from "../../features/task/taskApi";
 import toast from "react-hot-toast";
 
 type Props = {
@@ -10,6 +14,8 @@ type Props = {
 const TaskCard = ({ task, style }: Props) => {
   const { _id, name, deadline, status, assignedMember, assignedBy } = task;
   const [updateStatus] = useUpdateStatusMutation();
+  const [updateTask] = useUpdateTaskMutation();
+  const [deleteTask] = useDeleteTaskMutation();
   const [isEdit, setIsEdit] = useState(false);
   const [editedTask, setEditedTask] = useState("");
 
@@ -22,11 +28,18 @@ const TaskCard = ({ task, style }: Props) => {
     }
   };
 
-  const handleEditTask = () => {
+  const handleEditTask = async () => {
+    await updateTask({ id: _id, name: editedTask });
     setIsEdit(false);
-    console.log(editedTask);
   };
-  const handleDeleteTask = () => {};
+
+  const handleDeleteTask = async () => {
+    const result: any = await deleteTask(_id);
+    if (result?.data?.success) {
+      toast.success(result?.data?.message);
+      setIsEdit(false);
+    }
+  };
 
   return (
     <div className={`${style} flex flex-col gap-3`}>

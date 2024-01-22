@@ -30,8 +30,13 @@ const getTasksByProjectId = async (
       success: true,
       data: tasks,
     });
-  } catch (error) {
-    next(error);
+  } catch (error: any) {
+    res.json({
+      statusCode: 400,
+      success: false,
+      error: error?.message,
+      message: "Tasks not found",
+    });
   }
 };
 
@@ -56,9 +61,27 @@ const updateTaskStatus = async (
   }
 };
 
+const updateTask = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const updatedTask = await TaskService.updateTask(id, name);
+
+    res.json({
+      statusCode: 200,
+      success: true,
+      message: "Task updated successfully",
+      data: updatedTask,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const taskId = req.params.taskId;
+    console.log({ taskId });
     await TaskService.deleteTask(taskId);
 
     res.json({
@@ -76,4 +99,5 @@ export const TaskController = {
   getTasksByProjectId,
   updateTaskStatus,
   deleteTask,
+  updateTask,
 };
