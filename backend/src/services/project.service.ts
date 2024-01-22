@@ -33,12 +33,9 @@ const addMember = async (projectId: string, memberId: string, role: string) => {
   if (!project) {
     return { message: "Project not found", success: false };
   }
-  console.log({ members: project.members });
   const existingMember = project.members.find(
     (member) => member.member == memberId
   );
-
-  console.log({ existingMember });
 
   if (existingMember) {
     return { message: "Member is already part of the project", success: false };

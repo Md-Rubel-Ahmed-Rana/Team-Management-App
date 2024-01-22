@@ -6,7 +6,18 @@ const createTask = (data: any) => {
 };
 
 const getTasksByProjectId = (projectId: string) => {
-  return Task.find({ projectId }).populate("assignedMember").exec();
+  return Task.find({ projectId })
+    .populate([
+      {
+        path: "assignedMember",
+        model: "User",
+      },
+      {
+        path: "assignedBy",
+        model: "User",
+      },
+    ])
+    .exec();
 };
 
 const updateTaskStatus = (taskId: string, status: string) => {

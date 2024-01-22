@@ -8,8 +8,28 @@ const taskApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["project", "task"] as any,
+    }),
+    updateStatus: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `/task/update-status/${id}`,
+        method: "PATCH",
+        body: { status },
+      }),
+      invalidatesTags: ["project", "task"] as any,
+    }),
+
+    getTasksByProject: builder.query({
+      query: (id) => ({
+        url: `/task/by-project/${id}`,
+      }),
+      providesTags: ["project", "task"] as any,
     }),
   }),
 });
 
-export const { useCreateTaskMutation } = taskApi;
+export const {
+  useCreateTaskMutation,
+  useGetTasksByProjectQuery,
+  useUpdateStatusMutation,
+} = taskApi;

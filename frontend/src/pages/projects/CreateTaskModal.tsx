@@ -27,6 +27,7 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {
     data.assignedMember = selectedMember?.value;
     data.assignedBy = user._id;
     data.status = task;
+    data.projectId = project._id;
     const result: any = await createTask(data);
     if (result?.data?.success) {
       Swal.fire({
@@ -107,8 +108,8 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {
                         {...register("name", { required: "Name is required" })}
                         required
                         type="text"
-                        id="teamName"
-                        placeholder="Project Name"
+                        id="taskName"
+                        placeholder="Task Name"
                         className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
                       />
                     </div>
