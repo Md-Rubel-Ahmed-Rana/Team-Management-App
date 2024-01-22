@@ -5,11 +5,10 @@ import { TaskService } from "../services/task.service";
 const createTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await TaskService.createTask(req.body);
-
     res.json({
       statusCode: 201,
       success: true,
-      message: "Successfully created task",
+      message: "Task created  successfully",
       data: result,
     });
   } catch (error) {

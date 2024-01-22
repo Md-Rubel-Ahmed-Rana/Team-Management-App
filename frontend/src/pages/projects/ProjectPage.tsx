@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import ProjectSidebar from "./ProjectSidebar";
 import StatusNavbar from "./StatusNavbar";
 import TaskPage from "./TaskPage";
-import { IProject, projectInit } from "../../interfaces/project.interface";
 import AddMemberToProject from "./AddMemberToProject";
 import { useGetSingleProjectQuery } from "../../features/project/projectApi";
 
@@ -297,6 +296,7 @@ const ProjectPage = () => {
             todos={todosTask?.length}
             ongoing={ongoingTask?.length}
             completed={completedTask?.length}
+            project={project}
           />
           <TaskPage
             todosTask={todosTask}

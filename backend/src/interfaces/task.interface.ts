@@ -5,7 +5,7 @@ export type ITask = {
   projectId: Types.ObjectId | string;
   assignedMember: Types.ObjectId | string;
   assignedBy: Types.ObjectId | string;
-  status: "todo" | "ongoing" | "completed";
+  status: "Todo" | "Ongoing" | "Completed";
   createdAt?: Date;
   updatedAt?: Date;
   _id?: Types.ObjectId;

@@ -21,8 +21,8 @@ const taskSchema = new Schema<ITask>(
     },
     status: {
       type: String,
-      enum: ["todo", "ongoing", "completed"],
-      default: "todo",
+      enum: ["Todo", "Ongoing", "Completed"],
+      default: "Todo",
     },
   },
   {
