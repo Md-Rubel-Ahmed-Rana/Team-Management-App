@@ -16,6 +16,7 @@ import PaymentSuccess from "../pages/checkout/Success";
 import PaymentCancel from "../pages/checkout/Cancel";
 import RoutePreventer from "./RoutePreventer";
 import ProjectPage from "../pages/projects/ProjectPage";
+import TeamDetailsPage from "../pages/teams/showTeam/TeamDetailsPage";
 
 const router = createBrowserRouter([
   {
@@ -107,7 +108,7 @@ const router = createBrowserRouter([
         path: "/teams/:id",
         element: (
           <PrivateRoute>
-            <TeamDetails />
+            <TeamDetailsPage />
           </PrivateRoute>
         ),
       },

@@ -7,7 +7,7 @@ export type ITeam = {
   description: string;
   image: string;
   admin: IUser;
-  activeMembers?: Array<IUser | string>;
+  activeMembers: Array<IUser | string>;
   pendingMembers?: Array<IUser | string>;
   createdAt?: Date | string;
   updatedAt?: Date | string;
