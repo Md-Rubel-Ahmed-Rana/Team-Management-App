@@ -13,7 +13,7 @@ const TeamPage = () => {
   const { data: teamData } = useMyTeamsQuery(user?._id);
 
   return (
-    <section className="my-10 p-5">
+    <section className="p-5">
       <div className="lg:flex justify-between">
         <div>
           <h1 className="lg:text-3xl font-bold">
