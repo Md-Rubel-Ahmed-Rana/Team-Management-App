@@ -42,7 +42,9 @@ const TaskCard = ({ task, style }: Props) => {
   };
 
   return (
-    <div className={`${style} flex flex-col gap-3`}>
+    <div
+      className={`${style} flex flex-col gap-3 p-4 rounded-md shadow-md border`}
+    >
       {isEdit && (
         <div className="flex flex-col gap-2">
           <input
@@ -121,14 +123,17 @@ const TaskCard = ({ task, style }: Props) => {
         <h4>Deadline: {deadline || "No deadline"}</h4>
       </div>
       <div>
-        <p>Assigned Member: </p>
-        <div className="flex items-center gap-2 bg-violet-500 px-3 py-2 rounded-md">
+        <p>Assigned to: </p>
+        <div className="flex items-center gap-2 mt-2 bg-gray-100 px-3 py-2 rounded-md">
           <img
             className="h-10 w-10 rounded-full"
             src={assignedMember?.profile_picture}
             alt=""
           />
-          <h5>{assignedMember?.name}</h5>
+          <div>
+            <h5 className="text-lg  font-medium">{assignedMember?.name}</h5>
+            <p>{assignedMember?.designation}</p>
+          </div>
         </div>
       </div>
       <p>Assigned by: {assignedBy?.name}</p>

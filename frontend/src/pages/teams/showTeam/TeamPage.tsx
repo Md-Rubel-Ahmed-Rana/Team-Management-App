@@ -65,7 +65,7 @@ const TeamPage = () => {
       </div>
 
       {teamData?.data?.length <= 0 && (
-        <div>
+        <div className="text-2xl font-semibold flex flex-col gap-4 py-20">
           <h4>You haven't have created any team yet</h4>
           <p>Your created team will be displayed here</p>
         </div>

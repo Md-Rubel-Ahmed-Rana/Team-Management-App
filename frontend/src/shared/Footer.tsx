@@ -7,7 +7,7 @@ const icons = [<FaFacebook />, <FaTwitter />, <FaLinkedin />, <FaInstagram />];
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-300 p-16">
+    <footer className="shadow-lg p-16">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         <div className="mb-8 md:mb-0">
           <h1 className="text-2xl font-bold mb-2">Team Manager</h1>

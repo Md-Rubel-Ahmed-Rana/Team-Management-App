@@ -14,7 +14,7 @@ const StatusNavButton = ({ name, total, style, onClickHandler }: Props) => {
 
   return (
     <div
-      className={`w-full flex items-center justify-between px-4 py-2 text-white rounded-md ${style}`}
+      className={`w-full flex items-center justify-between px-4 py-2 border font-sans font-semibold rounded-md ${style}`}
     >
       <span>
         {name} - {total}

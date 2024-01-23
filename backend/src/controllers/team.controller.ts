@@ -16,6 +16,25 @@ const createTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getActiveMembers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.teamId;
+    const result = await TeamService.getActiveMembers(id);
+    res.json({
+      statusCode: 200,
+      success: true,
+      message: "Team members found",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const myTeams = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await TeamService.myTeams(req.params.adminId);
@@ -158,4 +177,5 @@ export const TeamController = {
   removeMember,
   getUserTeams,
   joinedTeams,
+  getActiveMembers,
 };

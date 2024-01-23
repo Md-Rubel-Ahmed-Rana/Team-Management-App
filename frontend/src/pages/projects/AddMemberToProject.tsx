@@ -1,19 +1,24 @@
 import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { useGetUsersQuery } from "../../features/user/userApi";
 import customStyles from "../../utils/reactSelectCustomStyle";
 import Select from "react-select";
 import { useAddMemberMutation } from "../../features/project/projectApi";
 import Swal from "sweetalert2";
+import { useGetActiveMembersQuery } from "../../features/team/teamApi";
 
-const AddMemberToProject = ({ isOpen, setIsOpen, projectId }: any) => {
+const AddMemberToProject = ({ isOpen, setIsOpen, projectId, teamId }: any) => {
   const closeModal = () => {
     setIsOpen(false);
   };
-  const { data: users } = useGetUsersQuery([]);
+
   const [addNewMember] = useAddMemberMutation();
   const [newMember, setNewMember] = useState({ label: "", value: "" });
   const [role, setRole] = useState("");
+  const { data: memberData } = useGetActiveMembersQuery(teamId?._id);
+  const members = memberData?.data?.map((member: any) => ({
+    value: member?._id,
+    label: member?.name,
+  }));
 
   const handleAddNewMember = async (e: any) => {
     e.preventDefault();
@@ -81,18 +86,16 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId }: any) => {
                     <div className="relative w-full py-2">
                       <p className="text-stone-500 mb-2 ">Select a member</p>
                       <Select
-                        options={
-                          users?.data &&
-                          users?.data?.map((user: any) => ({
-                            value: user?._id,
-                            label: user?.name,
-                          }))
-                        }
+                        options={members}
                         styles={customStyles}
                         onChange={(user: any) => setNewMember(user)}
                         placeholder="Type a name to assign a member to project"
                         className="mt-1 w-full"
                         classNamePrefix="select2-selection"
+                        noOptionsMessage={({ inputValue }) =>
+                          !inputValue &&
+                          `No active members in your team: ${teamId?.name}`
+                        }
                         components={{
                           DropdownIndicator: () => null,
                           IndicatorSeparator: () => null,

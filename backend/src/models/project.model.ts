@@ -6,6 +6,7 @@ const projectSchema = new Schema<IProject>(
     teamId: {
       type: String,
       required: true,
+      ref: "Team",
     },
     userId: {
       type: String,

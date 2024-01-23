@@ -16,7 +16,7 @@ const Navbar = () => {
   const notifications = [];
 
   return (
-    <nav className="lg:flex justify-between items-center py-5">
+    <nav className="lg:flex justify-between items-center py-5 shadow-sm">
       <div>
         <Link className="lg:flex hidden  items-center gap-3" to={"/"}>
           <img className="w-18 h-14 rounded-full" src={logo} alt="" />

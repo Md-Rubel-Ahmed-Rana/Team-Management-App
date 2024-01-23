@@ -1,3 +1,5 @@
+import { ITeam } from "./team.interface";
+
 export type INewProject = {
   teamId: string;
   userId: string;
@@ -7,7 +9,7 @@ export type INewProject = {
 
 export type IProject = {
   _id: string;
-  teamId: string;
+  teamId: any;
   userId: string;
   name: string;
   category: string;

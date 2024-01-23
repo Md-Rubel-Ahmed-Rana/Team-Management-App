@@ -16,7 +16,7 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
   const [createTeam] = useCreateTeamMutation();
   const uploadFile = useUploadFile();
 
-  const [teamData, setTeamData] = useState<ITeam>({
+  const [teamData, setTeamData] = useState<Partial<ITeam>>({
     name: "",
     image: "",
     category: "",
@@ -54,7 +54,10 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
     }
 
     const result: any = await createTeam(teamData);
+    console.log(result?.error?.data?.message);
+    console.log(result?.error?.data?.message);
     if (result?.data?.success) {
+      closeModal();
       Swal.fire({
         position: "center",
         icon: "success",
@@ -64,11 +67,11 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
       });
       navigate("/teams");
     }
-    if (!result?.data?.success) {
+    if (result?.error) {
       Swal.fire({
         position: "center",
         icon: "error",
-        title: result?.data?.message,
+        title: result?.error?.data?.message,
         showConfirmButton: false,
         timer: 1500,
       });

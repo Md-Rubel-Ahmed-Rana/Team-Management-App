@@ -5,6 +5,7 @@ export type IPayment = {
   userId: string;
   package: IPrice;
   sessionId: string;
+  status: string;
   createdAt: string;
   updatedAt: string;
 };

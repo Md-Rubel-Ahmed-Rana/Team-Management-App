@@ -10,6 +10,8 @@ router.get("/my-teams/:adminId", TeamController.myTeams);
 
 router.get("/", TeamController.allTeams);
 
+router.get("/active-members/:teamId", TeamController.getActiveMembers);
+
 router.get("/:id", TeamController.getSpecificTeam);
 
 router.get("/userTeams/:memberId", TeamController.getUserTeams);

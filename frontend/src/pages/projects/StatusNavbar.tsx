@@ -29,19 +29,19 @@ const StatusNavbar = ({
       <div className="flex justify-between space-x-4">
         <StatusNavButton
           name="Todo"
-          style="bg-blue-500 hover:bg-blue-600"
+          style=""
           total={todos}
           onClickHandler={handleOpenTaskModel}
         />
         <StatusNavButton
           name="Ongoing"
-          style="bg-yellow-500 hover:bg-yellow-600"
+          style=""
           total={ongoing}
           onClickHandler={handleOpenTaskModel}
         />
         <StatusNavButton
           name="Completed"
-          style="bg-green-500 hover:bg-green-600"
+          style=""
           total={completed}
           onClickHandler={handleOpenTaskModel}
         />

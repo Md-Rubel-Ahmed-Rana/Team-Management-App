@@ -1,10 +1,14 @@
 import ApiError from "../error/apiError";
 import Team from "../models/team.model";
 
-const createTeam = (data: any) => {
-  const result = Team.create(data);
-
-  return result;
+const createTeam = async (data: any) => {
+  const isExist = await Team.findOne({ name: data?.name });
+  if (isExist) {
+    throw new ApiError(409, "This team already exist");
+  } else {
+    const result = await Team.create(data);
+    return result;
+  }
 };
 
 const myTeams = async (adminId: string) => {
@@ -38,6 +42,22 @@ const myTeams = async (adminId: string) => {
     console.error("Error getting teams:", error);
     throw error;
   }
+};
+
+const getActiveMembers = async (teamId: string) => {
+  const result = await Team.findById(teamId)
+    .select({ activeMembers: 1 })
+    .populate([
+      {
+        path: "activeMembers",
+        model: "User",
+      },
+    ]);
+  const members = result?.activeMembers.map((member: any) => ({
+    _id: member._id,
+    name: member?.name,
+  }));
+  return members;
 };
 
 const joinedTeams = async (memberId: string) => {
@@ -194,4 +214,5 @@ export const TeamService = {
   removeMember,
   getUserTeams,
   joinedTeams,
+  getActiveMembers,
 };

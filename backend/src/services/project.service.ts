@@ -14,7 +14,10 @@ const myProjects = (userId: string) => {
 };
 
 const getSingleProject = (id: string) => {
-  return Project.findById(id).populate("members.member").exec();
+  return Project.findById(id)
+    .populate("members.member")
+    .populate("teamId", "name")
+    .exec();
 };
 
 const updateProject = async (id: string, data: any) => {

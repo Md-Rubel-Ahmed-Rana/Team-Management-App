@@ -16,7 +16,7 @@ const PaymentPage = () => {
       <div>
         <h3 className="text-xl font-bold mb-4">Payment History</h3>
         {payments?.map((payment: IPayment) => (
-          <div key={payment._id} className="bg-gray-100 p-4 rounded-md mb-4">
+          <div key={payment._id} className="shadow-md p-4 rounded-md mb-4">
             <p>
               <span className="font-bold">Plan:</span> {payment?.package?.plan}
             </p>
@@ -30,6 +30,10 @@ const PaymentPage = () => {
             </p>
             <p>
               <span className="font-bold">Date:</span> {payment?.createdAt}
+            </p>
+            <p>
+              <span className="font-bold">Status: </span>
+              <span className="capitalize">{payment?.status}</span>
             </p>
           </div>
         ))}

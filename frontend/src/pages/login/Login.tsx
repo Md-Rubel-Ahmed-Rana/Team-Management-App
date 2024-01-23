@@ -1,6 +1,6 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import LoginLogo from "../../assets/login.png";
 import { useLoginUserMutation } from "../../features/user/userApi";
 import Cookies from "js-cookie";
@@ -16,7 +16,6 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const navigate = useNavigate();
 
   const [loginUser] = useLoginUserMutation();
 
@@ -24,7 +23,6 @@ const Login = () => {
     const result: any = await loginUser(data);
     Cookies.set("tmAccessToken", result?.data?.data, { expires: 6 });
     if (result?.data?.success) {
-      navigate("/dashboard");
       Swal.fire({
         position: "center",
         icon: "success",
@@ -32,6 +30,7 @@ const Login = () => {
         showConfirmButton: false,
         timer: 1500,
       });
+      window.location.replace("/dashboard");
     } else {
       Swal.fire({
         position: "center",
