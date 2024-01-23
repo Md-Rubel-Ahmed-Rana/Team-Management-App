@@ -1,13 +1,13 @@
 import { Task } from "../models/task.model";
 
-const createTask = (data: any) => {
-  const result = Task.create(data);
-  return result;
-};
+class Service {
+  async createTask(data: any) {
+    const result = await Task.create(data);
+    return result;
+  }
 
-const getTasksByProjectId = (projectId: string) => {
-  if (projectId) {
-    return Task.find({ projectId })
+  async getTasksByProjectId(projectId: string) {
+    const result = await Task.find({ projectId })
       .populate([
         {
           path: "assignedMember",
@@ -19,34 +19,33 @@ const getTasksByProjectId = (projectId: string) => {
         },
       ])
       .exec();
+
+    return result;
   }
-};
 
-const updateTaskStatus = (taskId: string, status: string) => {
-  return Task.findByIdAndUpdate(
-    taskId,
-    { $set: { status } },
-    { new: true }
-  ).exec();
-};
+  async updateTaskStatus(taskId: string, status: string) {
+    const result = await Task.findByIdAndUpdate(
+      taskId,
+      { $set: { status } },
+      { new: true }
+    ).exec();
 
-const updateTask = async (taskId: string, name: string) => {
-  return Task.findByIdAndUpdate(
-    taskId,
-    { $set: { name } },
-    { new: true }
-  ).exec();
-};
+    return result;
+  }
 
-const deleteTask = (taskId: string) => {
-  console.log(taskId);
-  return Task.findByIdAndDelete(taskId).exec();
-};
+  async updateTask(taskId: string, name: string) {
+    const result = await Task.findByIdAndUpdate(
+      taskId,
+      { $set: { name } },
+      { new: true }
+    ).exec();
 
-export const TaskService = {
-  createTask,
-  getTasksByProjectId,
-  updateTaskStatus,
-  deleteTask,
-  updateTask,
-};
+    return result;
+  }
+
+  async deleteTask(taskId: string) {
+    const result = await Task.findByIdAndDelete(taskId).exec();
+    return result;
+  }
+}
+export const TaskService = new Service();
