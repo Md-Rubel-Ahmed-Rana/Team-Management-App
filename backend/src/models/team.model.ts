@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
+import { ITeam } from "../interfaces/team.interface";
 
-const teamSchema = new Schema(
+const teamSchema = new Schema<ITeam>(
   {
     name: {
       type: String,

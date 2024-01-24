@@ -1,29 +1,13 @@
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
-import { UserRouter } from "./routes/user.route";
-import { TeamRouter } from "./routes/team.route";
-import { InvitationRoutes } from "./routes/invitation.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
-import { NotificationRoutes } from "./routes/notification.route";
-import { PaymentRoutes } from "./routes/payment.route";
-import { PlanRoutes } from "./routes/plan.route";
-import { ProjectRoutes } from "./routes/project.route";
-import { TaskRoutes } from "./routes/task.route";
+import { RootRoutes } from "./routes/root.route";
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-app.use("/user", UserRouter);
-app.use("/team", TeamRouter);
-app.use("/invitation", InvitationRoutes);
-app.use("/payment", PaymentRoutes);
-app.use("/plan", PlanRoutes);
-app.use("/project", ProjectRoutes);
-app.use("/task", TaskRoutes);
-app.use("/notification", NotificationRoutes);
-
+// base route to check application health
 app.get("/", (req, res) => {
   res.status(200).json({
     statusCode: 200,
@@ -32,6 +16,9 @@ app.get("/", (req, res) => {
     data: null,
   });
 });
+
+// routes
+app.use(RootRoutes);
 
 app.use(globalErrorHandler);
 

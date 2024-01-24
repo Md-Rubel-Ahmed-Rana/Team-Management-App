@@ -1,181 +1,112 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { TeamService } from "../services/team.service";
+import RootController from "../shared/rootController";
+import httpStatus from "http-status";
 
-const createTeam = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+class Controller extends RootController {
+  createTeam = this.catchAsync(async (req: Request, res: Response) => {
     const result = await TeamService.createTeam(req.body);
-
-    res.json({
-      statusCode: 201,
+    this.apiResponse(res, {
+      statusCode: httpStatus.CREATED,
       success: true,
-      message: "Successfully created team",
+      message: "team created successfully",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getActiveMembers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+  });
+  getActiveMembers = this.catchAsync(async (req: Request, res: Response) => {
     const id = req.params.teamId;
     const result = await TeamService.getActiveMembers(id);
-    res.json({
-      statusCode: 200,
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
       message: "Team members found",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const myTeams = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await TeamService.myTeams(req.params.adminId);
-
-    res.json({
-      statusCode: 200,
+  myTeams = this.catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.adminId;
+    const result = await TeamService.myTeams(id);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Successfully found teams",
+      message: "Teams found",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const joinedTeams = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await TeamService.joinedTeams(req.params.memberId);
-    res.json({
-      statusCode: 200,
+  joinedTeams = this.catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.memberId;
+    const result = await TeamService.joinedTeams(id);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Teams found successfully",
+      message: "Teams found",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const allTeams = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  allTeams = this.catchAsync(async (req: Request, res: Response) => {
     const result = await TeamService.allTeams();
-
-    res.json({
-      statusCode: 200,
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Successfully found teams",
+      message: "Teams found",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const getSpecificTeam = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+  getTeam = this.catchAsync(async (req: Request, res: Response) => {
     const result = await TeamService.getTeam(req.params.id);
-
-    res.json({
-      statusCode: 200,
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Successfully found team",
+      message: "Team found",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const getUserTeams = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+  getUserTeams = this.catchAsync(async (req: Request, res: Response) => {
     const result = await TeamService.getUserTeams(req.params.memberId);
-    res.json({
-      statusCode: 200,
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Successfully found team",
+      message: "Teams found",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  updateTeam = this.catchAsync(async (req: Request, res: Response) => {
     const result = await TeamService.updateTeam(req.params.id, req.body);
-
-    res.json({
-      statusCode: 200,
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Successfully updated team",
+      message: "Team updated successfully",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  deleteTeam = this.catchAsync(async (req: Request, res: Response) => {
     const result = await TeamService.deleteTeam(req.params.id);
-
-    res.json({
-      statusCode: 200,
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Successfully deleted team",
+      message: "Team deleted successfully",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const removeMember = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+  removeMember = this.catchAsync(async (req: Request, res: Response) => {
     const team_id = req.params.team_id;
     const member_id = req.params.member_id;
     const result = await TeamService.removeMember(team_id, member_id);
-
-    res.json({
-      statusCode: 200,
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Successfully removed member",
+      message: "Team member removed successfully",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
+}
 
-export const TeamController = {
-  createTeam,
-  myTeams,
-  getSpecificTeam,
-  updateTeam,
-  deleteTeam,
-  allTeams,
-  removeMember,
-  getUserTeams,
-  joinedTeams,
-  getActiveMembers,
-};
+export const TeamController = new Controller();

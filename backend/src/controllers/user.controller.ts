@@ -1,87 +1,70 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
+import httpStatus from "http-status";
+import RootController from "../shared/rootController";
 
-const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+class Controller extends RootController {
+  getAllUsers = this.catchAsync(async (req: Request, res: Response) => {
     const result = await UserService.getAllUsers();
-
-    res.json({
-      statusCode: 200,
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Successfully fetched users",
+      message: "Users fetched  successfully",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const getUsers = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  getUsers = this.catchAsync(async (req: Request, res: Response) => {
     const result = await UserService.getUsers();
-    res.json({
-      statusCode: 200,
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Successfully fetched users",
+      message: "Users fetched  successfully",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const auth = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  auth = this.catchAsync(async (req: Request, res: Response) => {
     const result = await UserService.auth(req.id);
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-};
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User fetched  successfully",
+      data: result,
+    });
+  });
 
-const register = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  register = this.catchAsync(async (req: Request, res: Response) => {
     const result = await UserService.register(req.body);
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-};
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Registered successfully",
+      data: result,
+    });
+  });
 
-const updateUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  updateUser = this.catchAsync(async (req: Request, res: Response) => {
     const id = req.params.id;
     const result = await UserService.updateUser(id, req.body);
-    res.json({
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "User updated",
+      message: "User updated successfully",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  login = this.catchAsync(async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const result = await UserService.login(email, password);
-
-    res.json({
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Login successful",
+      message: "User logged in successfully",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
+}
 
-export const UserController = {
-  getAllUsers,
-  register,
-  login,
-  getUsers,
-  auth,
-  updateUser,
-};
+export const UserController = new Controller();

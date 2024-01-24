@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
+import { IUser } from "../interfaces/user.interface";
 
-const userSchema = new Schema(
+const userSchema = new Schema<IUser>(
   {
     name: {
       type: String,
@@ -21,6 +22,15 @@ const userSchema = new Schema(
     designation: {
       type: String,
       required: true,
+    },
+    phoneNumber: {
+      type: String,
+    },
+    permanentAddress: {
+      type: String,
+    },
+    presentAddress: {
+      type: String,
     },
     password: {
       type: String,

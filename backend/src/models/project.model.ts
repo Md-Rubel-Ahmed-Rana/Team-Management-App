@@ -3,12 +3,12 @@ import { IProject } from "../interfaces/project.interface";
 
 const projectSchema = new Schema<IProject>(
   {
-    teamId: {
+    team: {
       type: String,
       required: true,
       ref: "Team",
     },
-    userId: {
+    user: {
       type: String,
       required: true,
     },

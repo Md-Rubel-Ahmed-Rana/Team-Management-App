@@ -1,23 +1,20 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
+import { IApiResponse } from "../interfaces/util";
 
-type IApiResponse<T> = {
-  statusCode: number;
-  success: boolean;
-  message?: string | null;
-  data?: T | null;
-};
-
-class Controller {
-  constructor() {}
-  asyncController(fn: RequestHandler) {
-    return async function (req: Request, res: Response, next: NextFunction) {
+class RootController {
+  public model;
+  constructor(model: any = "") {
+    this.model = model;
+  }
+  catchAsync =
+    (fn: RequestHandler) =>
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         await fn(req, res, next);
       } catch (error) {
         next(error);
       }
     };
-  }
 
   apiResponse<T>(res: Response, data: IApiResponse<T>): void {
     const responseData: IApiResponse<T> = {
@@ -31,4 +28,4 @@ class Controller {
   }
 }
 
-export const RootController = new Controller();
+export default RootController;

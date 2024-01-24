@@ -12,7 +12,7 @@ router.get("/", TeamController.allTeams);
 
 router.get("/active-members/:teamId", TeamController.getActiveMembers);
 
-router.get("/:id", TeamController.getSpecificTeam);
+router.get("/:id", TeamController.getTeam);
 
 router.get("/userTeams/:memberId", TeamController.getUserTeams);
 
@@ -34,4 +34,4 @@ router.post(
 
 router.patch("/remove-member/:team_id/:member_id", TeamController.removeMember);
 
-export const TeamRouter = router;
+export const TeamRoutes = router;

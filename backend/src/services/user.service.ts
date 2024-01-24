@@ -1,10 +1,13 @@
 import jwt from "jsonwebtoken";
-import ApiError from "../error/apiError";
 import User from "../models/user.model";
 import bcrypt from "bcrypt";
+import { config } from "../config";
+import { IUser } from "../interfaces/user.interface";
+import httpStatus from "http-status";
+import ApiError from "../shared/apiError";
 
 class Service {
-  async getAllUsers() {
+  async getAllUsers(): Promise<IUser[]> {
     const result = await User.find({}).select({
       name: 1,
       email: 1,
@@ -15,59 +18,35 @@ class Service {
     return result;
   }
 
-  async getUsers() {
+  async getUsers(): Promise<IUser[]> {
     const result = await User.find({});
     return result;
   }
 
-  async register(user: any) {
+  async register(user: IUser): Promise<void> {
     const isExist = await User.findOne({
       email: user?.email,
     });
     if (isExist) {
-      return {
-        success: false,
-        message: "User already exists!",
-        error: `This email (${user.email}) is already used`,
-        data: null,
-      };
+      throw new ApiError(httpStatus.CONFLICT, "This email already exist");
     }
 
     const hashedPassword = await bcrypt.hash(user?.password, 12);
     user.password = hashedPassword;
 
     await User.create(user);
-    return {
-      success: true,
-      message: "User register successful",
-      error: null,
-      data: null,
-    };
   }
 
-  async auth(id: string) {
-    const isExist: any = await User.findById(id);
-    if (!isExist) {
-      return {
-        success: false,
-        message: "User does not exist",
-        error: "Your requested user is not found",
-        data: null,
-      };
+  async auth(id: string): Promise<IUser> {
+    const user = await User.findById(id);
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, "User not found");
     }
 
-    const { _id, name, profile_picture, email, department, designation } =
-      isExist;
-
-    return {
-      success: true,
-      message: "User found",
-      error: null,
-      data: { _id, name, profile_picture, email, department, designation },
-    };
+    return user;
   }
 
-  async updateUser(id: string, data: any) {
+  async updateUser(id: string, data: Partial<IUser>): Promise<IUser | null> {
     const result = await User.findByIdAndUpdate(
       id,
       { $set: { ...data } },
@@ -76,12 +55,12 @@ class Service {
     return result;
   }
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string): Promise<string> {
     const isExist = await User.findOne({
       email,
     });
     if (!isExist) {
-      throw new ApiError(404, "User not found!");
+      throw new ApiError(httpStatus.NOT_FOUND, "User not found!");
     }
 
     const isMatchedPassword = await bcrypt.compare(password, isExist.password);
@@ -94,13 +73,9 @@ class Service {
       email: isExist.email,
     };
 
-    const accessToken = jwt.sign(
-      jwtPayload,
-      process.env.JWT_ACCESS_TOKEN_SECRET as string,
-      {
-        expiresIn: process.env.ACCESS_EXPIRES_IN as string,
-      }
-    );
+    const accessToken = jwt.sign(jwtPayload, config.jwt.accessTokenSecret, {
+      expiresIn: config.jwt.accessTokenExpired,
+    });
 
     return accessToken;
   }

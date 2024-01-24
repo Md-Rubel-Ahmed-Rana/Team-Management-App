@@ -1,18 +1,20 @@
-import ApiError from "../error/apiError";
+import httpStatus from "http-status";
 import Team from "../models/team.model";
+import ApiError from "../shared/apiError";
+import { ITeam } from "../interfaces/team.interface";
 
 class Service {
-  async createTeam(data: any) {
+  async createTeam(data: ITeam): Promise<ITeam> {
     const isExist = await Team.findOne({ name: data?.name });
     if (isExist) {
-      throw new ApiError(409, "This team already exist");
+      throw new ApiError(httpStatus.CONFLICT, "This team already exist");
     } else {
       const result = await Team.create(data);
       return result;
     }
   }
 
-  async myTeams(adminId: string) {
+  async myTeams(adminId: string): Promise<ITeam[]> {
     try {
       const result = await Team.find({ admin: adminId }).populate([
         {
@@ -45,7 +47,9 @@ class Service {
     }
   }
 
-  async getActiveMembers(teamId: string) {
+  async getActiveMembers(
+    teamId: string
+  ): Promise<{ _id: string; name: string }[] | undefined> {
     const result = await Team.findById(teamId)
       .select({ activeMembers: 1 })
       .populate([
@@ -61,90 +65,79 @@ class Service {
     return members;
   }
 
-  async joinedTeams(memberId: string) {
-    try {
-      const result = await Team.find({ activeMembers: memberId }).populate([
-        {
-          path: "activeMembers",
-          model: "User",
-        },
-        {
-          path: "pendingMembers",
-          model: "User",
-        },
-        {
-          path: "admin",
-          model: "User",
-          select: [
-            "name",
-            "profile_picture",
-            "email",
-            "department",
-            "designation",
-            "createdAt",
-            "updatedAt",
-          ],
-        },
-      ]);
-      return result;
-    } catch (error) {
-      console.error("Error getting teams:", error);
-      throw error;
-    }
+  async joinedTeams(memberId: string): Promise<ITeam[]> {
+    const result = await Team.find({ activeMembers: memberId }).populate([
+      {
+        path: "activeMembers",
+        model: "User",
+      },
+      {
+        path: "pendingMembers",
+        model: "User",
+      },
+      {
+        path: "admin",
+        model: "User",
+        select: [
+          "name",
+          "profile_picture",
+          "email",
+          "department",
+          "designation",
+          "createdAt",
+          "updatedAt",
+        ],
+      },
+    ]);
+    return result;
   }
 
-  async allTeams() {
-    try {
-      const result = await Team.find().populate([
-        {
-          path: "activeMembers",
-          model: "User",
-          select: [
-            "name",
-            "profile_picture",
-            "email",
-            "department",
-            "designation",
-            "createdAt",
-            "updatedAt",
-          ],
-        },
-        {
-          path: "pendingMembers",
-          model: "User",
-          select: [
-            "name",
-            "profile_picture",
-            "email",
-            "department",
-            "designation",
-            "createdAt",
-            "updatedAt",
-          ],
-        },
-        {
-          path: "admin",
-          model: "User",
-          select: [
-            "name",
-            "profile_picture",
-            "email",
-            "department",
-            "designation",
-            "createdAt",
-            "updatedAt",
-          ],
-        },
-      ]);
-
-      return result;
-    } catch (error) {
-      console.error("Error getting teams:", error);
-      throw error;
-    }
+  async allTeams(): Promise<ITeam[]> {
+    const result = await Team.find().populate([
+      {
+        path: "activeMembers",
+        model: "User",
+        select: [
+          "name",
+          "profile_picture",
+          "email",
+          "department",
+          "designation",
+          "createdAt",
+          "updatedAt",
+        ],
+      },
+      {
+        path: "pendingMembers",
+        model: "User",
+        select: [
+          "name",
+          "profile_picture",
+          "email",
+          "department",
+          "designation",
+          "createdAt",
+          "updatedAt",
+        ],
+      },
+      {
+        path: "admin",
+        model: "User",
+        select: [
+          "name",
+          "profile_picture",
+          "email",
+          "department",
+          "designation",
+          "createdAt",
+          "updatedAt",
+        ],
+      },
+    ]);
+    return result;
   }
 
-  async getTeam(id: string) {
+  async getTeam(id: string): Promise<ITeam> {
     const result = await Team.findById(id).populate([
       {
         path: "activeMembers",
@@ -186,18 +179,18 @@ class Service {
     return result;
   }
 
-  async getUserTeams(memberId: string) {
+  async getUserTeams(memberId: string): Promise<ITeam[]> {
     const teams = await Team.find({
       $or: [{ activeMembers: memberId }, { pendingMembers: memberId }],
     });
     return teams;
   }
 
-  async updateTeam(id: string, data: any) {
+  async updateTeam(id: string, data: ITeam): Promise<ITeam | null> {
     const isExistTeam = await Team.findById(id);
 
     if (!isExistTeam) {
-      throw new ApiError(404, "Team Not Found!");
+      throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
     }
 
     await Team.findByIdAndUpdate(id, data);
@@ -205,22 +198,22 @@ class Service {
     return result;
   }
 
-  async deleteTeam(id: string) {
+  async deleteTeam(id: string): Promise<ITeam | null> {
     const result = await Team.findByIdAndDelete(id);
 
     if (!result) {
-      throw new ApiError(404, "Team Not Found!");
+      throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
     }
 
     return result;
   }
 
-  async removeMember(teamId: string, memberId: string) {
-    const result = await Team.updateOne(
+  async removeMember(teamId: string, memberId: string): Promise<void> {
+    await Team.updateOne(
       { _id: teamId },
-      { $pull: { activeMembers: memberId } }
+      { $pull: { activeMembers: memberId } },
+      { new: true }
     );
-    return result;
   }
 }
 export const TeamService = new Service();
