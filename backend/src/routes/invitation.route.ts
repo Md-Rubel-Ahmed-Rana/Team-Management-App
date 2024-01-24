@@ -3,18 +3,12 @@ import { InvitationController } from "../controllers/invitation.controller";
 
 const router = Router();
 
-router.post("/send/:team_id/:member_id", InvitationController.sendInvitation);
+router.post("/send/:teamId/:memberId", InvitationController.sendInvitation);
 
-router.get("/pending/:member_id", InvitationController.pendingInvitation);
+router.get("/pending/:memberId", InvitationController.pendingInvitation);
 
-router.post(
-  "/reject/:team_id/:member_id",
-  InvitationController.rejectInvitation
-);
+router.post("/reject/:teamId/:memberId", InvitationController.rejectInvitation);
 
-router.post(
-  "/accept/:team_id/:member_id",
-  InvitationController.acceptInvitation
-);
+router.post("/accept/:teamId/:memberId", InvitationController.acceptInvitation);
 
 export const InvitationRoutes = router;

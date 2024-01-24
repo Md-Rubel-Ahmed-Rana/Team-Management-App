@@ -1,34 +1,39 @@
 import { Request, Response } from "express";
 import { PaymentService } from "../services/payment.service";
+import RootController from "../shared/rootController";
+import httpStatus from "http-status";
 
-const checkout = async (req: Request, res: Response) => {
-  const result = await PaymentService.checkout(req.body);
-
-  res.json({
-    success: true,
-    message: "Payment proceed",
-    data: result,
+class Controller extends RootController {
+  checkout = this.catchAsync(async (req: Request, res: Response) => {
+    const result = await PaymentService.checkout(req.body);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Payment proceed",
+      data: result,
+    });
   });
-};
-const myPayments = async (req: Request, res: Response) => {
-  const userId = req.params.userId;
-  const result = await PaymentService.myPayments(userId);
 
-  res.json({
-    success: true,
-    message: "Payments found",
-    data: result,
+  myPayments = this.catchAsync(async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    const result = await PaymentService.myPayments(userId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Payments found",
+      data: result,
+    });
   });
-};
 
-const webhook = async (req: Request, res: Response) => {
-  await PaymentService.webHook(req.body);
+  webhook = this.catchAsync(async (req: Request, res: Response) => {
+    await PaymentService.webHook(req.body);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Webhook received successfully",
+      data: { received: true },
+    });
+  });
+}
 
-  res.json({ received: true });
-};
-
-export const PaymentController = {
-  checkout,
-  webhook,
-  myPayments,
-};
+export const PaymentController = new Controller();

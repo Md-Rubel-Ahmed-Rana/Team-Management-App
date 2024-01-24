@@ -1,11 +1,11 @@
 import Team from "../models/team.model";
 
 class Service {
-  public async sendInvitation(team_id: string, member_id: string) {
+  async sendInvitation(teamId: string, memberId: string) {
     const result = await Team.findByIdAndUpdate(
-      team_id,
+      teamId,
       {
-        $addToSet: { pendingMembers: member_id },
+        $addToSet: { pendingMembers: memberId },
       },
       { new: true }
     );
@@ -13,8 +13,8 @@ class Service {
     return result;
   }
 
-  public async pendingInvitation(member_id: string) {
-    const result = await Team.find({ pendingMembers: member_id }).populate([
+  async pendingInvitation(memberId: string) {
+    const result = await Team.find({ pendingMembers: memberId }).populate([
       {
         path: "activeMembers",
         model: "User",
@@ -40,11 +40,11 @@ class Service {
     return result;
   }
 
-  public async rejectInvitation(team_id: string, member_id: string) {
+  async rejectInvitation(teamId: string, memberId: string) {
     const result = await Team.findByIdAndUpdate(
-      team_id,
+      teamId,
       {
-        $pull: { pendingMembers: member_id },
+        $pull: { pendingMembers: memberId },
       },
       { new: true }
     );
@@ -52,12 +52,12 @@ class Service {
     return result;
   }
 
-  public async acceptInvitation(team_id: string, member_id: string) {
+  async acceptInvitation(teamId: string, memberId: string) {
     const result = await Team.findByIdAndUpdate(
-      team_id,
+      teamId,
       {
-        $addToSet: { activeMembers: member_id },
-        $pull: { pendingMembers: member_id },
+        $addToSet: { activeMembers: memberId },
+        $pull: { pendingMembers: memberId },
       },
       { new: true }
     );

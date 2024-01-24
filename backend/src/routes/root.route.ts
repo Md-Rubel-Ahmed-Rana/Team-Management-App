@@ -6,7 +6,6 @@ import { PaymentRoutes } from "./payment.route";
 import { PlanRoutes } from "./plan.route";
 import { ProjectRoutes } from "./project.route";
 import { TaskRoutes } from "./task.route";
-import { NotificationRoutes } from "./notification.route";
 
 const router = Router();
 
@@ -17,6 +16,5 @@ router.use("/payment", PaymentRoutes);
 router.use("/plan", PlanRoutes);
 router.use("/project", ProjectRoutes);
 router.use("/task", TaskRoutes);
-router.use("/notification", NotificationRoutes);
 
 export const RootRoutes = router;

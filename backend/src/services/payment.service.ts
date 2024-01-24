@@ -6,7 +6,7 @@ config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 class Service {
-  public async checkout(items: any) {
+  async checkout(items: any) {
     const plan = await Plan.findById(items[0].package);
     const storedData = items.map((item: any) => {
       console.log(item);
@@ -50,7 +50,7 @@ class Service {
     return { url: session.url };
   }
 
-  public async webHook(event: any) {
+  async webHook(event: any) {
     switch (event.type) {
       case "checkout.session.completed":
         const payment = event.data.object;
@@ -60,7 +60,7 @@ class Service {
     }
   }
 
-  public async myPayments(userId: string) {
+  async myPayments(userId: string) {
     const payments = await Payment.find({ userId }).populate({
       path: "package",
       model: "Plan",

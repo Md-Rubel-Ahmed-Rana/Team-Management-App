@@ -48,18 +48,14 @@ class Controller extends RootController {
   });
 
   getSingleProject = this.catchAsync(async (req: Request, res: Response) => {
-    console.log("Inside getSingleProject Controller", req.params.id);
-    if (req.params.id !== "undefined") {
-      console.log("Inside if clause");
-      const id = req.params.id;
-      const result = await ProjectService.getSingleProject(id);
-      this.apiResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Project found",
-        data: result,
-      });
-    }
+    const id = req.params.id;
+    const result = await ProjectService.getSingleProject(id);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Project found",
+      data: result,
+    });
   });
 
   addMember = this.catchAsync(async (req: Request, res: Response) => {

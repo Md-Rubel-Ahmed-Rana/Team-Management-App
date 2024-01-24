@@ -4,6 +4,7 @@ import handleValidationError from "./handleValidationError";
 import handleZodError from "../error/handleZodError";
 import handleCastError from "./handleCastError";
 import ApiError from "../shared/apiError";
+import mongoose from "mongoose";
 
 const globalErrorHandler = (
   error: any,
@@ -17,14 +18,10 @@ const globalErrorHandler = (
   let message = "Something went wrong !";
   let errorMessages = [];
 
-  if ("CastError" === error?.name) {
-    console.log("Inside if clause");
-    console.log("CastError", error);
-    const simplifiedError = handleCastError(error);
-
-    statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
-    errorMessages = simplifiedError.errorMessages;
+  // err.message instanceof mongoose.Error.CastError
+  if (error.name === "CastError") {
+    console.log("Cast error");
+    return new Error(`Invalid ${error?.path}: ${error?.value}`);
   }
 
   if (error?.name === "ValidationError") {
