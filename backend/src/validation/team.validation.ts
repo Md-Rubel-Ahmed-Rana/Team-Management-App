@@ -3,11 +3,39 @@ import { z } from "zod";
 const createTeamValidation = z.object({
   body: z
     .object({
-      name: z.string().min(1).max(255),
-      category: z.string().min(1).max(255),
-      description: z.string().min(1),
-      image: z.string(),
-      admin: z.string().min(1).max(255),
+      name: z
+        .string({
+          required_error: "Team name is required",
+          invalid_type_error: "Team name must be string",
+        })
+        .min(1)
+        .max(255),
+      category: z
+        .string({
+          required_error: "Team category is required",
+          invalid_type_error: "Team category must be string",
+        })
+        .min(1)
+        .max(255),
+      description: z
+        .string({
+          required_error: "Team description is required",
+          invalid_type_error: "Team description must be string",
+        })
+        .min(1),
+      image: z
+        .string({
+          required_error: "Team image is required",
+          invalid_type_error: "Team image must be a url/link",
+        })
+        .url(),
+      admin: z
+        .string({
+          required_error: "Team admin id is required",
+          invalid_type_error: "Team admin id must be string",
+        })
+        .min(1)
+        .max(255),
       activeMembers: z.array(z.string().optional()).optional(),
       pendingMembers: z.array(z.string().optional()).optional(),
     })

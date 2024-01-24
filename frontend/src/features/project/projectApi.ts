@@ -24,6 +24,12 @@ const projectApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["project"] as any,
     }),
+    assignedProjects: builder.query({
+      query: (memberId) => ({
+        url: `/project/assigned-projects/${memberId}`,
+      }),
+      providesTags: ["project"] as any,
+    }),
     getSingleProject: builder.query({
       query: (id) => ({
         url: `/project/single/${id}`,
@@ -47,4 +53,5 @@ export const {
   useAddMemberMutation,
   useGetSingleProjectQuery,
   useUpdateProjectMutation,
+  useAssignedProjectsQuery
 } = projectApi;

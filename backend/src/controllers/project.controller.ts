@@ -36,6 +36,17 @@ class Controller extends RootController {
     });
   });
 
+  assignedProjects = this.catchAsync(async (req: Request, res: Response) => {
+    const memberId = req.params.memberId;
+    const projects = await ProjectService.assignedProjects(memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Projects for assigned found",
+      data: projects,
+    });
+  });
+
   updateProject = this.catchAsync(async (req: Request, res: Response) => {
     const id = req.params.id;
     const result = await ProjectService.updateProject(id, req.body);

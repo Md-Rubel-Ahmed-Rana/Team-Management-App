@@ -21,10 +21,16 @@ class Service {
     return result;
   }
 
+  async assignedProjects(memberId: string): Promise<IProject[]> {
+    const result = await Project.find({ "members.member": memberId });
+    return result;
+  }
+
+
   async getSingleProject(id: string): Promise<IProject | null> {
     const result = await Project.findById(id)
       .populate("members.member")
-      .populate("teamId", "name");
+      .populate("team", "name");
     return result;
   }
 

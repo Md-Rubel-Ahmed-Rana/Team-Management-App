@@ -6,7 +6,7 @@ import { useAddMemberMutation } from "../../features/project/projectApi";
 import Swal from "sweetalert2";
 import { useGetActiveMembersQuery } from "../../features/team/teamApi";
 
-const AddMemberToProject = ({ isOpen, setIsOpen, projectId, teamId }: any) => {
+const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: any) => {
   const closeModal = () => {
     setIsOpen(false);
   };
@@ -14,7 +14,7 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, teamId }: any) => {
   const [addNewMember] = useAddMemberMutation();
   const [newMember, setNewMember] = useState({ label: "", value: "" });
   const [role, setRole] = useState("");
-  const { data: memberData } = useGetActiveMembersQuery(teamId?._id);
+  const { data: memberData } = useGetActiveMembersQuery(team?._id);
   const members = memberData?.data?.map((member: any) => ({
     value: member?._id,
     label: member?.name,
@@ -86,6 +86,7 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, teamId }: any) => {
                     <div className="relative w-full py-2">
                       <p className="text-stone-500 mb-2 ">Select a member</p>
                       <Select
+                        required
                         options={members}
                         styles={customStyles}
                         onChange={(user: any) => setNewMember(user)}
@@ -94,7 +95,7 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, teamId }: any) => {
                         classNamePrefix="select2-selection"
                         noOptionsMessage={({ inputValue }) =>
                           !inputValue &&
-                          `No active members in your team: ${teamId?.name}`
+                          `No active members in your team: ${team?.name}. Please invite members to join your team`
                         }
                         components={{
                           DropdownIndicator: () => null,

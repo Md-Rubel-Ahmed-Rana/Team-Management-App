@@ -1,4 +1,4 @@
-// DashboardPage.tsx
+
 import React from "react";
 import { useMyPaymentsQuery } from "../../features/payment/paymentApi";
 import { useLoggedInUserQuery } from "../../features/user/userApi";

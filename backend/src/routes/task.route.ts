@@ -16,13 +16,13 @@ router.post(
 
 router.patch(
   "/update-status/:taskId",
-  validateRequest(TaskValidationSchema.createZodSchema),
+  validateRequest(TaskValidationSchema.updateZodSchema),
   TaskController.updateTaskStatus
 );
 
 router.patch(
   "/task-update/:id",
-  validateRequest(TaskValidationSchema.createZodSchema),
+  validateRequest(TaskValidationSchema.updateZodSchema),
   TaskController.updateTask
 );
 

@@ -15,17 +15,15 @@ router.post(
 
 router.patch(
   "/update/:id",
-  validateRequest(ProjectValidationSchema.createZodSchema),
+  validateRequest(ProjectValidationSchema.updateZodSchema),
   ProjectController.updateProject
 );
 
-router.post(
-  "/add-member",
-  validateRequest(ProjectValidationSchema.createZodSchema),
-  ProjectController.addMember
-);
+router.post("/add-member",ProjectController.addMember);
 
 router.get("/my-projects/:userId", ProjectController.myProjects);
+
+router.get("/assigned-projects/:memberId", ProjectController.assignedProjects);
 
 router.get("/single/:id", ProjectController.getSingleProject);
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CreateProjectModal from "./CreateProjectModal";
-import { useMyProjectsQuery } from "../../features/project/projectApi";
+import { useAssignedProjectsQuery, useMyProjectsQuery } from "../../features/project/projectApi";
 import { useLoggedInUserQuery } from "../../features/user/userApi";
 import { IUser } from "../../interfaces/user.interface";
 import { IProject } from "../../interfaces/project.interface";
@@ -17,15 +17,14 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const { data: projects } = useMyProjectsQuery(user?._id);
-
   const { data: teamData } = useMyTeamsQuery(user?._id);
+  const {data: assignedProjects} = useAssignedProjectsQuery(user._id)
+  console.log(assignedProjects)
   const navigate = useNavigate();
-
   const handleEditProject = (project: IProject) => {
     setIsEdit(true);
     setEditableProject(project);
   };
-
   const handleOpenCreateProjectModal = () => {
     if (teamData?.data?.length <= 0) {
       Swal.fire({
@@ -57,21 +56,24 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
 
   return (
     <div className="w-1/5 px-4 border-r-2">
-      <h2 className="text-2xl font-semibold mb-4">Projects</h2>
+    <div>
+      <h2 className="text-lg font-semibold mb-2">My Projects</h2>
       {projects?.data.length > 0 && (
-        <div className="flex flex-col gap-2 overflow-hidden hover:overflow-auto h-80 scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100">
+        <div className="flex flex-col gap-2 overflow-hidden hover:overflow-auto h-48 scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100">
           {projects?.data?.map((project: IProject) => (
             <p
               key={project?._id}
-              className={`px-4 py-2 w-full hover:bg-gray-100 flex justify-between   rounded-md ${
+              className={`px-2 py-1 w-full hover:bg-gray-100 flex justify-between   rounded-md ${
                 project?._id == activeProject && "bg-gray-100"
               }`}
             >
               <button
-                className="w-full text-left"
+                className="w-full text-left text-lg"
                 onClick={() => setActiveProject(project?._id)}
               >
-                {project?.name}
+                {
+                project?.name.length > 20 ?  <small>{project?.name?.slice(0, 20)} ...</small> : <small>{project?.name}</small>
+              }
               </button>
               <button
                 onClick={() => handleEditProject(project)}
@@ -84,11 +86,51 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
         </div>
       )}
       {projects?.data?.length <= 0 && (
-        <div className="h-72 flex flex-col justify-center items-center">
+        <div className="h-48 flex flex-col justify-center items-center">
           <h1>No project created yet.</h1>
         </div>
       )}
-      <button
+      
+    </div>
+    <hr />
+    <div>
+      <h2 className="text-lg font-semibold mb-4">Assigned Projects</h2>
+      {assignedProjects?.data?.length > 0 && (
+        <div className="flex flex-col gap-2 overflow-hidden hover:overflow-auto h-48 scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100">
+          {assignedProjects?.data?.map((project: IProject) => (
+            <p
+              key={project?._id}
+              className={`px-2 py-1 w-full hover:bg-gray-100 flex justify-between   rounded-md ${
+                project?._id == activeProject && "bg-gray-100"
+              }`}
+            >
+              <button
+                className="w-full text-left"
+                onClick={() => setActiveProject(project?._id)}
+              >
+                {
+                project?.name.length > 20 ?  <small>{project?.name?.slice(0, 20)} ...</small> : <small>{project?.name}</small>
+              }
+              </button>
+              <button
+                onClick={() => handleEditProject(project)}
+                className="hover:bg-gray-200 p-2 rounded-full"
+              >
+                <FaEllipsisV />
+              </button>
+            </p>
+          ))}
+        </div>
+      )}
+      {assignedProjects?.data?.length <= 0 && (
+        <div className="h-48 flex flex-col justify-center items-center">
+          <h1>You haven't assigned project</h1>
+        </div>
+      )}
+      
+    </div>
+
+    <button
         onClick={handleOpenCreateProjectModal}
         className="px-4 py-2 mt-10 w-full text-center  rounded-md bg-green-600 hover:bg-green-500 text-white font-semibold"
       >

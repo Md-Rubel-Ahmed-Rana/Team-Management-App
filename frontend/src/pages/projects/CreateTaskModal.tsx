@@ -24,10 +24,10 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {
   const [createTask] = useCreateTaskMutation();
 
   const handleCreateNewTask: SubmitHandler<INewTask> = async (data) => {
-    data.assignedMember = selectedMember?.value;
+    data.assignedTo = selectedMember?.value;
     data.assignedBy = user._id;
     data.status = task;
-    data.projectId = project._id;
+    data.project = project._id;
     const result: any = await createTask(data);
     if (result?.data?.success) {
       Swal.fire({
@@ -84,6 +84,7 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {
                     <div className="relative w-full py-2">
                       <p className="text-stone-500 mb-2 ">Select a member</p>
                       <Select
+                      required
                         options={
                           members &&
                           members?.map((member: any) => ({
@@ -96,6 +97,10 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {
                         placeholder="Type a name to assign a task to member"
                         className="mt-1 w-full"
                         classNamePrefix="select2-selection"
+                        noOptionsMessage={({ inputValue }) =>
+                          !inputValue &&
+                          `No members in your project: ${project?.name}. Please add member then assign task`
+                        }
                         components={{
                           DropdownIndicator: () => null,
                           IndicatorSeparator: () => null,

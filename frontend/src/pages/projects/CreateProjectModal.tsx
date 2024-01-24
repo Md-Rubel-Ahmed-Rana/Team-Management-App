@@ -30,9 +30,10 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
   const [createProject] = useCreateProjectMutation();
 
   const handleCreateNewProject: SubmitHandler<INewProject> = async (data) => {
-    data.userId = user?._id || "";
-    data.teamId = selectedTeam.value;
+    data.user = user?._id || "";
+    data.team = selectedTeam.value;
     const result: any = await createProject(data);
+    console.log(result);
     if (result?.data?.success) {
       Swal.fire({
         position: "center",
@@ -89,6 +90,7 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
                     <div className="relative w-full py-2">
                       <p className="text-stone-500 mb-2 ">Select a team</p>
                       <Select
+                      required
                         options={
                           teamData?.data &&
                           teamData?.data?.map((team: any) => ({

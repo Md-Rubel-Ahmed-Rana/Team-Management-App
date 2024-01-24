@@ -15,12 +15,13 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormData>({ mode: "onChange" });
 
   const [loginUser] = useLoginUserMutation();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const result: any = await loginUser(data);
+    console.log(result);
     Cookies.set("tmAccessToken", result?.data?.data, { expires: 6 });
     if (result?.data?.success) {
       Swal.fire({
@@ -31,13 +32,14 @@ const Login = () => {
         timer: 1500,
       });
       window.location.replace("/dashboard");
-    } else {
+    }
+    if (result?.error?.data?.statusCode === 404) {
       Swal.fire({
         position: "center",
         icon: "error",
-        title: result?.error?.message,
+        title: result?.error?.data?.message,
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2500,
       });
     }
   };

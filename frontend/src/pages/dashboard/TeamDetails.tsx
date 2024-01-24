@@ -1,4 +1,13 @@
-const TeamDetails = ({ team }: { team: any }) => {
+import { useState } from "react";
+import AddMemberModal from "../teams/addMember/AddMemberModal";
+import { ITeam } from "../../interfaces/team.interface";
+import { useLoggedInUserQuery } from "../../features/user/userApi";
+import { IUser } from "../../interfaces/user.interface";
+import { Link } from "react-router-dom";
+
+const TeamDetails = ({ team }: { team: ITeam }) => {
+  const { data: userData }: any = useLoggedInUserQuery({});
+  const user: IUser = userData?.data;
   const {
     name,
     category,
@@ -9,6 +18,7 @@ const TeamDetails = ({ team }: { team: any }) => {
     pendingMembers,
     createdAt,
   } = team;
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="p-4 flex gap-5 shadow-md rounded-lg">
@@ -43,7 +53,32 @@ const TeamDetails = ({ team }: { team: any }) => {
         <p>
           <strong>Created At:</strong> {createdAt?.toString()?.slice(0, 10)}
         </p>
+        <div className="flex items-center gap-5">
+          {
+          user._id === admin._id &&  <p>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-blue-600 mx-auto outline-none text-white border-2 px-5 py-2 rounded-lg"
+          >
+            Add members
+          </button>
+        </p>
+        }
+        <p>
+          <Link
+            className="bg-blue-300 font-medium px-5 py-2 rounded-md"
+            to={`/teams/${team._id}`}
+                >
+            View team
+          </Link>
+        </p>
+        </div>
+        
+        
       </div>
+      {isOpen && (
+        <AddMemberModal team={team} isOpen={isOpen} setIsOpen={setIsOpen} />
+      )}
     </div>
   );
 };

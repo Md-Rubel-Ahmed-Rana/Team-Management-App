@@ -2,12 +2,10 @@ import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import customStyles from "../../../utils/reactSelectCustomStyle";
 import Select from "react-select";
-import {
-  useGetUsersQuery,
-  useLoggedInUserQuery,
-} from "../../../features/user/userApi";
+import {  useGetUsersQuery} from "../../../features/user/userApi";
 import { useSendInvitationMutation } from "../../../features/invitation/invitationApi";
 import Swal from "sweetalert2";
+import { IUser } from "../../../interfaces/user.interface";
 
 type ISelectType = { label: string; value: string };
 
@@ -16,7 +14,20 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
   const [page, setPage] = useState(1);
   const { data: users } = useGetUsersQuery([]);
   const [sendInvitation] = useSendInvitationMutation();
-  const { data: userData } = useLoggedInUserQuery({});
+
+  const remainingUsers = users?.data?.filter((user: IUser) => {
+  const isInActive = team?.activeMembers?.some(
+    (member: IUser) => member?._id === user?._id
+  );
+  const isInPending = team?.pendingMembers?.some(
+    (member: IUser) => member?._id === user?._id
+  );
+
+  // Check if the user is the admin
+  const isAdmin = team?.admin?._id === user?._id;
+
+  return !isInActive && !isInPending && !isAdmin;
+});
 
   const closeModal = () => {
     setIsOpen(false);
@@ -25,8 +36,9 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
   const handleAddNewMember = (user: ISelectType) => {
     setNewMember(user);
   };
+  
   const selectedMember = users?.data.find(
-    (usr: any) => usr.name === newMember?.value
+    (usr: IUser) => usr._id === newMember?.value
   );
 
   const handleSendInvitation = async () => {
@@ -129,9 +141,8 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
                         </p>
                         <Select
                           options={
-                            users?.data &&
-                            users?.data?.map((user: any) => ({
-                              value: user?.name,
+                            remainingUsers?.map((user: IUser) => ({
+                              value: user?._id,
                               label: user?.name,
                             }))
                           }

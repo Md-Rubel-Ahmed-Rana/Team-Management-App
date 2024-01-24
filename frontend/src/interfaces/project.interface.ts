@@ -1,16 +1,14 @@
-import { ITeam } from "./team.interface";
-
 export type INewProject = {
-  teamId: string;
-  userId: string;
+  team: string;
+  user: string;
   name: string;
   category: string;
 };
 
 export type IProject = {
   _id: string;
-  teamId: any;
-  userId: string;
+  team: any;
+  user: string;
   name: string;
   category: string;
   members: [
@@ -28,9 +26,9 @@ export const projectInit: IProject = {
   name: "",
   category: "",
   createdAt: "",
-  teamId: "",
+  team: "",
   updatedAt: "",
-  userId: "",
+  user: "",
   members: [
     {
       role: "",

@@ -66,7 +66,7 @@ const Signup = () => {
               Create account
             </h2>
           </div>
-          <div className="lg:flex w-full justify-between items-center gap-5">
+          <div className="lg:flex w-full justify-between  gap-5">
             <div className="rounded-md shadow-sm w-1/2">
               <div>
                 <label htmlFor="username">Name</label>

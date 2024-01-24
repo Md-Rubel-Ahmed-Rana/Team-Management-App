@@ -9,6 +9,7 @@ const createZodSchema = z.object({
         .max(255),
       deadline: z.string().min(1).optional(),
       project: z.string({ required_error: "Project is is required" }),
+      status: z.string().optional(),
       assignedTo: z.string({
         required_error: "Assigned to member id required",
       }),
@@ -26,6 +27,7 @@ const updateZodSchema = z.object({
       project: z.string().optional(),
       assignedTo: z.string().optional(),
       assignedBy: z.string().optional(),
+      status: z.string().optional(),
       createdAt: z.string().optional(),
       updatedAt: z.string().optional(),
     })

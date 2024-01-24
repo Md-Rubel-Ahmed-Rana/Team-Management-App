@@ -1,6 +1,4 @@
-// src/components/EditProfilePage.js
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
 import {
   useLoggedInUserQuery,
   useUpdateUserMutation,
@@ -16,7 +14,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
   const [isChangeImage, setIsChangeImage] = useState(false);
   const [updateUser] = useUpdateUserMutation();
   const uploadFile = useUploadFile();
-
+  console.log(user);
   const { register, handleSubmit } = useForm<IUser>({
     defaultValues: user,
   });

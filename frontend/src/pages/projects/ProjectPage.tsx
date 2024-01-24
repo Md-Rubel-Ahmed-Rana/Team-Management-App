@@ -49,9 +49,7 @@ const ProjectPage = () => {
                   <h2 className="text-2xl font-bold ">
                     Project: {project?.name}
                   </h2>
-                  <h5 className="font-semibold">
-                    Team: {project?.teamId?.name}
-                  </h5>
+                  <h5 className="font-semibold">Team: {project?.team?.name}</h5>
                   <h5 className="font-semibold">
                     Category: {project?.category}
                   </h5>
@@ -97,7 +95,7 @@ const ProjectPage = () => {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           projectId={activeProject}
-          teamId={project?.teamId}
+          team={project?.team}
         />
       )}
     </div>

@@ -47,8 +47,7 @@ const TeamPage = () => {
               <p className="absolute bottom-3 left-8 bg-blue-100 font-medium px-5 py-2 rounded-md flex items-center gap-1">
                 <span> Members: </span>
                 <span>
-                  {Number(team.activeMembers?.length) +
-                    Number(team.pendingMembers?.length)}
+                  {Number(team.activeMembers?.length)}
                 </span>
               </p>
               <p className="absolute bottom-5 right-8">
