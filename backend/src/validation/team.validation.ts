@@ -7,9 +7,9 @@ const createTeamValidation = z.object({
       category: z.string().min(1).max(255),
       description: z.string().min(1),
       image: z.string(),
-      admin: z.string().min(1).max(255), // Assuming admin is identified by some unique identifier
-      activeMembers: z.array(z.string().min(1).max(255)),
-      pendingMembers: z.array(z.string().min(1).max(255)),
+      admin: z.string().min(1).max(255),
+      activeMembers: z.array(z.string().optional()).optional(),
+      pendingMembers: z.array(z.string().optional()).optional(),
     })
     .strict(),
 });
@@ -21,9 +21,9 @@ const updateTeamValidation = z.object({
       category: z.string().min(1).max(255).optional(),
       description: z.string().min(1).optional(),
       image: z.string().optional(),
-      admin: z.string().min(1).max(255).optional(),
-      activeMembers: z.array(z.string().min(1).max(255)).optional(),
-      pendingMembers: z.array(z.string().min(1).max(255)).optional(),
+      admin: z.string().optional(),
+      activeMembers: z.array(z.string()).optional(),
+      pendingMembers: z.array(z.string()).optional(),
       createdAt: z.string().optional(),
       updatedAt: z.string().optional(),
     })

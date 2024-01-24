@@ -3,7 +3,7 @@ import { IPayment } from "../interfaces/payment.interface";
 
 const paymentSchema = new Schema<IPayment>(
   {
-    userId: {
+    user: {
       type: String,
       required: true,
     },

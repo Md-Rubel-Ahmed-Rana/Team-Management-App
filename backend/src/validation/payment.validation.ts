@@ -4,7 +4,7 @@ const paymentPostSchema = zod.object({
   body: zod.array(
     zod
       .object({
-        userId: zod.string({
+        user: zod.string({
           required_error: "User id is required",
           invalid_type_error: "User id must be string",
         }),

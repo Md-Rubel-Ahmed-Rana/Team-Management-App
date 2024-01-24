@@ -7,10 +7,10 @@ class Service {
   }
 
   async getTasksByProjectId(projectId: string) {
-    const result = await Task.find({ projectId })
+    const result = await Task.find({ project: projectId })
       .populate([
         {
-          path: "assignedMember",
+          path: "assignedTo",
           model: "User",
         },
         {
@@ -28,8 +28,7 @@ class Service {
       taskId,
       { $set: { status } },
       { new: true }
-    ).exec();
-
+    );
     return result;
   }
 

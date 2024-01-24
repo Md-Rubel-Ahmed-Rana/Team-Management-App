@@ -22,6 +22,7 @@ class Service {
   }
 
   async getSingleProject(id: string): Promise<IProject | null> {
+    console.log("Inside getSingleProject Service");
     const result = await Project.findById(id)
       .populate("members.member")
       .populate("teamId", "name");

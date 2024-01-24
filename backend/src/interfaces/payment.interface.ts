@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 export type IPayment = {
-  userId: string;
+  user: string;
   paymentAmount: number;
   package: Types.ObjectId;
   sessionId: string;

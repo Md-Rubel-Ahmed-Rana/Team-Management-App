@@ -1,103 +1,64 @@
-// Task Controller
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { TaskService } from "../services/task.service";
+import RootController from "../shared/rootController";
+import httpStatus from "http-status";
 
-const createTask = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+class Controller extends RootController {
+  createTask = this.catchAsync(async (req: Request, res: Response) => {
     const result = await TaskService.createTask(req.body);
-    res.json({
-      statusCode: 201,
+    this.apiResponse(res, {
+      statusCode: httpStatus.CREATED,
       success: true,
       message: "Task created  successfully",
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const getTasksByProjectId = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+  getTasksByProjectId = this.catchAsync(async (req: Request, res: Response) => {
     const projectId = req.params.projectId;
     const tasks = await TaskService.getTasksByProjectId(projectId);
-
-    res.json({
-      statusCode: 200,
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
+      message: "Tasks found",
       data: tasks,
     });
-  } catch (error: any) {
-    res.json({
-      statusCode: 400,
-      success: false,
-      error: error?.message,
-      message: "Tasks not found",
-    });
-  }
-};
+  });
 
-const updateTaskStatus = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+  updateTaskStatus = this.catchAsync(async (req: Request, res: Response) => {
     const taskId = req.params.taskId;
     const status = req.body.status;
-    const updatedTask = await TaskService.updateTaskStatus(taskId, status);
-
-    res.json({
-      statusCode: 200,
+    const result = await TaskService.updateTaskStatus(taskId, status);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
       message: "Task status updated successfully",
-      data: updatedTask,
+      data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const updateTask = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  updateTask = this.catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
     const { name } = req.body;
-    const updatedTask = await TaskService.updateTask(id, name);
-
-    res.json({
-      statusCode: 200,
+    const result = await TaskService.updateTask(id, name);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: "Task updated successfully",
-      data: updatedTask,
+      message: "Task status updated successfully",
+      data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
 
-const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  deleteTask = this.catchAsync(async (req: Request, res: Response) => {
     const taskId = req.params.taskId;
-    console.log({ taskId });
-    await TaskService.deleteTask(taskId);
-
-    res.json({
-      statusCode: 200,
+    const result = await TaskService.deleteTask(taskId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
       message: "Task deleted successfully",
+      data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  });
+}
 
-export const TaskController = {
-  createTask,
-  getTasksByProjectId,
-  updateTaskStatus,
-  deleteTask,
-  updateTask,
-};
+export const TaskController = new Controller();

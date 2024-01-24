@@ -8,8 +8,9 @@ type IMember = {
 };
 
 export type IProject = {
+  _id?: Types.ObjectId;
   team: Types.ObjectId | ITeam["_id"];
-  user: IUser["_id"];
+  user: Types.ObjectId | IUser["_id"];
   name: string;
   category: string;
   members: IMember[];

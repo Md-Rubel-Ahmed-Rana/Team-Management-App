@@ -3,8 +3,8 @@ import { z } from "zod";
 const createZodSchema = z.object({
   body: z
     .object({
-      teamId: z.string().min(1).max(255),
-      userId: z.string().min(1).max(255),
+      team: z.string().min(1).max(255),
+      user: z.string().min(1).max(255),
       name: z.string().min(1).max(255),
       category: z.string().min(1).max(255),
       members: z.array(

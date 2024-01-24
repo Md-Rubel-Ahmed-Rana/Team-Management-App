@@ -1,7 +1,7 @@
 const handleCastError = (error: any) => {
   const errors = [
     {
-      path: error.path,
+      path: error?.path,
       message: "Invalid Id",
     },
   ];

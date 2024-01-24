@@ -2,6 +2,7 @@ import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import { RootRoutes } from "./routes/root.route";
+import httpStatus from "http-status";
 
 const app = express();
 app.use(cors());
@@ -9,10 +10,10 @@ app.use(express.json());
 
 // base route to check application health
 app.get("/", (req, res) => {
-  res.status(200).json({
-    statusCode: 200,
+  res.status(httpStatus.OK).json({
+    statusCode: httpStatus.OK,
     success: true,
-    message: "Little Programmer task server is running!",
+    message: "Team Manager server is running",
     data: null,
   });
 });
@@ -23,7 +24,8 @@ app.use(RootRoutes);
 app.use(globalErrorHandler);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-  res.status(404).json({
+  res.status(httpStatus.NOT_FOUND).json({
+    statusCode: httpStatus.NOT_FOUND,
     success: false,
     message: "Not Found",
     errorMessages: [
@@ -32,7 +34,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
         message: "API Not Found",
       },
     ],
-    statusCode: 404,
   });
   next();
 });

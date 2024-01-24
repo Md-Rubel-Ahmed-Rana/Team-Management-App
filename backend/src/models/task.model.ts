@@ -10,11 +10,11 @@ const taskSchema = new Schema<ITask>(
     deadline: {
       type: String,
     },
-    projectId: {
+    project: {
       type: Schema.Types.ObjectId,
       ref: "Project",
     },
-    assignedMember: {
+    assignedTo: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
