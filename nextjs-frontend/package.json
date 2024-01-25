@@ -1,0 +1,46 @@
+{
+  "name": "Team-Manager",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.15",
+    "@reduxjs/toolkit": "^2.1.0",
+    "@types/js-cookie": "^3.0.6",
+    "axios": "^1.4.0",
+    "js-cookie": "^3.0.5",
+    "next": "14.1.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-hook-form": "^7.45.1",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^4.10.1",
+    "react-redux": "^9.1.0",
+    "react-select": "^5.8.0",
+    "socket.io-client": "^4.7.1",
+    "sweetalert2": "^11.7.18",
+    "tailwind-scrollbar": "^3.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^5.61.0",
+    "@typescript-eslint/parser": "^5.61.0",
+    "@vitejs/plugin-react": "^4.0.1",
+    "autoprefixer": "^10.4.14",
+    "daisyui": "^4.6.0",
+    "eslint": "^8.44.0",
+    "eslint-config-next": "14.1.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.1",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.0.2"
+  }
+}
