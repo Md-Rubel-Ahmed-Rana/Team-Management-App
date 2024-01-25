@@ -1,10 +1,25 @@
 import React from "react";
 import Cookies from "js-cookie";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useAssignedProjectsQuery, useMyProjectsQuery } from "@/features/project/projectApi";
+import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { IUser } from "@/interfaces/user.interface";
 
 const Sidebar = ({ setActiveView, activeView }: any) => {
-  const handleSidebarNavigate = (text: string) => {
+  const router = useRouter()
+  const { data: userData } = useLoggedInUserQuery({});
+  const user: IUser = userData?.data;
+  const {data: projects} = useMyProjectsQuery(user?._id)
+  const {data: assignedProjects} = useAssignedProjectsQuery(user?._id)
+  const project = projects?.data?.length > 0 ? projects?.data[0] : assignedProjects?.data[0]
+
+   const handleSidebarNavigate = (text: string) => {
     setActiveView(text);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, activeView: text },
+    });
   };
 
   const handleLogOut = () => {
@@ -51,7 +66,11 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
           className={`py-2 px-4 block hover:bg-gray-100 w-full rounded-md  text-left focus:outline-none ${
             activeView === "projects" && "bg-gray-100"
           }`}
-          href={"/projects"}
+
+          href={{
+                pathname: "/projects",
+                query: { team: project?.team || "unknown", id: project?._id || "unknown", name: project?.name || "unknown"},
+              }}
         >
           Projects
         </Link>

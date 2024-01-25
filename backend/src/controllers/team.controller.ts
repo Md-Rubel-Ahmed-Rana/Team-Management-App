@@ -97,9 +97,9 @@ class Controller extends RootController {
   });
 
   removeMember = this.catchAsync(async (req: Request, res: Response) => {
-    const team_id = req.params.team_id;
-    const member_id = req.params.member_id;
-    const result = await TeamService.removeMember(team_id, member_id);
+    const teamId = req.params.teamId;
+    const memberId = req.params.memberId;
+    const result = await TeamService.removeMember(teamId, memberId);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

@@ -56,21 +56,22 @@ const Navbar = () => {
 
         {user?.email && (
           <Link
-            href={"/dashboard"}
-            className={`${
-              !user.profile_picture && "border m-2 p-2 rounded-full"
-            }`}
-          >
-            {user.profile_picture ? (
-              <img
-                className="w-10 h-10 rounded-full"
-                src={user.profile_picture}
-                alt=""
-              />
-            ) : (
-              <FaUser />
-            )}
-          </Link>
+              href={{
+                pathname: "/dashboard",
+                query: { uId: user?._id , activeView : "profile"},
+              }}
+              className={`${!user.profile_picture && "border m-2 p-2 rounded-full"}`}
+            >
+              {user.profile_picture ? (
+                <img
+                  className="w-10 h-10 rounded-full"
+                  src={user.profile_picture}
+                  alt=""
+                />
+              ) : (
+                <FaUser />
+              )}
+            </Link>
         )}
       </div>
       <div className="flex lg:hidden items-center justify-between px-5">

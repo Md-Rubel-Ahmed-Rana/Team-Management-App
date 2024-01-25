@@ -8,7 +8,7 @@ const taskApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["project", "task"] as any,
+      invalidatesTags: ["task"] as any,
     }),
 
     updateStatus: builder.mutation({
@@ -17,7 +17,7 @@ const taskApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body: { status },
       }),
-      invalidatesTags: ["project", "task"] as any,
+      invalidatesTags: ["task"] as any,
     }),
 
     updateTask: builder.mutation({
@@ -26,7 +26,7 @@ const taskApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body: { name },
       }),
-      invalidatesTags: ["project", "task"] as any,
+      invalidatesTags: ["task"] as any,
     }),
 
     deleteTask: builder.mutation({
@@ -34,14 +34,14 @@ const taskApi = apiSlice.injectEndpoints({
         url: `/task/delete/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["project", "task"] as any,
+      invalidatesTags: ["task"] as any,
     }),
 
     getTasksByProject: builder.query({
       query: (id) => ({
         url: `/task/by-project/${id}`,
       }),
-      providesTags: ["project", "task"] as any,
+      providesTags: ["task"] as any,
     }),
   }),
 });

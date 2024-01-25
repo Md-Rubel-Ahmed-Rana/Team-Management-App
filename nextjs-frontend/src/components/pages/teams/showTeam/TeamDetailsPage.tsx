@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Announcement from "../collaborations/announcements/Announcement";
 import Resources from "../collaborations/resources/Resources";
 import Discussion from "../collaborations/discussions/Discussion";
@@ -8,10 +8,22 @@ import { useSingleTeamQuery } from "@/features/team/teamApi";
 import { ITeam } from "@/interfaces/team.interface";
 
 const TeamDetailsPage = () => {
-  const { query } = useRouter();
-  const { data: teamData } = useSingleTeamQuery(query?.id);
+  const router = useRouter();
+  const { data: teamData } = useSingleTeamQuery(router?.query?.id);
   const team: ITeam = teamData?.data;
-  const [activeNav, setActiveNav] = useState("Discussion");
+  const [activeNav, setActiveNav] = useState<any>("Discussion");
+
+  const handleChangeCollaborate = (text: string) => {
+    setActiveNav(text)
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, collaborate: text },
+    });
+  }
+
+  useEffect(() => {
+    setActiveNav(router?.query?.collaborate)
+  }, [router?.query?.collaborate])
 
   return (
     <div className="flex gap-5">
@@ -89,7 +101,7 @@ const TeamDetailsPage = () => {
           <ul className="flex justify-between">
             <li>
               <button
-                onClick={() => setActiveNav("Announcement")}
+                onClick={() => handleChangeCollaborate("Announcement")}
                 className={`${
                   activeNav === "Announcement" && "bg-gray-200 text-black"
                 }   px-4 py-2 rounded-md shadow-md`}
@@ -102,7 +114,7 @@ const TeamDetailsPage = () => {
                 className={`${
                   activeNav === "Resources" && "bg-gray-200 text-black"
                 }   px-4 py-2 rounded-md shadow-md`}
-                onClick={() => setActiveNav("Resources")}
+                onClick={() => handleChangeCollaborate("Resources")}
               >
                 Resources
               </button>
@@ -112,7 +124,7 @@ const TeamDetailsPage = () => {
                 className={`${
                   activeNav === "Discussion" && "bg-gray-200 text-black"
                 }   px-4 py-2 rounded-md shadow-md`}
-                onClick={() => setActiveNav("Discussion")}
+                onClick={() => handleChangeCollaborate("Discussion")}
               >
                 Discussion
               </button>

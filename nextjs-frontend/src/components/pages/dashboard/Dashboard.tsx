@@ -1,13 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import ProfilePage from "../Profile/ProfilePage";
 import MyTeams from "./MyTeams";
 import PaymentPage from "./PaymentPage";
 import JoinedTeams from "./JoinedTeams";
 import PendingInvitation from "./PendingInvitation";
+import { useRouter } from "next/router";
 
 const Dashboard = () => {
-  const [activeView, setActiveView] = useState("profile");
+  const [activeView, setActiveView] = useState("");
+  const {query}: any = useRouter();
+
+  useEffect(() =>{
+    setActiveView(query?.activeView || "profile")
+  }, [query?.activeView])
+
   return (
     <div className="flex h-screen gap-4">
       <Sidebar setActiveView={setActiveView} activeView={activeView} />

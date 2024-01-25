@@ -5,7 +5,7 @@ import React, { ReactElement } from 'react';
 
 const DashboardPage: NextPageWithLayout = () => {
     return (
-        <div>
+        <div className='py-5'>
             <Dashboard />
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProjectSidebar from "./ProjectSidebar";
 import StatusNavbar from "./StatusNavbar";
 import TaskPage from "./TaskPage";
@@ -8,22 +8,21 @@ import { IUser } from "@/interfaces/user.interface";
 import { useAssignedProjectsQuery, useGetSingleProjectQuery, useMyProjectsQuery } from "@/features/project/projectApi";
 import { IProject } from "@/interfaces/project.interface";
 import { useGetTasksByProjectQuery } from "@/features/task/taskApi";
-import { rolesWithMemberManagement } from "@/constants/projectMemberRoles";
+import RemoveMemberFromProject from "./RemoveMemberFromProject";
+import { useRouter } from "next/router";
 
 
 const Projects = () => {
-  const [activeProject, setActiveProject] = useState("");
+  const {query} = useRouter()
+  const [activeProject, setActiveProject] = useState<any>("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isRemove, setIsRemove] = useState(false);
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  
-  
   const { data: projectData } = useGetSingleProjectQuery(activeProject);
   const project: IProject = projectData?.data;
   const { data: projects } = useMyProjectsQuery(user?._id);
   const {data: assignedProjects} = useAssignedProjectsQuery(user?._id)
-  const memberRoles = project?.members?.map((member) => member?.role)
-
 
   const { data: tasks } = useGetTasksByProjectQuery(project?._id);
 
@@ -35,6 +34,10 @@ const Projects = () => {
   const completedTask = tasks?.data?.filter(
     (task: any) => task.status === "Completed"
   );
+
+  useEffect(() => {
+    setActiveProject(query?.id)
+  }, [query?.id])
 
   return (
     <div className="flex h-screen">
@@ -61,7 +64,7 @@ const Projects = () => {
                     Total Member: {project?.members?.length}
                   </h4>
                   {
-                    memberRoles?.some((role) => project?.user === user?._id || rolesWithMemberManagement?.includes(role)) && (
+                     project?.user === user?._id  && (
                       <button
                         onClick={() => setIsOpen(true)}
                         className="bg-blue-700 text-white px-4 py-1 rounded-md"
@@ -75,6 +78,7 @@ const Projects = () => {
                     project?.user === user?._id &&  <div>
                        <p className="flex flex-col gap-2">
                     <button
+                     onClick={() => setIsRemove(true)}
                       className="bg-blue-700 text-white px-4 py-1 rounded-md"
                     >
                       Remove Member
@@ -120,6 +124,15 @@ const Projects = () => {
         <AddMemberToProject
           isOpen={isOpen}
           setIsOpen={setIsOpen}
+          projectId={activeProject}
+          team={project?.team}
+        />
+      )}
+
+      {isRemove && (
+        <RemoveMemberFromProject
+          isRemove={isRemove}
+          setIsRemove={setIsRemove}
           projectId={activeProject}
           team={project?.team}
         />

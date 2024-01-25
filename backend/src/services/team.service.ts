@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import Team from "../models/team.model";
 import ApiError from "../shared/apiError";
 import { ITeam } from "../interfaces/team.interface";
+import { Project } from "../models/project.model";
 
 class Service {
   async createTeam(data: ITeam): Promise<ITeam> {
@@ -209,11 +210,23 @@ class Service {
   }
 
   async removeMember(teamId: string, memberId: string): Promise<void> {
+
+    // remove from team
     await Team.updateOne(
       { _id: teamId },
       { $pull: { activeMembers: memberId } },
       { new: true }
     );
+
+    // remove from projects
+    const projects = await Project.find({ "members.member": memberId });
+    const updatePromises = projects.map(async (project) => {
+      project.members = project.members.filter(
+        (member: any) => member?.member.toString() !== memberId
+      );
+      return project.save();
+    });
+    await Promise.all(updatePromises);
   }
 }
 export const TeamService = new Service();

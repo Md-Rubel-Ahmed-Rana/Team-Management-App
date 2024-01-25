@@ -21,6 +21,8 @@ router.patch(
 
 router.post("/add-member",ProjectController.addMember);
 
+router.post("/remove-member",ProjectController.removeMember);
+
 router.get("/my-projects/:userId", ProjectController.myProjects);
 
 router.get("/assigned-projects/:memberId", ProjectController.assignedProjects);

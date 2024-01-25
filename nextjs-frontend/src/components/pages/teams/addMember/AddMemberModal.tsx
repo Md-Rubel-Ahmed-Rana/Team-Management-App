@@ -16,10 +16,12 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
   const { data: users } = useGetUsersQuery([]);
   const [sendInvitation] = useSendInvitationMutation();
 
+
   const remainingUsers = users?.data?.filter((user: IUser) => {
   const isInActive = team?.activeMembers?.some(
     (member: IUser) => member?._id === user?._id
   );
+
   const isInPending = team?.pendingMembers?.some(
     (member: IUser) => member?._id === user?._id
   );

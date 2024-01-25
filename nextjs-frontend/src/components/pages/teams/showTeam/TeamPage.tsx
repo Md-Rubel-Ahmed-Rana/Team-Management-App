@@ -54,7 +54,10 @@ const Teams = () => {
               <p className="absolute bottom-5 right-8">
                 <Link
                   className="bg-blue-300 font-medium px-5 py-2 rounded-md"
-                  href={`/teams/${team._id}`}
+                  href={{
+                    pathname: `/teams/${team._id}`,
+                    query: { team: team?.name, category: team?.category, collaborate: "Discussion"},
+                  }}
                 >
                   View team
                 </Link>

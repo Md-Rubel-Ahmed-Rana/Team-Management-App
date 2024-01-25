@@ -76,6 +76,32 @@ class Service {
 
     return result;
   }
+
+    async removeMember(
+    projectId: string,
+    memberId: string,
+  ): Promise<IProject | null> {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      throw new ApiError(httpStatus.NOT_FOUND, "Project not found");
+    }
+
+    const memberIndex = project.members.findIndex(
+      (member: any) => member.member.toString() === memberId
+    );
+
+    if (memberIndex === -1) {
+      throw new ApiError(httpStatus.NOT_FOUND, "Member not found in the project");
+    }
+
+    project.members.splice(memberIndex, 1);
+
+    const result = await project.save();
+
+    return result;
+    }
+
 }
 
 export const ProjectService = new Service();

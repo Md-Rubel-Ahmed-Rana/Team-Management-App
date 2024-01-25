@@ -44,6 +44,14 @@ const projectApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["project"] as any,
     }),
+    removeMember: builder.mutation({
+      query: (data) => ({
+        url: "/project/remove-member",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["project"] as any,
+    }),
   }),
 });
 
@@ -53,5 +61,6 @@ export const {
   useAddMemberMutation,
   useGetSingleProjectQuery,
   useUpdateProjectMutation,
-  useAssignedProjectsQuery
+  useAssignedProjectsQuery,
+  useRemoveMemberMutation
 } = projectApi;

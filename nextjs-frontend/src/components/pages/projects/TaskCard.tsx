@@ -10,7 +10,7 @@ type Props = {
 };
 
 const TaskCard = ({ task, style }: Props) => {
-  const { _id, name, deadline, status, assignedMember, assignedBy } = task;
+  const { _id, name, deadline, status, assignedTo, assignedBy } = task;
   const [updateStatus] = useUpdateStatusMutation();
   const [updateTask] = useUpdateTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
@@ -125,12 +125,12 @@ const TaskCard = ({ task, style }: Props) => {
         <div className="flex items-center gap-2 mt-2 bg-gray-100 px-3 py-2 rounded-md">
           <img
             className="h-10 w-10 rounded-full"
-            src={assignedMember?.profile_picture}
+            src={assignedTo?.profile_picture}
             alt=""
           />
           <div>
-            <h5 className="text-lg  font-medium">{assignedMember?.name}</h5>
-            <p>{assignedMember?.designation}</p>
+            <h5 className="text-lg  font-medium">{assignedTo?.name}</h5>
+            <p>{assignedTo?.designation}</p>
           </div>
         </div>
       </div>

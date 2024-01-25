@@ -79,6 +79,17 @@ class Controller extends RootController {
       data: result,
     });
   });
+  
+  removeMember = this.catchAsync(async (req: Request, res: Response) => {
+    const { projectId, memberId } = req.body;
+    const result = await ProjectService.removeMember(projectId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Member removed successfully",
+      data: result,
+    });
+  });
 }
 
 export const ProjectController = new Controller();

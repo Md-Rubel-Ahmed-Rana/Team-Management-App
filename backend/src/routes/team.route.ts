@@ -18,12 +18,6 @@ router.get("/userTeams/:memberId", TeamController.getUserTeams);
 
 router.get("/joined-teams/:memberId", TeamController.joinedTeams);
 
-router.patch(
-  "/:id",
-  validateRequest(TeamValidationSchema.updateTeamValidation),
-  TeamController.updateTeam
-);
-
 router.delete("/:id", TeamController.deleteTeam);
 
 router.post(
@@ -32,6 +26,12 @@ router.post(
   TeamController.createTeam
 );
 
-router.patch("/remove-member/:team_id/:member_id", TeamController.removeMember);
+router.patch("/remove-member/:teamId/:memberId", TeamController.removeMember);
+
+router.patch(
+  "/:id",
+  validateRequest(TeamValidationSchema.updateTeamValidation),
+  TeamController.updateTeam
+);
 
 export const TeamRoutes = router;

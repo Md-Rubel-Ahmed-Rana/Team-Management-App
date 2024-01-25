@@ -10,6 +10,13 @@ const teamApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["team"] as any,
     }),
+    removeTeamMember: builder.mutation({
+      query: ({teamId, memberId}) => ({
+        method: "PATCH",
+        url: `/team/remove-member/${teamId}/${memberId}`,
+      }),
+      invalidatesTags: ["team"] as any,
+    }),
     myTeams: builder.query({
       query: (id) => ({
         url: `/team/my-teams/${id}`,
@@ -50,4 +57,5 @@ export const {
   useSingleTeamQuery,
   useJoinedTeamsQuery,
   useGetActiveMembersQuery,
+  useRemoveTeamMemberMutation
 } = teamApi;

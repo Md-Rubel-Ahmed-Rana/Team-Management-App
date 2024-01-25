@@ -1,4 +1,3 @@
-// src/components/AdminTeamDashboard.js
 import React, { useState } from "react";
 import TeamDetails from "./TeamDetails";
 import { useLoggedInUserQuery } from "@/features/user/userApi";
@@ -28,7 +27,7 @@ const MyTeams = () => {
         )}
       </div>
       {teamData?.data?.map((team: ITeam) => (
-        <TeamDetails key={team._id} team={team} />
+        <TeamDetails key={team?._id} team={team} />
       ))}
 
       {isOpen && <CreateTeamModal isOpen={isOpen} setIsOpen={setIsOpen} />}

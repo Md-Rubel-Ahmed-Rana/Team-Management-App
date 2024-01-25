@@ -20,10 +20,12 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
   const { data: teamData } = useMyTeamsQuery(user?._id);
   const {data: assignedProjects} = useAssignedProjectsQuery(user?._id)
   const router = useRouter();
+
   const handleEditProject = (project: IProject) => {
     setIsEdit(true);
     setEditableProject(project);
   };
+
   const handleOpenCreateProjectModal = () => {
     if (teamData?.data?.length <= 0) {
       Swal.fire({
@@ -49,9 +51,13 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
     }
   };
 
-  useEffect(() => {
-    setActiveProject(projects?.data[0]?._id);
-  }, [projects?.data, setActiveProject]);
+  const handleChangeProject = (project: IProject) => {
+    setActiveProject(project._id)
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, team: project?.team, id: project?._id, name: project?.name },
+    });
+  }
 
   return (
     <div className="w-1/5 px-4 border-r-2">
@@ -68,7 +74,7 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
             >
               <button
                 className="w-full text-left text-lg"
-                onClick={() => setActiveProject(project?._id)}
+                onClick={() => handleChangeProject(project)}
               >
                 {
                 project?.name.length > 20 ?  <small>{project?.name?.slice(0, 20)} ...</small> : <small>{project?.name}</small>
@@ -105,17 +111,11 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
             >
               <button
                 className="w-full text-left"
-                onClick={() => setActiveProject(project?._id)}
+                onClick={() => handleChangeProject(project)}
               >
                 {
                 project?.name.length > 20 ?  <small>{project?.name?.slice(0, 20)} ...</small> : <small>{project?.name}</small>
               }
-              </button>
-              <button
-                onClick={() => handleEditProject(project)}
-                className="hover:bg-gray-200 p-2 rounded-full"
-              >
-                <FaEllipsisV />
               </button>
             </p>
           ))}

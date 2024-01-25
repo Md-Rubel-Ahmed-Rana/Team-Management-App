@@ -1,14 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
 import AddMemberModal from "../teams/addMember/AddMemberModal";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
-import { IUser } from "@/interfaces/user.interface";
 import Link from "next/link";
 import { ITeam } from "@/interfaces/team.interface";
+import RemoveMemberModal from "../teams/addMember/RemoveMemberModal";
+import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { IUser } from "@/interfaces/user.interface";
 
 const TeamDetails = ({ team }: { team: ITeam }) => {
-  const { data: userData }: any = useLoggedInUserQuery({});
-  const user: IUser = userData?.data;
+    const [isRemove, setIsRemove] = useState(false);
+     const [isOpen, setIsOpen] = useState(false);
+     const { data: userData } = useLoggedInUserQuery({});
+    const user: IUser = userData?.data;
   const {
     name,
     category,
@@ -19,7 +22,7 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
     pendingMembers,
     createdAt,
   } = team;
-  const [isOpen, setIsOpen] = useState(false);
+ 
 
   return (
     <div className="p-4 flex gap-5 shadow-md rounded-lg">
@@ -56,7 +59,8 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
         </p>
         <div className="flex items-center gap-5">
           {
-          user._id === admin._id &&  <p>
+            admin._id === user._id && <>
+            <p>
           <button
             onClick={() => setIsOpen(true)}
             className="bg-blue-600 mx-auto outline-none text-white border-2 px-5 py-2 rounded-lg"
@@ -64,21 +68,36 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
             Add members
           </button>
         </p>
-        }
+          <p>
+          <button
+            onClick={() => setIsRemove(true)}
+            className="bg-yellow-600 mx-auto outline-none text-white border-2 px-5 py-2 rounded-lg"
+          >
+            Remove members
+          </button>
+        </p>
+            </>
+          }
+          
         <p>
           <Link
             className="bg-blue-300 font-medium px-5 py-2 rounded-md"
-            href={`/teams/${team._id}`}
+            href={{
+                    pathname: `/teams/${team._id}`,
+                    query: { team: team?.name, category: team?.category, collaborate: "Discussion"},
+                  }}
                 >
-            View team
+            View details
           </Link>
         </p>
         </div>
-        
-        
       </div>
       {isOpen && (
         <AddMemberModal team={team} isOpen={isOpen} setIsOpen={setIsOpen} />
+      )}
+
+      {isRemove && (
+        <RemoveMemberModal team={team} isRemove={isRemove} setIsRemove={setIsRemove} />
       )}
     </div>
   );
