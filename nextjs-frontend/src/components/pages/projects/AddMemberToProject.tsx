@@ -6,6 +6,7 @@ import { useAddMemberMutation } from "@/features/project/projectApi";
 import { useGetActiveMembersQuery } from "@/features/team/teamApi";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
+import { projectMemberRoles } from "@/constants/projectMemberRoles";
 
 const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: any) => {
   const closeModal = () => {
@@ -41,11 +42,12 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: any) => {
         timer: 1500,
       });
       closeModal();
-    } else {
+    } 
+    if(result?.error) {
       Swal.fire({
         position: "center",
         icon: "error",
-        text: result?.data?.message,
+        text: result?.error?.data?.message,
         showConfirmButton: true,
       });
       closeModal();
@@ -106,14 +108,31 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: any) => {
                     </div>
                     <div className="relative w-full py-2">
                       <p className="text-stone-500 mb-2">Assign a role</p>
-                      <input
+                      <Select
+                        required
+                        options={projectMemberRoles?.map((role) => ({label: role, value: role}))}
+                        styles={customStyles}
+                        onChange={(role: any) => setRole(role?.value)}
+                        placeholder="Type a name to assign a member to project"
+                        className="mt-1 w-full"
+                        classNamePrefix="select2-selection"
+                        noOptionsMessage={({ inputValue }: any) =>
+                          !inputValue &&
+                          `No active members in your team: ${team?.name}. Please invite members to join your team`
+                        }
+                        components={{
+                          DropdownIndicator: () => null,
+                          IndicatorSeparator: () => null,
+                        }}
+                      />
+                      {/* <input
                         required
                         type="text"
                         id="role"
                         onChange={(e) => setRole(e.target.value)}
                         placeholder="Role: manager, leader, developer, designer etc"
                         className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
-                      />
+                      /> */}
                     </div>
 
                     <div className="mt-5 lg:flex justify-between">

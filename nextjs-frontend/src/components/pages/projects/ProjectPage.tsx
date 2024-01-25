@@ -5,9 +5,10 @@ import TaskPage from "./TaskPage";
 import AddMemberToProject from "./AddMemberToProject";
 import { useLoggedInUserQuery } from "@/features/user/userApi";
 import { IUser } from "@/interfaces/user.interface";
-import { useGetSingleProjectQuery, useMyProjectsQuery } from "@/features/project/projectApi";
+import { useAssignedProjectsQuery, useGetSingleProjectQuery, useMyProjectsQuery } from "@/features/project/projectApi";
 import { IProject } from "@/interfaces/project.interface";
 import { useGetTasksByProjectQuery } from "@/features/task/taskApi";
+import { rolesWithMemberManagement } from "@/constants/projectMemberRoles";
 
 
 const Projects = () => {
@@ -15,10 +16,14 @@ const Projects = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-
+  
+  
   const { data: projectData } = useGetSingleProjectQuery(activeProject);
   const project: IProject = projectData?.data;
   const { data: projects } = useMyProjectsQuery(user?._id);
+  const {data: assignedProjects} = useAssignedProjectsQuery(user?._id)
+  const memberRoles = project?.members?.map((member) => member?.role)
+
 
   const { data: tasks } = useGetTasksByProjectQuery(project?._id);
 
@@ -40,7 +45,6 @@ const Projects = () => {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-x-hidden overflow-y-auto px-5">
-          {projects?.data?.length > 0 && (
             <>
               <div className="flex  justify-between items-center mb-4">
                 <div className="flex flex-col gap-2">
@@ -56,14 +60,39 @@ const Projects = () => {
                   <h4 className="text-xl font-semibold">
                     Total Member: {project?.members?.length}
                   </h4>
-                  <p>
+                  {
+                    memberRoles?.some((role) => project?.user === user?._id || rolesWithMemberManagement?.includes(role)) && (
+                      <button
+                        onClick={() => setIsOpen(true)}
+                        className="bg-blue-700 text-white px-4 py-1 rounded-md"
+                      >
+                        Add Member
+                      </button>
+                    )
+                  }
+
+                  {
+                    project?.user === user?._id &&  <div>
+                       <p className="flex flex-col gap-2">
                     <button
-                      onClick={() => setIsOpen(true)}
                       className="bg-blue-700 text-white px-4 py-1 rounded-md"
                     >
-                      Add Member
+                      Remove Member
                     </button>
                   </p>
+                    </div>
+                    
+                  }
+
+                  {
+                    project?.user !== user?._id && <button
+                      className="bg-blue-700 text-white px-4 py-1 rounded-md"
+                    >
+                    Request to leave
+                    </button>
+                    
+                    }
+                  
                 </div>
               </div>
               <StatusNavbar
@@ -78,8 +107,7 @@ const Projects = () => {
                 completedTask={completedTask}
               />
             </>
-          )}
-          {projects?.data?.length <= 0 && (
+          {projects?.data?.length <= 0 && assignedProjects?.data?.length <= 0 &&  (
             <div className="h-screen flex justify-center items-center">
               <h2 className="lg:text-3xl font-semibold">
                 You haven&apos; create any project yet. Create project to show here

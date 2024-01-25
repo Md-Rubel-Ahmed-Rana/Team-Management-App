@@ -18,10 +18,14 @@ type AppPropsWithLayout = AppProps & {
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
  
-  return (<Provider store={store}>
-    {getLayout(<Component {...pageProps} />)}
-     <Toaster />
-  </Provider>)
+  return (
+    <div className='max-w-[1280px] w-full mx-auto'> 
+    <Provider store={store}>
+      {getLayout(<Component {...pageProps} />)}
+      <Toaster />
+    </Provider>
+  </div>
+  )
   
 }
 

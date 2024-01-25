@@ -22,6 +22,7 @@ const StatusNavButton = ({ name, total, style, onClickHandler }: Props) => {
       <button onClick={handleClick}>
         <FaPlus />
       </button>
+      
     </div>
   );
 };
