@@ -5,6 +5,11 @@ export const config = {
   db: {
     url: process.env.DATABASE_URL as string,
   },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID as string,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    callbackUrl:  process.env.GOOGLE_CALLBACK_URL as string
+  },
   app: {
     port: process.env.PORT,
     environment: process.env.NODE_ENV as string,
