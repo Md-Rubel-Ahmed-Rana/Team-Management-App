@@ -35,6 +35,15 @@ const Projects = () => {
     (task: any) => task.status === "Completed"
   );
 
+  const handleLeaveRequest = () => {
+    const leaveData = {
+      projectId: project._id,
+      memberId: user._id
+    }
+    console.log("Clicked to leave from project");
+    console.log(leaveData);
+  }
+
   useEffect(() => {
     setActiveProject(query?.id)
   }, [query?.id])
@@ -90,6 +99,7 @@ const Projects = () => {
 
                   {
                     project?.user !== user?._id && <button
+                    onClick={handleLeaveRequest}
                       className="bg-blue-700 text-white px-4 py-1 rounded-md"
                     >
                     Request to leave
