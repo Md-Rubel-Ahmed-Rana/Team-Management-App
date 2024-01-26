@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { IUser } from "@/interfaces/user.interface";
 import { useCreateUserMutation } from "@/features/user";
 import useUploadFile from "@/hooks/useUploadFile";
+import GoogleLogin from "@/components/shared/GoogleLogin";
 
 const Signup = () => {
   const {
@@ -49,9 +50,6 @@ const Signup = () => {
     setProfilePicture(uploadedFile?.url);
   };
 
-  const handleGoogleLogin = async () => {
-    window.open("https://little-programmer.vercel.app/auth/google", "_self");
-  };
 
   return (
     <div className="flex items-center justify-center py-5 px-4 sm:px-6 lg:px-8">
@@ -181,7 +179,6 @@ const Signup = () => {
               </div>
             </div>
           </div>
-
           <div className="mt-6">
             <button
               type="submit"
@@ -190,15 +187,7 @@ const Signup = () => {
               Sign up
             </button>
           </div>
-          <div className="my-3 text-center font-semibold">
-            <button
-              onClick={handleGoogleLogin}
-              className="bg-blue-300 w-full px-5 py-2 rounded-md"
-              type="button"
-            >
-              Continue with Google
-            </button>
-          </div>
+          <GoogleLogin />
         </form>
       </div>
     </div>

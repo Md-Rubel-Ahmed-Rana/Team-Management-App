@@ -15,13 +15,11 @@ const ProfilePage = () => {
 
   const handleChangeProfileImage = async (e: any) => {
     const result = await uploadFile(e?.target?.files[0]);
-
     if (result?.url) {
       const updated = await updateUser({
         id: user._id,
         data: { profile_picture: result?.url },
       });
-      console.log(updated);
     }
   };
 
@@ -59,10 +57,10 @@ const ProfilePage = () => {
               <strong>Email:</strong> {user?.email}
             </p>
             <p>
-              <strong>Department:</strong> {user?.department}
+              <strong>Department:</strong> {user?.department || "Not available"}
             </p>
             <p>
-              <strong>Designation:</strong> {user?.designation}
+              <strong>Designation:</strong> {user?.designation || "Not available"}
             </p>
           </div>
           <div className="mt-4">

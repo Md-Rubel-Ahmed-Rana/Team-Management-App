@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import { useLoginUserMutation } from "@/features/user";
 import Link from "next/link";
+import GoogleLogin from "@/components/shared/GoogleLogin";
 
 type FormData = {
   email: string;
@@ -116,6 +117,7 @@ const Login = () => {
               Continue
             </button>
           </div>
+          <GoogleLogin />
           <div className="text-center my-3">
             <p>
               Don&apos; have an account?
