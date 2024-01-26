@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 const useUploadFile = () => {
-  const imageHostKey = process.env.VITE_IMGBB_KEY;
+  const imageHostKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
 
   const handleUploadFile = async (file: any) => {
     try {

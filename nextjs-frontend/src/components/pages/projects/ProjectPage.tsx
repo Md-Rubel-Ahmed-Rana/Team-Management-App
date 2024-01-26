@@ -5,7 +5,7 @@ import TaskPage from "./TaskPage";
 import AddMemberToProject from "./AddMemberToProject";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import { useAssignedProjectsQuery, useGetSingleProjectQuery, useLeaveProjectRequestMutation, useMyProjectsQuery } from "@/features/project";
+import { useAssignedProjectsQuery, useGetMemberLeaveProjectRequestQuery, useGetSingleProjectQuery, useLeaveProjectRequestMutation, useMyProjectsQuery } from "@/features/project";
 import { IProject } from "@/interfaces/project.interface";
 import { useGetTasksByProjectQuery } from "@/features/task";
 import RemoveMemberFromProject from "./RemoveMemberFromProject";
@@ -25,6 +25,8 @@ const Projects = () => {
   const { data: projects } = useMyProjectsQuery(user?._id);
   const {data: assignedProjects} = useAssignedProjectsQuery(user?._id)
   const [leaveRequest] = useLeaveProjectRequestMutation()
+  const {data: memberLeaveRequest} = useGetMemberLeaveProjectRequestQuery(user?._id)
+  console.log(memberLeaveRequest?.data?.project, project?._id);
 
   const { data: tasks } = useGetTasksByProjectQuery(project?._id);
 
@@ -38,31 +40,31 @@ const Projects = () => {
   );
 
   const handleLeaveRequest = async() => {
-    const leaveData = {
-      project: project?._id,
-      member: user?._id,
-      admin: project?.user
-    }
-
-    const result: any = await leaveRequest(leaveData);
-    if (result?.data?.success) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    } 
-
-    if(result?.error) {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        text: result?.error?.data?.message,
-        showConfirmButton: true,
-      });
-    }
+    Swal.fire({
+          title: "So sad",
+          text: "Are you sure to leave from this project",
+          showCancelButton: true,
+          cancelButtonText: "No",
+          confirmButtonText: "Yeas",
+        }).then((result) => {
+          if (result?.isConfirmed) {
+            const leaveData = {
+                project: project?._id,
+                member: user?._id,
+                admin: project?.user
+              }
+            const leaveHandler = async () => {
+              const result: any = await leaveRequest(leaveData);
+              if (result?.data?.success) {
+                    Swal.fire("Done!", `${result?.data?.message}`, "success");
+                  } 
+                  if(result?.error) {
+                    Swal.fire("Done!", `${result?.error?.data?.message}`, "error");
+                  }
+            }
+            leaveHandler()
+          }
+        });
   }
 
   useEffect(() => {
@@ -121,9 +123,13 @@ const Projects = () => {
                   {
                     project?.user !== user?._id && <button
                     onClick={handleLeaveRequest}
-                      className="bg-blue-700 text-white px-4 py-1 rounded-md"
+                    disabled={memberLeaveRequest?.data?.project === project?._id}
+                      className={` ${memberLeaveRequest?.data?.project === project?._id ? "bg-gray-400 cursor-not-allowed" : "bg-blue-700"} text-white px-4 py-1 rounded-md`}
                     >
-                    Request to leave
+                      {
+                        memberLeaveRequest?.data?.project === project?._id ? "Requested" : "Request to leave"
+                      }
+                    
                     </button>
                     
                     }

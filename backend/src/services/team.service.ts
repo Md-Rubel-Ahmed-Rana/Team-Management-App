@@ -230,7 +230,7 @@ class Service {
     await Promise.all(updatePromises);
 
     // update leave request for team
-    await TeamLeaveRequest.findOneAndUpdate({team: teamId}, {$set: {status: "accepted"}})
+    await TeamLeaveRequest.findOneAndUpdate({team: teamId}, {$set: {status: "accepted"}}).sort({createdAt: -1})
   }
 }
 export const TeamService = new Service();

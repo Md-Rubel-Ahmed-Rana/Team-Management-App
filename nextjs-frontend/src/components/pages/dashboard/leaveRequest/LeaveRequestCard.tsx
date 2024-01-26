@@ -64,8 +64,8 @@ const LeaveRequestCard = ({ data }: any) => {
 
     const handleIgnoreRequest = async() => {
         if(project){
-            const reqData = {projectId: project?._id, memberId: member?._id} 
-            const result: any = await ignoreProjectLeaveRequest(reqData);
+            console.log("Project");
+            const result: any = await ignoreProjectLeaveRequest(data?._id);
             if (result?.data?.success) {
             Swal.fire({
                 position: "center",
@@ -84,8 +84,8 @@ const LeaveRequestCard = ({ data }: any) => {
                });
             }
         }else{
-            const reqData = {teamId: team?._id, memberId: member?._id} 
-            const result: any = await ignoreTeamLeaveRequest(reqData);
+            console.log("Team");
+            const result: any = await ignoreTeamLeaveRequest(data?._id);
             if (result?.data?.success) {
             Swal.fire({
                 position: "center",

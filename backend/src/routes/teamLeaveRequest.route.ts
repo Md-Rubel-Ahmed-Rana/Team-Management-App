@@ -5,8 +5,10 @@ const router = Router();
 
 router.post("/sent-request", TeamLeaveRequestController.requestToLeave)
 
-router.patch("/ignore/:teamId/:memberId", TeamLeaveRequestController.ignoreRequest)
+router.patch("/ignore/:requestId", TeamLeaveRequestController.ignoreRequest)
 
 router.get("/all/:adminId", TeamLeaveRequestController.getLeaveRequestByAdmin)
+
+router.get("/member-request/:memberId", TeamLeaveRequestController.getMemberRequest)
 
 export const TeamLeaveRequestRoutes = router

@@ -26,13 +26,23 @@ class Controller extends RootController {
     })
 
     ignoreRequest = this.catchAsync(async (req: Request, res: Response) =>{
-        const teamId = req.params.teamId
-        const memberId = req.params.memberId
-        const result = await TeamLeaveRequestService.ignoreRequest(teamId, memberId)
+        const requestId = req.params.requestId
+        const result = await TeamLeaveRequestService.ignoreRequest(requestId)
         this.apiResponse(res, {
             statusCode: httpStatus.OK,
             success: true,
             message: "Leave request ignored",
+            data: result
+        })
+    })
+
+    getMemberRequest = this.catchAsync(async (req: Request, res: Response) =>{
+        const memberId = req.params.memberId
+        const result = await TeamLeaveRequestService.getMemberRequest(memberId)
+        this.apiResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: "Leave requests found",
             data: result
         })
     })

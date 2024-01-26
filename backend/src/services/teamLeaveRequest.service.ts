@@ -22,9 +22,14 @@ class Service {
         return result
     }
 
-    async ignoreRequest (teamId: string, memberId: string){
-        console.log("From team ignore", teamId, memberId);
-        const result = await TeamLeaveRequest.updateOne({_id: teamId,member: memberId, status: "pending"}, {$set: {status: "ignored"}})
+    async ignoreRequest (requestId: string){
+        console.log("From team ignore", requestId);
+        const result = await TeamLeaveRequest.findByIdAndUpdate(requestId,{$set: {status: "ignored"}}, {new: true})
+        return result
+    }
+
+    async getMemberRequest (memberId: string){
+        const result = await TeamLeaveRequest.find({member: memberId, status: "pending"})
         return result
     }
 }

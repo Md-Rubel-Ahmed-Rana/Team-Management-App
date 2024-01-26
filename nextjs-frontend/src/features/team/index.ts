@@ -64,8 +64,8 @@ const teamApi = apiSlice.injectEndpoints({
     }),
 
     ignoreTeamLeaveRequest: builder.mutation({
-      query: ({teamId, memberId}) => ({
-        url: `/leave-team/ignore/${teamId}/${memberId}`,
+      query: (requestId) => ({
+        url: `/leave-team/ignore/${requestId}`,
         method: "PATCH",
       }),
       invalidatesTags: ["team"] as any,
@@ -74,6 +74,12 @@ const teamApi = apiSlice.injectEndpoints({
     getLeaveTeamRequestsByAdmin: builder.query({
       query: (adminId) => ({
         url: `/leave-team/all/${adminId}`,
+      }),
+      providesTags: ["team"] as any,
+    }),
+    getMemberLeaveTeamRequest: builder.query({
+      query: (memberId) => ({
+        url: `/leave-team/member-request/${memberId}`,
       }),
       providesTags: ["team"] as any,
     }),
@@ -90,5 +96,6 @@ export const {
   useRemoveTeamMemberMutation,
   useLeaveTeamRequestMutation,
   useGetLeaveTeamRequestsByAdminQuery,
-  useIgnoreTeamLeaveRequestMutation
+  useIgnoreTeamLeaveRequestMutation,
+  useGetMemberLeaveTeamRequestQuery
 } = teamApi;

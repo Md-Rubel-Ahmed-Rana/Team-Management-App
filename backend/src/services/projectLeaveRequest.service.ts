@@ -22,9 +22,13 @@ class Service {
         return result
     }
 
-    async ignoreRequest (projectId: string, memberId: string){
-        console.log("From project ignore");
-        const result = await ProjectLeaveRequest.findOneAndUpdate({_id: projectId ,member: memberId, status: "pending"}, {$set: {status: "ignored"}})
+    async ignoreRequest (requestId: string){
+        const result = await ProjectLeaveRequest.findByIdAndUpdate(requestId, {$set: {status: "ignored"}}, {new: true})
+        return result
+    }
+
+    async getMemberRequest (memberId: string){
+        const result = await ProjectLeaveRequest.findOne({member: memberId, status: "pending"})
         return result
     }
 }

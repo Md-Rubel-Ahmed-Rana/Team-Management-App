@@ -101,7 +101,7 @@ class Service {
     const result = await project.save();
 
     // update leave request for project
-    await ProjectLeaveRequest.findOneAndUpdate({project: projectId}, {$set: {status: "accepted"}})
+    await ProjectLeaveRequest.findOneAndUpdate({project: projectId}, {$set: {status: "accepted"}}).sort({createdAt: -1})
 
     return result;
     }

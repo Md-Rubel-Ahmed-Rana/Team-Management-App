@@ -7,7 +7,7 @@ import RemoveMemberModal from "../teams/addMember/RemoveMemberModal";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import Swal from "sweetalert2";
-import { useLeaveTeamRequestMutation } from "@/features/team";
+import { useGetMemberLeaveTeamRequestQuery, useLeaveTeamRequestMutation } from "@/features/team";
 
 const TeamDetails = ({ team }: { team: ITeam }) => {
     const [isRemove, setIsRemove] = useState(false);
@@ -15,6 +15,9 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
     const { data: userData } = useLoggedInUserQuery({});
     const [leaveTeam] = useLeaveTeamRequestMutation()
     const user: IUser = userData?.data;
+    const {data: teamLeaveRequests} = useGetMemberLeaveTeamRequestQuery(user?._id)
+    const teamIds = teamLeaveRequests?.data?.map((team: any) => team?.team)
+    console.log(teamIds);
     const {
       _id,
       name,
@@ -29,7 +32,8 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
  
   const handleRequestToLeave = async() => {
     Swal.fire({
-          title: "Do you want to leave the this team?",
+          title: "Oops sadness",
+          text: "Are you sure to leave from this team",
           showCancelButton: true,
           cancelButtonText: "No",
           confirmButtonText: "Yeas",
@@ -52,7 +56,6 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
             leaveHandler()
           }
         });
-    console.log("Clicked to leave");
   }
 
   return (
@@ -109,14 +112,15 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
         </p>
             </>
           }
-
           {
             admin?._id !== user?._id &&  <p>
           <button
           onClick={handleRequestToLeave}
-            className="bg-blue-300 mx-auto outline-none  border-2 px-5 py-2 rounded-lg"
+          disabled={teamIds?.includes(_id)}
+            className={` ${teamIds?.includes(_id) ? "bg-gray-400 cursor-not-allowed hover:bg-gray-400" : "bg-slate-200 shadow-md"} mx-auto outline-none  border-2 px-5 py-2 rounded-lg hover:bg-slate-300`}
           >
-            Request to leave
+            {teamIds?.includes(_id) ? "Requested" : "Request to leave"}
+            
           </button>
         </p>
           }
