@@ -1,5 +1,5 @@
-import { useMyPaymentsQuery } from "@/features/payment/paymentApi";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useMyPaymentsQuery } from "@/features/payment";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IPayment } from "@/interfaces/payment.interface";
 import { IUser } from "@/interfaces/user.interface";
 import React from "react";

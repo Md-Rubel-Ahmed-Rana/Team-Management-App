@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useDeleteTaskMutation, useUpdateStatusMutation, useUpdateTaskMutation } from "@/features/task/taskApi";
+import { useDeleteTaskMutation, useUpdateStatusMutation, useUpdateTaskMutation } from "@/features/task";
 import { useState } from "react";
 
 import toast from "react-hot-toast";

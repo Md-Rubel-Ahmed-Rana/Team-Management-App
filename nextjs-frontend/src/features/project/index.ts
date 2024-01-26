@@ -52,6 +52,27 @@ const projectApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["project"] as any,
     }),
+    leaveProjectRequest: builder.mutation({
+      query: (data) => ({
+        url: "/leave-project/sent-request",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["project"] as any,
+    }),
+    ignoreProjectLeaveRequest: builder.mutation({
+      query: ({projectId, memberId}) => ({
+        url: `/leave-project/ignore/${projectId}/${memberId}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["project"] as any,
+    }),
+    getLeaveProjectRequestsByAdmin: builder.query({
+      query: (adminId) => ({
+        url: `/leave-project/all/${adminId}`,
+      }),
+      providesTags: ["project"] as any,
+    }),
   }),
 });
 
@@ -62,5 +83,8 @@ export const {
   useGetSingleProjectQuery,
   useUpdateProjectMutation,
   useAssignedProjectsQuery,
-  useRemoveMemberMutation
+  useRemoveMemberMutation,
+  useLeaveProjectRequestMutation,
+  useGetLeaveProjectRequestsByAdminQuery,
+  useIgnoreProjectLeaveRequestMutation
 } = projectApi;

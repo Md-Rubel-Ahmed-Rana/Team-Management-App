@@ -3,10 +3,10 @@ import CreateProjectModal from "./CreateProjectModal";
 import { FaEllipsisV } from "react-icons/fa";
 import EditProjectModal from "./EditProjectModal";
 import Swal from "sweetalert2";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import { useAssignedProjectsQuery, useMyProjectsQuery } from "@/features/project/projectApi";
-import { useMyTeamsQuery } from "@/features/team/teamApi";
+import { useAssignedProjectsQuery, useMyProjectsQuery } from "@/features/project";
+import { useMyTeamsQuery } from "@/features/team";
 import { useRouter } from "next/router";
 import { IProject } from "@/interfaces/project.interface";
 

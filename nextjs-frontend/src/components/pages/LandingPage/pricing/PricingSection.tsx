@@ -1,7 +1,7 @@
 import React from "react";
 import PricingCard from "./PricingCard";
 import { IPrice } from "@/interfaces/price.interface";
-import { useGetPricingQuery } from "@/features/pricing/pricingApi";
+import { useGetPricingQuery } from "@/features/pricing";
 
 const PricingSection = () => {
   const { data } = useGetPricingQuery({});

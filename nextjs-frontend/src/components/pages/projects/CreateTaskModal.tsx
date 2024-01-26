@@ -3,11 +3,11 @@ import { Fragment, useState } from "react";
 import Select from "react-select";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import { useGetSingleProjectQuery } from "@/features/project/projectApi";
+import { useGetSingleProjectQuery } from "@/features/project";
 import { INewTask } from "@/interfaces/task.interface";
-import { useCreateTaskMutation } from "@/features/task/taskApi";
+import { useCreateTaskMutation } from "@/features/task";
 import customStyles from "@/utils/reactSelectCustomStyle";
 
 const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {

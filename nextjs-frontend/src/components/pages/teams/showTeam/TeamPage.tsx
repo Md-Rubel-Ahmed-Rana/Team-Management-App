@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { useMyTeamsQuery } from "@/features/team/teamApi";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useMyTeamsQuery } from "@/features/team";
+import { useLoggedInUserQuery } from "@/features/user";
 import { ITeam } from "@/interfaces/team.interface";
 import Link from "next/link";
 import React, { useState } from "react";

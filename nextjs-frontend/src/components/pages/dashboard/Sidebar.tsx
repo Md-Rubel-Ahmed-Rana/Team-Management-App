@@ -2,8 +2,8 @@ import React from "react";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useAssignedProjectsQuery, useMyProjectsQuery } from "@/features/project/projectApi";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useAssignedProjectsQuery, useMyProjectsQuery } from "@/features/project";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 
 const Sidebar = ({ setActiveView, activeView }: any) => {
@@ -52,6 +52,14 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
         onClick={() => handleSidebarNavigate("invitations")}
       >
         Invitations
+      </button>
+      <button
+        className={`py-2 px-4 block w-full hover:bg-gray-100 rounded-md  text-left focus:outline-none ${
+          activeView === "leave-requests" && "bg-gray-100"
+        }`}
+        onClick={() => handleSidebarNavigate("leave-requests")}
+      >
+        Leave requests
       </button>
       <button
         className={`py-2 px-4 block hover:bg-gray-100 w-full rounded-md  text-left focus:outline-none ${

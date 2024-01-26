@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { useAcceptInvitationMutation, usePendingInvitationsQuery, useRejectInvitationMutation } from "@/features/invitation/invitationApi";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useAcceptInvitationMutation, usePendingInvitationsQuery, useRejectInvitationMutation } from "@/features/invitation";
+import { useLoggedInUserQuery } from "@/features/user";
 import { ITeam } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
 import React from "react";

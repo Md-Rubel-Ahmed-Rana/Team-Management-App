@@ -3,11 +3,11 @@ import { Fragment, useState } from "react";
 import Select from "react-select";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import { useMyTeamsQuery } from "@/features/team/teamApi";
+import { useMyTeamsQuery } from "@/features/team";
 import { INewProject } from "@/interfaces/project.interface";
-import { useCreateProjectMutation } from "@/features/project/projectApi";
+import { useCreateProjectMutation } from "@/features/project";
 import customStyles from "@/utils/reactSelectCustomStyle";
 
 const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {

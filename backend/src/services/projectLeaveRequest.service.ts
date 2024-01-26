@@ -8,7 +8,7 @@ class Service {
     }
 
     async getLeaveRequestByAdmin (admin: string){
-        const result = await ProjectLeaveRequest.find({ admin })
+        const result = await ProjectLeaveRequest.find({ admin, status: "pending" })
             .populate({
                 path: 'project',
                 model: 'Project',
@@ -19,6 +19,12 @@ class Service {
                 model: 'User',
                 select: 'name',
             })
+        return result
+    }
+
+    async ignoreRequest (projectId: string, memberId: string){
+        console.log("From project ignore");
+        const result = await ProjectLeaveRequest.findOneAndUpdate({_id: projectId ,member: memberId, status: "pending"}, {$set: {status: "ignored"}})
         return result
     }
 }

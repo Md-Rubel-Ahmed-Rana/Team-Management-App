@@ -4,7 +4,7 @@ import Announcement from "../collaborations/announcements/Announcement";
 import Resources from "../collaborations/resources/Resources";
 import Discussion from "../collaborations/discussions/Discussion";
 import { useRouter } from "next/router";
-import { useSingleTeamQuery } from "@/features/team/teamApi";
+import { useSingleTeamQuery } from "@/features/team";
 import { ITeam } from "@/interfaces/team.interface";
 
 const TeamDetailsPage = () => {

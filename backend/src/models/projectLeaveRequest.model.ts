@@ -15,6 +15,11 @@ const leaveRequestSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true,
         ref: "User",
+    },
+    status: {
+        type: String,
+        enum: ["pending", "ignored", "accepted"],
+        default: "pending"
     }
 }, 
 {

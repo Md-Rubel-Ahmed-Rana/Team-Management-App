@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useSingleTeamQuery } from "@/features/team/teamApi";
+import { useSingleTeamQuery } from "@/features/team";
 import { ITeam } from "@/interfaces/team.interface";
 import Link from "next/link";
 import { useParams } from "next/navigation";

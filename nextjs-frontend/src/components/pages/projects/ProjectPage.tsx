@@ -3,13 +3,14 @@ import ProjectSidebar from "./ProjectSidebar";
 import StatusNavbar from "./StatusNavbar";
 import TaskPage from "./TaskPage";
 import AddMemberToProject from "./AddMemberToProject";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import { useAssignedProjectsQuery, useGetSingleProjectQuery, useMyProjectsQuery } from "@/features/project/projectApi";
+import { useAssignedProjectsQuery, useGetSingleProjectQuery, useLeaveProjectRequestMutation, useMyProjectsQuery } from "@/features/project";
 import { IProject } from "@/interfaces/project.interface";
-import { useGetTasksByProjectQuery } from "@/features/task/taskApi";
+import { useGetTasksByProjectQuery } from "@/features/task";
 import RemoveMemberFromProject from "./RemoveMemberFromProject";
 import { useRouter } from "next/router";
+import Swal from "sweetalert2";
 
 
 const Projects = () => {
@@ -23,6 +24,7 @@ const Projects = () => {
   const project: IProject = projectData?.data;
   const { data: projects } = useMyProjectsQuery(user?._id);
   const {data: assignedProjects} = useAssignedProjectsQuery(user?._id)
+  const [leaveRequest] = useLeaveProjectRequestMutation()
 
   const { data: tasks } = useGetTasksByProjectQuery(project?._id);
 
@@ -35,13 +37,32 @@ const Projects = () => {
     (task: any) => task.status === "Completed"
   );
 
-  const handleLeaveRequest = () => {
+  const handleLeaveRequest = async() => {
     const leaveData = {
-      projectId: project._id,
-      memberId: user._id
+      project: project?._id,
+      member: user?._id,
+      admin: project?.user
     }
-    console.log("Clicked to leave from project");
-    console.log(leaveData);
+
+    const result: any = await leaveRequest(leaveData);
+    if (result?.data?.success) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: result?.data?.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } 
+
+    if(result?.error) {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        text: result?.error?.data?.message,
+        showConfirmButton: true,
+      });
+    }
   }
 
   useEffect(() => {

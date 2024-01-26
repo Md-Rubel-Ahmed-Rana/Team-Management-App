@@ -4,7 +4,7 @@ import { BiX } from "react-icons/bi";
 import NotificationModal from "../pages/notifications/NotificationModal";
 import { useState } from "react";
 import { IUser } from "@/interfaces/user.interface";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
 
 const Navbar = () => {

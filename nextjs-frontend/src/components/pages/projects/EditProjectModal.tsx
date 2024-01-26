@@ -2,7 +2,7 @@ import React, {  Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Swal from "sweetalert2";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useUpdateProjectMutation } from "@/features/project/projectApi";
+import { useUpdateProjectMutation } from "@/features/project";
 import { IProject } from "@/interfaces/project.interface";
 
 const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {

@@ -24,6 +24,18 @@ class Controller extends RootController {
             data: result
         })
     })
+
+    ignoreRequest = this.catchAsync(async (req: Request, res: Response) =>{
+        const projectId = req.params.projectId
+        const memberId = req.params.memberId
+        const result = await ProjectLeaveRequestService.ignoreRequest(projectId, memberId)
+        this.apiResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: "Leave request ignored",
+            data: result
+        })
+    })
 }
 
 export const ProjectLeaveRequestController = new Controller()

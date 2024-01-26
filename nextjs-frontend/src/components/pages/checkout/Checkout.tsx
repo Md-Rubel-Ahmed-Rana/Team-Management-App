@@ -1,6 +1,6 @@
-import { useCheckoutMutation } from "@/features/payment/paymentApi";
-import { useGetSinglePricingQuery } from "@/features/pricing/pricingApi";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useCheckoutMutation } from "@/features/payment";
+import { useGetSinglePricingQuery } from "@/features/pricing";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IPrice } from "@/interfaces/price.interface";
 import { IUser } from "@/interfaces/user.interface";
 import { useParams } from "next/navigation";

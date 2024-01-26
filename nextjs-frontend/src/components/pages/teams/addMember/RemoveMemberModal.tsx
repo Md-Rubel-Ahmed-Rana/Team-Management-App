@@ -5,7 +5,7 @@ import Select from "react-select";
 import Swal from "sweetalert2";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
-import { useRemoveTeamMemberMutation } from "@/features/team/teamApi";
+import { useRemoveTeamMemberMutation } from "@/features/team";
 
 
 const RemoveMemberModal = ({ isRemove, setIsRemove, team }: any) => {

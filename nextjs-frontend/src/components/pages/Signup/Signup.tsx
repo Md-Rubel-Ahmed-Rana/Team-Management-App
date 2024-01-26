@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { IUser } from "@/interfaces/user.interface";
-import { useCreateUserMutation } from "@/features/user/userApi";
+import { useCreateUserMutation } from "@/features/user";
 import useUploadFile from "@/hooks/useUploadFile";
 
 const Signup = () => {

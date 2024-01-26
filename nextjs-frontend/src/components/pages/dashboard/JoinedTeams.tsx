@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TeamDetails from "./TeamDetails";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
-import { useJoinedTeamsQuery } from "@/features/team/teamApi";
+import { useLoggedInUserQuery } from "@/features/user";
+import { useJoinedTeamsQuery } from "@/features/team";
 import { ITeam } from "@/interfaces/team.interface";
 
 const JoinedTeams = () => {

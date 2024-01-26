@@ -2,8 +2,8 @@ import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Select from "react-select";
 import Swal from "sweetalert2";
-import {  useRemoveMemberMutation } from "@/features/project/projectApi";
-import { useGetActiveMembersQuery } from "@/features/team/teamApi";
+import {  useRemoveMemberMutation } from "@/features/project";
+import { useGetActiveMembersQuery } from "@/features/team";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
 

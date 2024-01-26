@@ -6,6 +6,7 @@ import PaymentPage from "./PaymentPage";
 import JoinedTeams from "./JoinedTeams";
 import PendingInvitation from "./PendingInvitation";
 import { useRouter } from "next/router";
+import LeaveRequests from "./leaveRequest/LeaveRequests";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("");
@@ -23,6 +24,7 @@ const Dashboard = () => {
           {activeView === "my-teams" && <MyTeams />}
           {activeView === "joined-teams" && <JoinedTeams />}
           {activeView === "invitations" && <PendingInvitation />}
+          {activeView === "leave-requests" && <LeaveRequests />}
           {activeView === "profile" && <ProfilePage />}
           {activeView === "payments" && <PaymentPage />}
         </main>

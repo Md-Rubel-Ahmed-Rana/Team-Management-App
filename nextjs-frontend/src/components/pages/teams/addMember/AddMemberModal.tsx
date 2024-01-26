@@ -3,8 +3,8 @@ import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Select from "react-select";
 import Swal from "sweetalert2";
-import { useGetUsersQuery } from "@/features/user/userApi";
-import { useSendInvitationMutation } from "@/features/invitation/invitationApi";
+import { useGetUsersQuery } from "@/features/user";
+import { useSendInvitationMutation } from "@/features/invitation";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
 

@@ -2,7 +2,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
-import { useLoginUserMutation } from "@/features/user/userApi";
+import { useLoginUserMutation } from "@/features/user";
 import Link from "next/link";
 
 type FormData = {

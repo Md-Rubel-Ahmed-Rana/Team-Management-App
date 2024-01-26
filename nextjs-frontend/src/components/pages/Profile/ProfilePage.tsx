@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import EditProfilePage from "./EditProfile";
-import { useLoggedInUserQuery, useUpdateUserMutation } from "@/features/user/userApi";
+import { useLoggedInUserQuery, useUpdateUserMutation } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import useUploadFile from "@/hooks/useUploadFile";
 

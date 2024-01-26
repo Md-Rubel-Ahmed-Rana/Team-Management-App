@@ -4,25 +4,56 @@ import AddMemberModal from "../teams/addMember/AddMemberModal";
 import Link from "next/link";
 import { ITeam } from "@/interfaces/team.interface";
 import RemoveMemberModal from "../teams/addMember/RemoveMemberModal";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
+import Swal from "sweetalert2";
+import { useLeaveTeamRequestMutation } from "@/features/team";
 
 const TeamDetails = ({ team }: { team: ITeam }) => {
     const [isRemove, setIsRemove] = useState(false);
-     const [isOpen, setIsOpen] = useState(false);
-     const { data: userData } = useLoggedInUserQuery({});
+    const [isOpen, setIsOpen] = useState(false);
+    const { data: userData } = useLoggedInUserQuery({});
+    const [leaveTeam] = useLeaveTeamRequestMutation()
     const user: IUser = userData?.data;
-  const {
-    name,
-    category,
-    description,
-    image,
-    admin,
-    activeMembers,
-    pendingMembers,
-    createdAt,
-  } = team;
+    const {
+      _id,
+      name,
+      category,
+      description,
+      image,
+      admin,
+      activeMembers,
+      pendingMembers,
+      createdAt,
+    } = team;
  
+  const handleRequestToLeave = async() => {
+    Swal.fire({
+          title: "Do you want to leave the this team?",
+          showCancelButton: true,
+          cancelButtonText: "No",
+          confirmButtonText: "Yeas",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const leaveData = {
+              admin: admin?._id,
+              team: _id,
+              member: user?._id
+            }
+            const leaveHandler = async () => {
+              const result: any = await leaveTeam(leaveData)
+              if (result?.data?.success) {
+                    Swal.fire("Done!", `${result?.data?.message}`, "success");
+                  } 
+                  if(result?.error) {
+                    Swal.fire("Done!", `${result?.error?.data?.message}`, "error");
+                  }
+            }
+            leaveHandler()
+          }
+        });
+    console.log("Clicked to leave");
+  }
 
   return (
     <div className="p-4 flex gap-5 shadow-md rounded-lg">
@@ -78,12 +109,23 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
         </p>
             </>
           }
+
+          {
+            admin?._id !== user?._id &&  <p>
+          <button
+          onClick={handleRequestToLeave}
+            className="bg-blue-300 mx-auto outline-none  border-2 px-5 py-2 rounded-lg"
+          >
+            Request to leave
+          </button>
+        </p>
+          }
           
         <p>
           <Link
-            className="bg-blue-300 font-medium px-5 py-2 rounded-md"
+            className="bg-sky-600 text-white font-medium px-5 py-2 rounded-md"
             href={{
-                    pathname: `/teams/${team._id}`,
+                    pathname: `/teams/${team?._id}`,
                     query: { team: team?.name, category: team?.category, collaborate: "Discussion"},
                   }}
                 >

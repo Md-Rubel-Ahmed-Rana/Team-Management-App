@@ -3,6 +3,7 @@ import Team from "../models/team.model";
 import ApiError from "../shared/apiError";
 import { ITeam } from "../interfaces/team.interface";
 import { Project } from "../models/project.model";
+import { TeamLeaveRequest } from "../models/teamLeaveRequest.model";
 
 class Service {
   async createTeam(data: ITeam): Promise<ITeam> {
@@ -227,6 +228,9 @@ class Service {
       return project.save();
     });
     await Promise.all(updatePromises);
+
+    // update leave request for team
+    await TeamLeaveRequest.findOneAndUpdate({team: teamId}, {$set: {status: "accepted"}})
   }
 }
 export const TeamService = new Service();

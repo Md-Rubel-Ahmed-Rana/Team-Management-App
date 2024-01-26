@@ -2,7 +2,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
 import { FaCamera } from "react-icons/fa";
-import { useLoggedInUserQuery, useUpdateUserMutation } from "@/features/user/userApi";
+import { useLoggedInUserQuery, useUpdateUserMutation } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import useUploadFile from "@/hooks/useUploadFile";
 

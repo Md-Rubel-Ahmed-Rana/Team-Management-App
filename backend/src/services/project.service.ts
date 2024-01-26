@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import { IProject } from "../interfaces/project.interface";
 import { Project } from "../models/project.model";
 import ApiError from "../shared/apiError";
+import { ProjectLeaveRequest } from "../models/projectLeaveRequest.model";
 
 class Service {
   async createProject(data: IProject): Promise<IProject> {
@@ -98,6 +99,9 @@ class Service {
     project.members.splice(memberIndex, 1);
 
     const result = await project.save();
+
+    // update leave request for project
+    await ProjectLeaveRequest.findOneAndUpdate({project: projectId}, {$set: {status: "accepted"}})
 
     return result;
     }

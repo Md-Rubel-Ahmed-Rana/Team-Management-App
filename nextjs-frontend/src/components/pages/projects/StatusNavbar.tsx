@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import CreateTaskModal from "./CreateTaskModal";
 import StatusNavButton from "@/components/shared/StatusNavButton";
 import { IProject } from "@/interfaces/project.interface";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 
 type Props = {

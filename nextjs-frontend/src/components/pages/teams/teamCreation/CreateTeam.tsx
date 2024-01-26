@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { useCreateTeamMutation } from "@/features/team/teamApi";
-import { useLoggedInUserQuery } from "@/features/user/userApi";
+import { useCreateTeamMutation } from "@/features/team";
+import { useLoggedInUserQuery } from "@/features/user";
 import useUploadFile from "@/hooks/useUploadFile";
 import { ITeam } from "@/interfaces/team.interface";
 import { Dialog, Transition } from "@headlessui/react";
