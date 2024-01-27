@@ -8,7 +8,9 @@ export const config = {
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID as string,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    callbackUrl:  process.env.GOOGLE_CALLBACK_URL as string
+    callbackUrl: process.env.GOOGLE_CALLBACK_URL as string,
+    appUser: process.env.GOOGLE_APP_USER as string,
+    appPass: process.env.GOOGLE_APP_PASSWORD as string,
   },
   app: {
     port: process.env.PORT,
