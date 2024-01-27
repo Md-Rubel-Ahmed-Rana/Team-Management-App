@@ -10,7 +10,7 @@ type Inputs = {
 };
 
 const ContactSection = () => {
-  const { register, handleSubmit } = useForm<Inputs>();
+  const { register, handleSubmit, reset } = useForm<Inputs>();
   const [sendEmail] = useSendContactEmailMutation();
 
   const handleSendEmail: SubmitHandler<Inputs> = async (data) => {
@@ -25,6 +25,7 @@ const ContactSection = () => {
         showConfirmButton: true,
         confirmButtonText: "Okay",
       });
+      reset();
     }
     if (result?.error) {
       Swal.fire({

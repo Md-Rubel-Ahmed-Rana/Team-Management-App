@@ -2,7 +2,24 @@ import React from "react";
 import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from "react-icons/fa";
 import SocialIcon from "./SocialIcon";
 
-const icons = [<FaFacebook key={""}/>, <FaTwitter key={""} />, <FaLinkedin key={""} />, <FaInstagram key={""} />];
+const socialIcons = [
+  {
+    icon: <FaFacebook key={""} />,
+    link: "https://www.facebook.com/mdrubelahmed.rana.98",
+  },
+  {
+    icon: <FaTwitter key={""} />,
+    link: "https://twitter.com/MdRubelAhmed521",
+  },
+  {
+    icon: <FaLinkedin key={""} />,
+    link: "https://www.linkedin.com/in/md-rubel-ahmed-rana/",
+  },
+  {
+    icon: <FaInstagram key={""} />,
+    link: "https://www.instagram.com/mdrubelahmed.rana.98/",
+  },
+];
 
 const Footer = () => {
   return (
@@ -13,12 +30,12 @@ const Footer = () => {
           <p className="text-sm">Streamlining teamwork for success.</p>
         </div>
         <div className="flex space-x-4">
-          {icons.map((icon, index) => (
+          {socialIcons.map((icon, index) => (
             <SocialIcon
               key={index}
               style="text-blue-400 hover:text-gray-500 transition duration-300 text-4xl"
-              icon={icon}
-              link="#"
+              icon={icon?.icon}
+              link={icon?.link}
             />
           ))}
         </div>
