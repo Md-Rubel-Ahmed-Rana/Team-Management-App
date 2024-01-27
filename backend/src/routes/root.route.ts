@@ -11,6 +11,7 @@ import { ProjectLeaveRequestRoutes } from "./projectLeaveRequest.route";
 import { GooglOAuthRoutes } from "./googleOAuth.route";
 import { MailRoutes } from "./mail.route";
 import { MessageRoutes } from "./message.route";
+import { FileUploadRoutes } from "./uploadfile.route";
 
 const router = Router();
 
@@ -37,5 +38,7 @@ router.use("/google", GooglOAuthRoutes);
 router.use("/mail", MailRoutes);
 
 router.use("/message", MessageRoutes);
+
+router.use("/cloudinary", FileUploadRoutes);
 
 export const RootRoutes = router;

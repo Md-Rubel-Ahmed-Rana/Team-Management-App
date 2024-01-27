@@ -7,6 +7,11 @@ const messageSchema = new Schema<IMessage>({
     ref: "User",
     required: true,
   },
+  conversationId: {
+    type: Schema.Types.ObjectId,
+    ref: "Team",
+    required: true,
+  },
   type: {
     type: String,
     enum: ["announcement", "resources", "discussion"],

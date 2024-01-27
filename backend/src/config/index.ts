@@ -16,6 +16,11 @@ export const config = {
     port: process.env.PORT,
     environment: process.env.NODE_ENV as string,
   },
+  cloudinary: {
+    cloudinaryName: process.env.CLOUDINARY_API_NAME,
+    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+    cloudinarySecretKey: process.env.CLOUDINARY_API_SECRET,
+  },
   jwt: {
     accessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET as string,
     accessTokenExpired: process.env.ACCESS_TOKEN_EXPIRES_IN as string,
