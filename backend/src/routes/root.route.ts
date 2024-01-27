@@ -10,6 +10,7 @@ import { TeamLeaveRequestRoutes } from "./teamLeaveRequest.route";
 import { ProjectLeaveRequestRoutes } from "./projectLeaveRequest.route";
 import { GooglOAuthRoutes } from "./googleOAuth.route";
 import { MailRoutes } from "./mail.route";
+import { MessageRoutes } from "./message.route";
 
 const router = Router();
 
@@ -34,5 +35,7 @@ router.use("/leave-project", ProjectLeaveRequestRoutes);
 router.use("/google", GooglOAuthRoutes);
 
 router.use("/mail", MailRoutes);
+
+router.use("/message", MessageRoutes);
 
 export const RootRoutes = router;
