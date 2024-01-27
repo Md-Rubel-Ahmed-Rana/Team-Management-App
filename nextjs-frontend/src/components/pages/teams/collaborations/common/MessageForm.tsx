@@ -5,22 +5,45 @@ import { FaLink, FaImage, FaFile } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import LinkModal from "./LinkModal";
+import useUploadMultipleImage from "@/hooks/useUploadMultipleImage";
+import useUploadMultipleFile from "@/hooks/useUploadMultipleFiles";
+import { useSendMessageMutation } from "@/features/message";
+import { useLoggedInUserQuery } from "@/features/user";
+import { IUser } from "@/interfaces/user.interface";
 
 type Inputs = {
+  poster?: string;
+  conversationId?: string;
+  type?: string;
   text?: string;
-  images?: FileList;
-  files?: FileList;
+  images?: FileList | string[];
+  files?: FileList | string[];
   links?: string[];
 };
 
-const MessageForm = () => {
-  const { register, handleSubmit } = useForm<Inputs>();
+type Props = {
+  teamId: string;
+  type: string;
+};
+
+const MessageForm = ({ teamId, type }: Props) => {
+  const { data: userData } = useLoggedInUserQuery({});
+  const user: IUser = userData?.data;
+  const { register, handleSubmit, reset, getValues } = useForm<Inputs>({
+    mode: "onChange",
+  });
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const [filePreview, setFilePreview] = useState<string[]>([]);
-  const [images, setImages] = useState<FileList | undefined | null>();
-  const [files, setFiles] = useState<FileList | undefined | null>();
+  const [images, setImages] = useState<FileList | undefined | null>(null);
+  const [files, setFiles] = useState<FileList | undefined | null>(null);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [links, setLinks] = useState<string[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [filesUrls, setFileUrls] = useState<string[]>([]);
+  const uploadImages = useUploadMultipleImage();
+  const uploadFiles = useUploadMultipleFile();
+  const [sendMessage] = useSendMessageMutation();
+  const [isMessage, setIsMessage] = useState(false);
 
   const openLinkModal = () => {
     setShowLinkModal(true);
@@ -32,14 +55,33 @@ const MessageForm = () => {
 
   const handleLinkModalSubmit = (link: string) => {
     setLinks((prev: string[]) => [...prev, link]);
-    console.log("Link submitted:", link);
   };
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    data.files = files!;
-    data.images = images!;
+  const handleSendMessage: SubmitHandler<Inputs> = async (data) => {
+    if (files && files?.length > 0) {
+      await uploadFiles(files, setFileUrls);
+    }
+    if (images && images.length > 0) {
+      await uploadImages(images, setImageUrls);
+    }
+    data.files = filesUrls!;
+    data.images = imageUrls!;
     data.links = links;
-    console.log(data);
+    data.poster = user._id;
+    data.conversationId = teamId;
+    data.type = type;
+    const result: any = await sendMessage(data);
+    if (result?.data?.success) {
+      setImagePreview([]);
+      setFilePreview([]);
+      setImages(null);
+      setFiles(null);
+      setShowLinkModal(false);
+      setLinks([]);
+      setImageUrls([]);
+      setFileUrls([]);
+      reset();
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +91,7 @@ const MessageForm = () => {
       const previewUrls = Array.from(files).map((file) =>
         URL.createObjectURL(file)
       );
-      setImagePreview(previewUrls);
+      setImagePreview((prev) => prev.concat(previewUrls));
     }
   };
 
@@ -58,7 +100,7 @@ const MessageForm = () => {
     setFiles(files);
     if (files) {
       const previewUrls = Array.from(files).map((file) => file.name);
-      setFilePreview(previewUrls);
+      setFilePreview((prev) => prev.concat(previewUrls));
     }
   };
 
@@ -151,7 +193,7 @@ const MessageForm = () => {
       )}
 
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(handleSendMessage)}
         className="flex flex-wrap gap-3 items-center"
       >
         <label className="mr-2 cursor-pointer" onClick={openLinkModal}>
@@ -173,13 +215,16 @@ const MessageForm = () => {
         </label>
 
         <label htmlFor="files" className="mr-2 cursor-pointer">
-          <FaFile className="text-blue-500 hover:underline" />
+          <FaFile
+            title="Only pdf and video file supported"
+            className="text-blue-500 hover:underline"
+          />
           <input
             type="file"
             id="files"
             {...register("files")}
             className="hidden"
-            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, text/plain, application/zip, application/x-zip-compressed"
+            accept="application/pdf, pdf,mp4,avi,mov,mkv,wmv,flv,mpeg,mpg,webm,3gp"
             onChange={handleFileChange}
             multiple
           />
@@ -189,12 +234,26 @@ const MessageForm = () => {
           type="text"
           {...register("text")}
           placeholder="Type your message..."
+          onChange={(e) => setIsMessage(e.target.value ? true : false)}
           className="border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500 flex-grow"
         />
 
         <button
+          disabled={
+            links.length <= 0 &&
+            filePreview.length <= 0 &&
+            imagePreview.length <= 0 &&
+            !isMessage
+          }
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none"
+          className={`${
+            links.length <= 0 &&
+            filePreview.length <= 0 &&
+            imagePreview.length <= 0 &&
+            !isMessage
+              ? "bg-gray-500 hover:bg-gray-600"
+              : "bg-blue-500 hover:bg-blue-600"
+          } text-white px-4 py-2 rounded-md  focus:outline-none`}
         >
           <IoSend />
         </button>

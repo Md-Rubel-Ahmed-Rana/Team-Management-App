@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from "react";
 interface Poster {
   name: string;
-  image: string;
+  profile_picture: string;
 }
 
 export interface Post {
@@ -31,24 +31,24 @@ const ShowMessages = ({ messages }: Props) => {
       ref={messagesContainerRef}
       className="mx-auto mt-8 h-60  overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
     >
-      {messages.map((post, index) => (
+      {messages?.map((post, index) => (
         <div
           key={index}
           className="mx-auto bg-white shadow-lg rounded-md p-6 mb-8"
         >
           <div className="flex items-center mb-4">
             <img
-              src={post.poster.image}
-              alt={post.poster.name}
+              src={post?.poster?.profile_picture}
+              alt={post?.poster?.name}
               className="w-10 h-10 rounded-full mr-4"
             />
-            <span className="font-bold">{post.poster.name}</span>
+            <span className="font-bold">{post?.poster?.name}</span>
           </div>
-          <p className="text-gray-800 mb-4">{post.text}</p>
+          <p className="text-gray-800 mb-4">{post?.text}</p>
 
-          {post.images.length > 0 && (
+          {post?.images?.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-4">
-              {post.images.map((image, imageIndex) => (
+              {post?.images?.map((image, imageIndex) => (
                 <img
                   key={imageIndex}
                   src={image}
@@ -59,9 +59,9 @@ const ShowMessages = ({ messages }: Props) => {
             </div>
           )}
 
-          {post.files.length > 0 && (
+          {post?.files?.length > 0 && (
             <div className="mb-4">
-              {post.files.map((file, fileIndex) => (
+              {post?.files?.map((file, fileIndex) => (
                 <a
                   key={fileIndex}
                   href={file}
@@ -73,9 +73,9 @@ const ShowMessages = ({ messages }: Props) => {
             </div>
           )}
 
-          {post.links.length > 0 && (
+          {post?.links?.length > 0 && (
             <div className="mb-4">
-              {post.links.map((link, linkIndex) => (
+              {post?.links?.map((link, linkIndex) => (
                 <a
                   key={linkIndex}
                   href={link}

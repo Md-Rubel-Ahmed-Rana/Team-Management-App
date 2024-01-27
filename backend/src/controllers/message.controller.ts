@@ -16,7 +16,11 @@ class Controller extends RootController {
 
   getMessagesByType = this.catchAsync(async (req: Request, res: Response) => {
     const messageType = req.params.type;
-    const messages = await MessageService.getMessagesByType(messageType);
+    const conversationId = req.params.conversationId;
+    const messages = await MessageService.getMessagesByType(
+      messageType,
+      conversationId
+    );
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

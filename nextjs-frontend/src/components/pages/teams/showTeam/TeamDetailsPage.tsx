@@ -14,16 +14,16 @@ const TeamDetailsPage = () => {
   const [activeNav, setActiveNav] = useState<any>("Discussion");
 
   const handleChangeCollaborate = (text: string) => {
-    setActiveNav(text)
+    setActiveNav(text);
     router.push({
       pathname: router.pathname,
       query: { ...router.query, collaborate: text },
     });
-  }
+  };
 
   useEffect(() => {
-    setActiveNav(router?.query?.collaborate)
-  }, [router?.query?.collaborate])
+    setActiveNav(router?.query?.collaborate);
+  }, [router?.query?.collaborate]);
 
   return (
     <div className="flex gap-5">
@@ -132,9 +132,9 @@ const TeamDetailsPage = () => {
           </ul>
         </nav>
         <div>
-          {activeNav === "Announcement" && <Announcement />}
-          {activeNav === "Resources" && <Resources />}
-          {activeNav === "Discussion" && <Discussion />}
+          {activeNav === "Announcement" && <Announcement teamId={team?._id} />}
+          {activeNav === "Resources" && <Resources teamId={team?._id} />}
+          {activeNav === "Discussion" && <Discussion teamId={team?._id} />}
         </div>
       </div>
     </div>

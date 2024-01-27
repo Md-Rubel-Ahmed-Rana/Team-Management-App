@@ -7,13 +7,15 @@ class Service {
     return result;
   }
 
-  async getMessagesByType(messageType: string) {
-    const result = await Message.find({ type: messageType })
-      .populate({
-        path: "poster",
-        model: "User",
-      })
-      .exec();
+  async getMessagesByType(messageType: string, conversationId: string) {
+    const result = await Message.find({
+      type: messageType,
+      conversationId,
+    }).populate({
+      path: "poster",
+      model: "User",
+      select: ["name", "profile_picture"],
+    });
 
     return result;
   }
