@@ -1,16 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
+import { IFeature } from "@/interfaces/feature.interface";
 import React from "react";
 
 type Props = {
-  feature: {
-    title: string;
-    description: string;
-    image?: string;
-  };
-  limit: number;
+  feature: IFeature;
 };
 
-const FeatureCard = ({ feature, limit }: Props) => {
+const FeatureCard = ({ feature }: Props) => {
   const { title, description, image } = feature;
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">

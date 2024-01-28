@@ -3,22 +3,22 @@ import { useGetSinglePricingQuery } from "@/features/pricing";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IPrice } from "@/interfaces/price.interface";
 import { IUser } from "@/interfaces/user.interface";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 import React from "react";
 
 const CheckoutPage = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const  id  = useParams();
-  const { data: pricingData } = useGetSinglePricingQuery(id);
+  const { query } = useRouter();
+  const { data: pricingData } = useGetSinglePricingQuery(query?.id);
   const paymentData: IPrice = pricingData?.data;
   const [checkout, { isLoading }] = useCheckoutMutation();
 
   const payment = [
     {
-      userId: user._id,
+      user: user?._id,
       quantity: 1,
-      package: id,
+      package: query?.id,
     },
   ];
 
@@ -38,9 +38,9 @@ const CheckoutPage = () => {
         <div className="lg:flex gap-10 py-10 w-full">
           <div className="mb-4 w-1/2">
             <h3 className="text-xl font-bold">User Information</h3>
-            <p>Name: {user.name}</p>
-            <p>Email: {user.email}</p>
-            <p>User ID: {user._id}</p>
+            <p>Name: {user?.name}</p>
+            <p>Email: {user?.email}</p>
+            <p>User ID: {user?._id}</p>
           </div>
           <div className="mb-4 w-1/2">
             <h3 className="text-xl font-bold">Payment Information</h3>

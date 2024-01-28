@@ -28,8 +28,6 @@ class Service {
       };
     });
 
-    console.log({ storedData });
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -40,7 +38,7 @@ class Service {
 
     // store payment data in database
     const paymentData = items.map((item: any) => ({
-      userId: item.userId,
+      user: item.user,
       package: item.package,
       sessionId: session?.id,
     }));
