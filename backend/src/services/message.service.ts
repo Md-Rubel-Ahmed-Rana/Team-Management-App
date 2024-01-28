@@ -47,13 +47,13 @@ class Service {
       messageId,
       { $set: { text } },
       { new: true }
-    ).exec();
+    );
 
     return result;
   }
 
   async deleteMessage(messageId: string) {
-    const result = await Message.findByIdAndDelete(messageId).exec();
+    const result = await Message.findByIdAndDelete(messageId);
     return result;
   }
 }

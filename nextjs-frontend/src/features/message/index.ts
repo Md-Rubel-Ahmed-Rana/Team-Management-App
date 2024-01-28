@@ -8,14 +8,38 @@ const messageApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["message"] as any,
+    }),
+
+    deleteMessage: builder.mutation({
+      query: (id) => ({
+        url: `/message/delete/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["message"] as any,
+    }),
+
+    editMessage: builder.mutation({
+      query: ({ id, text }) => ({
+        url: `/message/update/${id}`,
+        method: "PATCH",
+        body: { text },
+      }),
+      invalidatesTags: ["message"] as any,
     }),
 
     getMessagesByType: builder.query({
       query: ({ type, conversationId }) => ({
         url: `/message//by-type/${type}/${conversationId}`,
       }),
+      providesTags: ["message"] as any,
     }),
   }),
 });
 
-export const { useSendMessageMutation, useGetMessagesByTypeQuery } = messageApi;
+export const {
+  useSendMessageMutation,
+  useGetMessagesByTypeQuery,
+  useDeleteMessageMutation,
+  useEditMessageMutation,
+} = messageApi;

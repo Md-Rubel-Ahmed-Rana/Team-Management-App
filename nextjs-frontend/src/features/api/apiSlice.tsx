@@ -5,7 +5,7 @@ const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:5000",
   }),
-  tagTypes: ["user", "team", "project", "task", "invitation"] as any,
+  tagTypes: ["user", "team", "project", "task", "invitation", "message"] as any,
   endpoints: () => ({}),
 });
 

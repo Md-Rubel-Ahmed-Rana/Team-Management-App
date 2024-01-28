@@ -15,6 +15,6 @@ router.get("/by-id/:id", MessageController.getMessageById);
 
 router.post("/send", MessageController.createMessage);
 
-router.patch("/update-text/:id", MessageController.updateMessage);
+router.patch("/update/:id", MessageController.updateMessage);
 
 export const MessageRoutes = router;
