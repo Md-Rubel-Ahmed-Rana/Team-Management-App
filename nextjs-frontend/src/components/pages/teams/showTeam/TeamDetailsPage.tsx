@@ -107,7 +107,7 @@ const TeamDetailsPage = () => {
                 onClick={() => handleChangeCollaborate("Announcement")}
                 className={`${
                   activeNav === "Announcement" && "bg-gray-200 text-black"
-                }   px-4 py-2 flex items-center gap-2 rounded-md shadow-md`}
+                }   px-4 py-2 flex items-center gap-2 text-xl rounded-md shadow-md`}
               >
                 <TbSpeakerphone />
                 <small>Announcement</small>
@@ -117,7 +117,7 @@ const TeamDetailsPage = () => {
               <button
                 className={`${
                   activeNav === "Resources" && "bg-gray-200 text-black"
-                }   px-4 py-2 flex items-center gap-2 rounded-md shadow-md`}
+                }   px-4 py-2 flex items-center gap-2 text-xl rounded-md shadow-md`}
                 onClick={() => handleChangeCollaborate("Resources")}
               >
                 <GrResources />
@@ -128,7 +128,7 @@ const TeamDetailsPage = () => {
               <button
                 className={`${
                   activeNav === "Discussion" && "bg-gray-200 text-black"
-                }   px-4 py-2 flex items-center gap-2 rounded-md shadow-md`}
+                }   px-4 py-2 flex items-center gap-2 text-xl rounded-md shadow-md`}
                 onClick={() => handleChangeCollaborate("Discussion")}
               >
                 <RiMessage2Line />

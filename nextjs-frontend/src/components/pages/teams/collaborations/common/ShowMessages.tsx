@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import ShowImageFullScreen from "@/components/shared/ShowImageFullScreen";
 import {
   useDeleteMessageMutation,
   useEditMessageMutation,
@@ -32,6 +33,8 @@ const ShowMessages = ({ messages }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [isEdit, setIsEdit] = useState({ index: 0, status: false });
   const [editedMessage, setEditedMessage] = useState<string | undefined>("");
+  const [imageModalOpen, setImageModalOpen] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<string>("");
   const [isEditMessage, setIsEditMessage] = useState<{
     id: string | undefined;
     status: boolean;
@@ -43,6 +46,12 @@ const ShowMessages = ({ messages }: Props) => {
   const user: IUser = userData?.data;
   const [deleteMessage] = useDeleteMessageMutation();
   const [editMessage] = useEditMessageMutation();
+
+  const handleShowImageFullScreen = (image: string) => {
+    console.log("Clicked on image", image);
+    setSelectedImage(image);
+    setImageModalOpen(true);
+  };
 
   const handleDeleteMessage = async (id: string | undefined) => {
     const result: any = await deleteMessage(id);
@@ -152,13 +161,23 @@ const ShowMessages = ({ messages }: Props) => {
             <div className="my-4 flex flex-wrap gap-4">
               {post?.images?.map((image, imageIndex) => (
                 <img
+                  onClick={() => handleShowImageFullScreen(image)}
                   key={imageIndex}
                   src={image}
-                  alt={`Announcement ${imageIndex}`}
-                  className="w-20 h-20 rounded-md"
+                  alt={"message image"}
+                  className="w-20 h-20 rounded-md cursor-pointer"
                 />
               ))}
             </div>
+          )}
+
+          {/* image showing full screen modal  */}
+          {imageModalOpen && selectedImage && (
+            <ShowImageFullScreen
+              image={selectedImage}
+              setSelectedImage={setSelectedImage}
+              setImageModalOpen={setImageModalOpen}
+            />
           )}
 
           {post?.files?.length > 0 && (
