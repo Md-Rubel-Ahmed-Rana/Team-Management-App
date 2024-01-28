@@ -3,14 +3,31 @@ import express, { NextFunction, Request, Response } from "express";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import { RootRoutes } from "./routes/root.route";
 import httpStatus from "http-status";
-import session from 'express-session';
-import passport from 'passport';
+import { Server, Socket } from "socket.io";
+import http from "http";
+import session from "express-session";
+import passport from "passport";
 import { config } from "./config";
 
 const app = express();
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+
 app.use(cors());
 app.use(express.json());
-app.use(session({ secret: config.google.clientSecret, resave: true, saveUninitialized: true }));
+app.use(
+  session({
+    secret: config.google.clientSecret,
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -46,12 +63,20 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // Serialize user into the session
 passport.serializeUser((user, done) => {
-    done(null, user);
+  done(null, user);
 });
 
 // Deserialize user from the session
 passport.deserializeUser((user: any, done) => {
-    done(null, user);
+  done(null, user);
 });
 
-export default app;
+// connecting to socket.io
+io.on("connection", (socket: Socket) => {
+  console.log("A user connected");
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
+
+export default server;

@@ -44,6 +44,9 @@
       ],
       "@/hooks/*": [
         "hooks/*"
+      ],
+      "@/context/*": [
+        "context/*"
       ]
     },
     "plugins": [
