@@ -15,7 +15,7 @@ const FeaturesSection = ({ limit = 3 }: Props) => {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {featureData.slice(0, limit).map((feature, index) => (
-          <FeatureCard key={index} feature={feature} />
+          <FeatureCard key={index} feature={feature} limit={limit} />
         ))}
       </div>
       {limit <= 3 && (

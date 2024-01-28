@@ -6,6 +6,9 @@ import Discussion from "../collaborations/discussions/Discussion";
 import { useRouter } from "next/router";
 import { useSingleTeamQuery } from "@/features/team";
 import { ITeam } from "@/interfaces/team.interface";
+import { TbSpeakerphone } from "react-icons/tb";
+import { GrResources } from "react-icons/gr";
+import { RiMessage2Line } from "react-icons/ri";
 
 const TeamDetailsPage = () => {
   const router = useRouter();
@@ -104,29 +107,32 @@ const TeamDetailsPage = () => {
                 onClick={() => handleChangeCollaborate("Announcement")}
                 className={`${
                   activeNav === "Announcement" && "bg-gray-200 text-black"
-                }   px-4 py-2 rounded-md shadow-md`}
+                }   px-4 py-2 flex items-center gap-2 rounded-md shadow-md`}
               >
-                Announcement
+                <TbSpeakerphone />
+                <small>Announcement</small>
               </button>
             </li>
             <li>
               <button
                 className={`${
                   activeNav === "Resources" && "bg-gray-200 text-black"
-                }   px-4 py-2 rounded-md shadow-md`}
+                }   px-4 py-2 flex items-center gap-2 rounded-md shadow-md`}
                 onClick={() => handleChangeCollaborate("Resources")}
               >
-                Resources
+                <GrResources />
+                <small>Resources</small>
               </button>
             </li>
             <li>
               <button
                 className={`${
                   activeNav === "Discussion" && "bg-gray-200 text-black"
-                }   px-4 py-2 rounded-md shadow-md`}
+                }   px-4 py-2 flex items-center gap-2 rounded-md shadow-md`}
                 onClick={() => handleChangeCollaborate("Discussion")}
               >
-                Discussion
+                <RiMessage2Line />
+                <small>Discussion</small>
               </button>
             </li>
           </ul>

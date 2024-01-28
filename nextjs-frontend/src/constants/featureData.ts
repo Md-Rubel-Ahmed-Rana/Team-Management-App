@@ -3,16 +3,19 @@ const featureData = [
     title: "Task and Project Management",
     description:
       "Assign tasks, set deadlines, and track project progress seamlessly.",
+    image: "https://i.ibb.co/SVWtXDH/Task-And-Project-Management.png",
   },
   {
     title: "Communication Hub",
     description:
       "Facilitate real-time communication and collaboration within your team.",
+    image: "https://i.ibb.co/TBkrLWZ/Communication-Hub.png",
   },
   {
     title: "Analytics and Reporting",
     description:
       "Gain insights into your team's performance with advanced analytics and reporting tools.",
+    image: "https://i.ibb.co/pdV34BJ/Analytics-And-Reporting.png",
   },
   {
     title: "File Sharing and Collaboration",
