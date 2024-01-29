@@ -65,22 +65,17 @@ const ShowMessages = ({ messages }: Props) => {
     }
   };
 
-  // Add a useEffect hook to listen for incoming messages
   useEffect(() => {
     const handleMessage = (data: IMessage) => {
-      // Handle the incoming message, e.g., update UI
-      console.log("Received message:", data);
       setRealTimeMessages((prev: IMessage[]) => [...prev, data]);
     };
 
-    // Add the event listener for the "message" event
     socket.on("message", handleMessage);
 
-    // Clean up the event listener when the component is unmounted
     return () => {
       socket.off("message", handleMessage);
     };
-  }, [setRealTimeMessages, socket]); // Ensure that the effect runs only when the socket changes
+  }, [setRealTimeMessages, socket]);
 
   // keep updated message in state
   useEffect(() => {
@@ -103,7 +98,7 @@ const ShowMessages = ({ messages }: Props) => {
       {realTimeMessages?.map((post: IMessage, index: number) => (
         <div
           key={post?._id}
-          className="mx-auto bg-white shadow-lg rounded-md p-6 mb-8"
+          className="mx-auto shadow-lg rounded-md p-6 mb-8"
           onMouseOver={() => setIsEdit({ index: index, status: true })}
           onMouseLeave={() => setIsEdit({ index: 0, status: false })}
         >
@@ -153,20 +148,20 @@ const ShowMessages = ({ messages }: Props) => {
               <p className="flex gap-2">
                 <button
                   onClick={() => setIsEditMessage({ id: "", status: false })}
-                  className="bg-gray-400 px-3 rounded-sm"
+                  className="border px-3 rounded-sm"
                 >
-                  cancel
+                  Cancel
                 </button>
                 <button
                   onClick={handleEditMessage}
-                  className="bg-blue-400 px-3 rounded-sm"
+                  className="border px-3 rounded-sm"
                 >
-                  save
+                  Save
                 </button>
               </p>
             </div>
           ) : (
-            <p className="text-gray-800 mb-4">{post?.text}</p>
+            <p className="mb-4">{post?.text}</p>
           )}
 
           {post?.images?.length > 0 && (

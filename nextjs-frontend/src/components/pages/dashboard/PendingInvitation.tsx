@@ -1,5 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { useAcceptInvitationMutation, usePendingInvitationsQuery, useRejectInvitationMutation } from "@/features/invitation";
+import {
+  useAcceptInvitationMutation,
+  usePendingInvitationsQuery,
+  useRejectInvitationMutation,
+} from "@/features/invitation";
 import { useLoggedInUserQuery } from "@/features/user";
 import { ITeam } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
@@ -100,13 +104,13 @@ const PendingInvitation = () => {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => handleAcceptInvitation(_id)}
-                    className="bg-blue-600 px-5 py-2 rounded-md text-white"
+                    className="px-5 py-2 rounded-md border"
                   >
                     Accept
                   </button>
                   <button
                     onClick={() => handleRejectInvitation(_id)}
-                    className="bg-yellow-600 px-5 py-2 rounded-md text-white"
+                    className="px-5 py-2 rounded-md border"
                   >
                     Reject
                   </button>

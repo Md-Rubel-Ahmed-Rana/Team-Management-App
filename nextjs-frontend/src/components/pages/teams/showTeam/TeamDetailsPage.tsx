@@ -113,7 +113,7 @@ const TeamDetailsPage = () => {
               <button
                 onClick={() => handleChangeCollaborate("Announcement")}
                 className={`${
-                  activeNav === "Announcement" && "bg-gray-200 text-black"
+                  activeNav === "Announcement" && "bg-gray-200 dark:bg-gray-600"
                 }   px-4 py-2 flex items-center gap-2 text-xl rounded-md shadow-md`}
               >
                 <TbSpeakerphone />
@@ -123,7 +123,7 @@ const TeamDetailsPage = () => {
             <li>
               <button
                 className={`${
-                  activeNav === "Resources" && "bg-gray-200 text-black"
+                  activeNav === "Resources" && "bg-gray-200 dark:bg-gray-600"
                 }   px-4 py-2 flex items-center gap-2 text-xl rounded-md shadow-md`}
                 onClick={() => handleChangeCollaborate("Resources")}
               >
@@ -134,7 +134,7 @@ const TeamDetailsPage = () => {
             <li>
               <button
                 className={`${
-                  activeNav === "Discussion" && "bg-gray-200 text-black"
+                  activeNav === "Discussion" && "bg-gray-200 dark:bg-gray-600"
                 }   px-4 py-2 flex items-center gap-2 text-xl rounded-md shadow-md`}
                 onClick={() => handleChangeCollaborate("Discussion")}
               >

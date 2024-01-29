@@ -45,9 +45,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
       <form onSubmit={handleSubmit(handleEditProfile)} className="mt-4">
         {!isChangeImage && (
           <div className="mb-4 relative">
-            <label className="block text-sm font-medium text-gray-600">
-              Image
-            </label>
+            <label className="block text-sm font-medium ">Image</label>
             <img
               className="w-20 h-20 rounded-full border-2 "
               src={user?.profile_picture}
@@ -123,14 +121,14 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
             className="mt-1 p-2 w-full border rounded-md"
           />
         </div>
-        <div className="mt-4">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
-          >
+        <div className="mt-4 flex items-center gap-4">
+          <button type="submit" className="border px-4 py-2 rounded-md">
             Save Changes
           </button>
-          <button onClick={() => setIsEdit(false)} className="text-blue-500">
+          <button
+            onClick={() => setIsEdit(false)}
+            className="border px-4 py-2 rounded-md"
+          >
             Cancel
           </button>
         </div>

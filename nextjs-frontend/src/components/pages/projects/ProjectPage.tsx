@@ -102,7 +102,7 @@ const Projects = () => {
                 {project?.user === user?._id && (
                   <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-blue-700 text-white px-4 py-1 rounded-md"
+                    className="border px-4 py-1 rounded-md"
                   >
                     Add Member
                   </button>
@@ -113,7 +113,7 @@ const Projects = () => {
                     <p className="flex flex-col gap-2">
                       <button
                         onClick={() => setIsRemove(true)}
-                        className="bg-blue-700 text-white px-4 py-1 rounded-md"
+                        className="border px-4 py-1 rounded-md"
                       >
                         Remove Member
                       </button>

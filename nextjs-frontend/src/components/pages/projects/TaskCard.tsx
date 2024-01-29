@@ -1,5 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { useDeleteTaskMutation, useUpdateStatusMutation, useUpdateTaskMutation } from "@/features/task";
+import {
+  useDeleteTaskMutation,
+  useUpdateStatusMutation,
+  useUpdateTaskMutation,
+} from "@/features/task";
 import { useState } from "react";
 
 import toast from "react-hot-toast";
@@ -90,7 +94,7 @@ const TaskCard = ({ task, style }: Props) => {
         <p>Status: {status}</p>
         <select
           onChange={(e) => handleChangeStatus(e.target.value)}
-          className="rounded-md bg-white border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-1 outline-none px-2 shadow-sm sm:text-sm cursor-pointer"
+          className="rounded-md border placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-1 outline-none px-2 shadow-sm sm:text-sm cursor-pointer"
           name="status"
           id="status"
         >
@@ -122,7 +126,7 @@ const TaskCard = ({ task, style }: Props) => {
       </div>
       <div>
         <p>Assigned to: </p>
-        <div className="flex items-center gap-2 mt-2 bg-gray-100 px-3 py-2 rounded-md">
+        <div className="flex items-center gap-2 mt-2 border px-3 py-2 rounded-md">
           <img
             className="h-10 w-10 rounded-full"
             src={assignedTo?.profile_picture}

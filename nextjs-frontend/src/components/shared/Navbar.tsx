@@ -1,18 +1,30 @@
 /* eslint-disable @next/next/no-img-element */
-import { FaUser, FaRegBell, FaBars } from "react-icons/fa";
+import {
+  FaUser,
+  FaRegBell,
+  FaBars,
+  FaThemeco,
+  FaRegMoon,
+  FaSun,
+} from "react-icons/fa";
 import { BiX } from "react-icons/bi";
 import NotificationModal from "../pages/notifications/NotificationModal";
 import { useState } from "react";
 import { IUser } from "@/interfaces/user.interface";
 import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 
 const Navbar = () => {
+  const { systemTheme, theme, setTheme } = useTheme();
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
   const notifications = [];
+  const currentTheme = theme === "system" ? systemTheme : theme;
+  console.log("Theme", theme);
+  console.log("currentTheme", currentTheme);
 
   return (
     <nav className="lg:flex justify-between items-center py-5 shadow-sm">
@@ -45,6 +57,14 @@ const Navbar = () => {
             My Teams
           </Link>
         )}
+
+        <button
+          onClick={() =>
+            theme == "dark" ? setTheme("light") : setTheme("dark")
+          }
+        >
+          {currentTheme === "dark" ? <FaSun /> : <FaRegMoon />}
+        </button>
 
         {user?.email && (
           <button

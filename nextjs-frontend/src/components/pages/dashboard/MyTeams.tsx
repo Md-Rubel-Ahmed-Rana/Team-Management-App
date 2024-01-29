@@ -16,7 +16,7 @@ const MyTeams = () => {
       <div className="mt-4">
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-green-500 text-white px-4 py-2 rounded-md"
+          className="border px-4 py-2 rounded-md"
         >
           Create New Team
         </button>

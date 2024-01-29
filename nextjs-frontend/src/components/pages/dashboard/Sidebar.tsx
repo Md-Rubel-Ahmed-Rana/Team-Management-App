@@ -44,8 +44,8 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
   return (
     <div className=" flex flex-col gap-2 w-1/5 font-sans font-semibold border-r-2 pr-2">
       <button
-        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 rounded-md  text-left focus:outline-none ${
-          activeView === "profile" && " bg-gray-100"
+        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md  text-left focus:outline-none ${
+          activeView === "profile" && " bg-gray-100 dark:bg-gray-600"
         }`}
         onClick={() => handleSidebarNavigate("profile")}
       >
@@ -53,8 +53,8 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
         <small>Profile</small>
       </button>
       <button
-        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 rounded-md  text-left focus:outline-none ${
-          activeView === "my-teams" && " bg-gray-100"
+        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md  text-left focus:outline-none ${
+          activeView === "my-teams" && " bg-gray-100 dark:bg-gray-600"
         }`}
         onClick={() => handleSidebarNavigate("my-teams")}
       >
@@ -62,8 +62,8 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
         <small> My Teams</small>
       </button>
       <button
-        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 rounded-md  text-left focus:outline-none ${
-          activeView === "invitations" && "bg-gray-100"
+        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600  rounded-md  text-left focus:outline-none ${
+          activeView === "invitations" && "bg-gray-100 dark:bg-gray-600"
         }`}
         onClick={() => handleSidebarNavigate("invitations")}
       >
@@ -71,8 +71,8 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
         <small>Invitations</small>
       </button>
       <button
-        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 rounded-md  text-left focus:outline-none ${
-          activeView === "leave-requests" && "bg-gray-100"
+        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600  rounded-md  text-left focus:outline-none ${
+          activeView === "leave-requests" && "bg-gray-100 dark:bg-gray-600"
         }`}
         onClick={() => handleSidebarNavigate("leave-requests")}
       >
@@ -80,8 +80,8 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
         <small>Leave requests</small>
       </button>
       <button
-        className={`py-2 px-4 flex items-center gap-2 text-xl hover:bg-gray-100 w-full rounded-md  text-left focus:outline-none ${
-          activeView === "joined-teams" && "bg-gray-100"
+        className={`py-2 px-4 flex items-center gap-2 text-xl hover:bg-gray-100 dark:hover:bg-gray-600  w-full rounded-md  text-left focus:outline-none ${
+          activeView === "joined-teams" && "bg-gray-100 dark:bg-gray-600"
         }`}
         onClick={() => handleSidebarNavigate("joined-teams")}
       >
@@ -90,8 +90,8 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
       </button>
       <button>
         <Link
-          className={`py-2 px-4 flex items-center gap-2 text-xl hover:bg-gray-100 w-full rounded-md  text-left focus:outline-none ${
-            activeView === "projects" && "bg-gray-100"
+          className={`py-2 px-4 flex items-center gap-2 text-xl hover:bg-gray-100 dark:hover:bg-gray-600  w-full rounded-md  text-left focus:outline-none ${
+            activeView === "projects" && "bg-gray-100 dark:bg-gray-600"
           }`}
           href={{
             pathname: "/projects",
@@ -107,8 +107,8 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
         </Link>
       </button>
       <button
-        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 rounded-md text-left focus:outline-none ${
-          activeView === "payments" && "bg-gray-100"
+        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600  rounded-md text-left focus:outline-none ${
+          activeView === "payments" && "bg-gray-100 dark:bg-gray-600"
         }`}
         onClick={() => handleSidebarNavigate("payments")}
       >
@@ -116,7 +116,7 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
         <small>Payments</small>
       </button>
       <button
-        className="py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 rounded-md  text-left focus:outline-none"
+        className="py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600  rounded-md  text-left focus:outline-none"
         onClick={handleLogOut}
       >
         <MdOutlineLogout />

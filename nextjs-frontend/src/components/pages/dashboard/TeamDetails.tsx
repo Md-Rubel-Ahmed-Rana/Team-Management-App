@@ -7,56 +7,60 @@ import RemoveMemberModal from "../teams/addMember/RemoveMemberModal";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import Swal from "sweetalert2";
-import { useGetMemberLeaveTeamRequestQuery, useLeaveTeamRequestMutation } from "@/features/team";
+import {
+  useGetMemberLeaveTeamRequestQuery,
+  useLeaveTeamRequestMutation,
+} from "@/features/team";
 
 const TeamDetails = ({ team }: { team: ITeam }) => {
-    const [isRemove, setIsRemove] = useState(false);
-    const [isOpen, setIsOpen] = useState(false);
-    const { data: userData } = useLoggedInUserQuery({});
-    const [leaveTeam] = useLeaveTeamRequestMutation()
-    const user: IUser = userData?.data;
-    const {data: teamLeaveRequests} = useGetMemberLeaveTeamRequestQuery(user?._id)
-    const teamIds = teamLeaveRequests?.data?.map((team: any) => team?.team)
-    console.log(teamIds);
-    const {
-      _id,
-      name,
-      category,
-      description,
-      image,
-      admin,
-      activeMembers,
-      pendingMembers,
-      createdAt,
-    } = team;
- 
-  const handleRequestToLeave = async() => {
+  const [isRemove, setIsRemove] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const { data: userData } = useLoggedInUserQuery({});
+  const [leaveTeam] = useLeaveTeamRequestMutation();
+  const user: IUser = userData?.data;
+  const { data: teamLeaveRequests } = useGetMemberLeaveTeamRequestQuery(
+    user?._id
+  );
+  const teamIds = teamLeaveRequests?.data?.map((team: any) => team?.team);
+  const {
+    _id,
+    name,
+    category,
+    description,
+    image,
+    admin,
+    activeMembers,
+    pendingMembers,
+    createdAt,
+  } = team;
+
+  const handleRequestToLeave = async () => {
     Swal.fire({
-          title: "Oops sadness",
-          text: "Are you sure to leave from this team",
-          showCancelButton: true,
-          cancelButtonText: "No",
-          confirmButtonText: "Yeas",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            const leaveData = {
-              admin: admin?._id,
-              team: _id,
-              member: user?._id
-            }
-            const leaveHandler = async () => {
-              const result: any = await leaveTeam(leaveData)
-              if (result?.data?.success) {
-                    Swal.fire("Done!", `${result?.data?.message}`, "success");
-                  } 
-                  if(result?.error) {
-                    Swal.fire("Done!", `${result?.error?.data?.message}`, "error");
-                  }
-            }
-            leaveHandler()
+      title: "Oops sadness",
+      text: "Are you sure to leave from this team",
+      showCancelButton: true,
+      cancelButtonText: "No",
+      confirmButtonText: "Yeas",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const leaveData = {
+          admin: admin?._id,
+          team: _id,
+          member: user?._id,
+        };
+        const leaveHandler = async () => {
+          const result: any = await leaveTeam(leaveData);
+          if (result?.data?.success) {
+            Swal.fire("Done!", `${result?.data?.message}`, "success");
           }
-        });
-  }
+          if (result?.error) {
+            Swal.fire("Done!", `${result?.error?.data?.message}`, "error");
+          }
+        };
+        leaveHandler();
+      }
+    });
+  };
 
   return (
     <div className="p-4 flex gap-5 shadow-md rounded-lg">
@@ -92,50 +96,55 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
           <strong>Created At:</strong> {createdAt?.toString()?.slice(0, 10)}
         </p>
         <div className="flex items-center gap-5">
-          {
-            admin._id === user._id && <>
-            <p>
-          <button
-            onClick={() => setIsOpen(true)}
-            className="bg-blue-600 mx-auto outline-none text-white border-2 px-5 py-2 rounded-lg"
-          >
-            Add members
-          </button>
-        </p>
-          <p>
-          <button
-            onClick={() => setIsRemove(true)}
-            className="bg-yellow-600 mx-auto outline-none text-white border-2 px-5 py-2 rounded-lg"
-          >
-            Remove members
-          </button>
-        </p>
-            </>
-          }
-          {
-            admin?._id !== user?._id &&  <p>
-          <button
-          onClick={handleRequestToLeave}
-          disabled={teamIds?.includes(_id)}
-            className={` ${teamIds?.includes(_id) ? "bg-gray-400 cursor-not-allowed hover:bg-gray-400" : "bg-slate-200 shadow-md"} mx-auto outline-none  border-2 px-5 py-2 rounded-lg hover:bg-slate-300`}
-          >
-            {teamIds?.includes(_id) ? "Requested" : "Request to leave"}
-            
-          </button>
-        </p>
-          }
-          
-        <p>
-          <Link
-            className="bg-sky-600 text-white font-medium px-5 py-2 rounded-md"
-            href={{
-                    pathname: `/teams/${team?._id}`,
-                    query: { team: team?.name, category: team?.category, collaborate: "Discussion"},
-                  }}
+          {admin._id === user._id && (
+            <>
+              <p>
+                <button
+                  onClick={() => setIsOpen(true)}
+                  className="mx-auto outline-none border px-5 py-2 rounded-lg"
                 >
-            View details
-          </Link>
-        </p>
+                  Add members
+                </button>
+              </p>
+              <p>
+                <button
+                  onClick={() => setIsRemove(true)}
+                  className="mx-auto  border px-5 py-2 rounded-lg"
+                >
+                  Remove members
+                </button>
+              </p>
+            </>
+          )}
+          {admin?._id !== user?._id && (
+            <p>
+              <button
+                onClick={handleRequestToLeave}
+                disabled={teamIds?.includes(_id)}
+                className={` ${
+                  teamIds?.includes(_id) ? "cursor-not-allowed" : "shadow-md"
+                } mx-auto outline-none  border px-5 py-2 rounded-lg`}
+              >
+                {teamIds?.includes(_id) ? "Requested" : "Request to leave"}
+              </button>
+            </p>
+          )}
+
+          <p>
+            <Link
+              className="font-medium border px-5 py-2 rounded-md"
+              href={{
+                pathname: `/teams/${team?._id}`,
+                query: {
+                  team: team?.name,
+                  category: team?.category,
+                  collaborate: "Discussion",
+                },
+              }}
+            >
+              View details
+            </Link>
+          </p>
         </div>
       </div>
       {isOpen && (
@@ -143,7 +152,11 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
       )}
 
       {isRemove && (
-        <RemoveMemberModal team={team} isRemove={isRemove} setIsRemove={setIsRemove} />
+        <RemoveMemberModal
+          team={team}
+          isRemove={isRemove}
+          setIsRemove={setIsRemove}
+        />
       )}
     </div>
   );

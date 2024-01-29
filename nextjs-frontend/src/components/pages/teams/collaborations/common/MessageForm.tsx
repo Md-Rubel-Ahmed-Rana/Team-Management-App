@@ -147,7 +147,7 @@ const MessageForm = ({ teamId, type }: Props) => {
   };
 
   return (
-    <div className="mx-auto bg-gray-200 shadow-md px-6 py-2 rounded-md mt-8">
+    <div className="mx-auto bg-gray-200 dark:bg-gray-700 shadow-md px-6 py-2 rounded-md mt-8">
       {/* Image Preview Section */}
       {imagePreview.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">

@@ -76,8 +76,9 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
             {projects?.data?.map((project: IProject) => (
               <p
                 key={project?._id}
-                className={`px-2 py-1 w-full hover:bg-gray-100 flex text-xl font-semibold justify-between   rounded-md ${
-                  project?._id == activeProject && "bg-gray-100"
+                className={`px-2 py-1 w-full hover:bg-gray-100 dark:hover:bg-gray-600 flex text-xl font-semibold justify-between   rounded-md ${
+                  project?._id == activeProject &&
+                  "bg-gray-100 dark:bg-gray-600"
                 }`}
               >
                 <button
@@ -92,7 +93,7 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
                 </button>
                 <button
                   onClick={() => handleEditProject(project)}
-                  className="hover:bg-gray-200 p-2 rounded-full"
+                  className="hover:bg-gray-200 dark:hover:bg-gray-500 p-2 rounded-full"
                 >
                   <FaEllipsisV />
                 </button>
@@ -114,8 +115,9 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
             {assignedProjects?.data?.map((project: IProject) => (
               <p
                 key={project?._id}
-                className={`px-2 py-1 w-full hover:bg-gray-100 flex justify-between   rounded-md ${
-                  project?._id == activeProject && "bg-gray-100"
+                className={`px-2 py-1 w-full hover:bg-gray-100 dark:hover:bg-gray-600 flex justify-between   rounded-md ${
+                  project?._id == activeProject &&
+                  "bg-gray-100 dark:bg-gray-600"
                 }`}
               >
                 <button

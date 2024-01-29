@@ -23,7 +23,7 @@ const Teams = () => {
         </div>
         <div>
           <button
-            className="flex items-center mt-3 lg:mt-0 gap-2 text-blue-400 border-2 border-blue-400 px-5 py-2 rounded-md"
+            className="flex items-center mt-3 lg:mt-0 gap-2  border px-5 py-2 rounded-md"
             onClick={() => setIsOpen(true)}
           >
             <FaPlus /> <small>Create a team</small>
@@ -45,18 +45,20 @@ const Teams = () => {
             <h4 className="text-xl font-semibold mb-3">{team.category}</h4>
             <p className="w-full mb-10">{team.description}</p>
             <div>
-              <p className="absolute bottom-3 left-8 bg-blue-100 font-medium px-5 py-2 rounded-md flex items-center gap-1">
+              <p className="absolute bottom-3 left-8 border font-medium px-5 py-2 rounded-md flex items-center gap-1">
                 <span> Members: </span>
-                <span>
-                  {Number(team.activeMembers?.length)}
-                </span>
+                <span>{Number(team.activeMembers?.length)}</span>
               </p>
               <p className="absolute bottom-5 right-8">
                 <Link
-                  className="bg-blue-300 font-medium px-5 py-2 rounded-md"
+                  className="border font-medium px-5 py-2 rounded-md"
                   href={{
                     pathname: `/teams/${team._id}`,
-                    query: { team: team?.name, category: team?.category, collaborate: "Discussion"},
+                    query: {
+                      team: team?.name,
+                      category: team?.category,
+                      collaborate: "Discussion",
+                    },
                   }}
                 >
                   View team

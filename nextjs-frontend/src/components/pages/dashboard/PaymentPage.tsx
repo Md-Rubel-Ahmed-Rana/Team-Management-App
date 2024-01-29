@@ -11,7 +11,7 @@ const PaymentPage = () => {
   const payments: IPayment[] = data?.data;
 
   return (
-    <div className="mx-auto bg-white p-8">
+    <div className="mx-auto p-8">
       <div>
         <h3 className="text-xl font-bold mb-4">Payment History</h3>
         {payments?.map((payment: IPayment) => (

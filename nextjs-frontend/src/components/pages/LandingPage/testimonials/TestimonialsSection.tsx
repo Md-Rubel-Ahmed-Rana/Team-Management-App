@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const TestimonialsSection = () => {
   return (
-    <section className="bg-gray-100 p-16 text-center">
+    <section className="p-16 text-center">
       <h2 className="text-3xl font-bold mb-8">
         See What Our Users Have to Say
       </h2>

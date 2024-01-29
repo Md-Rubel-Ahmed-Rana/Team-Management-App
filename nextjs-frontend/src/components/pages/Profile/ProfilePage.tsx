@@ -60,13 +60,14 @@ const ProfilePage = () => {
               <strong>Department:</strong> {user?.department || "Not available"}
             </p>
             <p>
-              <strong>Designation:</strong> {user?.designation || "Not available"}
+              <strong>Designation:</strong>{" "}
+              {user?.designation || "Not available"}
             </p>
           </div>
           <div className="mt-4">
             <button
               onClick={() => setIsEdit(true)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="border px-4 py-2 rounded-md"
             >
               Edit Profile
             </button>

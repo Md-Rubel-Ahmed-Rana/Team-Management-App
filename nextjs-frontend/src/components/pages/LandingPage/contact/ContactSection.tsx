@@ -41,7 +41,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section className="bg-gray-50 py-16 text-center">
+    <section className="py-16 text-center">
       <h2 className="text-3xl font-bold mb-8">Contact Us</h2>
       <p className="text-lg mb-8">
         Have questions or need assistance? Reach out to our team for support.
@@ -49,10 +49,7 @@ const ContactSection = () => {
       <div className="max-w-md mx-auto">
         <form onSubmit={handleSubmit(handleSendEmail)}>
           <div className="mb-4">
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="name" className="block text-sm font-medium">
               Your Name
             </label>
             <input
@@ -65,10 +62,7 @@ const ContactSection = () => {
             />
           </div>
           <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium">
               Your Email
             </label>
             <input
@@ -81,10 +75,7 @@ const ContactSection = () => {
             />
           </div>
           <div className="mb-4">
-            <label
-              htmlFor="message"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="message" className="block text-sm font-medium">
               Your Message
             </label>
             <textarea

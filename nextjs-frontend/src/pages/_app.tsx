@@ -6,6 +6,7 @@ import store from "app/store";
 import { Toaster } from "react-hot-toast";
 import "@/styles/globals.css";
 import SocketProvider from "@/context/SocketContext";
+import { ThemeProvider } from "next-themes";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -21,10 +22,12 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <div className="max-w-[1280px] w-full mx-auto">
       <SocketProvider>
-        <Provider store={store}>
-          {getLayout(<Component {...pageProps} />)}
-          <Toaster />
-        </Provider>
+        <ThemeProvider enableSystem={true} attribute="class">
+          <Provider store={store}>
+            {getLayout(<Component {...pageProps} />)}
+            <Toaster />
+          </Provider>
+        </ThemeProvider>
       </SocketProvider>
     </div>
   );
