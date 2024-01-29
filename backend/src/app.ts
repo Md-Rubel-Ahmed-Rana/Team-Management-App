@@ -3,7 +3,7 @@ import express, { NextFunction, Request, Response } from "express";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import { RootRoutes } from "./routes/root.route";
 import httpStatus from "http-status";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import http from "http";
 import session from "express-session";
 import passport from "passport";
@@ -71,9 +71,17 @@ passport.deserializeUser((user: any, done) => {
   done(null, user);
 });
 
-// connecting to socket.io
-io.on("connection", (socket: Socket) => {
+// Connecting to Socket.IO
+io.on("connection", (socket) => {
   console.log("A user connected");
+  socket.on("join-room", (roomId: string) => {
+    socket.join(roomId);
+  });
+
+  socket.on("message", (data) => {
+    socket.to(data.conversationId).emit("message", data);
+  });
+
   socket.on("disconnect", () => {
     console.log("User disconnected");
   });

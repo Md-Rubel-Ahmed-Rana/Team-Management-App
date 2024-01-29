@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Announcement from "../collaborations/announcements/Announcement";
 import Resources from "../collaborations/resources/Resources";
 import Discussion from "../collaborations/discussions/Discussion";
@@ -9,8 +9,10 @@ import { ITeam } from "@/interfaces/team.interface";
 import { TbSpeakerphone } from "react-icons/tb";
 import { GrResources } from "react-icons/gr";
 import { RiMessage2Line } from "react-icons/ri";
+import { SocketContext } from "@/context/SocketContext";
 
 const TeamDetailsPage = () => {
+  const { socket }: any = useContext(SocketContext);
   const router = useRouter();
   const { data: teamData } = useSingleTeamQuery(router?.query?.id);
   const team: ITeam = teamData?.data;
@@ -23,6 +25,11 @@ const TeamDetailsPage = () => {
       query: { ...router.query, collaborate: text },
     });
   };
+
+  // connect to socket room
+  useEffect(() => {
+    socket.emit("join-room", team?._id);
+  }, [socket, team?._id]);
 
   useEffect(() => {
     setActiveNav(router?.query?.collaborate);

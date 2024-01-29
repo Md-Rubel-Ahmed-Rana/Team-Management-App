@@ -1,35 +1,24 @@
 /* eslint-disable @next/next/no-img-element */
 import ShowImageFullScreen from "@/components/shared/ShowImageFullScreen";
+import { SocketContext } from "@/context/SocketContext";
 import {
   useDeleteMessageMutation,
   useEditMessageMutation,
 } from "@/features/message";
 import { useLoggedInUserQuery } from "@/features/user";
+import { IMessage } from "@/interfaces/message.interface";
 import { IUser } from "@/interfaces/user.interface";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaRegTrashAlt, FaPencilAlt } from "react-icons/fa";
 
-interface Poster {
-  _id?: string;
-  name: string;
-  profile_picture: string;
-}
-
-export interface Post {
-  poster: Poster;
-  _id?: string;
-  text: string;
-  images: string[];
-  files: string[];
-  links: string[];
-}
-
 interface Props {
-  messages: Post[];
+  messages: IMessage[];
 }
 
 const ShowMessages = ({ messages }: Props) => {
+  const { socket, realTimeMessages, setRealTimeMessages }: any =
+    useContext(SocketContext);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [isEdit, setIsEdit] = useState({ index: 0, status: false });
   const [editedMessage, setEditedMessage] = useState<string | undefined>("");
@@ -76,21 +65,44 @@ const ShowMessages = ({ messages }: Props) => {
     }
   };
 
+  // Add a useEffect hook to listen for incoming messages
+  useEffect(() => {
+    const handleMessage = (data: IMessage) => {
+      // Handle the incoming message, e.g., update UI
+      console.log("Received message:", data);
+      setRealTimeMessages((prev: IMessage[]) => [...prev, data]);
+    };
+
+    // Add the event listener for the "message" event
+    socket.on("message", handleMessage);
+
+    // Clean up the event listener when the component is unmounted
+    return () => {
+      socket.off("message", handleMessage);
+    };
+  }, [setRealTimeMessages, socket]); // Ensure that the effect runs only when the socket changes
+
+  // keep updated message in state
+  useEffect(() => {
+    setRealTimeMessages(messages);
+  }, [messages, setRealTimeMessages]);
+
+  // keep user in the bottom of the message
   useEffect(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop =
         messagesContainerRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [realTimeMessages, socket]);
 
   return (
     <div
       ref={messagesContainerRef}
       className="mx-auto mt-8 h-60  overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
     >
-      {messages?.map((post, index) => (
+      {realTimeMessages?.map((post: IMessage, index: number) => (
         <div
-          key={index}
+          key={post?._id}
           className="mx-auto bg-white shadow-lg rounded-md p-6 mb-8"
           onMouseOver={() => setIsEdit({ index: index, status: true })}
           onMouseLeave={() => setIsEdit({ index: 0, status: false })}
@@ -159,7 +171,7 @@ const ShowMessages = ({ messages }: Props) => {
 
           {post?.images?.length > 0 && (
             <div className="my-4 flex flex-wrap gap-4">
-              {post?.images?.map((image, imageIndex) => (
+              {post?.images?.map((image: string, imageIndex: number) => (
                 <img
                   onClick={() => handleShowImageFullScreen(image)}
                   key={imageIndex}
@@ -182,7 +194,7 @@ const ShowMessages = ({ messages }: Props) => {
 
           {post?.files?.length > 0 && (
             <div className="mb-4">
-              {post?.files?.map((file, fileIndex) => (
+              {post?.files?.map((file: string, fileIndex: number) => (
                 <a
                   key={fileIndex}
                   href={file}
@@ -196,7 +208,7 @@ const ShowMessages = ({ messages }: Props) => {
 
           {post?.links?.length > 0 && (
             <div className="mb-4">
-              {post?.links?.map((link, linkIndex) => (
+              {post?.links?.map((link: string, linkIndex: number) => (
                 <a
                   key={linkIndex}
                   href={link}

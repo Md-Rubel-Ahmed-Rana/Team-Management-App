@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FaLink, FaImage, FaFile } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
@@ -10,6 +10,8 @@ import useUploadMultipleFile from "@/hooks/useUploadMultipleFiles";
 import { useSendMessageMutation } from "@/features/message";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
+import { SocketContext } from "@/context/SocketContext";
+import { IMessage } from "@/interfaces/message.interface";
 
 type Inputs = {
   poster?: string;
@@ -28,8 +30,9 @@ type Props = {
 
 const MessageForm = ({ teamId, type }: Props) => {
   const { data: userData } = useLoggedInUserQuery({});
+  const { socket, setRealTimeMessages }: any = useContext(SocketContext);
   const user: IUser = userData?.data;
-  const { register, handleSubmit, reset, getValues } = useForm<Inputs>({
+  const { register, handleSubmit, reset } = useForm<Inputs>({
     mode: "onChange",
   });
   const [imagePreview, setImagePreview] = useState<string[]>([]);
@@ -72,6 +75,17 @@ const MessageForm = ({ teamId, type }: Props) => {
     data.type = type;
     const result: any = await sendMessage(data);
     if (result?.data?.success) {
+      const message = result?.data?.data;
+      const poster = {
+        _id: user._id,
+        name: user.name,
+        profile_picture: user.profile_picture,
+      };
+
+      const emitData: IMessage = { ...message, poster };
+      socket.emit("message", emitData);
+      setRealTimeMessages((prev: IMessage[]) => [...prev, emitData]);
+
       setImagePreview([]);
       setFilePreview([]);
       setImages(null);
@@ -80,6 +94,7 @@ const MessageForm = ({ teamId, type }: Props) => {
       setLinks([]);
       setImageUrls([]);
       setFileUrls([]);
+      setIsMessage(false);
       reset();
     }
   };
