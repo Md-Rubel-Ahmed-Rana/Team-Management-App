@@ -22,7 +22,6 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const result: any = await loginUser(data);
-    console.log(result);
     Cookies.set("tmAccessToken", result?.data?.data, { expires: 6 });
     if (result?.data?.success) {
       Swal.fire({
@@ -54,9 +53,13 @@ const Login = () => {
         >
           <div>
             <div className="text-center">
-              <img className="mx-auto w-20" src={"https://i.ibb.co/C7mknCv/login.png"} alt="" />
+              <img
+                className="mx-auto w-20"
+                src={"https://i.ibb.co/C7mknCv/login.png"}
+                alt=""
+              />
             </div>
-            <h2 className="mb-4 font-semibold text-center text-3xl leading-9 text-gray-900">
+            <h2 className="mb-4 font-semibold text-center text-3xl leading-9">
               Welcome<strong> Back!</strong>
             </h2>
           </div>
@@ -120,7 +123,7 @@ const Login = () => {
           <GoogleLogin />
           <div className="text-center my-3">
             <p>
-              Don&apos; have an account?
+              <small>Don&apos; have an account? </small>
               <Link className="text-blue-400" href="/signup">
                 Sign up
               </Link>

@@ -1,14 +1,26 @@
 import CheckoutPage from "@/components/pages/checkout/Checkout";
 import RootLayout from "@/layout/RootLayout";
 import { NextPageWithLayout } from "pages/_app";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+import Loader from "@/components/shared/Loader";
 
 const CheckoutRoute: NextPageWithLayout = () => {
-  return (
-    <div>
-      <CheckoutPage />
-    </div>
-  );
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  useEffect(() => {
+    setLoading(true);
+    const handleAuth = async () => {
+      const isLoggedIn = Cookies.get("tmAccessToken");
+      if (!isLoggedIn) {
+        setLoading(false);
+        return router.push("/login");
+      }
+    };
+    handleAuth();
+  }, [router]);
+  return <div>{loading ? <Loader /> : <CheckoutPage />}</div>;
 };
 
 export default CheckoutRoute;

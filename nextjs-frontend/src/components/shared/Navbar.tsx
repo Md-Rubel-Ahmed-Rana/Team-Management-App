@@ -1,12 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import {
-  FaUser,
-  FaRegBell,
-  FaBars,
-  FaThemeco,
-  FaRegMoon,
-  FaSun,
-} from "react-icons/fa";
+import { FaUser, FaRegBell, FaBars, FaRegMoon, FaSun } from "react-icons/fa";
 import { BiX } from "react-icons/bi";
 import NotificationModal from "../pages/notifications/NotificationModal";
 import { useState } from "react";
@@ -22,9 +15,6 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
   const notifications = [];
-  const currentTheme = theme === "system" ? systemTheme : theme;
-  console.log("Theme", theme);
-  console.log("currentTheme", currentTheme);
 
   return (
     <nav className="lg:flex justify-between items-center py-5 shadow-sm">
@@ -63,7 +53,7 @@ const Navbar = () => {
             theme == "dark" ? setTheme("light") : setTheme("dark")
           }
         >
-          {currentTheme === "dark" ? <FaSun /> : <FaRegMoon />}
+          {theme === "dark" ? <FaSun /> : <FaRegMoon />}
         </button>
 
         {user?.email && (
