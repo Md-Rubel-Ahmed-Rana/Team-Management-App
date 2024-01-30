@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CreateProjectModal from "./CreateProjectModal";
 import { FaEllipsisV } from "react-icons/fa";
 import EditProjectModal from "./EditProjectModal";

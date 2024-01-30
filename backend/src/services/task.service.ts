@@ -5,6 +5,10 @@ class Service {
     const result = await Task.create(data);
     return result;
   }
+  async getTasks() {
+    const result = await Task.find({});
+    return result;
+  }
 
   async getTasksByProjectId(projectId: string) {
     const result = await Task.find({ project: projectId })

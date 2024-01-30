@@ -5,4 +5,6 @@ export type IContext = {
   socket: Socket;
   realTimeMessages: IMessage[];
   setRealTimeMessages: (messages: IMessage[]) => void;
+  refetchTask: false;
+  setRefetchTask: (status: boolean) => void;
 };

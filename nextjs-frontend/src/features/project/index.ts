@@ -34,7 +34,8 @@ const projectApi = apiSlice.injectEndpoints({
       query: (id) => ({
         url: `/project/single/${id}`,
       }),
-      providesTags: ["project"] as any,
+      providesTags: ["project", "task"] as any,
+      invalidatesTags: ["task"] as any,
     }),
     addMember: builder.mutation({
       query: (data) => ({
@@ -93,5 +94,5 @@ export const {
   useLeaveProjectRequestMutation,
   useGetLeaveProjectRequestsByAdminQuery,
   useIgnoreProjectLeaveRequestMutation,
-  useGetMemberLeaveProjectRequestQuery
+  useGetMemberLeaveProjectRequestQuery,
 } = projectApi;

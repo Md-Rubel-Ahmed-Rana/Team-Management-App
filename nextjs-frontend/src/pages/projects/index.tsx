@@ -16,6 +16,8 @@ const ProjectPage: NextPageWithLayout = () => {
       if (!isLoggedIn) {
         setLoading(false);
         return router.push("/login");
+      } else {
+        setLoading(false);
       }
     };
     handleAuth();

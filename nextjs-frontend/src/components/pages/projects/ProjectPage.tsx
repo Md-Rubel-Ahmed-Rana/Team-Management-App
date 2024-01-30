@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import ProjectSidebar from "./ProjectSidebar";
-import StatusNavbar from "./StatusNavbar";
-import TaskPage from "./TaskPage";
 import AddMemberToProject from "./AddMemberToProject";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
@@ -13,10 +11,10 @@ import {
   useMyProjectsQuery,
 } from "@/features/project";
 import { IProject } from "@/interfaces/project.interface";
-import { useGetTasksByProjectQuery } from "@/features/task";
 import RemoveMemberFromProject from "./RemoveMemberFromProject";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
+import ParentTask from "../tasks/ParentTask";
 
 const Projects = () => {
   const { query } = useRouter();
@@ -25,24 +23,13 @@ const Projects = () => {
   const [isRemove, setIsRemove] = useState(false);
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: projectData } = useGetSingleProjectQuery(activeProject);
+  const { data: projectData } = useGetSingleProjectQuery(query?.id);
   const project: IProject = projectData?.data;
   const { data: projects } = useMyProjectsQuery(user?._id);
   const { data: assignedProjects } = useAssignedProjectsQuery(user?._id);
   const [leaveRequest] = useLeaveProjectRequestMutation();
   const { data: memberLeaveRequest } = useGetMemberLeaveProjectRequestQuery(
     user?._id
-  );
-
-  const { data: tasks } = useGetTasksByProjectQuery(project?._id);
-
-  const todosTask = tasks?.data?.filter((task: any) => task.status === "Todo");
-  const ongoingTask = tasks?.data?.filter(
-    (task: any) => task.status === "Ongoing"
-  );
-
-  const completedTask = tasks?.data?.filter(
-    (task: any) => task.status === "Completed"
   );
 
   const handleLeaveRequest = async () => {
@@ -140,17 +127,7 @@ const Projects = () => {
                 )}
               </div>
             </div>
-            <StatusNavbar
-              todos={todosTask?.length}
-              ongoing={ongoingTask?.length}
-              completed={completedTask?.length}
-              project={project}
-            />
-            <TaskPage
-              todosTask={todosTask}
-              ongoingTask={ongoingTask}
-              completedTask={completedTask}
-            />
+            <ParentTask project={project} />
           </>
           {projects?.data?.length <= 0 &&
             assignedProjects?.data?.length <= 0 && (

@@ -6,6 +6,8 @@ const router = Router();
 
 router.delete("/delete/:taskId", TaskController.deleteTask);
 
+router.get("/", TaskController.getTasks);
+
 router.get("/by-project/:projectId", TaskController.getTasksByProjectId);
 
 router.post(

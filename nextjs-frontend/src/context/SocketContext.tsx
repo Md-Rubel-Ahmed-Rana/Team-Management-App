@@ -7,6 +7,8 @@ const initValues: IContext = {
   socket: io("http://localhost:5000") as Socket,
   realTimeMessages: [],
   setRealTimeMessages: (messages: IMessage[]) => {},
+  refetchTask: false,
+  setRefetchTask: () => false,
 };
 
 export const SocketContext = createContext<IContext>(initValues);
@@ -19,11 +21,14 @@ const SocketProvider = ({ children }: Props) => {
   const socketIo: any = io;
   const socket = socketIo.connect("http://localhost:5000");
   const [realTimeMessages, setRealTimeMessages] = useState<IMessage[]>([]);
+  const [refetchTask, setRefetchTask] = useState<any>(false);
 
   const values: IContext = {
     socket,
     realTimeMessages,
     setRealTimeMessages,
+    refetchTask,
+    setRefetchTask,
   };
 
   return (

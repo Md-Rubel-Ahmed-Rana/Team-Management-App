@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useState } from "react";
 import Select from "react-select";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
@@ -10,11 +10,10 @@ import { INewTask } from "@/interfaces/task.interface";
 import { useCreateTaskMutation } from "@/features/task";
 import customStyles from "@/utils/reactSelectCustomStyle";
 
-const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {
+const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
   const closeModal = () => {
     setIsOpen(false);
   };
-
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const { data: projectData }: any = useGetSingleProjectQuery(project?._id);
@@ -26,10 +25,11 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {
   const handleCreateNewTask: SubmitHandler<INewTask> = async (data) => {
     data.assignedTo = selectedMember?.value;
     data.assignedBy = user._id;
-    data.status = task;
+    data.status = status;
     data.project = project._id;
     const result: any = await createTask(data);
     if (result?.data?.success) {
+      window.location.reload();
       Swal.fire({
         position: "center",
         icon: "success",
@@ -79,12 +79,12 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, task }: any) => {
                 <div className="mt-3">
                   <form onSubmit={handleSubmit(handleCreateNewTask)}>
                     <h3 className="text-xl font-bold mb-5">
-                      Create a new task for {task}
+                      Create a new task for {status}
                     </h3>
                     <div className="relative w-full py-2">
                       <p className="text-stone-500 mb-2 ">Select a member</p>
                       <Select
-                      required
+                        required
                         options={
                           members &&
                           members?.map((member: any) => ({
