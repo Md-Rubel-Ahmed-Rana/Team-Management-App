@@ -24,7 +24,7 @@ const Navbar = () => {
   }, [setTheme]);
 
   return (
-    <nav className="lg:flex justify-between items-center py-5 shadow-sm">
+    <nav className="lg:flex justify-between items-center py-5 shadow-sm relative">
       <div>
         <Link className="lg:flex hidden  items-center gap-3" href={"/"}>
           <img
@@ -110,11 +110,14 @@ const Navbar = () => {
             </button>
           )}
         </div>
-        <div className="flex">
+        <div className="flex gap-4">
           {user?.email && (
             <button
-              onClick={() => setIsOpen(true)}
-              className="relative m-2 p-2 border-2 rounded-full"
+              onClick={() => {
+                setIsOpen(true);
+                setToggle(false);
+              }}
+              className="relative  p-2 border-2 rounded-full"
             >
               <FaRegBell />
               <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
@@ -123,31 +126,47 @@ const Navbar = () => {
             </button>
           )}
 
-          {user?.email && (
-            <Link href={"/dashboard"} className="border m-2 p-2 rounded-full">
-              <FaUser />
-            </Link>
-          )}
+          <div>
+            {user?.email && (
+              <Link
+                href={{
+                  pathname: "/dashboard",
+                  query: { uId: user?._id, activeView: "profile" },
+                }}
+                className={`${!user.profile_picture && "border  rounded-full"}`}
+              >
+                {user.profile_picture ? (
+                  <img
+                    className="w-10 h-10 rounded-full"
+                    src={user.profile_picture}
+                    alt=""
+                  />
+                ) : (
+                  <FaUser />
+                )}
+              </Link>
+            )}
+          </div>
         </div>
       </div>
       {toggle && (
-        <div className="flex lg:hidden flex-col gap-3 ">
-          <button>Availability</button>
-          <button>Integration</button>
-          <button>Community</button>
+        <div className="flex lg:hidden flex-col gap-3 z-10 absolute top-20 w-full  p-10 bg-gray-200">
+          <button onClick={() => setToggle(false)}>Availability</button>
+          <button onClick={() => setToggle(false)}>Integration</button>
+          <button onClick={() => setToggle(false)}>Community</button>
           {!user?.email && (
             <>
-              <button>
+              <button onClick={() => setToggle(false)}>
                 <Link href="/signup">Signup</Link>
               </button>
-              <button>
+              <button onClick={() => setToggle(false)}>
                 <Link href="/login">Login</Link>
               </button>
             </>
           )}
 
           {user?.email && (
-            <button>
+            <button onClick={() => setToggle(false)}>
               <Link href="/teams">My Teams</Link>
             </button>
           )}
