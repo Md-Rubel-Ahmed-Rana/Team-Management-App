@@ -4,6 +4,9 @@ const nextConfig = {
   images: {
     domains: ["res.cloudinary.com"],
   },
+  devIndicators: {
+    buildActivity: false,
+  },
 };
 
 export default nextConfig;

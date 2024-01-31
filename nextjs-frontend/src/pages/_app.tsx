@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import "@/styles/globals.css";
 import SocketProvider from "@/context/SocketContext";
 import { ThemeProvider } from "next-themes";
+import NextNProgress from "nextjs-progressbar";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -24,6 +25,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       <SocketProvider>
         <ThemeProvider enableSystem={true} attribute="class">
           <Provider store={store}>
+            <NextNProgress color="#3267b1" options={{ showSpinner: false }} />
             {getLayout(<Component {...pageProps} />)}
             <Toaster />
           </Provider>
