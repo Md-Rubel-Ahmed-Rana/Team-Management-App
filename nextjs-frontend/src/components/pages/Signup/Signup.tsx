@@ -58,12 +58,12 @@ const Signup = () => {
           onSubmit={handleSubmit(handleRegister)}
         >
           <div>
-            <h2 className="mb-4 text-center text-3xl leading-9 font-extrabold">
+            <h2 className="mb-4 text-center lg:text-3xl text-xl leading-9 font-extrabold">
               Create account
             </h2>
           </div>
-          <div className="lg:flex w-full justify-between  gap-5">
-            <div className="rounded-md shadow-sm w-1/2">
+          <div className="lg:flex lg:flex-wrap w-full gap-5">
+            <div className="rounded-md shadow-sm lg:w-1/2 w-full">
               <div>
                 <label htmlFor="username">Name</label>
                 <input
@@ -124,7 +124,7 @@ const Signup = () => {
                 )}
               </div>
             </div>
-            <div className="rounded-md shadow-sm w-1/2">
+            <div className="rounded-md shadow-sm lg:w-1/2 w-full mt-4 lg:mt-0">
               <div>
                 <label htmlFor="username">Email</label>
                 <input
@@ -181,7 +181,7 @@ const Signup = () => {
           <div className="mt-6">
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 dark:bg-gray-600 dark:hover:bg-gray-700  hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-2"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 dark:bg-gray-600 dark:hover:bg-gray-700 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-2"
             >
               Sign up
             </button>
