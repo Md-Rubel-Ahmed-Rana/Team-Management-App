@@ -2,19 +2,26 @@
 import { FaUser, FaRegBell, FaBars, FaRegMoon, FaSun } from "react-icons/fa";
 import { BiX } from "react-icons/bi";
 import NotificationModal from "../pages/notifications/NotificationModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IUser } from "@/interfaces/user.interface";
 import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
 const Navbar = () => {
-  const { systemTheme, theme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
   const notifications = [];
+
+  useEffect(() => {
+    const currentTheme = localStorage.getItem("theme");
+    if (currentTheme !== null) {
+      setTheme(currentTheme);
+    }
+  }, [setTheme]);
 
   return (
     <nav className="lg:flex justify-between items-center py-5 shadow-sm">

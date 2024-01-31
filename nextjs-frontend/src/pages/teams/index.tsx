@@ -5,6 +5,7 @@ import { NextPageWithLayout } from "pages/_app";
 import React, { ReactElement, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import Loader from "@/components/shared/Loader";
+import GetHead from "@/utils/Head";
 
 const TeamPage: NextPageWithLayout = () => {
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,16 @@ const TeamPage: NextPageWithLayout = () => {
     };
     handleAuth();
   }, [router]);
-  return <div>{loading ? <Loader /> : <Teams />}</div>;
+  return (
+    <div>
+      <GetHead
+        title="Team: Team Manager"
+        description="team management, project collaboration, task tracking, project details"
+        keywords="team management, project collaboration, task tracking, project details"
+      />
+      {loading ? <Loader /> : <Teams />}
+    </div>
+  );
 };
 
 export default TeamPage;
