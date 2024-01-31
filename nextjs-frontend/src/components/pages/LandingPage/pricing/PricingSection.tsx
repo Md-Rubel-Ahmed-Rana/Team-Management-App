@@ -7,8 +7,8 @@ const PricingSection = () => {
   const { data } = useGetPricingQuery({});
   const pricingData = data?.data;
   return (
-    <section className="py-16 text-center">
-      <h2 className="text-3xl font-bold mb-8">
+    <section className="lg:py-16 p-4 text-center">
+      <h2 className="lg:text-3xl text-xl font-bold mb-8">
         Choose the Right Plan for Your Team
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

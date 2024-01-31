@@ -1,4 +1,4 @@
-import Dashboard from "@/components/pages/dashboard/Dashboard";
+import Dashboard from "@/components/pages/dashboard";
 import RootLayout from "@/layout/RootLayout";
 import { NextPageWithLayout } from "pages/_app";
 import React, { ReactElement, useEffect, useState } from "react";

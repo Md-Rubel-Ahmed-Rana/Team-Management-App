@@ -3,7 +3,7 @@ import TeamDetails from "./TeamDetails";
 import { useLoggedInUserQuery } from "@/features/user";
 import { useMyTeamsQuery } from "@/features/team";
 import { ITeam } from "@/interfaces/team.interface";
-import CreateTeamModal from "../teams/teamCreation/CreateTeam";
+import CreateTeamModal from "../../teams/teamCreation/CreateTeam";
 
 const MyTeams = () => {
   const { data: userData } = useLoggedInUserQuery({});

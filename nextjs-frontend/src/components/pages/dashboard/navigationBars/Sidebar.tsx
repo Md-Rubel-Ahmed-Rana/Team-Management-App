@@ -42,7 +42,7 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
   };
 
   return (
-    <div className=" flex flex-col gap-2 w-1/5 font-sans font-semibold border-r-2 pr-2">
+    <div className="flex flex-col gap-2  font-sans font-semibold border-r-2 pr-2">
       <button
         className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md  text-left focus:outline-none ${
           activeView === "profile" && " bg-gray-100 dark:bg-gray-600"

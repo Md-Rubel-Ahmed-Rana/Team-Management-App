@@ -7,6 +7,7 @@ import { IUser } from "@/interfaces/user.interface";
 import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import Cookies from "js-cookie";
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -15,6 +16,11 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
   const notifications = [];
+
+  const handleLogOut = () => {
+    Cookies.remove("tmAccessToken");
+    window.location.replace("/");
+  };
 
   useEffect(() => {
     const currentTheme = localStorage.getItem("theme");
@@ -110,7 +116,23 @@ const Navbar = () => {
             </button>
           )}
         </div>
+
         <div className="flex gap-4">
+          <button
+            onClick={() =>
+              theme == "dark" ? setTheme("light") : setTheme("dark")
+            }
+          >
+            {theme === "dark" ? <FaSun /> : <FaRegMoon />}
+          </button>
+          {!user?.email && (
+            <>
+              <button onClick={() => setToggle(false)}>
+                <Link href="/login">Login</Link>
+              </button>
+            </>
+          )}
+
           {user?.email && (
             <button
               onClick={() => {
@@ -170,6 +192,7 @@ const Navbar = () => {
               <Link href="/teams">My Teams</Link>
             </button>
           )}
+          {user?.email && <button onClick={handleLogOut}>Logout</button>}
         </div>
       )}
       {isOpen && <NotificationModal isOpen={isOpen} setIsOpen={setIsOpen} />}
