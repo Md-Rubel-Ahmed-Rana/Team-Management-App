@@ -173,6 +173,9 @@ const Navbar = () => {
       </div>
       {toggle && (
         <div className="flex lg:hidden flex-col gap-3 z-10 absolute top-20 w-full  p-10 bg-gray-200">
+          <button onClick={() => setToggle(false)}>
+            <Link href="/">Home</Link>
+          </button>
           <button onClick={() => setToggle(false)}>Availability</button>
           <button onClick={() => setToggle(false)}>Integration</button>
           <button onClick={() => setToggle(false)}>Community</button>
