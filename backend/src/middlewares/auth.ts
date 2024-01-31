@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import httpStatus from "http-status";
 import jwt from "jsonwebtoken";
 
 const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
@@ -6,7 +7,7 @@ const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
     if (!token) {
       return res.json({
-        statusCode: 400,
+        statusCode: httpStatus.BAD_REQUEST,
         success: false,
         message: "Did't provide token",
         data: null,
@@ -20,7 +21,7 @@ const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
 
     if (!user) {
       return res.json({
-        statusCode: 401,
+        statusCode: httpStatus.UNAUTHORIZED,
         success: false,
         message: "Invalid token provided",
         data: null,
@@ -32,7 +33,7 @@ const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
     next();
   } catch (error: any) {
     res.json({
-      statusCode: 500,
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       success: false,
       message: "There was an error to verify token",
       error: error.message,

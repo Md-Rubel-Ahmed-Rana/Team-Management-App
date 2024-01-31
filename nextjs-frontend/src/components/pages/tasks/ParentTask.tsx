@@ -5,6 +5,7 @@ import Column from "./Column";
 import { reorderColumnList } from "@/utils/reorderTaskColumnList";
 import { useUpdateStatusMutation } from "@/features/task";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 type Props = {
   project: any;
@@ -87,7 +88,7 @@ const ParentTask = ({ project }: Props) => {
   };
 
   useEffect(() => {
-    const initialColumns = state.columnOrder.reduce(
+    const initialColumns = state?.columnOrder.reduce(
       (acc: any, columnName: string) => {
         acc[columnName] = {
           id: columnName,
@@ -104,24 +105,29 @@ const ParentTask = ({ project }: Props) => {
       columns: initialColumns,
     }));
 
+    const token = Cookies.get("tmAccessToken");
     // Fetch tasks and update state if needed
-    fetch(`http://localhost:5000/task/by-project/${project?._id}`)
+    fetch(`http://localhost:5000/task/by-project/${project?._id}`, {
+      headers: {
+        authorization: token || "",
+      },
+    })
       .then((res) => res.json())
       .then((data: any) => {
         const dynamicData = data?.data?.reduce(
           (acc: any, task: any) => {
-            acc.tasks[task._id] = task;
+            acc.tasks[task?._id] = task;
 
-            const statusColumnId = task.status;
-            if (!acc.columns[statusColumnId]) {
+            const statusColumnId = task?.status;
+            if (!acc?.columns[statusColumnId]) {
               acc.columns[statusColumnId] = {
                 id: statusColumnId,
-                title: task.status,
+                title: task?.status,
                 taskIds: [],
               };
             }
 
-            acc.columns[statusColumnId].taskIds.push(task._id);
+            acc?.columns[statusColumnId]?.taskIds?.push(task?._id);
 
             return acc;
           },

@@ -14,17 +14,18 @@ router.post(
   UserController.register
 );
 
-router.get("/", UserController.getAllUsers);
+router.get("/", verifyJwt, UserController.getAllUsers);
 
 router.get("/auth", verifyJwt, UserController.auth);
 
 router.patch(
   "/update/:id",
+  verifyJwt,
   validateRequest(UserValidationSchema.updateZodSchema),
   UserController.updateUser
 );
 
-router.get("/all", UserController.getUsers);
+router.get("/all", verifyJwt, UserController.getUsers);
 
 router.post(
   "/login",

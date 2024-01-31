@@ -1,9 +1,13 @@
 import apiSlice from "../api/apiSlice";
+import Cookies from "js-cookie";
 
 const fileUploadApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     uploadSingleImage: builder.mutation({
       query: (image) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: "/cloudinary/single-image",
         method: "POST",
         body: image,
@@ -12,6 +16,9 @@ const fileUploadApi = apiSlice.injectEndpoints({
 
     uploadMultipleImage: builder.mutation({
       query: (images) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: "/cloudinary/multiple-image",
         method: "POST",
         body: images,
@@ -20,6 +27,9 @@ const fileUploadApi = apiSlice.injectEndpoints({
 
     uploadSingleFile: builder.mutation({
       query: (file) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: "/cloudinary/single-file",
         method: "POST",
         body: file,
@@ -28,6 +38,9 @@ const fileUploadApi = apiSlice.injectEndpoints({
 
     uploadMultipleFile: builder.mutation({
       query: (files) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: "/cloudinary/multiple-files",
         method: "POST",
         body: files,

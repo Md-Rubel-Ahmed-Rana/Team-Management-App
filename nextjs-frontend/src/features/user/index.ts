@@ -21,6 +21,9 @@ const userApi = apiSlice.injectEndpoints({
 
     getUsers: builder.query({
       query: () => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: "/user",
       }),
     }),
@@ -33,13 +36,11 @@ const userApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["user"] as any,
     }),
-    getUser: builder.query({
-      query: (id) => ({
-        url: `/api/auth/users/${id}`,
-      }),
-    }),
     updateUser: builder.mutation({
       query: ({ id, data }) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         method: "PATCH",
         url: `/user/update/${id}`,
         body: data,
@@ -52,7 +53,6 @@ const userApi = apiSlice.injectEndpoints({
 export const {
   useCreateUserMutation,
   useGetUsersQuery,
-  useGetUserQuery,
   useLoginUserMutation,
   useLoggedInUserQuery,
   useUpdateUserMutation,

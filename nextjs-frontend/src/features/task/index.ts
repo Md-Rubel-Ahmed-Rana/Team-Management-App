@@ -1,9 +1,13 @@
 import apiSlice from "../api/apiSlice";
+import Cookies from "js-cookie";
 
 const taskApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createTask: builder.mutation({
       query: (data) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: "/task/create",
         method: "POST",
         body: data,
@@ -13,6 +17,9 @@ const taskApi = apiSlice.injectEndpoints({
 
     updateStatus: builder.mutation({
       query: ({ id, status }) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/task/update-status/${id}`,
         method: "PATCH",
         body: { status },
@@ -22,6 +29,9 @@ const taskApi = apiSlice.injectEndpoints({
 
     updateTask: builder.mutation({
       query: ({ id, name }) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/task/task-update/${id}`,
         method: "PATCH",
         body: { name },
@@ -31,6 +41,9 @@ const taskApi = apiSlice.injectEndpoints({
 
     deleteTask: builder.mutation({
       query: (id) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/task/delete/${id}`,
         method: "DELETE",
       }),
@@ -39,6 +52,9 @@ const taskApi = apiSlice.injectEndpoints({
 
     getTasksByProject: builder.query({
       query: (id) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/task/by-project/${id}`,
       }),
       providesTags: ["task"] as any,

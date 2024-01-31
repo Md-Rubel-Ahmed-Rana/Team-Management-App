@@ -1,9 +1,13 @@
 import apiSlice from "../api/apiSlice";
+import Cookies from "js-cookie";
 
 const projectApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createProject: builder.mutation({
       query: (data) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: "/project/create",
         method: "POST",
         body: data,
@@ -12,6 +16,9 @@ const projectApi = apiSlice.injectEndpoints({
     }),
     updateProject: builder.mutation({
       query: ({ id, data }) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/project/update/${id}`,
         method: "PATCH",
         body: data,
@@ -20,18 +27,27 @@ const projectApi = apiSlice.injectEndpoints({
     }),
     myProjects: builder.query({
       query: (userId) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/project/my-projects/${userId}`,
       }),
       providesTags: ["project"] as any,
     }),
     assignedProjects: builder.query({
       query: (memberId) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/project/assigned-projects/${memberId}`,
       }),
       providesTags: ["project"] as any,
     }),
     getSingleProject: builder.query({
       query: (id) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/project/single/${id}`,
       }),
       providesTags: ["project", "task"] as any,
@@ -39,6 +55,9 @@ const projectApi = apiSlice.injectEndpoints({
     }),
     addMember: builder.mutation({
       query: (data) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: "/project/add-member",
         method: "POST",
         body: data,
@@ -47,6 +66,9 @@ const projectApi = apiSlice.injectEndpoints({
     }),
     removeMember: builder.mutation({
       query: (data) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: "/project/remove-member",
         method: "POST",
         body: data,
@@ -55,6 +77,9 @@ const projectApi = apiSlice.injectEndpoints({
     }),
     leaveProjectRequest: builder.mutation({
       query: (data) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: "/leave-project/sent-request",
         method: "POST",
         body: data,
@@ -63,6 +88,9 @@ const projectApi = apiSlice.injectEndpoints({
     }),
     ignoreProjectLeaveRequest: builder.mutation({
       query: (requestId) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/leave-project/ignore/${requestId}`,
         method: "PATCH",
       }),
@@ -70,12 +98,18 @@ const projectApi = apiSlice.injectEndpoints({
     }),
     getLeaveProjectRequestsByAdmin: builder.query({
       query: (adminId) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/leave-project/all/${adminId}`,
       }),
       providesTags: ["project"] as any,
     }),
     getMemberLeaveProjectRequest: builder.query({
       query: (memberId) => ({
+        headers: {
+          authorization: Cookies.get("tmAccessToken"),
+        },
         url: `/leave-project/member-request/${memberId}`,
       }),
       providesTags: ["project"] as any,

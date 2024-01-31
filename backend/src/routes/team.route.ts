@@ -3,33 +3,44 @@ import { Router } from "express";
 import validateRequest from "../middlewares/validateRequest";
 import { TeamController } from "../controllers/team.controller";
 import { TeamValidationSchema } from "../validation/team.validation";
+import verifyJwt from "../middlewares/auth";
 
 const router = Router();
 
-router.get("/my-teams/:adminId", TeamController.myTeams);
+router.get("/my-teams/:adminId", verifyJwt, TeamController.myTeams);
 
-router.get("/", TeamController.allTeams);
+router.get("/", verifyJwt, TeamController.allTeams);
 
-router.get("/active-members/:teamId", TeamController.getActiveMembers);
+router.get(
+  "/active-members/:teamId",
+  verifyJwt,
+  TeamController.getActiveMembers
+);
 
-router.get("/:id", TeamController.getTeam);
+router.get("/:id", verifyJwt, TeamController.getTeam);
 
-router.get("/userTeams/:memberId", TeamController.getUserTeams);
+router.get("/userTeams/:memberId", verifyJwt, TeamController.getUserTeams);
 
-router.get("/joined-teams/:memberId", TeamController.joinedTeams);
+router.get("/joined-teams/:memberId", verifyJwt, TeamController.joinedTeams);
 
-router.delete("/:id", TeamController.deleteTeam);
+router.delete("/:id", verifyJwt, TeamController.deleteTeam);
 
 router.post(
   "/create",
+  verifyJwt,
   validateRequest(TeamValidationSchema.createTeamValidation),
   TeamController.createTeam
 );
 
-router.patch("/remove-member/:teamId/:memberId", TeamController.removeMember);
+router.patch(
+  "/remove-member/:teamId/:memberId",
+  verifyJwt,
+  TeamController.removeMember
+);
 
 router.patch(
   "/:id",
+  verifyJwt,
   validateRequest(TeamValidationSchema.updateTeamValidation),
   TeamController.updateTeam
 );

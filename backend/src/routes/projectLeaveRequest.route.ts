@@ -1,14 +1,31 @@
-import { ProjectLeaveRequestController } from './../controllers/projectLeaveRequest.controller';
+import verifyJwt from "../middlewares/auth";
+import { ProjectLeaveRequestController } from "./../controllers/projectLeaveRequest.controller";
 import { Router } from "express";
 
 const router = Router();
 
-router.post("/sent-request", ProjectLeaveRequestController.requestToLeave)
+router.post(
+  "/sent-request",
+  verifyJwt,
+  ProjectLeaveRequestController.requestToLeave
+);
 
-router.patch("/ignore/:requestId", ProjectLeaveRequestController.ignoreRequest)
+router.patch(
+  "/ignore/:requestId",
+  verifyJwt,
+  ProjectLeaveRequestController.ignoreRequest
+);
 
-router.get("/all/:adminId", ProjectLeaveRequestController.getLeaveRequestByAdmin)
+router.get(
+  "/all/:adminId",
+  verifyJwt,
+  ProjectLeaveRequestController.getLeaveRequestByAdmin
+);
 
-router.get("/member-request/:memberId", ProjectLeaveRequestController.getMemberRequest)
+router.get(
+  "/member-request/:memberId",
+  verifyJwt,
+  ProjectLeaveRequestController.getMemberRequest
+);
 
-export const ProjectLeaveRequestRoutes = router
+export const ProjectLeaveRequestRoutes = router;
