@@ -12,6 +12,7 @@ import { GooglOAuthRoutes } from "./googleOAuth.route";
 import { MailRoutes } from "./mail.route";
 import { MessageRoutes } from "./message.route";
 import { FileUploadRoutes } from "./uploadfile.route";
+import { NotificationRoutes } from "./notification.route";
 
 const router = Router();
 
@@ -40,5 +41,7 @@ router.use("/mail", MailRoutes);
 router.use("/message", MessageRoutes);
 
 router.use("/cloudinary", FileUploadRoutes);
+
+router.use("/notification", NotificationRoutes);
 
 export const RootRoutes = router;

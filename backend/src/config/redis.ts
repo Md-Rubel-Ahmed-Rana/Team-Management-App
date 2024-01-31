@@ -1,15 +1,15 @@
 import { createClient } from "redis";
 
-const client = createClient();
+export const redisClient = createClient();
 
 class Redis {
   async connect() {
     try {
-      await client.connect();
+      await redisClient.connect();
       console.log("Redis connected successfully");
     } catch (error: any) {
       console.log({
-        message: "Redis Client Error",
+        message: "Redis not connected",
         error: error.message,
       });
     }

@@ -9,7 +9,7 @@ class Controller extends RootController {
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Users fetched  successfully",
+      message: "Users fetched  successfully from database",
       data: result,
     });
   });

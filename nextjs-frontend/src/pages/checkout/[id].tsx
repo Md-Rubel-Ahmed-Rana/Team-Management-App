@@ -10,12 +10,14 @@ const CheckoutRoute: NextPageWithLayout = () => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   useEffect(() => {
-    setLoading(true);
     const handleAuth = async () => {
+      setLoading(true);
       const isLoggedIn = Cookies.get("tmAccessToken");
       if (!isLoggedIn) {
         setLoading(false);
         return router.push("/login");
+      } else {
+        setLoading(false);
       }
     };
     handleAuth();

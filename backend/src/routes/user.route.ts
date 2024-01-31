@@ -5,6 +5,8 @@ import validateRequest from "../middlewares/validateRequest";
 import { UserController } from "../controllers/user.controller";
 import { UserValidationSchema } from "../validation/user.validation";
 import verifyJwt from "../middlewares/auth";
+import { RedisCacheService } from "../middlewares/redisCache";
+import { redisKeys } from "../constants/redisKeys";
 
 const router = Router();
 
@@ -14,7 +16,11 @@ router.post(
   UserController.register
 );
 
-router.get("/", verifyJwt, UserController.getAllUsers);
+router.get(
+  "/",
+  RedisCacheService.findMany(redisKeys.users, "Users fetched from caches"),
+  UserController.getAllUsers
+);
 
 router.get("/auth", verifyJwt, UserController.auth);
 
@@ -25,7 +31,7 @@ router.patch(
   UserController.updateUser
 );
 
-router.get("/all", verifyJwt, UserController.getUsers);
+router.get("/all", UserController.getUsers);
 
 router.post(
   "/login",

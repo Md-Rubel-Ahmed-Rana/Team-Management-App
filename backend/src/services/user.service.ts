@@ -5,6 +5,8 @@ import { config } from "../config";
 import { IUser } from "../interfaces/user.interface";
 import httpStatus from "http-status";
 import ApiError from "../shared/apiError";
+import { RedisCacheService } from "../middlewares/redisCache";
+import { redisKeys } from "../constants/redisKeys";
 
 class Service {
   async getAllUsers(): Promise<IUser[]> {
@@ -15,6 +17,7 @@ class Service {
       designation: 1,
       profile_picture: 1,
     });
+    await RedisCacheService.insertMany(redisKeys.users, result);
     return result;
   }
 
@@ -34,7 +37,16 @@ class Service {
     const hashedPassword = await bcrypt.hash(user?.password, 12);
     user.password = hashedPassword;
 
-    await User.create(user);
+    const result = await User.create(user);
+    const data = {
+      _id: result?._id,
+      name: result?.name,
+      profile_picture: result?.profile_picture,
+      email: result?.email,
+      department: result?.department,
+      designation: result?.designation,
+    };
+    await RedisCacheService.insertOne(redisKeys.users, data);
   }
 
   async auth(id: string): Promise<IUser> {

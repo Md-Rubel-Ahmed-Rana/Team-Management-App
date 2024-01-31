@@ -15,6 +15,7 @@ export const config = {
   app: {
     port: process.env.PORT,
     environment: process.env.NODE_ENV as string,
+    frontendDomain: process.env.FRONTEND_DOMAIN as string,
   },
   cloudinary: {
     cloudinaryName: process.env.CLOUDINARY_API_NAME,

@@ -31,7 +31,7 @@ const CheckoutPage = () => {
 
   return (
     <div className="container mx-auto py-20">
-      <div className="w-2/3 mx-auto bg-white p-8 rounded-md shadow-md">
+      <div className="w-2/3 mx-auto  p-8 rounded-md shadow-md">
         <h2 className="text-3xl font-bold mb-6 text-center">
           Thanks for checkout
         </h2>

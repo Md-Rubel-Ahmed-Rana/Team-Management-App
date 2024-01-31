@@ -8,6 +8,8 @@ import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import Cookies from "js-cookie";
+import { useGetNotificationQuery } from "@/features/notification";
+import { INotification } from "@/interfaces/notification.interface";
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -15,7 +17,11 @@ const Navbar = () => {
   const user: IUser = data?.data;
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
-  const notifications = [];
+  const { data: notifiedData } = useGetNotificationQuery(user?._id);
+  const notifications: INotification[] = notifiedData?.data || [];
+  const unreadNotification = notifications?.filter(
+    (notification: INotification) => !notification.read
+  );
 
   const handleLogOut = () => {
     Cookies.remove("tmAccessToken");
@@ -143,7 +149,7 @@ const Navbar = () => {
             >
               <FaRegBell />
               <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-                {notifications?.length || 0}
+                {unreadNotification?.length || 0}
               </small>
             </button>
           )}
