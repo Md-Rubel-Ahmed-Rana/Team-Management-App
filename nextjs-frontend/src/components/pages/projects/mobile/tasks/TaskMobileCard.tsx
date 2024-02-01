@@ -1,22 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 
-const TaskMobileCard = () => {
+type Props = {
+  task: any;
+};
+
+const TaskMobileCard = ({ task }: Props) => {
   const [editedTaskName, setEditedTaskName] = useState("");
   const [isEdit, setIsEdit] = useState(false);
-  const task = {
-    _id: "asfkjhwdkfjnslf",
-    name: "Create API",
-    deadline: "4 hours",
-    assignedTo: {
-      profile_picture: "",
-      name: "Rubel",
-      designation: "Full Stack Developer",
-    },
-    assignedBy: {
-      name: "Rashed",
-    },
-  };
+
   return (
     <div className="flex flex-col gap-2 border rounded-md shadow-md p-4">
       {isEdit ? (

@@ -1,23 +1,22 @@
+import { IProject } from "@/interfaces/project.interface";
 import React from "react";
 
-const ProjectInfo = ({ project }: any) => {
-  const projectData = {
-    name: "Octal phone store",
-    team: "Triangle Squad",
-    category: "This is a shop management app",
-    members: 4,
-  };
+type Props = {
+  project: IProject;
+};
+
+const ProjectInfo = ({ project }: Props) => {
   return (
     <div className="border shadow-md p-4">
       <div className="flex flex-col gap-2">
-        <h3 className="font-bold">Project: {projectData.name}</h3>
-        <h5 className="font-light text-sm">Team: {projectData.team}</h5>
-        <h6 className="font-light text-sm">Category: {projectData.category}</h6>
+        <h3 className="font-bold">Project: {project?.name}</h3>
+        <h5 className="font-light text-sm">Team: {project?.team?.name}</h5>
+        <h6 className="font-light text-sm">Category: {project?.category}</h6>
       </div>
       <hr className="my-2" />
       <div className="flex flex-col gap-2">
         <h4 className="font-bold text-lg">
-          Total Member: {projectData.members}{" "}
+          Total Member: {project?.members?.length}{" "}
         </h4>
         <div className="flex items-center justify-between">
           <p>

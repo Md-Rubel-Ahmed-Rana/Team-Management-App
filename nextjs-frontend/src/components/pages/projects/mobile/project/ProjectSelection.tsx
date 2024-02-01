@@ -3,11 +3,15 @@ import AssignedProjects from "./AssignedProjects";
 import MyProjects from "./MyProjects";
 import ProjectInfo from "./ProjectInfo";
 import Tasks from "../tasks/Tasks";
+import { useGetSingleProjectQuery } from "@/features/project";
+import { IProject } from "@/interfaces/project.interface";
 
 const ProjectSelection = () => {
-  const [selectedProject, setSelectedProject] = useState("My Projects");
+  const [selectedProjectType, setSelectedProjectType] = useState("My Projects");
   const [selectedCategory, setSelectedCategory] = useState("Tasks");
-  const project = { name: "Octal phone store" };
+  const [selectedProject, setSelectedProject] = useState("");
+  const { data: projectData } = useGetSingleProjectQuery(selectedProject);
+  const project: IProject = projectData?.data;
 
   return (
     <div className="p-4 flex flex-col gap-4">
@@ -15,7 +19,7 @@ const ProjectSelection = () => {
       <div className="flex flex-col justify-between items-center gap-2">
         <div className="w-full">
           <select
-            onChange={(e) => setSelectedProject(e.target.value)}
+            onChange={(e) => setSelectedProjectType(e.target.value)}
             name="main-project"
             id="main-project"
             className="p-2 w-full border rounded"
@@ -24,10 +28,10 @@ const ProjectSelection = () => {
             <option value="Assigned Projects">Assigned Projects</option>
           </select>
         </div>
-        {selectedProject === "My Projects" ? (
-          <MyProjects />
+        {selectedProjectType === "My Projects" ? (
+          <MyProjects setSelectedProject={setSelectedProject} />
         ) : (
-          <AssignedProjects />
+          <AssignedProjects setSelectedProject={setSelectedProject} />
         )}
       </div>
 
@@ -60,7 +64,7 @@ const ProjectSelection = () => {
         {selectedCategory === "Project info" ? (
           <ProjectInfo project={project} />
         ) : (
-          <Tasks />
+          <Tasks project={project} />
         )}
       </div>
     </div>
