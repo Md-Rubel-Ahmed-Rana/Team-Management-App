@@ -1,38 +1,38 @@
+import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
 import Select from "react-select";
-import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
-import { useLoggedInUserQuery } from "@/features/user";
+import { useAddMemberMutation } from "@/features/project";
+import { useGetActiveMembersQuery } from "@/features/team";
 import { IUser } from "@/interfaces/user.interface";
-import { useMyTeamsQuery } from "@/features/team";
-import { INewProject } from "@/interfaces/project.interface";
-import { useCreateProjectMutation } from "@/features/project";
 import customStyles from "@/utils/reactSelectCustomStyle";
+import { projectMemberRoles } from "@/constants/projectMemberRoles";
 
-const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
+const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: any) => {
   const closeModal = () => {
     setIsOpen(false);
   };
-  const { data: userData } = useLoggedInUserQuery({});
-  const user: IUser = userData?.data;
-  const { data: teamData } = useMyTeamsQuery(user?._id);
-  const [selectedTeam, setSelectedTeam] = useState<{
-    label: string;
-    value: string;
-  }>({ label: "", value: "" });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<INewProject>();
 
-  const [createProject] = useCreateProjectMutation();
+  const [addNewMember] = useAddMemberMutation();
+  const [newMember, setNewMember] = useState({ label: "", value: "" });
+  const [role, setRole] = useState("");
+  const { data: memberData } = useGetActiveMembersQuery(team?._id);
+  const members = memberData?.data?.map((member: IUser) => ({
+    value: member?._id,
+    label: member?.name,
+  }));
 
-  const handleCreateNewProject: SubmitHandler<INewProject> = async (data) => {
-    data.user = user?._id || "";
-    data.team = selectedTeam.value;
-    const result: any = await createProject(data);
+  const handleAddNewMember = async (e: any) => {
+    e.preventDefault();
+
+    const memberData = {
+      projectId,
+      memberId: newMember.value,
+      role,
+    };
+
+    const result: any = await addNewMember(memberData);
+
     if (result?.data?.success) {
       Swal.fire({
         position: "center",
@@ -42,13 +42,13 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
         timer: 1500,
       });
       closeModal();
-    } else {
+    }
+    if (result?.error) {
       Swal.fire({
         position: "center",
         icon: "error",
-        title: "Something went wrong to create project",
-        showConfirmButton: false,
-        timer: 1500,
+        text: result?.error?.data?.message,
+        showConfirmButton: true,
       });
       closeModal();
     }
@@ -82,26 +82,24 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
             >
               <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 p-6 text-left  shadow-xl transition-all relative">
                 <div className="mt-3">
-                  <form onSubmit={handleSubmit(handleCreateNewProject)}>
+                  <form onSubmit={handleAddNewMember}>
                     <h3 className="text-xl font-bold mb-5">
-                      Create a new project
+                      Add member to this project
                     </h3>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2 ">Select a team</p>
+                      <p className="text-stone-500 mb-2 ">Select a member</p>
                       <Select
-                      required
-                        options={
-                          teamData?.data &&
-                          teamData?.data?.map((team: any) => ({
-                            value: team?._id,
-                            label: team?.name,
-                          }))
-                        }
+                        required
+                        options={members}
                         styles={customStyles}
-                        onChange={(team: any) => setSelectedTeam(team)}
-                        placeholder="Type a name to assign group member"
+                        onChange={(user: any) => setNewMember(user)}
+                        placeholder="Type a name to assign a member to project"
                         className="mt-1 w-full"
                         classNamePrefix="select2-selection"
+                        noOptionsMessage={({ inputValue }: any) =>
+                          !inputValue &&
+                          `No active members in your team: ${team?.name}. Please invite members to join your team`
+                        }
                         components={{
                           DropdownIndicator: () => null,
                           IndicatorSeparator: () => null,
@@ -109,28 +107,35 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
                       />
                     </div>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2">Project name</p>
-                      <input
-                        {...register("name", { required: "Name is required" })}
+                      <p className="text-stone-500 mb-2">Assign a role</p>
+                      <Select
+                        required
+                        options={projectMemberRoles?.map((role) => ({
+                          label: role,
+                          value: role,
+                        }))}
+                        styles={customStyles}
+                        onChange={(role: any) => setRole(role?.value)}
+                        placeholder="Type a name to assign a member to project"
+                        className="mt-1 w-full"
+                        classNamePrefix="select2-selection"
+                        noOptionsMessage={({ inputValue }: any) =>
+                          !inputValue &&
+                          `No active members in your team: ${team?.name}. Please invite members to join your team`
+                        }
+                        components={{
+                          DropdownIndicator: () => null,
+                          IndicatorSeparator: () => null,
+                        }}
+                      />
+                      {/* <input
                         required
                         type="text"
-                        id="teamName"
-                        placeholder="Project Name"
+                        id="role"
+                        onChange={(e) => setRole(e.target.value)}
+                        placeholder="Role: manager, leader, developer, designer etc"
                         className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
-                      />
-                    </div>
-                    <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2">Project category</p>
-                      <input
-                        {...register("category", {
-                          required: "category is required",
-                        })}
-                        required
-                        type="text"
-                        id="teamName"
-                        placeholder="Project category"
-                        className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
-                      />
+                      /> */}
                     </div>
 
                     <div className="mt-5 lg:flex justify-between">
@@ -145,7 +150,7 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
                         type="submit"
                         className="border mx-auto outline-none rounded-full px-10 py-2 bg-blue-700 text-white text-md flex items-center gap-2"
                       >
-                        Continue
+                        Add
                       </button>
                     </div>
                   </form>
@@ -159,4 +164,4 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
   );
 };
 
-export default CreateProjectModal;
+export default AddMemberToProject;

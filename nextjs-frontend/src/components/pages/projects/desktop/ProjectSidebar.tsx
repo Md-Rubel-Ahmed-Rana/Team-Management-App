@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import CreateProjectModal from "./CreateProjectModal";
 import { FaEllipsisV } from "react-icons/fa";
 import EditProjectModal from "./EditProjectModal";
 import Swal from "sweetalert2";
@@ -12,6 +11,7 @@ import {
 import { useMyTeamsQuery } from "@/features/team";
 import { useRouter } from "next/router";
 import { IProject } from "@/interfaces/project.interface";
+import CreateProjectModal from "./CreateProjectModal";
 
 const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
   const [isOpen, setIsOpen] = useState(false);

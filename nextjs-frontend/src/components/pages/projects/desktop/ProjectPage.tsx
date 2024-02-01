@@ -14,7 +14,7 @@ import { IProject } from "@/interfaces/project.interface";
 import RemoveMemberFromProject from "./RemoveMemberFromProject";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
-import ParentTask from "../tasks/ParentTask";
+import ParentTask from "../../tasks/ParentTask";
 
 const Projects = () => {
   const { query } = useRouter();
