@@ -23,6 +23,8 @@ const Navbar = () => {
     (notification: INotification) => !notification.read
   );
 
+  console.log(notifications, unreadNotification);
+
   const handleLogOut = () => {
     Cookies.remove("tmAccessToken");
     window.location.replace("/");
@@ -82,7 +84,7 @@ const Navbar = () => {
           >
             <FaRegBell />
             <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-              {notifications?.length || 0}
+              {unreadNotification?.length || 0}
             </small>
           </button>
         )}

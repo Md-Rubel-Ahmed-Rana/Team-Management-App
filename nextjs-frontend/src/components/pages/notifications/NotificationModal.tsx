@@ -9,6 +9,7 @@ import {
 } from "@/features/notification";
 import { RxCross2 } from "react-icons/rx";
 import { INotification } from "@/interfaces/notification.interface";
+import Link from "next/link";
 
 const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
   const { data }: any = useLoggedInUserQuery({});
@@ -27,12 +28,12 @@ const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
   };
 
   useEffect(() => {
-    const update = async () => {
-      const result = await updatedNotifications({ userId: user._id, ids });
-      console.log(result);
-    };
-    update();
-    console.log("Need to update notification as read", ids);
+    if (ids?.length > 0) {
+      const update = async () => {
+        await updatedNotifications({ userId: user._id, ids });
+      };
+      update();
+    }
   }, []);
 
   return (
@@ -75,7 +76,7 @@ const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
                 </button>
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 w-full overflow-hidden hover:overflow-auto h-[450px] scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thumb-rounded-md scrollbar-track-slate-100 pr-1">
                 {notifications?.map((notification: INotification) => (
                   <div
                     key={notification.id}
@@ -86,16 +87,14 @@ const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
                     </h4>
                     <p>{notification.content.message}</p>
                     <p>Invited by: {notification.content.data.invitedBy}</p>
-                    <p className="text-sm">
-                      <a
+                    <button onClick={closeModal} className="text-sm">
+                      <Link
                         href={notification.content.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="text-blue-600"
                       >
                         View link
-                      </a>
-                    </p>
+                      </Link>
+                    </button>
                   </div>
                 ))}
               </div>
