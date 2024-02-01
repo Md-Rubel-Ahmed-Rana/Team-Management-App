@@ -11,4 +11,5 @@ export interface IMessage {
   images: string[];
   files: string[];
   links: string[];
+  createdAt: Date;
 }

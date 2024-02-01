@@ -11,6 +11,8 @@ import { IUser } from "@/interfaces/user.interface";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaRegTrashAlt, FaPencilAlt } from "react-icons/fa";
+import moment from "moment";
+import { formattedDate } from "@/utils/formattedDate";
 
 interface Props {
   messages: IMessage[];
@@ -109,7 +111,12 @@ const ShowMessages = ({ messages }: Props) => {
                 alt={post?.poster?.name}
                 className="w-10 h-10 rounded-full mr-4"
               />
-              <span className="font-bold">{post?.poster?.name}</span>
+              <div className="flex flex-col gap-1">
+                <span className="font-bold">{post?.poster?.name}</span>
+                <span className="text-sm text-gray-500">
+                  {moment(post?.createdAt).fromNow()}
+                </span>
+              </div>
             </div>
             {isEdit.status &&
               isEdit.index === index &&
@@ -214,6 +221,7 @@ const ShowMessages = ({ messages }: Props) => {
               ))}
             </div>
           )}
+          <p>{formattedDate(post.createdAt)}</p>
         </div>
       ))}
     </div>
