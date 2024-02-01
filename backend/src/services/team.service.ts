@@ -4,6 +4,12 @@ import ApiError from "../shared/apiError";
 import { ITeam } from "../interfaces/team.interface";
 import { Project } from "../models/project.model";
 import { TeamLeaveRequest } from "../models/teamLeaveRequest.model";
+import User from "../models/user.model";
+import { v4 as uuidv4 } from "uuid";
+import { INotification } from "../interfaces/notification.interface";
+import { config } from "../config";
+import { RedisCacheService } from "../middlewares/redisCache";
+import { cacheExpireDates } from "../constants/redisCacheExpireDate";
 
 class Service {
   async createTeam(data: ITeam): Promise<ITeam> {
@@ -211,7 +217,6 @@ class Service {
   }
 
   async removeMember(teamId: string, memberId: string): Promise<void> {
-
     // remove from team
     await Team.updateOne(
       { _id: teamId },
@@ -219,7 +224,41 @@ class Service {
       { new: true }
     );
 
-    // remove from projects
+    const result = await Team.findById(teamId).select({ name: 1, admin: 1 });
+
+    // send notification to removed member
+    const member = await User.findById(memberId).select({ name: 1 });
+    const admin = await User.findById(result?.admin).select({ name: 1 });
+
+    if (member && admin) {
+      const notification: INotification = {
+        id: uuidv4(),
+        sortBy: Date.now(),
+        type: "team_invitation",
+        createdAt: new Date(),
+        read: false,
+        content: {
+          title: "Team Removal",
+          message: `You've been removed from Team (${result?.name})`,
+          link: `${config.app.frontendDomain}/dashboard?uId=${member?._id}activeView=joined-teams`,
+          data: {
+            sendBy: admin?.name,
+          },
+        },
+        recipient: {
+          userId: member?._id,
+          name: member?.name,
+        },
+      };
+
+      await RedisCacheService.insertOne(
+        String(member?._id),
+        notification,
+        cacheExpireDates.months[1]
+      );
+    }
+
+    // remove this member from projects
     const projects = await Project.find({ "members.member": memberId });
     const updatePromises = projects.map(async (project) => {
       project.members = project.members.filter(
@@ -230,7 +269,10 @@ class Service {
     await Promise.all(updatePromises);
 
     // update leave request for team
-    await TeamLeaveRequest.findOneAndUpdate({team: teamId}, {$set: {status: "accepted"}}).sort({createdAt: -1})
+    await TeamLeaveRequest.findOneAndUpdate(
+      { team: teamId },
+      { $set: { status: "accepted" } }
+    ).sort({ createdAt: -1 });
   }
 }
 export const TeamService = new Service();

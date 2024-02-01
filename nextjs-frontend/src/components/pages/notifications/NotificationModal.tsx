@@ -81,7 +81,7 @@ const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
               <div className="flex flex-col gap-4 w-full overflow-hidden hover:overflow-auto h-[450px] scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thumb-rounded-md scrollbar-track-slate-100 pr-1">
                 {notifications?.map((notification: INotification) => (
                   <div
-                    key={notification.id}
+                    key={Math.random()}
                     className="flex flex-col gap-2 shadow-lg border p-4 rounded-md"
                   >
                     <div className="flex justify-between items-center">

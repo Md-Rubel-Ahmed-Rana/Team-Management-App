@@ -4,6 +4,7 @@ import { RedisCacheService } from "../middlewares/redisCache";
 import Team from "../models/team.model";
 import User from "../models/user.model";
 import { cacheExpireDates } from "../constants/redisCacheExpireDate";
+import { v4 as uuidv4 } from "uuid";
 
 class Service {
   async sendInvitation(teamId: string, memberId: string) {
@@ -21,7 +22,8 @@ class Service {
 
     if (member && admin) {
       const notification: INotification = {
-        id: Date.now(),
+        id: uuidv4(),
+        sortBy: Date.now(),
         type: "team_invitation",
         createdAt: new Date(),
         read: false,
@@ -90,7 +92,8 @@ class Service {
 
     if (member && admin) {
       const notification: INotification = {
-        id: Date.now(),
+        id: uuidv4(),
+        sortBy: Date.now(),
         type: "team_invitation",
         createdAt: new Date(),
         read: false,
@@ -133,7 +136,8 @@ class Service {
 
     if (member && admin) {
       const notification: INotification = {
-        id: Date.now(),
+        id: uuidv4(),
+        sortBy: Date.now(),
         type: "team_invitation",
         createdAt: new Date(),
         read: false,

@@ -1,8 +1,9 @@
 import { Types } from "mongoose";
 
 export type INotification = {
-  id: number;
+  id: string;
   type: string;
+  sortBy: number;
   createdAt: Date;
   read: boolean;
   content: {
