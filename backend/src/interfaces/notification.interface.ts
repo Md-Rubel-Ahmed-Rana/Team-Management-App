@@ -10,7 +10,7 @@ export type INotification = {
     message: string;
     link: string;
     data: {
-      invitedBy: string;
+      sendBy: string;
     };
   };
   recipient: {

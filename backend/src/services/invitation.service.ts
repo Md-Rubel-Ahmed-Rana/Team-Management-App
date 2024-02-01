@@ -1,9 +1,9 @@
-import { Types } from "mongoose";
 import { config } from "../config";
 import { INotification } from "../interfaces/notification.interface";
 import { RedisCacheService } from "../middlewares/redisCache";
 import Team from "../models/team.model";
 import User from "../models/user.model";
+import { cacheExpireDates } from "../constants/redisCacheExpireDate";
 
 class Service {
   async sendInvitation(teamId: string, memberId: string) {
@@ -17,8 +17,9 @@ class Service {
 
     // send notification to invited user and store it on cache
     const member = await User.findById(memberId).select({ name: 1 });
+    const admin = await User.findById(result?.admin).select({ name: 1 });
 
-    if (member) {
+    if (member && admin) {
       const notification: INotification = {
         id: Date.now(),
         type: "team_invitation",
@@ -27,9 +28,9 @@ class Service {
         content: {
           title: "Team Invitation",
           message: `You've been invited to join Team (${result?.name})`,
-          link: `${config.app.frontendDomain}/dashboard?activeView=invitations`,
+          link: `${config.app.frontendDomain}/dashboard?uId=${member?._id}activeView=invitations`,
           data: {
-            invitedBy: "Team admin",
+            sendBy: admin?.name,
           },
         },
         recipient: {
@@ -37,12 +38,11 @@ class Service {
           name: member?.name,
         },
       };
-      const expireDate = 2592000; // 30 days | 1 month
 
       await RedisCacheService.insertOne(
         String(member?._id),
         notification,
-        expireDate
+        cacheExpireDates.months[1]
       );
     }
 
@@ -85,6 +85,36 @@ class Service {
       { new: true }
     );
 
+    const member = await User.findById(memberId).select({ name: 1 });
+    const admin = await User.findById(result?.admin).select({ name: 1 });
+
+    if (member && admin) {
+      const notification: INotification = {
+        id: Date.now(),
+        type: "team_invitation",
+        createdAt: new Date(),
+        read: false,
+        content: {
+          title: "Team Invitation",
+          message: `Your team invitation has been rejected for (${result?.name})`,
+          link: `${config.app.frontendDomain}/dashboard?uId=${admin?._id}&activeView=my-teams`,
+          data: {
+            sendBy: member?.name,
+          },
+        },
+        recipient: {
+          userId: admin?._id,
+          name: admin?.name,
+        },
+      };
+
+      await RedisCacheService.insertOne(
+        String(admin?._id),
+        notification,
+        cacheExpireDates.months[1]
+      );
+    }
+
     return result;
   }
 
@@ -98,102 +128,38 @@ class Service {
       { new: true }
     );
 
+    const member = await User.findById(memberId).select({ name: 1 });
+    const admin = await User.findById(result?.admin).select({ name: 1 });
+
+    if (member && admin) {
+      const notification: INotification = {
+        id: Date.now(),
+        type: "team_invitation",
+        createdAt: new Date(),
+        read: false,
+        content: {
+          title: "Team Invitation",
+          message: `Your team invitation has been accepted for (${result?.name})`,
+          link: `${config.app.frontendDomain}/dashboard?uId=${admin?._id}&activeView=my-teams`,
+          data: {
+            sendBy: member?.name,
+          },
+        },
+        recipient: {
+          userId: admin?._id,
+          name: admin?.name,
+        },
+      };
+
+      await RedisCacheService.insertOne(
+        String(admin?._id),
+        notification,
+        cacheExpireDates.months[1]
+      );
+    }
+
     return result;
   }
 }
 
 export const InvitationService = new Service();
-
-const notifications = [
-  {
-    type: "task_assignment",
-    createdAt: new Date(),
-    read: false,
-    content: {
-      title: "Task Assignment",
-      message: "You've been assigned a new task in Project [project name]",
-      link: "/projects/project-x/tasks/task-123",
-      data: {
-        taskName: "Complete Documentation",
-        dueDate: "2022-02-15",
-      },
-    },
-    recipient: {
-      userId: "user-123",
-      username: "john_doe",
-    },
-  },
-  {
-    id: "2",
-    type: "project_update",
-    createdAt: 1644048000000, // Timestamp for February 1, 2022
-    read: false,
-    content: {
-      title: "Project Update",
-      message: "Project Y has a new status update",
-      link: "/projects/project-y",
-      data: {
-        status: "In Progress",
-        lastUpdatedBy: "user-456",
-      },
-    },
-    recipient: {
-      userId: "user-789",
-      username: "jane_doe",
-    },
-  },
-  {
-    id: "3",
-    type: "team_invitation",
-    createdAt: 1644220800000, // Timestamp for February 2, 2022
-    read: false,
-    content: {
-      title: "Team Invitation",
-      message: "You've been invited to join Team [team name]",
-      link: "/teams/team-z",
-      data: {
-        invitedBy: "user-789",
-      },
-    },
-    recipient: {
-      userId: "user-123",
-      username: "john_doe",
-    },
-  },
-  {
-    id: "4",
-    type: "notification_type",
-    createdAt: 1644393600000, // Timestamp for February 3, 2022
-    read: false,
-    content: {
-      title: "Generic Notification",
-      message: "This is a generic notification with no specific type",
-      link: "/path/to/unknown/resource",
-      data: {
-        additionalInfo: "Any relevant data can be included",
-      },
-    },
-    recipient: {
-      userId: "user-456",
-      username: "bob_smith",
-    },
-  },
-  {
-    id: "5",
-    type: "task_completed",
-    createdAt: 1644566400000, // Timestamp for February 4, 2022
-    read: false,
-    content: {
-      title: "Task Completed",
-      message: "The task 'Review Design Mockups' has been completed",
-      link: "/projects/project-a/tasks/task-789",
-      data: {
-        completedBy: "user-123",
-      },
-    },
-    recipient: {
-      userId: "user-789",
-      username: "jane_doe",
-    },
-  },
-];

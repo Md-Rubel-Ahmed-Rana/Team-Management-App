@@ -10,6 +10,8 @@ import {
 import { RxCross2 } from "react-icons/rx";
 import { INotification } from "@/interfaces/notification.interface";
 import Link from "next/link";
+import moment from "moment";
+import { formattedDate } from "@/utils/formattedDate";
 
 const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
   const { data }: any = useLoggedInUserQuery({});
@@ -80,14 +82,20 @@ const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
                 {notifications?.map((notification: INotification) => (
                   <div
                     key={notification.id}
-                    className="shadow-lg border p-4 rounded-md"
+                    className="flex flex-col gap-2 shadow-lg border p-4 rounded-md"
                   >
-                    <h4 className="text-lg font-semibold mb-2">
-                      {notification.content.title}
-                    </h4>
+                    <div className="flex justify-between items-center">
+                      <h4 className="text-md font-semibold">
+                        {notification.content.title}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {moment(notification.createdAt).fromNow()}
+                      </p>
+                    </div>
+
                     <p>{notification.content.message}</p>
-                    <p>Invited by: {notification.content.data.invitedBy}</p>
-                    <button onClick={closeModal} className="text-sm">
+                    <p>Send by: {notification.content.data.sendBy}</p>
+                    <button onClick={closeModal} className="text-sm text-left">
                       <Link
                         href={notification.content.link}
                         className="text-blue-600"
@@ -95,6 +103,7 @@ const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
                         View link
                       </Link>
                     </button>
+                    <p>{formattedDate(notification.createdAt)}</p>
                   </div>
                 ))}
               </div>
