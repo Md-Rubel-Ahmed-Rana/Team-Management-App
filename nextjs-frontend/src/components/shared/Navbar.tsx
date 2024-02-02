@@ -23,8 +23,6 @@ const Navbar = () => {
     (notification: INotification) => !notification.read
   );
 
-  console.log(notifications, unreadNotification);
-
   const handleLogOut = () => {
     Cookies.remove("tmAccessToken");
     window.location.replace("/");

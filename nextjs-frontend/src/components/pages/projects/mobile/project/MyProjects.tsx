@@ -1,28 +1,55 @@
-import {
-  useGetSingleProjectQuery,
-  useMyProjectsQuery,
-} from "@/features/project";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useMyProjectsQuery } from "@/features/project";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IProject } from "@/interfaces/project.interface";
 import { IUser } from "@/interfaces/user.interface";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 
 const MyProjects = ({ setSelectedProject }: any) => {
+  const router = useRouter();
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const { data: projectsData } = useMyProjectsQuery(user?._id);
-  const projects: IProject[] = projectsData?.data || [];
+  const projects: IProject[] = projectsData?.data;
+
+  const handleChangeProject = (projectId: string) => {
+    const project = projects.find((prj) => prj._id === projectId);
+    setSelectedProject(project?._id);
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        team: project?.team?.name,
+        id: project?._id,
+        name: project?.name,
+      },
+    });
+  };
+
+  useEffect(() => {
+    const project: any = projects?.length > 0 ? projects[0] : [];
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        team: project?.team?.name || "unknown",
+        id: project?._id,
+        name: project?.name,
+      },
+    });
+  }, []);
 
   return (
     <select
-      onChange={(e) => setSelectedProject(e.target.value)}
+      onChange={(e) => handleChangeProject(e.target.value)}
       className="p-2 w-full border rounded"
     >
       {projects?.length > 0 ? (
         <>
           {projects?.map((project: IProject) => (
-            <option key={Math.random()} value={project._id}>
-              {project.name}
+            <option key={Math.random()} value={project?._id}>
+              {project?.name}
             </option>
           ))}
         </>

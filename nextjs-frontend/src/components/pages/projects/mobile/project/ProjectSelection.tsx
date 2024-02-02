@@ -1,17 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AssignedProjects from "./AssignedProjects";
 import MyProjects from "./MyProjects";
 import ProjectInfo from "./ProjectInfo";
 import Tasks from "../tasks/Tasks";
 import { useGetSingleProjectQuery } from "@/features/project";
 import { IProject } from "@/interfaces/project.interface";
+import { useRouter } from "next/router";
 
 const ProjectSelection = () => {
-  const [selectedProjectType, setSelectedProjectType] = useState("My Projects");
+  const router = useRouter();
+  const [selectedProjectType, setSelectedProjectType] = useState<any>("");
   const [selectedCategory, setSelectedCategory] = useState("Tasks");
-  const [selectedProject, setSelectedProject] = useState("");
+  const [selectedProject, setSelectedProject] = useState<any>("");
   const { data: projectData } = useGetSingleProjectQuery(selectedProject);
   const project: IProject = projectData?.data;
+
+  const handleChangeProjectType = (type: string) => {
+    setSelectedProjectType(type);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, projectType: type },
+    });
+  };
+
+  useEffect(() => {
+    setSelectedProject(router?.query?.id);
+    setSelectedProjectType(router?.query?.projectType || "My Projects");
+  }, [router?.query?.id, router?.query?.projectType]);
 
   return (
     <div className="p-4 flex flex-col gap-4">
@@ -19,13 +34,24 @@ const ProjectSelection = () => {
       <div className="flex flex-col justify-between items-center gap-2">
         <div className="w-full">
           <select
-            onChange={(e) => setSelectedProjectType(e.target.value)}
+            defaultValue={selectedProjectType}
+            onChange={(e) => handleChangeProjectType(e.target.value)}
             name="main-project"
             id="main-project"
             className="p-2 w-full border rounded"
           >
-            <option value="My Projects">My Projects</option>
-            <option value="Assigned Projects">Assigned Projects</option>
+            <option
+              selected={selectedProjectType === "My Projects"}
+              value="My Projects"
+            >
+              My Projects
+            </option>
+            <option
+              selected={selectedProjectType === "Assigned Projects"}
+              value="Assigned Projects"
+            >
+              Assigned Projects
+            </option>
           </select>
         </div>
         {selectedProjectType === "My Projects" ? (

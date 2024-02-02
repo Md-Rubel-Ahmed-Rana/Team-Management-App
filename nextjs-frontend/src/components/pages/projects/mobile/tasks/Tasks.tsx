@@ -11,15 +11,12 @@ type Props = {
 const Tasks = ({ project }: Props) => {
   const [activeStatus, setActiveStatus] = useState("Todo");
   const { data: taskData } = useGetTasksByProjectQuery(project?._id);
-  const todoTasksArray = taskData?.data?.filter(
-    (task: any) => task?.status === "Todo"
-  );
-  const ongoingTasksArray = taskData?.data?.filter(
-    (task: any) => task?.status === "Ongoing"
-  );
-  const completedTasksArray = taskData?.data?.filter(
-    (task: any) => task?.status === "Completed"
-  );
+  const todoTasksArray =
+    taskData?.data?.filter((task: any) => task?.status === "Todo") || [];
+  const ongoingTasksArray =
+    taskData?.data?.filter((task: any) => task?.status === "Ongoing") || [];
+  const completedTasksArray =
+    taskData?.data?.filter((task: any) => task?.status === "Completed") || [];
 
   return (
     <div>
@@ -37,14 +34,14 @@ const Tasks = ({ project }: Props) => {
         )}
         {activeStatus === "Ongoing" && (
           <>
-            {ongoingTasksArray.map((task: any) => (
+            {ongoingTasksArray?.map((task: any) => (
               <TaskMobileCard task={task} key={Math.random()} />
             ))}
           </>
         )}
         {activeStatus === "Completed" && (
           <>
-            {completedTasksArray.map((task: any) => (
+            {completedTasksArray?.map((task: any) => (
               <TaskMobileCard task={task} key={Math.random()} />
             ))}
           </>

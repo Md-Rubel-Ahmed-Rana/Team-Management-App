@@ -12,6 +12,7 @@ const AssignedProjects = ({ setSelectedProject }: any) => {
 
   return (
     <select
+      defaultValue={projects[0]?._id}
       onChange={(e) => setSelectedProject(e.target.value)}
       className="p-2 w-full border rounded"
     >
