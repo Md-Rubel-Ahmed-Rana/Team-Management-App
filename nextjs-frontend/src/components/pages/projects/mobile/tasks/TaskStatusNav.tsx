@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 
-const TaskStatusNav = ({ activeStatus, setActiveStatus }: any) => {
+const TaskStatusNav = ({ activeStatus, setActiveStatus, setIsOpen }: any) => {
   return (
     <div className="flex justify-between items-center gap-2 mb-4">
       <p
@@ -11,7 +11,9 @@ const TaskStatusNav = ({ activeStatus, setActiveStatus }: any) => {
         }`}
       >
         <button className="w-full text-left text-sm">Todo</button>
-        <FaPlus />
+        <button onClick={() => setIsOpen(true)}>
+          <FaPlus />
+        </button>
       </p>
       <p
         onClick={() => setActiveStatus("Ongoing")}
@@ -20,7 +22,9 @@ const TaskStatusNav = ({ activeStatus, setActiveStatus }: any) => {
         }`}
       >
         <button className="w-full text-left text-sm">Ongoing</button>
-        <FaPlus />
+        <button onClick={() => setIsOpen(true)}>
+          <FaPlus />
+        </button>
       </p>
       <p
         onClick={() => setActiveStatus("Completed")}
@@ -29,7 +33,9 @@ const TaskStatusNav = ({ activeStatus, setActiveStatus }: any) => {
         }`}
       >
         <button className="w-full text-left text-sm">Completed</button>
-        <FaPlus />
+        <button onClick={() => setIsOpen(true)}>
+          <FaPlus />
+        </button>
       </p>
     </div>
   );

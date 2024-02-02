@@ -8,7 +8,14 @@ import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
 import { projectMemberRoles } from "@/constants/projectMemberRoles";
 
-const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: any) => {
+type Props = {
+  isOpen: boolean;
+  setIsOpen: (state: boolean) => void;
+  projectId: string;
+  team: any;
+};
+
+const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
   const closeModal = () => {
     setIsOpen(false);
   };

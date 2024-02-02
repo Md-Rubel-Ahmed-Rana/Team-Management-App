@@ -2,13 +2,24 @@ import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Select from "react-select";
 import Swal from "sweetalert2";
-import {  useRemoveMemberMutation } from "@/features/project";
+import { useRemoveMemberMutation } from "@/features/project";
 import { useGetActiveMembersQuery } from "@/features/team";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
 
-const RemoveMemberFromProject = ({ isRemove, setIsRemove, projectId, team }: any) => {
+type Props = {
+  isRemove: boolean;
+  setIsRemove: (state: boolean) => void;
+  projectId: string;
+  team: any;
+};
 
+const RemoveMemberFromProject = ({
+  isRemove,
+  setIsRemove,
+  projectId,
+  team,
+}: Props) => {
   const closeModal = () => {
     setIsRemove(false);
   };
@@ -40,8 +51,8 @@ const RemoveMemberFromProject = ({ isRemove, setIsRemove, projectId, team }: any
         timer: 1500,
       });
       closeModal();
-    } 
-    if(result?.error) {
+    }
+    if (result?.error) {
       Swal.fire({
         position: "center",
         icon: "error",

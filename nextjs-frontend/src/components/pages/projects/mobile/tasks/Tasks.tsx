@@ -3,6 +3,7 @@ import TaskMobileCard from "./TaskMobileCard";
 import TaskStatusNav from "./TaskStatusNav";
 import { IProject } from "@/interfaces/project.interface";
 import { useGetTasksByProjectQuery } from "@/features/task";
+import CreateTaskModal from "@/components/pages/tasks/CreateTaskModal";
 
 type Props = {
   project: IProject;
@@ -10,6 +11,7 @@ type Props = {
 
 const Tasks = ({ project }: Props) => {
   const [activeStatus, setActiveStatus] = useState("Todo");
+  const [isOpen, setIsOpen] = useState(false);
   const { data: taskData } = useGetTasksByProjectQuery(project?._id);
   const todoTasksArray =
     taskData?.data?.filter((task: any) => task?.status === "Todo") || [];
@@ -23,6 +25,7 @@ const Tasks = ({ project }: Props) => {
       <TaskStatusNav
         activeStatus={activeStatus}
         setActiveStatus={setActiveStatus}
+        setIsOpen={setIsOpen}
       />
       <div className="flex flex-col gap-2">
         {activeStatus === "Todo" && (
@@ -47,6 +50,14 @@ const Tasks = ({ project }: Props) => {
           </>
         )}
       </div>
+      {isOpen && (
+        <CreateTaskModal
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          status={activeStatus}
+          project={project}
+        />
+      )}
     </div>
   );
 };
