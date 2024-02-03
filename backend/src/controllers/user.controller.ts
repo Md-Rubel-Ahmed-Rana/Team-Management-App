@@ -25,7 +25,8 @@ class Controller extends RootController {
   });
 
   auth = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.auth(req.id);
+    const id: any = req?.id;
+    const result = await UserService.auth(id);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

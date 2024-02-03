@@ -28,7 +28,7 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
-    "start": "node dist/server.js"
+    "start": "node -r ./tsconfig-paths-bootstrap.js dist/server.js"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
