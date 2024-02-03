@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Loader from "@/components/shared/Loader";
 import GetHead from "@/utils/Head";
+import TeamDetailsMobilePage from "@/components/pages/teams/mobile";
 
 const TeamDetails: NextPageWithLayout = () => {
   const [loading, setLoading] = useState(true);
@@ -30,7 +31,18 @@ const TeamDetails: NextPageWithLayout = () => {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      {loading ? <Loader /> : <TeamDetailsPage />}
+      {loading ? (
+        <Loader />
+      ) : (
+        <div>
+          <div className="hidden lg:block">
+            <TeamDetailsPage />
+          </div>
+          <div className="md:hidden">
+            <TeamDetailsMobilePage />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

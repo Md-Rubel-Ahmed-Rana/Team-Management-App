@@ -209,14 +209,14 @@ const MessageForm = ({ teamId, type }: Props) => {
 
       <form
         onSubmit={handleSubmit(handleSendMessage)}
-        className="flex flex-wrap gap-3 items-center"
+        className="flex  gap-3 items-center"
       >
-        <label className="mr-2 cursor-pointer" onClick={openLinkModal}>
+        <label className="cursor-pointer" onClick={openLinkModal}>
           <FaLink className="text-blue-500 hover:underline" />
           <input type="text" {...register("links")} className="hidden" />
         </label>
 
-        <label htmlFor="images" className="mr-2 cursor-pointer">
+        <label htmlFor="images" className="cursor-pointer">
           <FaImage className="text-blue-500 hover:underline" />
           <input
             type="file"
@@ -229,7 +229,7 @@ const MessageForm = ({ teamId, type }: Props) => {
           />
         </label>
 
-        <label htmlFor="files" className="mr-2 cursor-pointer">
+        <label htmlFor="files" className="cursor-pointer">
           <FaFile
             title="Only pdf and video file supported"
             className="text-blue-500 hover:underline"

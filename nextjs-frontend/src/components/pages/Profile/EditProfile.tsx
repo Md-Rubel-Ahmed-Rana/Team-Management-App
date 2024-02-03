@@ -35,6 +35,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
       });
       if (updated?.data?.success) {
         setIsChangeImage(false);
+        setIsEdit(false);
       }
     }
   };

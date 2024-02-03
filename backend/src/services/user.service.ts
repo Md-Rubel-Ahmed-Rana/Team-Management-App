@@ -59,6 +59,7 @@ class Service {
   }
 
   async updateUser(id: string, data: Partial<IUser>): Promise<IUser | null> {
+    console.log("User profile picture", data);
     const result = await User.findByIdAndUpdate(
       id,
       { $set: { ...data } },

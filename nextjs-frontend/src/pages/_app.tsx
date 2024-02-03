@@ -1,4 +1,4 @@
-import type { ReactElement, ReactNode } from "react";
+import { Suspense, type ReactElement, type ReactNode } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
@@ -26,7 +26,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <ThemeProvider enableSystem={true} attribute="class">
           <Provider store={store}>
             <NextNProgress color="#3267b1" options={{ showSpinner: false }} />
-            {getLayout(<Component {...pageProps} />)}
+            <Suspense fallback={`<h3>Loading...</h3>`}>
+              {getLayout(<Component {...pageProps} />)}
+            </Suspense>
             <Toaster />
           </Provider>
         </ThemeProvider>
