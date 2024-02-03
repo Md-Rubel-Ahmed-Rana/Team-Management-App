@@ -26,9 +26,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <ThemeProvider enableSystem={true} attribute="class">
           <Provider store={store}>
             <NextNProgress color="#3267b1" options={{ showSpinner: false }} />
-            <Suspense fallback={`<h3>Loading...</h3>`}>
-              {getLayout(<Component {...pageProps} />)}
-            </Suspense>
+            {getLayout(<Component {...pageProps} />)}
             <Toaster />
           </Provider>
         </ThemeProvider>

@@ -47,9 +47,6 @@ const Navbar = () => {
         </Link>
       </div>
       <div className="lg:flex hidden  items-center gap-4">
-        <button className="m-2">Availability</button>
-        <button className="m-2">Integration</button>
-        <button className="m-2">Community</button>
         {!user?.email && (
           <>
             <Link className="m-2" href="/signup">
@@ -62,9 +59,23 @@ const Navbar = () => {
         )}
 
         {user?.email && (
-          <Link className="m-2" href="/teams">
-            My Teams
-          </Link>
+          <>
+            <Link className="m-2" href="/teams">
+              My Teams
+            </Link>
+            <Link
+              className="m-2"
+              href={{
+                pathname: "dashboard",
+                query: `uId=${user?._id}&activeView=invitations`,
+              }}
+            >
+              Joined Teams
+            </Link>
+            <Link className="m-2" href="/projects">
+              Projects
+            </Link>
+          </>
         )}
 
         <button
