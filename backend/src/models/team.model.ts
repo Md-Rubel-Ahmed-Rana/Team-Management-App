@@ -1,5 +1,5 @@
+import { ITeam } from "@/interfaces/team.interface";
 import { Schema, model } from "mongoose";
-import { ITeam } from "../interfaces/team.interface";
 
 const teamSchema = new Schema<ITeam>(
   {

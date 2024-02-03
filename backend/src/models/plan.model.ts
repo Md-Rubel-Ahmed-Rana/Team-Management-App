@@ -1,5 +1,5 @@
+import { IPlan } from "@/interfaces/plan.interface";
 import { Schema, model } from "mongoose";
-import { IPlan } from "../interfaces/plan.interface";
 
 const planSchema = new Schema<IPlan>(
   {

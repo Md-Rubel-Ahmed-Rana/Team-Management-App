@@ -1,5 +1,5 @@
-import { ITask } from "../interfaces/task.interface";
-import { Task } from "../models/task.model";
+import { ITask } from "@/interfaces/task.interface";
+import { Task } from "@/models/task.model";
 import { NotificationService } from "./notification.service";
 
 class Service {

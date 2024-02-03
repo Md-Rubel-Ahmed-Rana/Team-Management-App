@@ -1,6 +1,6 @@
+import { MessageService } from "@/services/message.service";
+import RootController from "@/shared/rootController";
 import { Request, Response } from "express";
-import { MessageService } from "../services/message.service";
-import RootController from "../shared/rootController";
 import httpStatus from "http-status";
 
 class Controller extends RootController {

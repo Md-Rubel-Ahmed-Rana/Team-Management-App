@@ -1,5 +1,4 @@
 const handleCastError = (error: any) => {
-  console.log("Inside Cast error handler");
   const errors = [
     {
       path: error?.path,

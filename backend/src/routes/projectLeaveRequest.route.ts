@@ -1,5 +1,5 @@
-import verifyJwt from "../middlewares/auth";
-import { ProjectLeaveRequestController } from "./../controllers/projectLeaveRequest.controller";
+import { ProjectLeaveRequestController } from "@/controllers/projectLeaveRequest.controller";
+import verifyJwt from "@/middlewares/auth";
 import { Router } from "express";
 
 const router = Router();

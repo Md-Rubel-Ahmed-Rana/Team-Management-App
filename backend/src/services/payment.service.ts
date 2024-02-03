@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { config } from "dotenv";
-import { Payment } from "../models/payment.model";
-import { Plan } from "../models/plan.model";
+import { Plan } from "@/models/plan.model";
+import { Payment } from "@/models/payment.model";
 config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
@@ -9,7 +9,6 @@ class Service {
   async checkout(items: any) {
     const plan = await Plan.findById(items[0].package);
     const storedData = items.map((item: any) => {
-      console.log(item);
       if (item?.quantity) {
         item.quantity = item.quantity >= 1 ? item.quantity : 1;
       } else {

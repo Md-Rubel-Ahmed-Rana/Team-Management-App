@@ -1,6 +1,6 @@
+import { TeamLeaveRequestController } from "@/controllers/teamLeaveRequest.controller";
+import verifyJwt from "@/middlewares/auth";
 import { Router } from "express";
-import { TeamLeaveRequestController } from "../controllers/teamLeaveRequest.controller";
-import verifyJwt from "../middlewares/auth";
 
 const router = Router();
 

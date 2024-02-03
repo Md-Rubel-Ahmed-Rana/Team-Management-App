@@ -1,5 +1,5 @@
+import { RedisCacheService } from "@/middlewares/redisCache";
 import { Router } from "express";
-import { RedisCacheService } from "../middlewares/redisCache";
 
 const router = Router();
 

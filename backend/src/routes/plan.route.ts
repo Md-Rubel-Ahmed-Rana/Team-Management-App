@@ -1,6 +1,6 @@
+import { PlanController } from "@/controllers/plan.controller";
+import verifyJwt from "@/middlewares/auth";
 import { Router } from "express";
-import { PlanController } from "../controllers/plan.controller";
-import verifyJwt from "../middlewares/auth";
 
 const router = Router();
 

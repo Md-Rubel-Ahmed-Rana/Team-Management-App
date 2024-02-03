@@ -1,9 +1,9 @@
+import { ITeam } from "@/interfaces/team.interface";
+import { Project } from "@/models/project.model";
+import Team from "@/models/team.model";
+import { TeamLeaveRequest } from "@/models/teamLeaveRequest.model";
+import ApiError from "@/shared/apiError";
 import httpStatus from "http-status";
-import Team from "../models/team.model";
-import ApiError from "../shared/apiError";
-import { ITeam } from "../interfaces/team.interface";
-import { Project } from "../models/project.model";
-import { TeamLeaveRequest } from "../models/teamLeaveRequest.model";
 import { NotificationService } from "./notification.service";
 
 class Service {

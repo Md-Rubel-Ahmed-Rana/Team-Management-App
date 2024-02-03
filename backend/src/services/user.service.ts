@@ -1,12 +1,12 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.model";
 import bcrypt from "bcrypt";
-import { config } from "../config";
-import { IUser } from "../interfaces/user.interface";
 import httpStatus from "http-status";
-import ApiError from "../shared/apiError";
-import { RedisCacheService } from "../middlewares/redisCache";
-import { redisKeys } from "../constants/redisKeys";
+import { IUser } from "@/interfaces/user.interface";
+import User from "@/models/user.model";
+import { RedisCacheService } from "@/middlewares/redisCache";
+import { redisKeys } from "@/constants/redisKeys";
+import ApiError from "@/shared/apiError";
+import { config } from "@/configurations/envConfig";
 
 class Service {
   async getAllUsers(): Promise<IUser[]> {
@@ -59,7 +59,6 @@ class Service {
   }
 
   async updateUser(id: string, data: Partial<IUser>): Promise<IUser | null> {
-    console.log("User profile picture", data);
     const result = await User.findByIdAndUpdate(
       id,
       { $set: { ...data } },

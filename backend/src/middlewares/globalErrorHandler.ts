@@ -1,10 +1,8 @@
 import { ZodError } from "zod";
 import { NextFunction, Request, Response } from "express";
 import handleValidationError from "./handleValidationError";
-import handleZodError from "../error/handleZodError";
-import handleCastError from "./handleCastError";
-import ApiError from "../shared/apiError";
-import mongoose from "mongoose";
+import handleZodError from "@/errors/handleZodError";
+import ApiError from "@/shared/apiError";
 
 const globalErrorHandler = (
   error: any,

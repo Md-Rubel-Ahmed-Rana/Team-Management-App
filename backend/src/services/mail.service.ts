@@ -1,10 +1,10 @@
-import { config } from "../config";
-import { contactMail } from "../interfaces/mail.interfaces";
-import { MailModels } from "../models/mail.model";
-import { MailUtilService } from "../utils/mail.util";
+import { IContactMail } from "@/interfaces/mail.interfaces";
+import { MailUtilService } from "@/utils/mail.util";
+import { MailModels } from "@/models/mail.model";
+import { config } from "@/configurations/envConfig";
 
 class Service {
-  async contactMail(data: contactMail) {
+  async contactMail(data: IContactMail) {
     await MailUtilService.sendOne(
       "Team Manager Contact",
       `${data.name} ${data.email}`,

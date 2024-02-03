@@ -1,7 +1,7 @@
+import { UserService } from "@/services/user.service";
+import RootController from "@/shared/rootController";
 import { Request, Response } from "express";
-import { UserService } from "../services/user.service";
 import httpStatus from "http-status";
-import RootController from "../shared/rootController";
 
 class Controller extends RootController {
   getAllUsers = this.catchAsync(async (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 import server from "./app";
-import { config } from "./config";
-import { Database } from "./config/database";
-import { RedisClient } from "./config/redis";
+import { config } from "./configurations/envConfig";
+import { Database } from "./configurations/database";
+import { RedisClient } from "./configurations/redis";
 
 const bootstrap = async () => {
   server.listen(config.app.port, async () => {

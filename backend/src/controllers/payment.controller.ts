@@ -1,6 +1,6 @@
+import { PaymentService } from "@/services/payment.service";
+import RootController from "@/shared/rootController";
 import { Request, Response } from "express";
-import { PaymentService } from "../services/payment.service";
-import RootController from "../shared/rootController";
 import httpStatus from "http-status";
 
 class Controller extends RootController {

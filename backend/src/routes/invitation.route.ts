@@ -1,6 +1,6 @@
+import { InvitationController } from "@/controllers/invitation.controller";
+import verifyJwt from "@/middlewares/auth";
 import { Router } from "express";
-import { InvitationController } from "../controllers/invitation.controller";
-import verifyJwt from "../middlewares/auth";
 
 const router = Router();
 

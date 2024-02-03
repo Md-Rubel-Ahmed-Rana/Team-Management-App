@@ -1,6 +1,6 @@
+import { PaymentController } from "@/controllers/payment.controller";
+import verifyJwt from "@/middlewares/auth";
 import express, { Router } from "express";
-import { PaymentController } from "../controllers/payment.controller";
-import verifyJwt from "../middlewares/auth";
 
 const router = Router();
 

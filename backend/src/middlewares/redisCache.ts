@@ -1,7 +1,7 @@
+import { redisClient } from "@/configurations/redis";
+import { INotification } from "@/interfaces/notification.interface";
 import { NextFunction, Request, Response } from "express";
-import { redisClient } from "../config/redis";
 import httpStatus from "http-status";
-import { INotification } from "../interfaces/notification.interface";
 
 class RedisCache {
   async insertOne<T>(key: string, data: T, expireDate?: number) {

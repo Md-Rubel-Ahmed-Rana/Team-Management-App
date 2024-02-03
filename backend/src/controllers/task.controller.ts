@@ -1,6 +1,6 @@
+import { TaskService } from "@/services/task.service";
+import RootController from "@/shared/rootController";
 import { Request, Response } from "express";
-import { TaskService } from "../services/task.service";
-import RootController from "../shared/rootController";
 import httpStatus from "http-status";
 
 class Controller extends RootController {

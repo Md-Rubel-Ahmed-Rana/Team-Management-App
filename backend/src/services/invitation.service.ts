@@ -1,10 +1,5 @@
-import { config } from "../config";
-import { INotification } from "../interfaces/notification.interface";
-import { RedisCacheService } from "../middlewares/redisCache";
-import Team from "../models/team.model";
-import User from "../models/user.model";
-import { cacheExpireDates } from "../constants/redisCacheExpireDate";
-import { v4 as uuidv4 } from "uuid";
+import Team from "@/models/team.model";
+import { NotificationService } from "./notification.service";
 
 class Service {
   async sendInvitation(teamId: string, memberId: string) {
@@ -16,35 +11,14 @@ class Service {
       { new: true }
     );
 
-    // send notification to invited user and store it on cache
-    const member = await User.findById(memberId).select({ name: 1 });
-    const admin = await User.findById(result?.admin).select({ name: 1 });
-
-    if (member && admin) {
-      const notification: INotification = {
-        id: uuidv4(),
-        sortBy: Date.now(),
-        type: "team_invitation",
-        createdAt: new Date(),
-        read: false,
-        content: {
-          title: "Team Invitation",
-          message: `You've been invited to join Team (${result?.name})`,
-          link: `${config.app.frontendDomain}/dashboard?uId=${member?._id}activeView=invitations`,
-          data: {
-            sendBy: admin?.name,
-          },
-        },
-        recipient: {
-          userId: member?._id,
-          name: member?.name,
-        },
-      };
-
-      await RedisCacheService.insertOne(
-        String(member?._id),
-        notification,
-        cacheExpireDates.months[1]
+    if (result && result?.admin) {
+      await NotificationService.sendNotification(
+        result?.admin,
+        memberId,
+        "team_invitation",
+        "Team Invitation",
+        `You've been invited to join Team (${result?.name})`,
+        `dashboard?uId=${memberId}activeView=invitations`
       );
     }
 
@@ -87,34 +61,14 @@ class Service {
       { new: true }
     );
 
-    const member = await User.findById(memberId).select({ name: 1 });
-    const admin = await User.findById(result?.admin).select({ name: 1 });
-
-    if (member && admin) {
-      const notification: INotification = {
-        id: uuidv4(),
-        sortBy: Date.now(),
-        type: "team_invitation",
-        createdAt: new Date(),
-        read: false,
-        content: {
-          title: "Team Invitation",
-          message: `Your team invitation has been rejected for (${result?.name})`,
-          link: `${config.app.frontendDomain}/dashboard?uId=${admin?._id}&activeView=my-teams`,
-          data: {
-            sendBy: member?.name,
-          },
-        },
-        recipient: {
-          userId: admin?._id,
-          name: admin?.name,
-        },
-      };
-
-      await RedisCacheService.insertOne(
-        String(admin?._id),
-        notification,
-        cacheExpireDates.months[1]
+    if (result && result?.admin) {
+      await NotificationService.sendNotification(
+        result?.admin,
+        memberId,
+        "team_invitation",
+        "Team Invitation",
+        `Your team invitation has been rejected for (${result?.name})`,
+        `dashboard?uId=${result?._id}&activeView=my-teams`
       );
     }
 
@@ -131,34 +85,14 @@ class Service {
       { new: true }
     );
 
-    const member = await User.findById(memberId).select({ name: 1 });
-    const admin = await User.findById(result?.admin).select({ name: 1 });
-
-    if (member && admin) {
-      const notification: INotification = {
-        id: uuidv4(),
-        sortBy: Date.now(),
-        type: "team_invitation",
-        createdAt: new Date(),
-        read: false,
-        content: {
-          title: "Team Invitation",
-          message: `Your team invitation has been accepted for (${result?.name})`,
-          link: `${config.app.frontendDomain}/dashboard?uId=${admin?._id}&activeView=my-teams`,
-          data: {
-            sendBy: member?.name,
-          },
-        },
-        recipient: {
-          userId: admin?._id,
-          name: admin?.name,
-        },
-      };
-
-      await RedisCacheService.insertOne(
-        String(admin?._id),
-        notification,
-        cacheExpireDates.months[1]
+    if (result && result?.admin) {
+      await NotificationService.sendNotification(
+        result?.admin,
+        memberId,
+        "team_invitation",
+        "Team Invitation",
+        `Your team invitation has been accepted for (${result?.name})`,
+        `dashboard?uId=${result?._id}&activeView=my-teams`
       );
     }
 

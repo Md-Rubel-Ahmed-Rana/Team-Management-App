@@ -1,10 +1,8 @@
+import { TeamController } from "@/controllers/team.controller";
+import verifyJwt from "@/middlewares/auth";
+import validateRequest from "@/middlewares/validateRequest";
+import { TeamValidationSchema } from "@/validations/team.validation";
 import { Router } from "express";
-
-import validateRequest from "../middlewares/validateRequest";
-import { TeamController } from "../controllers/team.controller";
-import { TeamValidationSchema } from "../validation/team.validation";
-import verifyJwt from "../middlewares/auth";
-
 const router = Router();
 
 router.get("/my-teams/:adminId", verifyJwt, TeamController.myTeams);

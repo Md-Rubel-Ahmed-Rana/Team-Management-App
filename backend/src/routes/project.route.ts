@@ -1,9 +1,8 @@
+import { ProjectController } from "@/controllers/project.controller";
+import verifyJwt from "@/middlewares/auth";
+import validateRequest from "@/middlewares/validateRequest";
+import { ProjectValidationSchema } from "@/validations/project.validation";
 import { Router } from "express";
-import { ProjectController } from "../controllers/project.controller";
-import validateRequest from "../middlewares/validateRequest";
-import { ProjectValidationSchema } from "../validation/project.validation";
-import verifyJwt from "../middlewares/auth";
-
 const router = Router();
 
 router.get(

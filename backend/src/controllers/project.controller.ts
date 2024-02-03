@@ -1,6 +1,6 @@
+import { ProjectService } from "@/services/project.service";
+import RootController from "@/shared/rootController";
 import { Request, Response } from "express";
-import { ProjectService } from "../services/project.service";
-import RootController from "../shared/rootController";
 import httpStatus from "http-status";
 
 class Controller extends RootController {
@@ -79,7 +79,7 @@ class Controller extends RootController {
       data: result,
     });
   });
-  
+
   removeMember = this.catchAsync(async (req: Request, res: Response) => {
     const { projectId, memberId } = req.body;
     const result = await ProjectService.removeMember(projectId, memberId);

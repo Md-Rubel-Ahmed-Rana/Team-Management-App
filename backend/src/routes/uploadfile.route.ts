@@ -1,7 +1,7 @@
+import { uploadFileMiddleware } from "@/configurations/cloudinary";
+import { UploadFileController } from "@/controllers/uploadFile.controller";
+import verifyJwt from "@/middlewares/auth";
 import { Router } from "express";
-import { uploadFileMiddleware } from "../config/cloudinary";
-import { UploadFileController } from "../controllers/uploadFile.controller";
-import verifyJwt from "../middlewares/auth";
 
 const router = Router();
 

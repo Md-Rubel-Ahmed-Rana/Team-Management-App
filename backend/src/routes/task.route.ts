@@ -1,8 +1,8 @@
+import { TaskController } from "@/controllers/task.controller";
+import verifyJwt from "@/middlewares/auth";
+import validateRequest from "@/middlewares/validateRequest";
+import { TaskValidationSchema } from "@/validations/task.validation";
 import { Router } from "express";
-import { TaskController } from "../controllers/task.controller";
-import validateRequest from "../middlewares/validateRequest";
-import { TaskValidationSchema } from "../validation/task.validation";
-import verifyJwt from "../middlewares/auth";
 const router = Router();
 
 router.delete("/delete/:taskId", verifyJwt, TaskController.deleteTask);

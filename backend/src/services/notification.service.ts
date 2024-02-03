@@ -1,10 +1,10 @@
-import { INotification } from "../interfaces/notification.interface";
-import User from "../models/user.model";
 import { v4 as uuidv4 } from "uuid";
-import { RedisCacheService } from "../middlewares/redisCache";
-import { cacheExpireDates } from "../constants/redisCacheExpireDate";
-import { config } from "../config";
 import { Types } from "mongoose";
+import User from "@/models/user.model";
+import { INotification } from "@/interfaces/notification.interface";
+import { RedisCacheService } from "@/middlewares/redisCache";
+import { cacheExpireDates } from "@/constants/redisCacheExpireDate";
+import { config } from "@/configurations/envConfig";
 
 class Service {
   async sendNotification(

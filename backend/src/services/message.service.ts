@@ -1,5 +1,5 @@
-import { IMessage } from "../interfaces/message.interface";
-import { Message } from "../models/message.model";
+import { IMessage } from "@/interfaces/message.interface";
+import { Message } from "@/models/message.model";
 
 class Service {
   async createMessage(data: IMessage) {

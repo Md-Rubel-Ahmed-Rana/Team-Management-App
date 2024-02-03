@@ -1,5 +1,5 @@
+import { IApiResponse } from "@/interfaces/util";
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { IApiResponse } from "../interfaces/util";
 
 class RootController {
   public model;

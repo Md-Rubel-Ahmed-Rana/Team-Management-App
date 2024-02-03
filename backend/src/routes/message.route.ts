@@ -1,6 +1,6 @@
+import { MessageController } from "@/controllers/message.controller";
+import verifyJwt from "@/middlewares/auth";
 import { Router } from "express";
-import { MessageController } from "../controllers/message.controller";
-import verifyJwt from "../middlewares/auth";
 const router = Router();
 
 router.delete("/delete/:id", verifyJwt, MessageController.deleteMessage);

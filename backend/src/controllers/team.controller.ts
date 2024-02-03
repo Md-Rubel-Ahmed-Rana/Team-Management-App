@@ -1,6 +1,6 @@
+import { TeamService } from "@/services/team.service";
+import RootController from "@/shared/rootController";
 import { Request, Response } from "express";
-import { TeamService } from "../services/team.service";
-import RootController from "../shared/rootController";
 import httpStatus from "http-status";
 
 class Controller extends RootController {

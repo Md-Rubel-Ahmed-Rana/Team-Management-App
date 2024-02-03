@@ -1,6 +1,6 @@
+import { MailService } from "@/services/mail.service";
+import RootController from "@/shared/rootController";
 import { Request, Response } from "express";
-import RootController from "../shared/rootController";
-import { MailService } from "../services/mail.service";
 import httpStatus from "http-status";
 
 class Controller extends RootController {

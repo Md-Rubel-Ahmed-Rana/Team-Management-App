@@ -1,5 +1,5 @@
-import { IPlan } from "./../interfaces/plan.interface";
-import { Plan } from "../models/plan.model";
+import { IPlan } from "@/interfaces/plan.interface";
+import { Plan } from "@/models/plan.model";
 
 class Service {
   async getPlans() {

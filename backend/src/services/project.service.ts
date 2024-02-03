@@ -1,9 +1,9 @@
+import { IProject } from "@/interfaces/project.interface";
+import { Project } from "@/models/project.model";
+import ApiError from "@/shared/apiError";
 import httpStatus from "http-status";
-import { IProject } from "../interfaces/project.interface";
-import { Project } from "../models/project.model";
-import ApiError from "../shared/apiError";
-import { ProjectLeaveRequest } from "../models/projectLeaveRequest.model";
 import { NotificationService } from "./notification.service";
+import { ProjectLeaveRequest } from "@/models/projectLeaveRequest.model";
 
 class Service {
   async createProject(data: IProject): Promise<IProject> {

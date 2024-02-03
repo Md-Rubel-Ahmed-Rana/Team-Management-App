@@ -1,12 +1,10 @@
+import { redisKeys } from "@/constants/redisKeys";
+import { UserController } from "@/controllers/user.controller";
+import verifyJwt from "@/middlewares/auth";
+import { RedisCacheService } from "@/middlewares/redisCache";
+import validateRequest from "@/middlewares/validateRequest";
+import { UserValidationSchema } from "@/validations/user.validation";
 import { Router } from "express";
-
-import validateRequest from "../middlewares/validateRequest";
-
-import { UserController } from "../controllers/user.controller";
-import { UserValidationSchema } from "../validation/user.validation";
-import verifyJwt from "../middlewares/auth";
-import { RedisCacheService } from "../middlewares/redisCache";
-import { redisKeys } from "../constants/redisKeys";
 
 const router = Router();
 

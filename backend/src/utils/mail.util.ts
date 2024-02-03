@@ -1,5 +1,5 @@
+import { config } from "@/configurations/envConfig";
 import nodemailer from "nodemailer";
-import { config } from "../config";
 
 class Mail {
   sendOne(subject: string, from: string, to: string, content: string) {
