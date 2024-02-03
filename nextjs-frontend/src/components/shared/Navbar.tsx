@@ -67,7 +67,7 @@ const Navbar = () => {
               className="m-2"
               href={{
                 pathname: "dashboard",
-                query: `uId=${user?._id}&activeView=invitations`,
+                query: `uId=${user?._id}&activeView=joined-teams`,
               }}
             >
               Joined Teams
