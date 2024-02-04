@@ -16,21 +16,20 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
   const { data: users } = useGetUsersQuery([]);
   const [sendInvitation] = useSendInvitationMutation();
 
-
   const remainingUsers = users?.data?.filter((user: IUser) => {
-  const isInActive = team?.activeMembers?.some(
-    (member: IUser) => member?._id === user?._id
-  );
+    const isInActive = team?.activeMembers?.some(
+      (member: IUser) => member?._id === user?._id
+    );
 
-  const isInPending = team?.pendingMembers?.some(
-    (member: IUser) => member?._id === user?._id
-  );
+    const isInPending = team?.pendingMembers?.some(
+      (member: IUser) => member?._id === user?._id
+    );
 
-  // Check if the user is the admin
-  const isAdmin = team?.admin?._id === user?._id;
+    // Check if the user is the admin
+    const isAdmin = team?.admin?._id === user?._id;
 
-  return !isInActive && !isInPending && !isAdmin;
-});
+    return !isInActive && !isInPending && !isAdmin;
+  });
 
   const closeModal = () => {
     setIsOpen(false);
@@ -39,7 +38,7 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
   const handleAddNewMember = (user: ISelectType) => {
     setNewMember(user);
   };
-  
+
   const selectedMember = users?.data.find(
     (usr: IUser) => usr._id === newMember?.value
   );
@@ -96,7 +95,7 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 p-6 text-left  shadow-xl transition-all relative">
                 {/* modal content */}
                 <div className="mt-3">
                   {page === 1 && (
@@ -139,16 +138,14 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
                         Who do you want to add new members
                       </h3>
                       <div className="relative w-full py-2">
-                        <p className="text-stone-500 mb-2">
+                        <p className="text-stone-500 dark:text-white mb-2">
                           Add new member to join group.
                         </p>
                         <Select
-                          options={
-                            remainingUsers?.map((user: IUser) => ({
-                              value: user?._id,
-                              label: user?.name,
-                            }))
-                          }
+                          options={remainingUsers?.map((user: IUser) => ({
+                            value: user?._id,
+                            label: user?.name,
+                          }))}
                           styles={customStyles}
                           onChange={(user: any) => handleAddNewMember(user)}
                           placeholder="Type a name to assign group member"

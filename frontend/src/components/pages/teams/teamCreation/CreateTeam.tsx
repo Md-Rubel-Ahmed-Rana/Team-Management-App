@@ -103,7 +103,7 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 p-6 text-left  shadow-xl transition-all relative">
                 {/* modal content */}
                 <div className="mt-3">
                   {page === 1 && (
@@ -112,7 +112,9 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
                         Create a new team
                       </h3>
                       <div className="relative w-full py-2">
-                        <p className="text-stone-500 mb-2">Team name</p>
+                        <p className="text-stone-500 dark:text-white mb-2">
+                          Team name
+                        </p>
                         <input
                           defaultValue={teamData.name}
                           required
@@ -125,13 +127,13 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
                           type="text"
                           id="teamName"
                           placeholder="Team Name"
-                          className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
+                          className="w-full rounded-lg dark:text-white bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]    py-3 outline-none px-2 shadow-sm sm:text-sm"
                         />
                       </div>
                       <div className="relative w-full py-2">
                         {teamData.image && (
                           <div className="w-full flex justify-between items-center rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm">
-                            <h4>Team image</h4>
+                            <h4 className="dark:text-white ">Team image</h4>
                             <img
                               className="w-14 h-14 rounded-full"
                               src={teamData.image}
@@ -141,13 +143,15 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
                         )}
                         {!teamData.image && (
                           <div>
-                            <p className="text-stone-500 mb-2">Team image</p>
+                            <p className="text-stone-500 dark:text-white  mb-2">
+                              Team image
+                            </p>
                             <input
                               aria-label="Profile Image"
                               type="file"
                               accept="image/*"
                               onChange={handleFileChange}
-                              className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
+                              className="w-full rounded-lg dark:text-white  bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
                             />
                           </div>
                         )}
@@ -172,7 +176,9 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
                   {page === 2 && (
                     <form onSubmit={handleCreateTeamCategory}>
                       <div className="relative w-full py-2">
-                        <p className="text-stone-500 mb-2">Team category</p>
+                        <p className="text-stone-500 dark:text-white mb-2">
+                          Team category
+                        </p>
                         <input
                           required
                           onChange={(e) =>
@@ -189,7 +195,9 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
                         />
                       </div>
                       <div className="relative w-full py-2">
-                        <p className="text-stone-500 mb-2">Team description</p>
+                        <p className="text-stone-500 dark:text-white mb-2">
+                          Team description
+                        </p>
                         <textarea
                           rows={5}
                           required

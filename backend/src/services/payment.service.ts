@@ -58,7 +58,7 @@ class Service {
   }
 
   async myPayments(userId: string) {
-    const payments = await Payment.find({ userId }).populate({
+    const payments = await Payment.find({ user: userId }).populate({
       path: "package",
       model: "Plan",
     });

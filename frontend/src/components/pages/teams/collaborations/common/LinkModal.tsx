@@ -33,8 +33,8 @@ const LinkModal = ({ isOpen, onClose, onSubmit }: any) => {
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
 
-        <div className="relative z-50 bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
-          <div className="bg-white p-4">
+        <div className="relative z-50 bg-white  rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+          <div className="bg-white dark:bg-gray-800 p-4">
             <span
               onClick={onClose}
               className="cursor-pointer absolute top-0 right-0 p-4"

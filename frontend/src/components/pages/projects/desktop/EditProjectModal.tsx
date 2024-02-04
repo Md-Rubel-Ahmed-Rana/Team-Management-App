@@ -1,4 +1,4 @@
-import React, {  Fragment } from "react";
+import React, { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Swal from "sweetalert2";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -65,13 +65,15 @@ const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 dark:text-white p-6 text-left  shadow-xl transition-all relative">
                 <div className="mt-3">
                   <form onSubmit={handleSubmit(handleEditProject)}>
                     <h3 className="text-xl font-bold mb-5">Edit Project</h3>
 
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2">Name</p>
+                      <p className="text-stone-500 dark:text-white mb-2">
+                        Name
+                      </p>
                       <input
                         {...register("name", { required: true })}
                         required
@@ -82,7 +84,9 @@ const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
                       />
                     </div>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2">Category</p>
+                      <p className="text-stone-500 dark:text-white mb-2">
+                        Category
+                      </p>
                       <input
                         {...register("category", { required: true })}
                         required

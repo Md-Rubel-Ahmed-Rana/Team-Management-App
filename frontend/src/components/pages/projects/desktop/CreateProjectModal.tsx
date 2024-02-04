@@ -80,14 +80,16 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 dark:text-white p-6 text-left  shadow-xl transition-all relative">
                 <div className="mt-3">
                   <form onSubmit={handleSubmit(handleCreateNewProject)}>
                     <h3 className="text-xl font-bold mb-5">
                       Create a new project
                     </h3>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2 ">Select a team</p>
+                      <p className="text-stone-500 dark:text-white mb-2 ">
+                        Select a team
+                      </p>
                       <Select
                         required
                         options={
@@ -109,7 +111,9 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
                       />
                     </div>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2">Project name</p>
+                      <p className="text-stone-500 dark:text-white mb-2">
+                        Project name
+                      </p>
                       <input
                         {...register("name", { required: "Name is required" })}
                         required
@@ -120,7 +124,9 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
                       />
                     </div>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2">Project category</p>
+                      <p className="text-stone-500 dark:text-white mb-2">
+                        Project category
+                      </p>
                       <input
                         {...register("category", {
                           required: "category is required",

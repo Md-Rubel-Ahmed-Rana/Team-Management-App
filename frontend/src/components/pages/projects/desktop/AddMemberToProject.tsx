@@ -87,14 +87,16 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 p-6 text-left  shadow-xl transition-all relative">
                 <div className="mt-3">
                   <form onSubmit={handleAddNewMember}>
                     <h3 className="text-xl font-bold mb-5">
                       Add member to this project
                     </h3>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2 ">Select a member</p>
+                      <p className="text-stone-500 dark:text-white  mb-2 ">
+                        Select a member
+                      </p>
                       <Select
                         required
                         options={members}
@@ -114,7 +116,9 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
                       />
                     </div>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2">Assign a role</p>
+                      <p className="text-stone-500 dark:text-white  mb-2">
+                        Assign a role
+                      </p>
                       <Select
                         required
                         options={projectMemberRoles?.map((role) => ({
@@ -135,14 +139,6 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
                           IndicatorSeparator: () => null,
                         }}
                       />
-                      {/* <input
-                        required
-                        type="text"
-                        id="role"
-                        onChange={(e) => setRole(e.target.value)}
-                        placeholder="Role: manager, leader, developer, designer etc"
-                        className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
-                      /> */}
                     </div>
 
                     <div className="mt-5 lg:flex justify-between">

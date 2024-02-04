@@ -75,14 +75,16 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 p-6 text-left  shadow-xl transition-all relative">
                 <div className="mt-3">
                   <form onSubmit={handleSubmit(handleCreateNewTask)}>
                     <h3 className="text-xl font-bold mb-5">
                       Create a new task for {status}
                     </h3>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2 ">Select a member</p>
+                      <p className="text-stone-500 dark:text-white mb-2 ">
+                        Select a member
+                      </p>
                       <Select
                         required
                         options={
@@ -108,7 +110,9 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
                       />
                     </div>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2">Task name</p>
+                      <p className="text-stone-500 dark:text-white mb-2">
+                        Task name
+                      </p>
                       <input
                         {...register("name", { required: "Name is required" })}
                         required
@@ -119,7 +123,9 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
                       />
                     </div>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2">Task deadline</p>
+                      <p className="text-stone-500 dark:text-white mb-2">
+                        Task deadline
+                      </p>
                       <input
                         {...register("deadline")}
                         required
@@ -134,7 +140,7 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
                       <button
                         onClick={closeModal}
                         type="button"
-                        className="border-2 mb-4 lg:mb-0 mx-auto outline-none border-black rounded-full px-10 py-2  text-sm flex items-center gap-2"
+                        className="border-2 mb-4 lg:mb-0 dark:text-white mx-auto outline-none border-black rounded-full px-10 py-2  text-sm flex items-center gap-2"
                       >
                         Cancel
                       </button>

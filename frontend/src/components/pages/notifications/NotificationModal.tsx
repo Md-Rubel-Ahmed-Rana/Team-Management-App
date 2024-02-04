@@ -67,7 +67,7 @@ const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="lg:w-[400px] mx-auto bg-white rounded-xl p-6 text-left shadow-xl transition-all relative">
+            <div className="lg:w-[400px] mx-auto bg-white dark:bg-gray-400 dark:text-black rounded-xl p-6 text-left shadow-xl transition-all relative">
               <div className="flex justify-between items-center mb-4">
                 <h1 className="text-xl font-bold">Notifications</h1>
                 <button

@@ -89,14 +89,16 @@ const RemoveMemberFromProject = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 p-6 text-left  shadow-xl transition-all relative">
                 <div className="mt-3">
                   <form onSubmit={handleRemoveMember}>
                     <h3 className="text-xl font-bold mb-5">
                       Remove member from this project
                     </h3>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 mb-2 ">Select a member</p>
+                      <p className="text-stone-500 dark:text-white mb-2 ">
+                        Select a member
+                      </p>
                       <Select
                         required
                         options={members}
