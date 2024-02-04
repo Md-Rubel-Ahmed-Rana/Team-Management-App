@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"cd backend && yarn dev\" \"cd nextjs-frontend && yarn dev\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently \"cd backend && yarn dev\" \"cd frontend && yarn dev\""
   },
   "keywords": [],
   "author": "",
