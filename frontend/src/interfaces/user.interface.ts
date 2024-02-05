@@ -9,3 +9,15 @@ export type IUser = {
   createdAt?: string;
   updatedAt?: string;
 };
+
+export const userInitData: IUser = {
+  _id: "",
+  name: "",
+  profile_picture: "",
+  email: "",
+  department: "",
+  designation: "",
+  password: "",
+  createdAt: "",
+  updatedAt: "",
+};

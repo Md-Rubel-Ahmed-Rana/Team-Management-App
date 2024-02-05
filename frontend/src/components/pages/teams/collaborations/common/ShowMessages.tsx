@@ -39,7 +39,6 @@ const ShowMessages = ({ messages }: Props) => {
   const [editMessage] = useEditMessageMutation();
 
   const handleShowImageFullScreen = (image: string) => {
-    console.log("Clicked on image", image);
     setSelectedImage(image);
     setImageModalOpen(true);
   };

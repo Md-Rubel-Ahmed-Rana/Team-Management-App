@@ -27,7 +27,7 @@ const TeamDetailsPage = () => {
     });
   };
 
-  // connect to socket room
+  // connect to socket team room
   useEffect(() => {
     socket.emit("join-room", team?._id);
   }, [socket, team?._id]);

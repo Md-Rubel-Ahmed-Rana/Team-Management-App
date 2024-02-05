@@ -12,7 +12,7 @@ class Service {
     );
 
     if (result && result?.admin) {
-      await NotificationService.sendNotification(
+      const notification = await NotificationService.sendNotification(
         result?.admin,
         memberId,
         "team_invitation",
@@ -20,9 +20,9 @@ class Service {
         `You've been invited to join Team (${result?.name})`,
         `dashboard?uId=${memberId}activeView=invitations`
       );
-    }
 
-    return result;
+      return notification;
+    }
   }
 
   async pendingInvitation(memberId: string) {

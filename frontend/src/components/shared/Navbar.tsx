@@ -2,7 +2,7 @@
 import { FaUser, FaRegBell, FaBars, FaRegMoon, FaSun } from "react-icons/fa";
 import { BiX } from "react-icons/bi";
 import NotificationModal from "../pages/notifications/NotificationModal";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IUser } from "@/interfaces/user.interface";
 import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
@@ -10,8 +10,10 @@ import { useTheme } from "next-themes";
 import Cookies from "js-cookie";
 import { useGetNotificationQuery } from "@/features/notification";
 import { INotification } from "@/interfaces/notification.interface";
+import { SocketContext } from "@/context/SocketContext";
 
 const Navbar = () => {
+  const { socket }: any = useContext(SocketContext);
   const { theme, setTheme } = useTheme();
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
@@ -19,6 +21,9 @@ const Navbar = () => {
   const [toggle, setToggle] = useState(false);
   const { data: notifiedData } = useGetNotificationQuery(user?._id);
   const notifications: INotification[] = notifiedData?.data || [];
+  const [unreadNotifications, setUnreadNotifications] = useState<
+    INotification[]
+  >([]);
   const unreadNotification = notifications?.filter(
     (notification: INotification) => !notification.read
   );
@@ -27,6 +32,24 @@ const Navbar = () => {
     Cookies.remove("tmAccessToken");
     window.location.replace("/");
   };
+
+  useEffect(() => {
+    console.log("Notification effect");
+    const handleNotification = (data: INotification) => {
+      console.log("New notification", data);
+      setUnreadNotifications((prev: INotification[]) => [...prev, data]);
+    };
+
+    socket.on("notification", handleNotification);
+
+    return () => {
+      socket.off("notification", handleNotification);
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    setUnreadNotifications(unreadNotification);
+  }, [unreadNotification]);
 
   useEffect(() => {
     const currentTheme = localStorage.getItem("theme");
@@ -93,7 +116,7 @@ const Navbar = () => {
           >
             <FaRegBell />
             <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-              {unreadNotification?.length || 0}
+              {unreadNotifications?.length || 0}
             </small>
           </button>
         )}
@@ -160,7 +183,7 @@ const Navbar = () => {
             >
               <FaRegBell />
               <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-                {unreadNotification?.length || 0}
+                {unreadNotifications?.length || 0}
               </small>
             </button>
           )}

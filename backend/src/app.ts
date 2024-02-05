@@ -74,12 +74,25 @@ passport.deserializeUser((user: any, done) => {
 // Connecting to Socket.IO
 io.on("connection", (socket) => {
   console.log("A user connected");
+
+  // messaging room for a team
   socket.on("join-room", (roomId: string) => {
     socket.join(roomId);
   });
 
   socket.on("message", (data) => {
     socket.to(data.conversationId).emit("message", data);
+  });
+
+  // notification room for each user
+  socket.on("notification-room", (userId: string) => {
+    console.log("notification room", userId);
+    socket.join(userId);
+  });
+
+  socket.on("notification", (data) => {
+    console.log("New notification", data);
+    socket.to(data.recipient.userId).emit("notification", data);
   });
 
   socket.on("disconnect", () => {

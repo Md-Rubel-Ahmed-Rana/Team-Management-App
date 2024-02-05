@@ -45,6 +45,8 @@ class Service {
         notification,
         cacheExpireDates.months[1]
       );
+
+      return notification;
     }
   }
 }

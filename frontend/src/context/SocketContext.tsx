@@ -1,6 +1,8 @@
+import useGetLoggedInUser from "@/hooks/useGetLoggedinUser";
 import { IContext } from "@/interfaces/context.interface";
 import { IMessage } from "@/interfaces/message.interface";
-import { ReactNode, createContext, useState } from "react";
+import { IUser } from "@/interfaces/user.interface";
+import { ReactNode, createContext, useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 
 const initValues: IContext = {
@@ -22,6 +24,12 @@ const SocketProvider = ({ children }: Props) => {
   const socket = socketIo.connect("http://localhost:5000");
   const [realTimeMessages, setRealTimeMessages] = useState<IMessage[]>([]);
   const [refetchTask, setRefetchTask] = useState<any>(false);
+  const user: IUser = useGetLoggedInUser();
+
+  // connect to socket notification room
+  useEffect(() => {
+    socket.emit("notification-room", user?._id);
+  }, [socket, user?._id]);
 
   const values: IContext = {
     socket,

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState, Fragment } from "react";
+import { useState, Fragment, useContext } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Select from "react-select";
 import Swal from "sweetalert2";
@@ -7,10 +7,12 @@ import { useGetUsersQuery } from "@/features/user";
 import { useSendInvitationMutation } from "@/features/invitation";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
+import { SocketContext } from "@/context/SocketContext";
 
 type ISelectType = { label: string; value: string };
 
 const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
+  const { socket }: any = useContext(SocketContext);
   const [newMember, setNewMember] = useState({ label: "", value: "" });
   const [page, setPage] = useState(1);
   const { data: users } = useGetUsersQuery([]);
@@ -48,8 +50,11 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
       teamId: team._id,
       memberId: selectedMember._id,
     });
+    console.log("Team invitation", result);
     if (result?.data?.success) {
       closeModal();
+      // send invitation notification
+      socket.emit("notification", result?.data?.data);
       Swal.fire({
         position: "center",
         icon: "success",

@@ -1,4 +1,4 @@
-import { Suspense, type ReactElement, type ReactNode } from "react";
+import { Suspense, type ReactElement, type ReactNode, useEffect } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { Provider } from "react-redux";

@@ -14,14 +14,14 @@ import Swal from "sweetalert2";
 const PendingInvitation = () => {
   const { data: userData }: any = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data } = usePendingInvitationsQuery(user._id);
+  const { data } = usePendingInvitationsQuery(user?._id);
   const [acceptInvitation] = useAcceptInvitationMutation();
   const [rejectInvitation] = useRejectInvitationMutation();
 
   const handleAcceptInvitation = async (teamId: string) => {
     const result: any = await acceptInvitation({
       teamId,
-      memberId: user._id,
+      memberId: user?._id,
     });
     if (result?.data?.success) {
       Swal.fire({
