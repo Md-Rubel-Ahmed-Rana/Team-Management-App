@@ -1,5 +1,5 @@
 import React from "react";
-import ShowMessages, { Post } from "../common/ShowMessages";
+import ShowMessages from "../common/ShowMessages";
 import MessageForm from "../common/MessageForm";
 import { useGetMessagesByTypeQuery } from "@/features/message";
 

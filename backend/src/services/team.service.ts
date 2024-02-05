@@ -215,8 +215,7 @@ class Service {
     // remove from team
     await Team.updateOne(
       { _id: teamId },
-      { $pull: { activeMembers: memberId } },
-      { new: true }
+      { $pull: { activeMembers: memberId } }
     );
 
     const result = await Team.findById(teamId).select({ name: 1, admin: 1 });

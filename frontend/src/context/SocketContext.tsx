@@ -1,4 +1,4 @@
-import useGetLoggedInUser from "@/hooks/useGetLoggedinUser";
+import useGetLoggedInUser from "@/hooks/useGetLoggedInUser";
 import { IContext } from "@/interfaces/context.interface";
 import { IMessage } from "@/interfaces/message.interface";
 import { IUser } from "@/interfaces/user.interface";
