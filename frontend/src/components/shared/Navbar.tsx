@@ -47,17 +47,6 @@ const Navbar = () => {
     };
   }, [socket]);
 
-  useEffect(() => {
-    setUnreadNotifications(unreadNotification);
-  }, [unreadNotification]);
-
-  useEffect(() => {
-    const currentTheme = localStorage.getItem("theme");
-    if (currentTheme !== null) {
-      setTheme(currentTheme);
-    }
-  }, [setTheme]);
-
   return (
     <nav className="lg:flex justify-between items-center py-5 shadow-sm relative">
       <div>
