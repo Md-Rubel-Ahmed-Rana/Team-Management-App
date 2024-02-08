@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+  "dev": "concurrently \"cd frontend && yarn dev\" \"cd backend && yarn dev\"",
     "docker-build": "docker-compose rm -f && docker-compose pull && docker image prune -f && docker-compose build",
     "docker-push": "docker-compose images && docker tag team-management-app-backend:latest rubel49882/team-management-app-backend:latest && docker tag team-management-app-frontend:latest rubel49882/team-management-app-frontend:latest && docker tag team-management-app-nginx:latest rubel49882/team-management-app-nginx:latest && docker login && docker push rubel49882/team-management-app-backend:latest && docker push rubel49882/team-management-app-frontend:latest && docker push rubel49882/team-management-app-nginx:latest",
     "docker-start": "docker-compose up -d",

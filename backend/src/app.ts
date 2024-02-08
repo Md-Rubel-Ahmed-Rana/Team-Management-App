@@ -44,7 +44,7 @@ app.get("/", (req, res) => {
 // routes
 app.use(RootRoutes);
 
-app.use(globalErrorHandler);
+app.use(globalErrorHandler.globalErrorHandler);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(httpStatus.NOT_FOUND).json({

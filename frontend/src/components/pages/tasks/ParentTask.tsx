@@ -20,7 +20,6 @@ const ParentTask = ({ project }: Props) => {
   });
 
   const onDragEnd = async (result: any) => {
-    console.log(result);
     const { destination, source } = result;
     if (!destination) return;
     if (
@@ -145,9 +144,9 @@ const ParentTask = ({ project }: Props) => {
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex flex-col">
         <div className="flex justify-between">
-          {state?.columnOrder.map((columnId: any) => {
+          {state?.columnOrder?.map((columnId: any) => {
             const column = state?.columns[columnId];
-            const tasks = column?.taskIds.map(
+            const tasks = column?.taskIds?.map(
               (taskId: any) => state?.tasks[taskId]
             );
             return (

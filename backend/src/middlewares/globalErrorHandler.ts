@@ -1,73 +1,130 @@
-import { ZodError } from "zod";
-import { NextFunction, Request, Response } from "express";
-import handleValidationError from "./handleValidationError";
-import handleZodError from "@/errors/handleZodError";
+import { ZodError, ZodIssue } from "zod";
+import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import ApiError from "@/shared/apiError";
+import { IGenericErrorMessage } from "@/interfaces/util";
+import mongoose from "mongoose";
 
-const globalErrorHandler = (
-  error: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  console.log(`Global Error Handler`, { error });
+class ErrorHandler {
+  private statusCode: number = 500;
+  private message: string = "Something went wrong";
+  private errorMessages: IGenericErrorMessage[] = [];
 
-  let statusCode = 500;
-  let message = "Something went wrong !";
-  let errorMessages = [];
+  constructor() {}
 
-  // err.message instanceof mongoose.Error.CastError
-  if (error.name === "CastError") {
-    console.log("Cast error");
-    return new Error(`Invalid ${error?.path}: ${error?.value}`);
+  public handleZodValidationError(error: ZodError) {
+    const errors: IGenericErrorMessage[] = error.issues.map(
+      (issue: ZodIssue) => {
+        return {
+          path: issue?.path[issue.path.length - 1],
+          message: issue?.message,
+        };
+      }
+    );
+
+    this.statusCode = 400;
+    this.message = "Validation Error";
+    this.errorMessages = errors;
   }
 
-  if (error?.name === "ValidationError") {
-    const simplifiedError = handleValidationError(error);
-
-    statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
-    errorMessages = simplifiedError.errorMessages;
-  }
-  if (error instanceof ZodError) {
-    const simplifiedError = handleZodError(error);
-
-    statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
-    errorMessages = simplifiedError.errorMessages;
-  }
-
-  if (error instanceof ApiError) {
-    statusCode = error?.statusCode;
-    message = error.message;
-    errorMessages = error?.message
+  public handleApiError(error: ApiError) {
+    this.statusCode = error?.statusCode || 500;
+    this.message = error.message || "Something went wrong";
+    this.errorMessages = error?.message
       ? [
           {
             path: "",
-            message: error?.message,
+            message: error.message,
           },
         ]
       : [];
   }
 
-  if (error instanceof Error) {
-    message = error?.message;
-    errorMessages = error?.message
+  public handleGenericError(error: Error) {
+    this.message = error?.message || "Something went wrong";
+    this.errorMessages = error?.message
       ? [
           {
             path: "",
-            message: error?.message,
+            message: error.message,
           },
         ]
       : [];
   }
 
-  res.status(statusCode).json({
-    success: false,
-    message,
-    errorMessages,
-    statusCode,
-  });
-};
+  public handleCastError(error: mongoose.Error.CastError) {
+    const errors: IGenericErrorMessage[] = [
+      {
+        path: error.path,
+        message: "Invalid id!",
+      },
+    ];
 
-export default globalErrorHandler;
+    this.errorMessages = errors;
+    this.statusCode = 400;
+    this.message = `Invalid ${error.path}`;
+  }
+
+  public handleValidationError(error: mongoose.Error.ValidationError) {
+    const errors: IGenericErrorMessage[] = Object.values(error.errors).map(
+      (el: mongoose.Error.ValidatorError | mongoose.Error.CastError) => {
+        return {
+          path: el?.path,
+          message: el?.message,
+        };
+      }
+    );
+    this.statusCode = 400;
+    this.errorMessages = errors;
+    this.message = "Validation Error!";
+  }
+
+  public globalErrorHandler: ErrorRequestHandler = (
+    error,
+    req: Request,
+    res: Response,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    next: NextFunction
+  ) => {
+    if (error?.name === "ValidationError") {
+      this.handleValidationError(error);
+    } else if (error?.name === "CastError") {
+      this.handleCastError(error);
+    } else if (error instanceof ZodError) {
+      this.handleZodValidationError(error);
+    } else if (error instanceof ApiError) {
+      this.handleGenericError(error);
+    } else if (error instanceof Error) {
+      this.handleGenericError(error);
+    }
+
+    res.status(this.statusCode).json({
+      success: false,
+      message: this.message,
+      errorMessages: this.errorMessages,
+      stack: process.env.NODE_ENV !== "production" ? error.stack : undefined,
+    });
+  };
+
+  public handleError = (error: any) => {
+    if (error?.name === "ValidationError") {
+      this.handleValidationError(error);
+    } else if (error?.name === "CastError") {
+      this.handleCastError(error);
+    } else if (error instanceof ZodError) {
+      this.handleZodValidationError(error);
+    } else if (error instanceof ApiError) {
+      this.handleGenericError(error);
+    } else if (error instanceof Error) {
+      this.handleGenericError(error);
+    }
+
+    return {
+      success: false,
+      message: this.message,
+      errorMessage: this.errorMessages,
+      stack: process.env.NODE_ENV !== "prod" ? error.stack : undefined,
+    };
+  };
+}
+
+export default new ErrorHandler();

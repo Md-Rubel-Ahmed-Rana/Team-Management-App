@@ -4,3 +4,8 @@ export type IApiResponse<T> = {
   message?: string | null;
   data?: T | null;
 };
+
+export type IGenericErrorMessage = {
+  path: string | number;
+  message: string;
+};
