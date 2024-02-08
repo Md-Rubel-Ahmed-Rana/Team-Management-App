@@ -220,6 +220,8 @@ class Service {
 
     const result = await Team.findById(teamId).select({ name: 1, admin: 1 });
 
+    console.log("Removed member", { admin: result?.admin, member: memberId });
+
     if (result && result?.admin) {
       await NotificationService.sendNotification(
         result?.admin,

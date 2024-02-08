@@ -16,13 +16,18 @@
       "@/services/*": ["services/*"],
       "@/shared/*": ["shared/*"],
       "@/utils/*": ["utils/*"],
-      "@/validations/*": ["validations/*"]
+      "@/validations/*": ["validations/*"],
+      "@/mapper/*": ["mapper/*"],
+      "@/dto/*": ["dto/*"],
+      "@/entities/*": ["entities/*"]
     },
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true 
   },
   "files": ["./src/interfaces/index.d.ts"],
   "include": ["index.d.ts", "src/**/*.ts"],

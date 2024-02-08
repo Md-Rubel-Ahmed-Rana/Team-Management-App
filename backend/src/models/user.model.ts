@@ -29,6 +29,9 @@ const userSchema = new Schema<IUser>(
     presentAddress: {
       type: String,
     },
+    country: {
+      type: String,
+    },
     password: {
       type: String,
     },

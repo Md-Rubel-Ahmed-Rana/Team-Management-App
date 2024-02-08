@@ -24,9 +24,6 @@ const Navbar = () => {
   const [unreadNotifications, setUnreadNotifications] = useState<
     INotification[]
   >([]);
-  const unreadNotification = notifications?.filter(
-    (notification: INotification) => !notification.read
-  );
 
   const handleLogOut = () => {
     Cookies.remove("tmAccessToken");

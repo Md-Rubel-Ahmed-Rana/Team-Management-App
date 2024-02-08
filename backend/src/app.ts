@@ -9,6 +9,7 @@ import helmet from "helmet";
 import { config } from "./configurations/envConfig";
 import { RootRoutes } from "./routes/root.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
+import initializeDTOMapper from "./configurations/dtoMapper";
 
 const app = express();
 
@@ -32,6 +33,9 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// * Mappers initiate
+initializeDTOMapper();
 
 // base route to check application health
 app.get("/", (req, res) => {
