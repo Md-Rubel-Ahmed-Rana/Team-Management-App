@@ -31,14 +31,6 @@ const createZodSchema = z.object({
         })
         .min(1)
         .max(255),
-      members: z
-        .array(
-          z.object({
-            role: z.string().optional(),
-            member: z.string().min(1).max(255).optional(),
-          })
-        )
-        .optional(),
     })
     .strict(),
 });

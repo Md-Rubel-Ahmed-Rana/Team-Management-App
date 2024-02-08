@@ -5,22 +5,18 @@ import { ProjectValidationSchema } from "@/validations/project.validation";
 import { Router } from "express";
 const router = Router();
 
-router.get(
-  "/by-team/:teamId",
-  verifyJwt,
-  ProjectController.getProjectsByTeamId
-);
-
 router.post(
   "/create",
-  verifyJwt,
   validateRequest(ProjectValidationSchema.createZodSchema),
   ProjectController.createProject
 );
 
+router.get("/my-projects/:userId", ProjectController.myProjects);
+
+router.get("/assigned-projects/:memberId", ProjectController.assignedProjects);
+
 router.patch(
   "/update/:id",
-  verifyJwt,
   validateRequest(ProjectValidationSchema.updateZodSchema),
   ProjectController.updateProject
 );
@@ -28,14 +24,6 @@ router.patch(
 router.post("/add-member", verifyJwt, ProjectController.addMember);
 
 router.post("/remove-member", verifyJwt, ProjectController.removeMember);
-
-router.get("/my-projects/:userId", verifyJwt, ProjectController.myProjects);
-
-router.get(
-  "/assigned-projects/:memberId",
-  verifyJwt,
-  ProjectController.assignedProjects
-);
 
 router.get("/single/:id", verifyJwt, ProjectController.getSingleProject);
 

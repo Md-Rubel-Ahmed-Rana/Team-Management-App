@@ -6,7 +6,7 @@ import ApiError from "@/shared/apiError";
 import httpStatus from "http-status";
 import { NotificationService } from "./notification.service";
 import { mapper } from "../mapper";
-import { TeamEntity } from "@/entities/team";
+import { TeamEntity } from "@/entities/team.entity";
 import { ModelIdentifier } from "@automapper/core";
 import { CreateTeamDTO } from "@/dto/team/create";
 import { GetTeamDTO } from "@/dto/team/get";

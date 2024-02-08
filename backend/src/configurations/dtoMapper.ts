@@ -5,11 +5,17 @@ import { CreateUserDTO } from "@/dto/user/create";
 import { GetUserDTO } from "@/dto/user/get";
 import { UpdateUserDTO } from "@/dto/user/update";
 import { DeleteUserDTO } from "@/dto/user/delete";
-import { TeamEntity } from "@/entities/team";
+import { TeamEntity } from "@/entities/team.entity";
 import { CreateTeamDTO } from "@/dto/team/create";
 import { GetTeamDTO } from "@/dto/team/get";
 import { UpdateTeamDTO } from "@/dto/team/update";
 import { DeleteTeamDTO } from "@/dto/team/delete";
+import { ProjectEntity } from "@/entities/project.entity";
+import { CreateProjectDTO } from "@/dto/project/create";
+import { GetProjectDTO } from "@/dto/project/get";
+import { UpdateProjectDTO } from "@/dto/project/update";
+import { DeleteProjectDTO } from "@/dto/project/delete";
+import { GetOnlyProjectDTO } from "@/dto/project/getOnlyProject";
 
 const initializeDTOMapper = () => {
   //  ===== user dto =========
@@ -39,6 +45,23 @@ const initializeDTOMapper = () => {
   // update
   createMap(mapper, TeamEntity, DeleteTeamDTO);
   createMap(mapper, DeleteTeamDTO, TeamEntity);
+
+  //  ===== project dto =========
+  // create
+  createMap(mapper, ProjectEntity, CreateProjectDTO);
+  createMap(mapper, CreateProjectDTO, ProjectEntity);
+  // get
+  createMap(mapper, ProjectEntity, GetProjectDTO);
+  createMap(mapper, GetProjectDTO, ProjectEntity);
+  // get only project
+  createMap(mapper, ProjectEntity, GetOnlyProjectDTO);
+  createMap(mapper, GetOnlyProjectDTO, ProjectEntity);
+  // update
+  createMap(mapper, ProjectEntity, UpdateProjectDTO);
+  createMap(mapper, UpdateProjectDTO, ProjectEntity);
+  // update
+  createMap(mapper, ProjectEntity, DeleteProjectDTO);
+  createMap(mapper, DeleteProjectDTO, ProjectEntity);
 };
 
 export default initializeDTOMapper;

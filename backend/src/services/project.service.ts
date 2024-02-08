@@ -4,47 +4,68 @@ import ApiError from "@/shared/apiError";
 import httpStatus from "http-status";
 import { NotificationService } from "./notification.service";
 import { ProjectLeaveRequest } from "@/models/projectLeaveRequest.model";
+import { mapper } from "../mapper";
+import { ProjectEntity } from "@/entities/project.entity";
+import { ModelIdentifier } from "@automapper/core";
+import { CreateProjectDTO } from "@/dto/project/create";
+import { GetOnlyProjectDTO } from "@/dto/project/getOnlyProject";
 
 class Service {
-  async createProject(data: IProject): Promise<IProject> {
+  async createProject(data: IProject): Promise<CreateProjectDTO> {
     const result = await Project.create(data);
-    return result;
-  }
-
-  async getProjectsByTeamId(teamId: string): Promise<IProject[]> {
-    const result = await Project.find({ team: teamId }).populate(
-      "members.member"
+    const mappedData = mapper.map(
+      result,
+      ProjectEntity as ModelIdentifier,
+      CreateProjectDTO
     );
-    return result;
+    return mappedData;
   }
 
-  async myProjects(userId: string): Promise<IProject[]> {
+  async myProjects(userId: string): Promise<GetOnlyProjectDTO[]> {
     const result = await Project.find({ user: userId });
-    return result;
+    const mappedData = mapper.mapArray(
+      result,
+      ProjectEntity as ModelIdentifier,
+      GetOnlyProjectDTO
+    );
+    return mappedData;
   }
 
-  async assignedProjects(memberId: string): Promise<IProject[]> {
+  async assignedProjects(memberId: string): Promise<GetOnlyProjectDTO[]> {
     const result = await Project.find({ "members.member": memberId });
-    return result;
-  }
-
-  async getSingleProject(id: string): Promise<IProject | null> {
-    const result = await Project.findById(id)
-      .populate("members.member")
-      .populate("team", "name");
-    return result;
+    const mappedData = mapper.mapArray(
+      result,
+      ProjectEntity as ModelIdentifier,
+      GetOnlyProjectDTO
+    );
+    return mappedData;
   }
 
   async updateProject(
     id: string,
     data: Partial<IProject>
-  ): Promise<IProject | null> {
+  ): Promise<GetOnlyProjectDTO | null> {
     const { name, category } = data;
     const result = await Project.findOneAndUpdate(
       { _id: id },
       { $set: { name, category } },
       { new: true }
     );
+
+    const mappedData = mapper.map(
+      result,
+      ProjectEntity as ModelIdentifier,
+      GetOnlyProjectDTO
+    );
+    return mappedData;
+  }
+
+  // remaining to apply DTO
+
+  async getSingleProject(id: string): Promise<IProject | null> {
+    const result = await Project.findById(id)
+      .populate("members.member")
+      .populate("team", "name");
     return result;
   }
 
