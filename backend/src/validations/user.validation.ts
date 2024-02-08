@@ -25,7 +25,7 @@ const loginZodSchema = z.object({
 const updateZodSchema = z.object({
   body: z
     .object({
-      _id: z.string().min(1).max(255).optional(),
+      id: z.string().min(1).max(255).optional(),
       name: z.string().min(1).max(255).optional(),
       profile_picture: z.string().optional(),
       email: z.string().email().optional(),
@@ -35,6 +35,7 @@ const updateZodSchema = z.object({
       phoneNumber: z.string().optional(),
       permanentAddress: z.string().optional(),
       presentAddress: z.string().optional(),
+      country: z.string().optional(),
       createdAt: z.string().optional(),
       updatedAt: z.string().optional(),
     })

@@ -11,13 +11,13 @@ export class UpdateUserDTO {
   email!: string;
 
   @AutoMap()
+  profile_picture!: string;
+
+  @AutoMap()
   department!: string;
 
   @AutoMap()
   designation!: string;
-
-  @AutoMap()
-  password!: string;
 
   @AutoMap()
   phoneNumber!: string;

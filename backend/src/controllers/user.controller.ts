@@ -9,16 +9,6 @@ class Controller extends RootController {
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Users fetched  successfully from database",
-      data: result,
-    });
-  });
-
-  getUsers = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.getUsers();
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
       message: "Users fetched  successfully",
       data: result,
     });
@@ -36,12 +26,12 @@ class Controller extends RootController {
   });
 
   register = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.register(req.body);
+    await UserService.register(req.body);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: "Registered successfully",
-      data: result,
+      data: null,
     });
   });
 

@@ -11,6 +11,9 @@ export class UserEntity {
   email!: string;
 
   @AutoMap()
+  profile_picture!: string;
+
+  @AutoMap()
   department!: string;
 
   @AutoMap()

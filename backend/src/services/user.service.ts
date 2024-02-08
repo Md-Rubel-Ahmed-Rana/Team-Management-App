@@ -3,27 +3,23 @@ import bcrypt from "bcrypt";
 import httpStatus from "http-status";
 import { IUser } from "@/interfaces/user.interface";
 import User from "@/models/user.model";
-import { RedisCacheService } from "@/middlewares/redisCache";
-import { redisKeys } from "@/constants/redisKeys";
 import ApiError from "@/shared/apiError";
 import { config } from "@/configurations/envConfig";
+import { mapper } from "../mapper";
+import { UserEntity } from "@/entities/user.entity";
+import { GetUserDTO } from "@/dto/user/get";
+import { ModelIdentifier } from "@automapper/core";
+import { UpdateUserDTO } from "@/dto/user/update";
 
 class Service {
-  async getAllUsers(): Promise<IUser[]> {
-    const result = await User.find({}).select({
-      name: 1,
-      email: 1,
-      department: 1,
-      designation: 1,
-      profile_picture: 1,
-    });
-    await RedisCacheService.insertMany(redisKeys.users, result);
-    return result;
-  }
-
-  async getUsers(): Promise<IUser[]> {
+  async getAllUsers(): Promise<GetUserDTO[]> {
     const result = await User.find({});
-    return result;
+    const mappedData = mapper.mapArray(
+      result,
+      UserEntity as ModelIdentifier,
+      GetUserDTO
+    );
+    return mappedData;
   }
 
   async register(user: IUser): Promise<void> {
@@ -37,34 +33,38 @@ class Service {
     const hashedPassword = await bcrypt.hash(user?.password, 12);
     user.password = hashedPassword;
 
-    const result = await User.create(user);
-    const data = {
-      _id: result?._id,
-      name: result?.name,
-      profile_picture: result?.profile_picture,
-      email: result?.email,
-      department: result?.department,
-      designation: result?.designation,
-    };
-    await RedisCacheService.insertOne(redisKeys.users, data);
+    await User.create(user);
   }
 
-  async auth(id: string): Promise<IUser> {
+  async auth(id: string): Promise<GetUserDTO | null> {
     const user = await User.findById(id);
     if (!user) {
       throw new ApiError(httpStatus.NOT_FOUND, "User not found");
     }
 
-    return user;
+    const mappedUser = mapper.map(
+      user,
+      UserEntity as ModelIdentifier,
+      GetUserDTO
+    );
+    return mappedUser;
   }
 
-  async updateUser(id: string, data: Partial<IUser>): Promise<IUser | null> {
+  async updateUser(
+    id: string,
+    data: Partial<IUser>
+  ): Promise<UpdateUserDTO | null> {
     const result = await User.findByIdAndUpdate(
       id,
       { $set: { ...data } },
       { new: true }
     );
-    return result;
+    const mappedUser = mapper.map(
+      result,
+      UserEntity as ModelIdentifier,
+      UpdateUserDTO
+    );
+    return mappedUser;
   }
 
   async login(email: string, password: string): Promise<string> {
