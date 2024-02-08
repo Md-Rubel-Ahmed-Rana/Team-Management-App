@@ -5,70 +5,56 @@ import { TeamLeaveRequest } from "@/models/teamLeaveRequest.model";
 import ApiError from "@/shared/apiError";
 import httpStatus from "http-status";
 import { NotificationService } from "./notification.service";
+import { mapper } from "../mapper";
+import { TeamEntity } from "@/entities/team";
+import { ModelIdentifier } from "@automapper/core";
+import { CreateTeamDTO } from "@/dto/team/create";
+import { GetTeamDTO } from "@/dto/team/get";
+import { UserEntity } from "@/entities/user.entity";
+import { GetUserDTO } from "@/dto/user/get";
+import { UpdateTeamDTO } from "@/dto/team/update";
+import { DeleteTeamDTO } from "@/dto/team/delete";
 
 class Service {
-  async createTeam(data: ITeam): Promise<ITeam> {
+  async createTeam(data: ITeam): Promise<CreateTeamDTO> {
     const isExist = await Team.findOne({ name: data?.name });
     if (isExist) {
       throw new ApiError(httpStatus.CONFLICT, "This team already exist");
     } else {
       const result = await Team.create(data);
-      return result;
+      const mappedData = mapper.map(
+        result,
+        TeamEntity as ModelIdentifier,
+        CreateTeamDTO
+      );
+      return mappedData;
     }
   }
 
-  async myTeams(adminId: string): Promise<ITeam[]> {
-    try {
-      const result = await Team.find({ admin: adminId }).populate([
-        {
-          path: "activeMembers",
-          model: "User",
-        },
-        {
-          path: "pendingMembers",
-          model: "User",
-        },
-        {
-          path: "admin",
-          model: "User",
-          select: [
-            "name",
-            "profile_picture",
-            "email",
-            "department",
-            "designation",
-            "createdAt",
-            "updatedAt",
-          ],
-        },
-      ]);
-
-      return result;
-    } catch (error) {
-      console.error("Error getting teams:", error);
-      throw error;
-    }
+  async myTeams(adminId: string): Promise<GetTeamDTO[]> {
+    const result = await Team.find({ admin: adminId }).populate([
+      {
+        path: "activeMembers",
+        model: "User",
+      },
+      {
+        path: "pendingMembers",
+        model: "User",
+      },
+      {
+        path: "admin",
+        model: "User",
+      },
+    ]);
+    const mappedData = mapper.mapArray(
+      result,
+      TeamEntity as ModelIdentifier,
+      GetTeamDTO
+    );
+    return mappedData;
   }
 
-  async getActiveMembers(
-    teamId: string
-  ): Promise<{ _id: string; name: string }[] | undefined> {
-    const result = await Team.findById(teamId)
-      .select({ activeMembers: 1 })
-      .populate([
-        {
-          path: "activeMembers",
-          model: "User",
-        },
-      ]);
-    const members = result?.activeMembers.map((member: any) => ({
-      _id: member._id,
-      name: member?.name,
-    }));
-    return members;
-  }
-
-  async joinedTeams(memberId: string): Promise<ITeam[]> {
+  async joinedTeams(memberId: string): Promise<GetTeamDTO[]> {
     const result = await Team.find({ activeMembers: memberId }).populate([
       {
         path: "activeMembers",
@@ -81,134 +67,108 @@ class Service {
       {
         path: "admin",
         model: "User",
-        select: [
-          "name",
-          "profile_picture",
-          "email",
-          "department",
-          "designation",
-          "createdAt",
-          "updatedAt",
-        ],
       },
     ]);
-    return result;
+    const mappedData = mapper.mapArray(
+      result,
+      TeamEntity as ModelIdentifier,
+      GetTeamDTO
+    );
+    return mappedData;
   }
 
-  async allTeams(): Promise<ITeam[]> {
-    const result = await Team.find().populate([
-      {
-        path: "activeMembers",
-        model: "User",
-        select: [
-          "name",
-          "profile_picture",
-          "email",
-          "department",
-          "designation",
-          "createdAt",
-          "updatedAt",
-        ],
-      },
-      {
-        path: "pendingMembers",
-        model: "User",
-        select: [
-          "name",
-          "profile_picture",
-          "email",
-          "department",
-          "designation",
-          "createdAt",
-          "updatedAt",
-        ],
-      },
-      {
-        path: "admin",
-        model: "User",
-        select: [
-          "name",
-          "profile_picture",
-          "email",
-          "department",
-          "designation",
-          "createdAt",
-          "updatedAt",
-        ],
-      },
-    ]);
-    return result;
+  async getActiveMembers(teamId: string): Promise<GetUserDTO[] | undefined> {
+    const result = await Team.findById(teamId)
+      .select({ activeMembers: 1 })
+      .populate([
+        {
+          path: "activeMembers",
+          model: "User",
+        },
+      ]);
+    const members = result?.activeMembers;
+    if (members && members?.length > 0) {
+      const mappedData = mapper.mapArray(
+        members,
+        UserEntity as ModelIdentifier,
+        GetUserDTO
+      );
+      return mappedData;
+    }
   }
 
-  async getTeam(id: string): Promise<ITeam> {
+  async getTeam(id: string): Promise<GetTeamDTO> {
     const result = await Team.findById(id).populate([
       {
         path: "activeMembers",
         model: "User",
-        select: [
-          "name",
-          "profile_picture",
-          "email",
-          "department",
-          "designation",
-        ],
       },
       {
         path: "pendingMembers",
         model: "User",
-        select: [
-          "name",
-          "profile_picture",
-          "email",
-          "department",
-          "designation",
-        ],
       },
       {
         path: "admin",
         model: "User",
-        select: [
-          "name",
-          "profile_picture",
-          "email",
-          "department",
-          "designation",
-        ],
       },
     ]);
     if (!result) {
       throw new ApiError(404, "Team not found!");
     }
-    return result;
+    const mappedData = mapper.map(
+      result,
+      TeamEntity as ModelIdentifier,
+      GetTeamDTO
+    );
+    return mappedData;
   }
 
-  async getUserTeams(memberId: string): Promise<ITeam[]> {
-    const teams = await Team.find({
-      $or: [{ activeMembers: memberId }, { pendingMembers: memberId }],
-    });
-    return teams;
-  }
-
-  async updateTeam(id: string, data: ITeam): Promise<ITeam | null> {
+  async updateTeam(id: string, data: ITeam): Promise<UpdateTeamDTO | null> {
     const isExistTeam = await Team.findById(id);
 
     if (!isExistTeam) {
       throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
     }
 
-    await Team.findByIdAndUpdate(id, data);
-    const result = await Team.findById(id);
-    return result;
+    const result = await Team.findByIdAndUpdate(
+      id,
+      { $set: { ...data } },
+      { new: true }
+    ).populate([
+      {
+        path: "activeMembers",
+        model: "User",
+      },
+      {
+        path: "pendingMembers",
+        model: "User",
+      },
+      {
+        path: "admin",
+        model: "User",
+      },
+    ]);
+    const mappedData = mapper.map(
+      result,
+      TeamEntity as ModelIdentifier,
+      UpdateTeamDTO
+    );
+    return mappedData;
   }
 
-  async deleteTeam(id: string): Promise<ITeam | null> {
+  async deleteTeam(id: string): Promise<DeleteTeamDTO | null> {
     const result = await Team.findByIdAndDelete(id);
 
     if (!result) {
       throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
     }
 
-    return result;
+    const mappedData = mapper.map(
+      result,
+      TeamEntity as ModelIdentifier,
+      DeleteTeamDTO
+    );
+    return mappedData;
   }
 
   async removeMember(teamId: string, memberId: string): Promise<void> {
@@ -219,8 +179,6 @@ class Service {
     );
 
     const result = await Team.findById(teamId).select({ name: 1, admin: 1 });
-
-    console.log("Removed member", { admin: result?.admin, member: memberId });
 
     if (result && result?.admin) {
       await NotificationService.sendNotification(

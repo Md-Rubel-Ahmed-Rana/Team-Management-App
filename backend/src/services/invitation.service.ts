@@ -11,8 +11,6 @@ class Service {
       { new: true }
     );
 
-    console.log("Invite member", { admin: result?.admin, member: memberId });
-
     if (result && result?.admin) {
       const notification = await NotificationService.sendNotification(
         result?.admin,

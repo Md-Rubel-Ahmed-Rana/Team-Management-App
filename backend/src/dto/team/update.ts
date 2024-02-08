@@ -1,5 +1,5 @@
-import { UserEntity } from "@/entities/user.entity";
 import { AutoMap } from "@automapper/classes";
+import { GetUserDTO } from "../user/get";
 
 export class UpdateTeamDTO {
   @AutoMap()
@@ -17,14 +17,14 @@ export class UpdateTeamDTO {
   @AutoMap()
   image!: string;
 
-  @AutoMap(() => UserEntity)
-  admin!: UserEntity;
+  @AutoMap(() => GetUserDTO)
+  admin!: GetUserDTO;
 
-  @AutoMap(() => [UserEntity])
-  activeMembers: UserEntity[] = [];
+  @AutoMap(() => [GetUserDTO])
+  activeMembers: GetUserDTO[] = [];
 
-  @AutoMap(() => [UserEntity])
-  pendingMembers: UserEntity[] = [];
+  @AutoMap(() => [GetUserDTO])
+  pendingMembers: GetUserDTO[] = [];
 
   @AutoMap()
   createdAt!: Date;

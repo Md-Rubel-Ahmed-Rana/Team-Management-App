@@ -46,32 +46,12 @@ class Controller extends RootController {
     });
   });
 
-  allTeams = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await TeamService.allTeams();
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Teams found",
-      data: result,
-    });
-  });
-
   getTeam = this.catchAsync(async (req: Request, res: Response) => {
     const result = await TeamService.getTeam(req.params.id);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: "Team found",
-      data: result,
-    });
-  });
-
-  getUserTeams = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await TeamService.getUserTeams(req.params.memberId);
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Teams found",
       data: result,
     });
   });
