@@ -41,6 +41,11 @@ import { CreateMessageDTO } from "@/dto/message/create";
 import { GetMessageDTO } from "@/dto/message/get";
 import { UpdateMessageDTO } from "@/dto/message/update";
 import { DeleteMessageDTO } from "@/dto/message/delete";
+import { PaymentEntity } from "@/entities/payment.entity";
+import { CreatePaymentDTO } from "@/dto/payment/create";
+import { GetPaymentDTO } from "@/dto/payment/get";
+import { UpdatePaymentDTO } from "@/dto/payment/update";
+import { DeletePaymentDTO } from "@/dto/payment/delete";
 
 const initializeDTOMapper = () => {
   //  ===== user dto =========
@@ -162,6 +167,21 @@ const initializeDTOMapper = () => {
   // update
   createMap(mapper, MessageEntity, DeleteMessageDTO);
   createMap(mapper, DeleteMessageDTO, MessageEntity);
+
+  //  ===== payment  dto =========
+  // create
+  createMap(mapper, PaymentEntity, CreatePaymentDTO);
+  createMap(mapper, CreatePaymentDTO, PaymentEntity);
+  // get
+  createMap(mapper, PaymentEntity, GetPaymentDTO);
+  createMap(mapper, GetPaymentDTO, PaymentEntity);
+
+  // update
+  createMap(mapper, PaymentEntity, UpdatePaymentDTO);
+  createMap(mapper, UpdatePaymentDTO, PaymentEntity);
+  // update
+  createMap(mapper, PaymentEntity, DeletePaymentDTO);
+  createMap(mapper, DeletePaymentDTO, PaymentEntity);
 };
 
 export default initializeDTOMapper;

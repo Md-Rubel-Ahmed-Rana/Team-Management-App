@@ -12,6 +12,6 @@ router.post(
   PaymentController.webhook
 );
 
-router.get("/:userId", verifyJwt, PaymentController.myPayments);
+router.get("/:userId", PaymentController.myPayments);
 
 export const PaymentRoutes = router;
