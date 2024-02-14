@@ -5,6 +5,10 @@ export type IUser = {
   email: string;
   department: string;
   designation: string;
+  phoneNumber: string;
+  permanentAddress: string;
+  presentAddress: string;
+  country: string;
   password: string;
   createdAt?: string;
   updatedAt?: string;
@@ -17,6 +21,10 @@ export const userInitData: IUser = {
   email: "",
   department: "",
   designation: "",
+  phoneNumber: "",
+  permanentAddress: "",
+  presentAddress: "",
+  country: "",
   password: "",
   createdAt: "",
   updatedAt: "",

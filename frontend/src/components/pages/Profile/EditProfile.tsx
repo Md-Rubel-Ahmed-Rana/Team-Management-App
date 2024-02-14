@@ -46,7 +46,6 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
       <form onSubmit={handleSubmit(handleEditProfile)} className="mt-4">
         {!isChangeImage && (
           <div className="mb-4 relative">
-            <label className="block text-sm font-medium ">Image</label>
             <img
               className="w-20 h-20 rounded-full border-2 "
               src={user?.profile_picture}
@@ -119,6 +118,46 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           <input
             type="text"
             {...register("designation")}
+            className="mt-1 p-2 w-full border rounded-md"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-600">
+            Phone number
+          </label>
+          <input
+            type="text"
+            {...register("phoneNumber")}
+            className="mt-1 p-2 w-full border rounded-md"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-600">
+            Present address
+          </label>
+          <input
+            type="text"
+            {...register("presentAddress")}
+            className="mt-1 p-2 w-full border rounded-md"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-600">
+            Permanent address
+          </label>
+          <input
+            type="text"
+            {...register("permanentAddress")}
+            className="mt-1 p-2 w-full border rounded-md"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-600">
+            Country
+          </label>
+          <input
+            type="text"
+            {...register("country")}
             className="mt-1 p-2 w-full border rounded-md"
           />
         </div>

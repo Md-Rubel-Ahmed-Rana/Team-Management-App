@@ -63,6 +63,20 @@ const ProfilePage = () => {
               <strong>Designation:</strong>{" "}
               {user?.designation || "Not available"}
             </p>
+            <p>
+              <strong>Phone No.:</strong> {user?.phoneNumber || "Not available"}
+            </p>
+            <p>
+              <strong>Present Address:</strong>{" "}
+              {user?.presentAddress || "Not available"}
+            </p>
+            <p>
+              <strong>Permanent Address:</strong>{" "}
+              {user?.permanentAddress || "Not available"}
+            </p>
+            <p>
+              <strong>Country:</strong> {user?.country || "Not available"}
+            </p>
           </div>
           <div className="mt-4">
             <button
