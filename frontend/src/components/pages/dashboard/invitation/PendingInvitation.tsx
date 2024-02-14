@@ -55,7 +55,7 @@ const PendingInvitation = () => {
       <div>
         {data?.data?.map((team: ITeam) => {
           const {
-            _id,
+            id,
             name,
             category,
             description,
@@ -67,7 +67,7 @@ const PendingInvitation = () => {
           } = team;
           return (
             <div
-              key={_id}
+              key={id}
               className="p-4 flex flex-col md:flex-row gap-5 shadow-md rounded-lg"
             >
               <div className="w-full md:w-2/6 h-60 md:h-auto">
@@ -106,13 +106,13 @@ const PendingInvitation = () => {
                 </p>
                 <div className="flex  items-center gap-3">
                   <button
-                    onClick={() => handleAcceptInvitation(_id)}
+                    onClick={() => handleAcceptInvitation(id)}
                     className="px-5 py-2 rounded-md border"
                   >
                     Accept
                   </button>
                   <button
-                    onClick={() => handleRejectInvitation(_id)}
+                    onClick={() => handleRejectInvitation(id)}
                     className="px-5 py-2 rounded-md border"
                   >
                     Reject

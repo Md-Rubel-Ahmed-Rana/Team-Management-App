@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import FeatureCard from "./FeatureCard";
 import featureData from "@/constants/featureData";
 import Link from "next/link";

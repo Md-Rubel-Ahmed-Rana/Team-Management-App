@@ -8,7 +8,7 @@ type Props = {
 };
 
 const PricingCard = ({ data }: Props) => {
-  const { _id, plan, price, features } = data;
+  const { id, plan, price, features } = data;
   return (
     <div className="p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-bold mb-4">{plan}</h3>
@@ -22,7 +22,7 @@ const PricingCard = ({ data }: Props) => {
         ))}
       </ul>
       <button className="bg-blue-500 text-white py-2 px-4 rounded-full mt-6 hover:bg-blue-700">
-        <Link href={`/checkout/${_id}`}>Upgrade Now</Link>
+        <Link href={`/checkout/${id}`}>Upgrade Now</Link>
       </button>
     </div>
   );
