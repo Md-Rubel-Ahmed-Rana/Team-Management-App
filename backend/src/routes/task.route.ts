@@ -7,13 +7,7 @@ const router = Router();
 
 router.delete("/delete/:taskId", verifyJwt, TaskController.deleteTask);
 
-router.get("/", verifyJwt, TaskController.getTasks);
-
-router.get(
-  "/by-project/:projectId",
-  verifyJwt,
-  TaskController.getTasksByProjectId
-);
+router.get("/by-project/:projectId", TaskController.getTasksByProjectId);
 
 router.post(
   "/create",

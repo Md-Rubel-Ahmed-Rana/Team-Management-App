@@ -14,16 +14,6 @@ class Controller extends RootController {
     });
   });
 
-  getTasks = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await TaskService.getTasks();
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Tasks found  successfully",
-      data: result,
-    });
-  });
-
   getTasksByProjectId = this.catchAsync(async (req: Request, res: Response) => {
     const projectId = req.params.projectId;
     const tasks = await TaskService.getTasksByProjectId(projectId);

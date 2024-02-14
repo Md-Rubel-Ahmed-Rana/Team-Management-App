@@ -16,6 +16,11 @@ import { GetProjectDTO } from "@/dto/project/get";
 import { UpdateProjectDTO } from "@/dto/project/update";
 import { DeleteProjectDTO } from "@/dto/project/delete";
 import { GetOnlyProjectDTO } from "@/dto/project/getOnlyProject";
+import { TaskEntity } from "@/entities/task.entity";
+import { CreateTaskDTO } from "@/dto/task/create";
+import { GetTaskDTO } from "@/dto/task/get";
+import { UpdateTaskDTO } from "@/dto/task/update";
+import { DeleteTaskDTO } from "@/dto/task/delete";
 
 const initializeDTOMapper = () => {
   //  ===== user dto =========
@@ -62,6 +67,21 @@ const initializeDTOMapper = () => {
   // update
   createMap(mapper, ProjectEntity, DeleteProjectDTO);
   createMap(mapper, DeleteProjectDTO, ProjectEntity);
+
+  //  ===== task dto =========
+  // create
+  createMap(mapper, TaskEntity, CreateTaskDTO);
+  createMap(mapper, CreateTaskDTO, TaskEntity);
+  // get
+  createMap(mapper, TaskEntity, GetTaskDTO);
+  createMap(mapper, GetTaskDTO, TaskEntity);
+
+  // update
+  createMap(mapper, TaskEntity, UpdateTaskDTO);
+  createMap(mapper, UpdateTaskDTO, TaskEntity);
+  // update
+  createMap(mapper, TaskEntity, DeleteTaskDTO);
+  createMap(mapper, DeleteTaskDTO, TaskEntity);
 };
 
 export default initializeDTOMapper;

@@ -22,7 +22,6 @@ class Service {
   }
 
   async ignoreRequest(requestId: string) {
-    console.log("From team ignore", requestId);
     const result = await TeamLeaveRequest.findByIdAndUpdate(
       requestId,
       { $set: { status: "ignored" } },
