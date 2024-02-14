@@ -31,6 +31,11 @@ import { CreateProjectLeaveDTO } from "@/dto/projectLeave/create";
 import { GetProjectLeaveDTO } from "@/dto/projectLeave/get";
 import { UpdateProjectLeaveDTO } from "@/dto/projectLeave/update";
 import { DeleteProjectLeaveDTO } from "@/dto/projectLeave/delete";
+import { PlanEntity } from "@/entities/plan.entity";
+import { CreatePlanDTO } from "@/dto/plan/create";
+import { GetPlanDTO } from "@/dto/plan/get";
+import { UpdatePlanDTO } from "@/dto/plan/update";
+import { DeletePlanDTO } from "@/dto/plan/delete";
 
 const initializeDTOMapper = () => {
   //  ===== user dto =========
@@ -122,6 +127,21 @@ const initializeDTOMapper = () => {
   // update
   createMap(mapper, ProjectLeaveEntity, DeleteProjectLeaveDTO);
   createMap(mapper, DeleteProjectLeaveDTO, ProjectLeaveEntity);
+
+  //  ===== plan  dto =========
+  // create
+  createMap(mapper, PlanEntity, CreatePlanDTO);
+  createMap(mapper, CreatePlanDTO, PlanEntity);
+  // get
+  createMap(mapper, PlanEntity, GetPlanDTO);
+  createMap(mapper, GetPlanDTO, PlanEntity);
+
+  // update
+  createMap(mapper, PlanEntity, UpdatePlanDTO);
+  createMap(mapper, UpdatePlanDTO, PlanEntity);
+  // update
+  createMap(mapper, PlanEntity, DeletePlanDTO);
+  createMap(mapper, DeletePlanDTO, PlanEntity);
 };
 
 export default initializeDTOMapper;
