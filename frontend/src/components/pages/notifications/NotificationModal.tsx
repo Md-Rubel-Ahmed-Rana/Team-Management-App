@@ -3,27 +3,24 @@ import { Fragment, SetStateAction, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import {
-  useGetNotificationQuery,
-  useUpdateNotificationMutation,
-} from "@/features/notification";
+import { useUpdateNotificationMutation } from "@/features/notification";
 import { RxCross2 } from "react-icons/rx";
 import { INotification } from "@/interfaces/notification.interface";
 import Link from "next/link";
 import moment from "moment";
 import { formattedDate } from "@/utils/formattedDate";
 
-const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
+const NotificationModal = ({
+  isOpen,
+  setIsOpen,
+  notifications,
+  unreadNotifications,
+}: any) => {
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
-  const { data: notifiedData } = useGetNotificationQuery(user?.id);
   const [updatedNotifications] = useUpdateNotificationMutation();
-  const notifications: INotification[] = notifiedData?.data;
-  const unreadNotification = notifications?.filter(
-    (notification: INotification) => !notification?.read
-  );
 
-  const ids = unreadNotification.map((not: INotification) => not.id);
+  const ids = unreadNotifications.map((not: INotification) => not.id);
 
   const closeModal = () => {
     setIsOpen(false);

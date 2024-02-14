@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 import { FaUser, FaRegBell, FaBars, FaRegMoon, FaSun } from "react-icons/fa";
 import { BiX } from "react-icons/bi";
@@ -31,18 +32,20 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    console.log("Notification effect");
     const handleNotification = (data: INotification) => {
       console.log("New notification", data);
       setUnreadNotifications((prev: INotification[]) => [...prev, data]);
     };
-
     socket.on("notification", handleNotification);
-
     return () => {
       socket.off("notification", handleNotification);
     };
   }, [socket]);
+
+  useEffect(() => {
+    const unread = notifications.filter((notified) => !notified.read);
+    setUnreadNotifications(unread);
+  }, []);
 
   return (
     <nav className="lg:flex justify-between items-center py-5  relative">
@@ -224,7 +227,14 @@ const Navbar = () => {
           {user?.email && <button onClick={handleLogOut}>Logout</button>}
         </div>
       )}
-      {isOpen && <NotificationModal isOpen={isOpen} setIsOpen={setIsOpen} />}
+      {isOpen && (
+        <NotificationModal
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          notifications={notifications}
+          unreadNotifications={unreadNotifications}
+        />
+      )}
     </nav>
   );
 };

@@ -1,17 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
+import { SocketContext } from "@/context/SocketContext";
 import {
   useAcceptInvitationMutation,
   usePendingInvitationsQuery,
   useRejectInvitationMutation,
 } from "@/features/invitation";
 import { useLoggedInUserQuery } from "@/features/user";
+import { INotification } from "@/interfaces/notification.interface";
 import { ITeam } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
-import React from "react";
+import React, { useContext } from "react";
 
 import Swal from "sweetalert2";
 
 const PendingInvitation = () => {
+  const { socket }: any = useContext(SocketContext);
   const { data: userData }: any = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const { data } = usePendingInvitationsQuery(user?.id);
@@ -24,6 +27,7 @@ const PendingInvitation = () => {
       memberId: user?.id,
     });
     if (result?.data?.success) {
+      socket.emit("notification", result?.data?.data);
       Swal.fire({
         position: "center",
         icon: "success",
@@ -40,6 +44,9 @@ const PendingInvitation = () => {
       memberId: user.id,
     });
     if (result?.data?.success) {
+      // send notification viw socket
+      socket.emit("notification", result?.data?.data);
+
       Swal.fire({
         position: "center",
         icon: "success",

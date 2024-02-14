@@ -50,7 +50,6 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
       teamId: team.id,
       memberId: selectedMember.id,
     });
-    console.log("Team invitation", result);
     if (result?.data?.success) {
       closeModal();
       // send invitation notification

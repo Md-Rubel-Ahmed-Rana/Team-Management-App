@@ -62,17 +62,16 @@ class Service {
     );
 
     if (result && result?.admin) {
-      await NotificationService.sendNotification(
-        result?.admin,
+      const notified = await NotificationService.sendNotification(
         memberId,
+        result?.admin,
         "team_invitation",
         "Team Invitation",
         `Your team invitation has been rejected for (${result?.name})`,
         `dashboard?uId=${result?._id}&activeView=my-teams`
       );
+      return notified;
     }
-
-    return result;
   }
 
   async acceptInvitation(teamId: string, memberId: string) {
@@ -86,17 +85,16 @@ class Service {
     );
 
     if (result && result?.admin) {
-      await NotificationService.sendNotification(
-        result?.admin,
+      const notified = await NotificationService.sendNotification(
         memberId,
+        result?.admin,
         "team_invitation",
         "Team Invitation",
         `Your team invitation has been accepted for (${result?.name})`,
         `dashboard?uId=${result?._id}&activeView=my-teams`
       );
+      return notified;
     }
-
-    return result;
   }
 }
 
