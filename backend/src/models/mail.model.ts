@@ -15,7 +15,13 @@ const contactSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true, toJSON: { versionKey: false } }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+    },
+  }
 );
 
 const ContactMail = model("ContactMail", contactSchema);

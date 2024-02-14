@@ -9,6 +9,8 @@ import { ProjectEntity } from "@/entities/project.entity";
 import { ModelIdentifier } from "@automapper/core";
 import { CreateProjectDTO } from "@/dto/project/create";
 import { GetOnlyProjectDTO } from "@/dto/project/getOnlyProject";
+import { GetProjectDTO } from "@/dto/project/get";
+import { UpdateProjectDTO } from "@/dto/project/update";
 
 class Service {
   async createProject(data: IProject): Promise<CreateProjectDTO> {
@@ -60,20 +62,22 @@ class Service {
     return mappedData;
   }
 
-  // remaining to apply DTO
-
-  async getSingleProject(id: string): Promise<IProject | null> {
+  async getSingleProject(id: string): Promise<GetProjectDTO | null> {
     const result = await Project.findById(id)
-      .populate("members.member")
+      .populate("members")
       .populate("team", "name");
-    return result;
+    const mappedData = mapper.map(
+      result,
+      ProjectEntity as ModelIdentifier,
+      GetProjectDTO
+    );
+    return mappedData;
   }
 
   async addMember(
     projectId: string,
-    memberId: string,
-    role: string
-  ): Promise<IProject | null> {
+    memberId: string
+  ): Promise<UpdateProjectDTO | null> {
     const project = await Project.findById(projectId);
 
     if (!project) {
@@ -92,9 +96,13 @@ class Service {
       );
     }
 
-    const result = await Project.findByIdAndUpdate(projectId, {
-      $push: { members: { role, member: memberId } },
-    });
+    const result = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        $push: { members: memberId },
+      },
+      { new: true }
+    );
 
     if (project?.user) {
       await NotificationService.sendNotification(
@@ -106,33 +114,31 @@ class Service {
         `projects?team=${project?.team}&id=${project._id}&name=${project?.name}`
       );
     }
-    return result;
+    const mappedData = mapper.map(
+      result,
+      ProjectEntity as ModelIdentifier,
+      UpdateProjectDTO
+    );
+    return mappedData;
   }
 
   async removeMember(
     projectId: string,
     memberId: string
-  ): Promise<IProject | null> {
+  ): Promise<UpdateProjectDTO | null> {
     const project = await Project.findById(projectId);
 
     if (!project) {
       throw new ApiError(httpStatus.NOT_FOUND, "Project not found");
     }
 
-    const memberIndex = project.members.findIndex(
-      (member: any) => member.member.toString() === memberId
+    const result = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        $pull: { members: memberId },
+      },
+      { new: true }
     );
-
-    if (memberIndex === -1) {
-      throw new ApiError(
-        httpStatus.NOT_FOUND,
-        "Member not found in the project"
-      );
-    }
-
-    project.members.splice(memberIndex, 1);
-
-    const result = await project.save();
 
     // update leave request for project
     await ProjectLeaveRequest.findOneAndUpdate(
@@ -151,7 +157,12 @@ class Service {
       );
     }
 
-    return result;
+    const mappedData = mapper.map(
+      result,
+      ProjectEntity as ModelIdentifier,
+      UpdateProjectDTO
+    );
+    return mappedData;
   }
 }
 

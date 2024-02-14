@@ -25,6 +25,6 @@ router.post("/add-member", verifyJwt, ProjectController.addMember);
 
 router.post("/remove-member", verifyJwt, ProjectController.removeMember);
 
-router.get("/single/:id", verifyJwt, ProjectController.getSingleProject);
+router.get("/single/:id", ProjectController.getSingleProject);
 
 export const ProjectRoutes = router;

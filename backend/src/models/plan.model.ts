@@ -13,7 +13,13 @@ const planSchema = new Schema<IPlan>(
     },
     features: [String],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+    },
+  }
 );
 
 export const Plan = model("Plan", planSchema);

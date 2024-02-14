@@ -39,6 +39,10 @@ const teamSchema = new Schema<ITeam>(
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+    },
   }
 );
 

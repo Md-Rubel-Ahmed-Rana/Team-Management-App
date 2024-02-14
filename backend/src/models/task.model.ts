@@ -30,6 +30,10 @@ const taskSchema = new Schema<ITask>(
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+    },
   }
 );
 

@@ -22,7 +22,13 @@ const paymentSchema = new Schema<IPayment>(
       default: "failed",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+    },
+  }
 );
 
 export const Payment = model("Payment", paymentSchema);

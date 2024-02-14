@@ -42,14 +42,7 @@ const updateZodSchema = z.object({
       user: z.string().min(1).max(255).optional(),
       name: z.string().min(1).max(255).optional(),
       category: z.string().min(1).max(255).optional(),
-      members: z
-        .array(
-          z.object({
-            role: z.string().optional(),
-            member: z.string().min(1).max(255).optional(),
-          })
-        )
-        .optional(),
+      members: z.array(z.object({})).optional(),
       createdAt: z.string().optional(),
       updatedAt: z.string().optional(),
     })

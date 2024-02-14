@@ -20,17 +20,14 @@ const projectSchema = new Schema<IProject>(
       type: String,
       required: true,
     },
-    members: [
-      {
-        role: {
-          type: String,
-        },
-        member: { type: Schema.Types.ObjectId, ref: "User" },
-      },
-    ],
+    members: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+    },
   }
 );
 

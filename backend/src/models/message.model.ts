@@ -27,6 +27,7 @@ const messageSchema = new Schema<IMessage>(
   {
     timestamps: true,
     toJSON: {
+      virtuals: true,
       versionKey: false,
     },
   }

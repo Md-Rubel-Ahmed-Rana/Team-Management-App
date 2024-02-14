@@ -1,7 +1,7 @@
-import { MemberEntity } from "@/entities/project.entity";
-import { TeamEntity } from "@/entities/team.entity";
 import { UserEntity } from "@/entities/user.entity";
 import { AutoMap } from "@automapper/classes";
+import { GetTeamDTO } from "../team/get";
+import { GetUserDTO } from "../user/get";
 
 export class GetProjectDTO {
   @AutoMap()
@@ -16,11 +16,11 @@ export class GetProjectDTO {
   @AutoMap(() => UserEntity)
   user!: UserEntity;
 
-  @AutoMap(() => TeamEntity)
-  team!: TeamEntity;
+  @AutoMap(() => GetTeamDTO)
+  team!: GetTeamDTO;
 
-  @AutoMap(() => [MemberEntity])
-  members: MemberEntity[] = [];
+  @AutoMap(() => [GetUserDTO])
+  members: GetUserDTO[] = [];
 
   @AutoMap()
   createdAt!: Date;
