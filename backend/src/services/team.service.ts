@@ -124,6 +124,7 @@ class Service {
   }
 
   async updateTeam(id: string, data: ITeam): Promise<UpdateTeamDTO | null> {
+    console.log(id, data);
     const isExistTeam = await Team.findById(id);
 
     if (!isExistTeam) {

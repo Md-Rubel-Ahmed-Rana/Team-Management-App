@@ -25,7 +25,6 @@ const SocketProvider = ({ children }: Props) => {
   const [realTimeMessages, setRealTimeMessages] = useState<IMessage[]>([]);
   const [refetchTask, setRefetchTask] = useState<any>(false);
   const user: IUser = useGetLoggedInUser();
-  console.log("User", user);
 
   // connect to socket notification room
   useEffect(() => {

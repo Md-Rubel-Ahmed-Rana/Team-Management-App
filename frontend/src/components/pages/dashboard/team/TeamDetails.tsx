@@ -114,6 +114,23 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
                   Remove members
                 </button>
               </p>
+              <p>
+                <Link
+                  href={{
+                    pathname: `/teams/edit-team/${team?.id}`,
+                    query: {
+                      id: team.id,
+                      name: team?.name,
+                      category: team?.category,
+                      description: team?.description,
+                    },
+                  }}
+                >
+                  <button className="mx-auto  border px-5 py-2 rounded-lg">
+                    Edit Team
+                  </button>
+                </Link>
+              </p>
             </>
           )}
           {admin?.id !== user?.id && (

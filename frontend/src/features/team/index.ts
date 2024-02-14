@@ -19,6 +19,15 @@ const teamApi = apiSlice.injectEndpoints({
       invalidatesTags: ["team"] as any,
     }),
 
+    updateTeam: builder.mutation({
+      query: ({ id, data }) => ({
+        method: "PATCH",
+        url: `/team/update/${id}`,
+        body: data,
+      }),
+      invalidatesTags: ["team"] as any,
+    }),
+
     myTeams: builder.query({
       query: (id) => ({
         url: `/team/my-teams/${id}`,
@@ -98,4 +107,5 @@ export const {
   useGetLeaveTeamRequestsByAdminQuery,
   useIgnoreTeamLeaveRequestMutation,
   useGetMemberLeaveTeamRequestQuery,
+  useUpdateTeamMutation,
 } = teamApi;

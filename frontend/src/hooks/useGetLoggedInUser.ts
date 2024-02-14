@@ -16,7 +16,6 @@ const useGetLoggedInUser = () => {
           });
           const data = await res.json();
           setUser(data?.data);
-          console.log("Logged in user", data);
         }
       } catch (error) {
         console.log("Failed to fetch user");
