@@ -1,13 +1,28 @@
 import { IMessage } from "@/interfaces/message.interface";
 import { Message } from "@/models/message.model";
+import { mapper } from "../mapper";
+import { MessageEntity } from "@/entities/message.entity";
+import { ModelIdentifier } from "@automapper/core";
+import { CreateMessageDTO } from "@/dto/message/create";
+import { GetMessageDTO } from "@/dto/message/get";
+import { UpdateMessageDTO } from "@/dto/message/update";
+import { DeleteMessageDTO } from "@/dto/message/delete";
 
 class Service {
-  async createMessage(data: IMessage) {
+  async createMessage(data: IMessage): Promise<CreateMessageDTO> {
     const result = await Message.create(data);
-    return result;
+    const mappedData = mapper.map(
+      result,
+      MessageEntity as ModelIdentifier,
+      CreateMessageDTO
+    );
+    return mappedData;
   }
 
-  async getMessagesByType(messageType: string, conversationId: string) {
+  async getMessagesByType(
+    messageType: string,
+    conversationId: string
+  ): Promise<GetMessageDTO[]> {
     const result = await Message.find({
       type: messageType,
       conversationId,
@@ -17,44 +32,53 @@ class Service {
       select: ["name", "profile_picture"],
     });
 
-    return result;
+    const mappedData = mapper.mapArray(
+      result,
+      MessageEntity as ModelIdentifier,
+      GetMessageDTO
+    );
+    return mappedData;
   }
 
-  async getAllMessages() {
-    const result = await Message.find()
-      .populate({
-        path: "poster",
-        model: "User",
-      })
-      .exec();
-
-    return result;
+  async getMessageById(messageId: string): Promise<GetMessageDTO> {
+    const result = await Message.findById(messageId).populate({
+      path: "poster",
+      model: "User",
+    });
+    const mappedData = mapper.map(
+      result,
+      MessageEntity as ModelIdentifier,
+      GetMessageDTO
+    );
+    return mappedData;
   }
 
-  async getMessageById(messageId: string) {
-    const result = await Message.findById(messageId)
-      .populate({
-        path: "poster",
-        model: "User",
-      })
-      .exec();
-
-    return result;
-  }
-
-  async updateMessage(messageId: string, text: string) {
+  async updateMessage(
+    messageId: string,
+    text: string
+  ): Promise<UpdateMessageDTO> {
     const result = await Message.findByIdAndUpdate(
       messageId,
       { $set: { text } },
       { new: true }
     );
 
-    return result;
+    const mappedData = mapper.map(
+      result,
+      MessageEntity as ModelIdentifier,
+      UpdateMessageDTO
+    );
+    return mappedData;
   }
 
-  async deleteMessage(messageId: string) {
+  async deleteMessage(messageId: string): Promise<DeleteMessageDTO> {
     const result = await Message.findByIdAndDelete(messageId);
-    return result;
+    const mappedData = mapper.map(
+      result,
+      MessageEntity as ModelIdentifier,
+      DeleteMessageDTO
+    );
+    return mappedData;
   }
 }
 

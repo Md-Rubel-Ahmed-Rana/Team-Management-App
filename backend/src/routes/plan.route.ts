@@ -8,6 +8,6 @@ router.post("/create", verifyJwt, PlanController.createPlan);
 
 router.get("/", PlanController.getPlans);
 
-router.get("/single/:id", verifyJwt, PlanController.getSinglePlan);
+router.get("/single/:id", PlanController.getSinglePlan);
 
 export const PlanRoutes = router;

@@ -36,6 +36,11 @@ import { CreatePlanDTO } from "@/dto/plan/create";
 import { GetPlanDTO } from "@/dto/plan/get";
 import { UpdatePlanDTO } from "@/dto/plan/update";
 import { DeletePlanDTO } from "@/dto/plan/delete";
+import { MessageEntity } from "@/entities/message.entity";
+import { CreateMessageDTO } from "@/dto/message/create";
+import { GetMessageDTO } from "@/dto/message/get";
+import { UpdateMessageDTO } from "@/dto/message/update";
+import { DeleteMessageDTO } from "@/dto/message/delete";
 
 const initializeDTOMapper = () => {
   //  ===== user dto =========
@@ -142,6 +147,21 @@ const initializeDTOMapper = () => {
   // update
   createMap(mapper, PlanEntity, DeletePlanDTO);
   createMap(mapper, DeletePlanDTO, PlanEntity);
+
+  //  ===== message  dto =========
+  // create
+  createMap(mapper, MessageEntity, CreateMessageDTO);
+  createMap(mapper, CreateMessageDTO, MessageEntity);
+  // get
+  createMap(mapper, MessageEntity, GetMessageDTO);
+  createMap(mapper, GetMessageDTO, MessageEntity);
+
+  // update
+  createMap(mapper, MessageEntity, UpdateMessageDTO);
+  createMap(mapper, UpdateMessageDTO, MessageEntity);
+  // update
+  createMap(mapper, MessageEntity, DeleteMessageDTO);
+  createMap(mapper, DeleteMessageDTO, MessageEntity);
 };
 
 export default initializeDTOMapper;

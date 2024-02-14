@@ -7,11 +7,8 @@ router.delete("/delete/:id", verifyJwt, MessageController.deleteMessage);
 
 router.get(
   "/by-type/:type/:conversationId",
-  verifyJwt,
   MessageController.getMessagesByType
 );
-
-router.get("/all", verifyJwt, MessageController.getAllMessages);
 
 router.get("/by-id/:id", verifyJwt, MessageController.getMessageById);
 

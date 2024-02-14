@@ -29,16 +29,6 @@ class Controller extends RootController {
     });
   });
 
-  getAllMessages = this.catchAsync(async (req: Request, res: Response) => {
-    const messages = await MessageService.getAllMessages();
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "All Messages found",
-      data: messages,
-    });
-  });
-
   getMessageById = this.catchAsync(async (req: Request, res: Response) => {
     const messageId = req.params.id;
     const message = await MessageService.getMessageById(messageId);
