@@ -21,6 +21,11 @@ import { CreateTaskDTO } from "@/dto/task/create";
 import { GetTaskDTO } from "@/dto/task/get";
 import { UpdateTaskDTO } from "@/dto/task/update";
 import { DeleteTaskDTO } from "@/dto/task/delete";
+import { TeamLeaveEntity } from "@/entities/teamLeave.entity";
+import { CreateTeamLeaveDTO } from "@/dto/teamLeave/create";
+import { GetTeamLeaveDTO } from "@/dto/teamLeave/get";
+import { UpdateTeamLeaveDTO } from "@/dto/teamLeave/update";
+import { DeleteTeamLeaveDTO } from "@/dto/teamLeave/delete";
 
 const initializeDTOMapper = () => {
   //  ===== user dto =========
@@ -82,6 +87,21 @@ const initializeDTOMapper = () => {
   // update
   createMap(mapper, TaskEntity, DeleteTaskDTO);
   createMap(mapper, DeleteTaskDTO, TaskEntity);
+
+  //  ===== team leave dto =========
+  // create
+  createMap(mapper, TeamLeaveEntity, CreateTeamLeaveDTO);
+  createMap(mapper, CreateTeamLeaveDTO, TeamLeaveEntity);
+  // get
+  createMap(mapper, TeamLeaveEntity, GetTeamLeaveDTO);
+  createMap(mapper, GetTeamLeaveDTO, TeamLeaveEntity);
+
+  // update
+  createMap(mapper, TeamLeaveEntity, UpdateTeamLeaveDTO);
+  createMap(mapper, UpdateTeamLeaveDTO, TeamLeaveEntity);
+  // update
+  createMap(mapper, TeamLeaveEntity, DeleteTeamLeaveDTO);
+  createMap(mapper, DeleteTeamLeaveDTO, TeamLeaveEntity);
 };
 
 export default initializeDTOMapper;

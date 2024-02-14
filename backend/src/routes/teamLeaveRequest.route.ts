@@ -16,11 +16,7 @@ router.patch(
   TeamLeaveRequestController.ignoreRequest
 );
 
-router.get(
-  "/all/:adminId",
-  verifyJwt,
-  TeamLeaveRequestController.getLeaveRequestByAdmin
-);
+router.get("/all/:adminId", TeamLeaveRequestController.getLeaveRequestByAdmin);
 
 router.get(
   "/member-request/:memberId",
