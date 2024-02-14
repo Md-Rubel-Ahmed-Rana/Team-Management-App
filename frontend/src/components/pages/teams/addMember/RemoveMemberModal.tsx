@@ -17,7 +17,7 @@ const RemoveMemberModal = ({ isRemove, setIsRemove, team }: any) => {
 
   const handleRemoveMember = async () => {
     const result: any = await removeMember({
-      teamId: team._id,
+      teamId: team.id,
       memberId: member?.value,
     });
     console.log(result?.data?.success);
@@ -77,7 +77,7 @@ const RemoveMemberModal = ({ isRemove, setIsRemove, team }: any) => {
                       </h3>
                       <Select
                         options={team?.activeMembers?.map((user: IUser) => ({
-                          value: user?._id,
+                          value: user?.id,
                           label: user?.name,
                         }))}
                         styles={customStyles}

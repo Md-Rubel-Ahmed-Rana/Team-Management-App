@@ -19,9 +19,9 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
   const [editableProject, setEditableProject] = useState({});
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: projects } = useMyProjectsQuery(user?._id);
-  const { data: teamData } = useMyTeamsQuery(user?._id);
-  const { data: assignedProjects } = useAssignedProjectsQuery(user?._id);
+  const { data: projects } = useMyProjectsQuery(user?.id);
+  const { data: teamData } = useMyTeamsQuery(user?.id);
+  const { data: assignedProjects } = useAssignedProjectsQuery(user?.id);
   const router = useRouter();
 
   const handleEditProject = (project: IProject) => {
@@ -55,13 +55,13 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
   };
 
   const handleChangeProject = (project: IProject) => {
-    setActiveProject(project._id);
+    setActiveProject(project.id);
     router.push({
       pathname: router.pathname,
       query: {
         ...router.query,
         team: project?.team,
-        id: project?._id,
+        id: project?.id,
         name: project?.name,
       },
     });
@@ -75,10 +75,9 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
           <div className="flex flex-col gap-2 overflow-hidden hover:overflow-auto h-48 scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100">
             {projects?.data?.map((project: IProject) => (
               <p
-                key={project?._id}
+                key={project?.id}
                 className={`px-2 py-1 w-full hover:bg-gray-100 dark:hover:bg-gray-600 flex text-xl font-semibold justify-between   rounded-md ${
-                  project?._id == activeProject &&
-                  "bg-gray-100 dark:bg-gray-600"
+                  project?.id == activeProject && "bg-gray-100 dark:bg-gray-600"
                 }`}
               >
                 <button
@@ -114,10 +113,9 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
           <div className="flex flex-col text-xl font-semibold gap-2 overflow-hidden hover:overflow-auto h-48 scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100">
             {assignedProjects?.data?.map((project: IProject) => (
               <p
-                key={project?._id}
+                key={project?.id}
                 className={`px-2 py-1 w-full hover:bg-gray-100 dark:hover:bg-gray-600 flex justify-between   rounded-md ${
-                  project?._id == activeProject &&
-                  "bg-gray-100 dark:bg-gray-600"
+                  project?.id == activeProject && "bg-gray-100 dark:bg-gray-600"
                 }`}
               >
                 <button

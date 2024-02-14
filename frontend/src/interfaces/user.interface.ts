@@ -1,5 +1,5 @@
 export type IUser = {
-  _id: string;
+  id: string;
   name: string;
   profile_picture: string;
   email: string;
@@ -11,7 +11,7 @@ export type IUser = {
 };
 
 export const userInitData: IUser = {
-  _id: "",
+  id: "",
   name: "",
   profile_picture: "",
   email: "",

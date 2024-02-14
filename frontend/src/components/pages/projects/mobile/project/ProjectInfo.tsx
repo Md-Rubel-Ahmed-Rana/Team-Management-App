@@ -21,7 +21,7 @@ const ProjectInfo = ({ project }: Props) => {
   const [isRemove, setIsRemove] = useState(false);
   const [leaveRequest] = useLeaveProjectRequestMutation();
   const { data: memberLeaveRequest } = useGetMemberLeaveProjectRequestQuery(
-    user?._id
+    user?.id
   );
 
   const handleLeaveRequest = async () => {
@@ -34,8 +34,8 @@ const ProjectInfo = ({ project }: Props) => {
     }).then((result) => {
       if (result?.isConfirmed) {
         const leaveData = {
-          project: project?._id,
-          member: user?._id,
+          project: project?.id,
+          member: user?.id,
           admin: project?.user,
         };
         const leaveHandler = async () => {
@@ -63,7 +63,7 @@ const ProjectInfo = ({ project }: Props) => {
         <h4 className="font-bold text-lg">
           Total Member: {project?.members?.length}{" "}
         </h4>
-        {project?.user === user?._id && (
+        {project?.user === user?.id && (
           <div className="flex items-center justify-between">
             <p>
               <button
@@ -83,17 +83,17 @@ const ProjectInfo = ({ project }: Props) => {
             </p>
           </div>
         )}
-        {project?.user !== user?._id && (
+        {project?.user !== user?.id && (
           <button
             onClick={handleLeaveRequest}
-            disabled={memberLeaveRequest?.data?.project === project?._id}
+            disabled={memberLeaveRequest?.data?.project === project?.id}
             className={` ${
-              memberLeaveRequest?.data?.project === project?._id
+              memberLeaveRequest?.data?.project === project?.id
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-700"
             } text-white px-4 py-1 rounded-md`}
           >
-            {memberLeaveRequest?.data?.project === project?._id
+            {memberLeaveRequest?.data?.project === project?.id
               ? "Requested"
               : "Request to leave"}
           </button>
@@ -103,7 +103,7 @@ const ProjectInfo = ({ project }: Props) => {
         <AddMemberToProject
           isOpen={isOpen}
           setIsOpen={setIsOpen}
-          projectId={project?._id}
+          projectId={project?.id}
           team={project?.team}
         />
       )}
@@ -111,7 +111,7 @@ const ProjectInfo = ({ project }: Props) => {
         <RemoveMemberFromProject
           isRemove={isRemove}
           setIsRemove={setIsRemove}
-          projectId={project?._id}
+          projectId={project?.id}
           team={project?.team}
         />
       )}

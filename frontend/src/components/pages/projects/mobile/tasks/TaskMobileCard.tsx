@@ -19,7 +19,7 @@ const TaskMobileCard = ({ task }: Props) => {
   const [updateStatus] = useUpdateStatusMutation();
 
   const handleDeleteTask = async () => {
-    const result: any = await deleteTask(task?._id);
+    const result: any = await deleteTask(task?.id);
     if (result?.data?.success) {
       toast.success(result?.data?.message);
     }
@@ -27,7 +27,7 @@ const TaskMobileCard = ({ task }: Props) => {
 
   const handleEditTask = async () => {
     const result: any = await updateTask({
-      id: task?._id,
+      id: task?.id,
       name: editedTaskName,
     });
     if (result?.data?.success) {
@@ -37,7 +37,7 @@ const TaskMobileCard = ({ task }: Props) => {
 
   const handleChangeStatus = async (status: string) => {
     const res: any = await updateStatus({
-      id: task?._id,
+      id: task?.id,
       status,
     });
     if (res?.data?.success) {

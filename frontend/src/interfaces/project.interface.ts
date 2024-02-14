@@ -6,33 +6,23 @@ export type INewProject = {
 };
 
 export type IProject = {
-  _id: string;
+  id: string;
   team: any;
   user: string;
   name: string;
   category: string;
-  members: [
-    {
-      role: string;
-      member: string;
-    }
-  ];
+  members: [string];
   createdAt: string;
   updatedAt: string;
 };
 
 export const projectInit: IProject = {
-  _id: "",
+  id: "",
   name: "",
   category: "",
   createdAt: "",
   team: "",
   updatedAt: "",
   user: "",
-  members: [
-    {
-      role: "",
-      member: "",
-    },
-  ],
+  members: [""],
 };

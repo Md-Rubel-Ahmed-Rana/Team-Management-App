@@ -8,7 +8,7 @@ import CreateTeamModal from "../../teams/teamCreation/CreateTeam";
 const MyTeams = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
-  const { data: teamData } = useMyTeamsQuery(user?._id);
+  const { data: teamData } = useMyTeamsQuery(user?.id);
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -27,7 +27,7 @@ const MyTeams = () => {
         )}
       </div>
       {teamData?.data?.map((team: ITeam) => (
-        <TeamDetails key={team?._id} team={team} />
+        <TeamDetails key={team?.id} team={team} />
       ))}
 
       {isOpen && <CreateTeamModal isOpen={isOpen} setIsOpen={setIsOpen} />}

@@ -16,7 +16,7 @@ import { formattedDate } from "@/utils/formattedDate";
 const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
-  const { data: notifiedData } = useGetNotificationQuery(user?._id);
+  const { data: notifiedData } = useGetNotificationQuery(user?.id);
   const [updatedNotifications] = useUpdateNotificationMutation();
   const notifications: INotification[] = notifiedData?.data;
   const unreadNotification = notifications?.filter(
@@ -32,7 +32,7 @@ const NotificationModal = ({ isOpen, setIsOpen }: SetStateAction<any>) => {
   useEffect(() => {
     if (ids?.length > 0) {
       const update = async () => {
-        await updatedNotifications({ userId: user._id, ids });
+        await updatedNotifications({ userId: user.id, ids });
       };
       update();
     }

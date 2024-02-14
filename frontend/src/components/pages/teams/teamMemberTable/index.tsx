@@ -43,7 +43,7 @@ const TeamMemberTable = ({ team }: Props) => {
                 </tr>
                 {team?.activeMembers?.length > 0 &&
                   team?.activeMembers?.map((member: any) => (
-                    <tr key={member?._id} className="border rounded-md">
+                    <tr key={member?.id} className="border rounded-md">
                       <td className="px-6 py-4 flex items-center gap-5">
                         <div className="flex justify-center items-center w-12 h-12 bg-gray-400 rounded-full">
                           <img

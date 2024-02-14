@@ -7,19 +7,19 @@ import React from "react";
 const AssignedProjects = ({ setSelectedProject }: any) => {
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: assignedProjects } = useAssignedProjectsQuery(user?._id);
+  const { data: assignedProjects } = useAssignedProjectsQuery(user?.id);
   const projects: IProject[] = assignedProjects?.data || [];
 
   return (
     <select
-      defaultValue={projects[0]?._id}
+      defaultValue={projects[0]?.id}
       onChange={(e) => setSelectedProject(e.target.value)}
       className="p-2 w-full border rounded"
     >
       {projects?.length > 0 ? (
         <>
           {projects?.map((project: IProject) => (
-            <option key={Math.random()} value={project?._id}>
+            <option key={Math.random()} value={project?.id}>
               {project?.name}
             </option>
           ))}

@@ -25,11 +25,11 @@ const Projects = () => {
   const user: IUser = userData?.data;
   const { data: projectData } = useGetSingleProjectQuery(query?.id);
   const project: IProject = projectData?.data;
-  const { data: projects } = useMyProjectsQuery(user?._id);
-  const { data: assignedProjects } = useAssignedProjectsQuery(user?._id);
+  const { data: projects } = useMyProjectsQuery(user?.id);
+  const { data: assignedProjects } = useAssignedProjectsQuery(user?.id);
   const [leaveRequest] = useLeaveProjectRequestMutation();
   const { data: memberLeaveRequest } = useGetMemberLeaveProjectRequestQuery(
-    user?._id
+    user?.id
   );
 
   const handleLeaveRequest = async () => {
@@ -42,8 +42,8 @@ const Projects = () => {
     }).then((result) => {
       if (result?.isConfirmed) {
         const leaveData = {
-          project: project?._id,
-          member: user?._id,
+          project: project?.id,
+          member: user?.id,
           admin: project?.user,
         };
         const leaveHandler = async () => {
@@ -86,7 +86,7 @@ const Projects = () => {
                 <h4 className="text-xl font-semibold">
                   Total Member: {project?.members?.length}
                 </h4>
-                {project?.user === user?._id && (
+                {project?.user === user?.id && (
                   <button
                     onClick={() => setIsOpen(true)}
                     className="border px-4 py-1 rounded-md"
@@ -95,7 +95,7 @@ const Projects = () => {
                   </button>
                 )}
 
-                {project?.user === user?._id && (
+                {project?.user === user?.id && (
                   <div>
                     <p className="flex flex-col gap-2">
                       <button
@@ -108,19 +108,17 @@ const Projects = () => {
                   </div>
                 )}
 
-                {project?.user !== user?._id && (
+                {project?.user !== user?.id && (
                   <button
                     onClick={handleLeaveRequest}
-                    disabled={
-                      memberLeaveRequest?.data?.project === project?._id
-                    }
+                    disabled={memberLeaveRequest?.data?.project === project?.id}
                     className={` ${
-                      memberLeaveRequest?.data?.project === project?._id
+                      memberLeaveRequest?.data?.project === project?.id
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-blue-700"
                     } text-white px-4 py-1 rounded-md`}
                   >
-                    {memberLeaveRequest?.data?.project === project?._id
+                    {memberLeaveRequest?.data?.project === project?.id
                       ? "Requested"
                       : "Request to leave"}
                   </button>

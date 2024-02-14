@@ -18,7 +18,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
 
   const handleEditProfile: SubmitHandler<IUser> = async (data) => {
     const updated: any = await updateUser({
-      id: user._id,
+      id: user.id,
       data,
     });
     if (updated?.data?.success) {
@@ -30,7 +30,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
     const result = await uploadFile(e?.target?.files[0]);
     if (result?.url) {
       const updated: any = await updateUser({
-        id: user._id,
+        id: user.id,
         data: { profile_picture: result?.url },
       });
       if (updated?.data?.success) {

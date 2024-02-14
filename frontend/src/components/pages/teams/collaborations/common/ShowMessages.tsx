@@ -98,7 +98,7 @@ const ShowMessages = ({ messages }: Props) => {
     >
       {realTimeMessages?.map((post: IMessage, index: number) => (
         <div
-          key={post?._id}
+          key={post?.id}
           className="mx-auto shadow-lg rounded-md p-6 mb-8"
           onMouseOver={() => setIsEdit({ index: index, status: true })}
           onMouseLeave={() => setIsEdit({ index: 0, status: false })}
@@ -119,12 +119,12 @@ const ShowMessages = ({ messages }: Props) => {
             </div>
             {isEdit.status &&
               isEdit.index === index &&
-              user._id === post?.poster?._id && (
+              user.id === post?.poster?.id && (
                 <div className="flex items-center gap-3 mb-4">
                   <button
                     title="Edit Message"
                     onClick={() =>
-                      setIsEditMessage({ id: post?._id, status: true })
+                      setIsEditMessage({ id: post?.id, status: true })
                     }
                     className="bg-gray-400 p-2 rounded-md text-white"
                   >
@@ -132,7 +132,7 @@ const ShowMessages = ({ messages }: Props) => {
                   </button>
                   <button
                     title="Delete Message"
-                    onClick={() => handleDeleteMessage(post?._id)}
+                    onClick={() => handleDeleteMessage(post?.id)}
                     className="bg-gray-400 p-2 rounded-md text-white"
                   >
                     <FaRegTrashAlt />
@@ -140,7 +140,7 @@ const ShowMessages = ({ messages }: Props) => {
                 </div>
               )}
           </div>
-          {isEditMessage.status && isEditMessage.id === post?._id ? (
+          {isEditMessage.status && isEditMessage.id === post?.id ? (
             <div className="flex flex-col gap-3">
               <p>
                 <textarea

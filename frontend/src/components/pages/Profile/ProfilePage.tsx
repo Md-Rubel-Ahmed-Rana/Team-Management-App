@@ -17,7 +17,7 @@ const ProfilePage = () => {
     const result = await uploadFile(e?.target?.files[0]);
     if (result?.url) {
       const updated = await updateUser({
-        id: user._id,
+        id: user.id,
         data: { profile_picture: result?.url },
       });
     }

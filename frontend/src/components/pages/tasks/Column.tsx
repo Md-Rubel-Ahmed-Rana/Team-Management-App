@@ -50,8 +50,8 @@ const Column = ({ column, tasks, project }: any) => {
             >
               {tasks?.map((task: any, index: number) => (
                 <Draggable
-                  key={task?._id}
-                  draggableId={`${task?._id}`}
+                  key={task?.id}
+                  draggableId={`${task?.id}`}
                   index={index}
                 >
                   {(draggableProvided, draggableSnapshot) => (
@@ -61,7 +61,7 @@ const Column = ({ column, tasks, project }: any) => {
                       {...draggableProvided.draggableProps}
                       {...draggableProvided.dragHandleProps}
                     >
-                      {editedTaskMap[task?._id] !== undefined ? (
+                      {editedTaskMap[task?.id] !== undefined ? (
                         <div className="flex flex-col gap-2">
                           <input
                             type="text"
@@ -74,7 +74,7 @@ const Column = ({ column, tasks, project }: any) => {
                           />
                           <div className="flex justify-between">
                             <button
-                              onClick={() => handleDeleteTask(task?._id)}
+                              onClick={() => handleDeleteTask(task?.id)}
                               className="border px-2 py-1 rounded-md dark:bg-gray-700 bg-gray-200"
                             >
                               Delete
@@ -83,7 +83,7 @@ const Column = ({ column, tasks, project }: any) => {
                               onClick={() =>
                                 setEditedTaskMap((prevMap) => ({
                                   ...prevMap,
-                                  [task?._id]: undefined,
+                                  [task?.id]: undefined,
                                 }))
                               }
                               className="border px-2 py-1 rounded-md dark:bg-gray-700 bg-gray-200"
@@ -91,7 +91,7 @@ const Column = ({ column, tasks, project }: any) => {
                               Cancel
                             </button>
                             <button
-                              onClick={() => handleEditTask(task?._id)}
+                              onClick={() => handleEditTask(task?.id)}
                               className="border px-2 py-1 rounded-md dark:bg-gray-700 bg-gray-200"
                             >
                               Save changes
@@ -127,7 +127,7 @@ const Column = ({ column, tasks, project }: any) => {
                             onClick={() =>
                               setEditedTaskMap((prevMap) => ({
                                 ...prevMap,
-                                [task?._id]: task?.name,
+                                [task?.id]: task?.name,
                               }))
                             }
                             className="text-xl font-semibold cursor-pointer"

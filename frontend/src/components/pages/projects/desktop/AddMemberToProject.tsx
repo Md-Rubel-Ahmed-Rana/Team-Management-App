@@ -23,9 +23,9 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
   const [addNewMember] = useAddMemberMutation();
   const [newMember, setNewMember] = useState({ label: "", value: "" });
   const [role, setRole] = useState("");
-  const { data: memberData } = useGetActiveMembersQuery(team?._id);
+  const { data: memberData } = useGetActiveMembersQuery(team?.id);
   const members = memberData?.data?.map((member: IUser) => ({
-    value: member?._id,
+    value: member?.id,
     label: member?.name,
   }));
 

@@ -1,5 +1,5 @@
 export type IPrice = {
-  _id: string;
+  id: string;
   plan: string;
   price: number;
   features: string[];

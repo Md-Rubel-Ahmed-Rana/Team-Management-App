@@ -70,14 +70,14 @@ const MessageForm = ({ teamId, type }: Props) => {
     data.files = filesUrls!;
     data.images = imageUrls!;
     data.links = links;
-    data.poster = user._id;
+    data.poster = user.id;
     data.conversationId = teamId;
     data.type = type;
     const result: any = await sendMessage(data);
     if (result?.data?.success) {
       const message = result?.data?.data;
       const poster = {
-        _id: user._id,
+        _id: user.id,
         name: user.name,
         profile_picture: user.profile_picture,
       };

@@ -16,7 +16,7 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
   };
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: projectData }: any = useGetSingleProjectQuery(project?._id);
+  const { data: projectData }: any = useGetSingleProjectQuery(project?.id);
   const members = projectData?.data?.members;
   const [selectedMember, setSelectedMember] = useState<any>();
   const { register, handleSubmit } = useForm<INewTask>();
@@ -24,9 +24,9 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
 
   const handleCreateNewTask: SubmitHandler<INewTask> = async (data) => {
     data.assignedTo = selectedMember?.value;
-    data.assignedBy = user._id;
+    data.assignedBy = user.id;
     data.status = status;
-    data.project = project._id;
+    data.project = project.id;
     const result: any = await createTask(data);
     if (result?.data?.success) {
       window.location.reload();
@@ -90,7 +90,7 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
                         options={
                           members &&
                           members?.map((member: any) => ({
-                            value: member?.member?._id,
+                            value: member?.member?.id,
                             label: member?.member?.name,
                           }))
                         }

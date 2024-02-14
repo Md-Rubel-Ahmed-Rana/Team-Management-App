@@ -26,9 +26,9 @@ const RemoveMemberFromProject = ({
 
   const [removeMember] = useRemoveMemberMutation();
   const [newMember, setNewMember] = useState({ label: "", value: "" });
-  const { data: memberData } = useGetActiveMembersQuery(team?._id);
+  const { data: memberData } = useGetActiveMembersQuery(team?.id);
   const members = memberData?.data?.map((member: IUser) => ({
-    value: member?._id,
+    value: member?.id,
     label: member?.name,
   }));
 

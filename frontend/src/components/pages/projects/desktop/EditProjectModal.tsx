@@ -16,7 +16,7 @@ const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
 
   const handleEditProject: SubmitHandler<Partial<IProject>> = async (data) => {
     const result: any = await updateProject({
-      id: project._id,
+      id: project.id,
       data,
     });
     if (result?.data?.success) {

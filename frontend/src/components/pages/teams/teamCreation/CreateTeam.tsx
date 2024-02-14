@@ -22,7 +22,7 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
     image: "",
     category: "",
     description: "",
-    admin: user?._id || user?.id,
+    admin: user?.id || user?.id,
   });
 
   const closeModal = () => {

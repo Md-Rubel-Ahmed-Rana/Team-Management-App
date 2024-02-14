@@ -16,7 +16,7 @@ const CheckoutPage = () => {
 
   const payment = [
     {
-      user: user?._id,
+      user: user?.id,
       quantity: 1,
       package: query?.id,
     },
@@ -40,7 +40,7 @@ const CheckoutPage = () => {
             <h3 className="text-xl font-bold">User Information</h3>
             <p>Name: {user?.name}</p>
             <p>Email: {user?.email}</p>
-            <p>User ID: {user?._id}</p>
+            <p>User ID: {user?.id}</p>
           </div>
           <div className="mb-4 w-1/2">
             <h3 className="text-xl font-bold">Payment Information</h3>

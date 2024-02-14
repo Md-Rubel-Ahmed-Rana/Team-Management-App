@@ -16,7 +16,7 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
   };
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: teamData } = useMyTeamsQuery(user?._id);
+  const { data: teamData } = useMyTeamsQuery(user?.id);
   const [selectedTeam, setSelectedTeam] = useState<{
     label: string;
     value: string;
@@ -30,7 +30,7 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
   const [createProject] = useCreateProjectMutation();
 
   const handleCreateNewProject: SubmitHandler<INewProject> = async (data) => {
-    data.user = user?._id || "";
+    data.user = user?.id || "";
     data.team = selectedTeam.value;
     const result: any = await createProject(data);
     if (result?.data?.success) {
@@ -95,7 +95,7 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
                         options={
                           teamData?.data &&
                           teamData?.data?.map((team: any) => ({
-                            value: team?._id,
+                            value: team?.id,
                             label: team?.name,
                           }))
                         }

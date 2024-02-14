@@ -29,8 +29,8 @@ const TeamDetailsPage = () => {
 
   // connect to socket team room
   useEffect(() => {
-    socket.emit("join-room", team?._id);
-  }, [socket, team?._id]);
+    socket.emit("join-room", team?.id);
+  }, [socket, team?.id]);
 
   useEffect(() => {
     setActiveNav(router?.query?.collaborate);
@@ -85,9 +85,9 @@ const TeamDetailsPage = () => {
           </ul>
         </nav>
         <div>
-          {activeNav === "Announcement" && <Announcement teamId={team?._id} />}
-          {activeNav === "Resources" && <Resources teamId={team?._id} />}
-          {activeNav === "Discussion" && <Discussion teamId={team?._id} />}
+          {activeNav === "Announcement" && <Announcement teamId={team?.id} />}
+          {activeNav === "Resources" && <Resources teamId={team?.id} />}
+          {activeNav === "Discussion" && <Discussion teamId={team?.id} />}
         </div>
       </div>
     </div>

@@ -19,11 +19,11 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
   const [leaveTeam] = useLeaveTeamRequestMutation();
   const user: IUser = userData?.data;
   const { data: teamLeaveRequests } = useGetMemberLeaveTeamRequestQuery(
-    user?._id
+    user?.id
   );
   const teamIds = teamLeaveRequests?.data?.map((team: any) => team?.team);
   const {
-    _id,
+    id,
     name,
     category,
     description,
@@ -44,9 +44,9 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
     }).then((result) => {
       if (result.isConfirmed) {
         const leaveData = {
-          admin: admin?._id,
-          team: _id,
-          member: user?._id,
+          admin: admin?.id,
+          team: id,
+          member: user?.id,
         };
         const leaveHandler = async () => {
           const result: any = await leaveTeam(leaveData);
@@ -96,7 +96,7 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
           <strong>Created At:</strong> {createdAt?.toString()?.slice(0, 10)}
         </p>
         <div className="flex flex-col md:flex-row items-center gap-5">
-          {admin._id === user._id && (
+          {admin.id === user.id && (
             <>
               <p>
                 <button
@@ -116,25 +116,24 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
               </p>
             </>
           )}
-          {admin?._id !== user?._id && (
+          {admin?.id !== user?.id && (
             <p>
               <button
                 onClick={handleRequestToLeave}
-                disabled={teamIds?.includes(_id)}
+                disabled={teamIds?.includes(id)}
                 className={` ${
-                  teamIds?.includes(_id) ? "cursor-not-allowed" : "shadow-md"
+                  teamIds?.includes(id) ? "cursor-not-allowed" : "shadow-md"
                 } mx-auto outline-none  border px-5 py-2 rounded-lg`}
               >
-                {teamIds?.includes(_id) ? "Requested" : "Request to leave"}
+                {teamIds?.includes(id) ? "Requested" : "Request to leave"}
               </button>
             </p>
           )}
 
           <p>
             <Link
-              className="font-medium border px-5 py-2 rounded-md"
               href={{
-                pathname: `/teams/${team?._id}`,
+                pathname: `/teams/${team?.id}`,
                 query: {
                   team: team?.name,
                   category: team?.category,
@@ -142,7 +141,9 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
                 },
               }}
             >
-              View details
+              <button className="font-medium border px-5 py-2 rounded-md">
+                View details
+              </button>
             </Link>
           </p>
         </div>

@@ -20,15 +20,15 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
 
   const remainingUsers = users?.data?.filter((user: IUser) => {
     const isInActive = team?.activeMembers?.some(
-      (member: IUser) => member?._id === user?._id
+      (member: IUser) => member?.id === user?.id
     );
 
     const isInPending = team?.pendingMembers?.some(
-      (member: IUser) => member?._id === user?._id
+      (member: IUser) => member?.id === user?.id
     );
 
     // Check if the user is the admin
-    const isAdmin = team?.admin?._id === user?._id;
+    const isAdmin = team?.admin?.id === user?.id;
 
     return !isInActive && !isInPending && !isAdmin;
   });
@@ -42,13 +42,13 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
   };
 
   const selectedMember = users?.data.find(
-    (usr: IUser) => usr._id === newMember?.value
+    (usr: IUser) => usr.id === newMember?.value
   );
 
   const handleSendInvitation = async () => {
     const result: any = await sendInvitation({
-      teamId: team._id,
-      memberId: selectedMember._id,
+      teamId: team.id,
+      memberId: selectedMember.id,
     });
     console.log("Team invitation", result);
     if (result?.data?.success) {
@@ -148,7 +148,7 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
                         </p>
                         <Select
                           options={remainingUsers?.map((user: IUser) => ({
-                            value: user?._id,
+                            value: user?.id,
                             label: user?.name,
                           }))}
                           styles={customStyles}

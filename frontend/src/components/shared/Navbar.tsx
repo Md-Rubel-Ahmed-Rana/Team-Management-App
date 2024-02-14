@@ -19,7 +19,7 @@ const Navbar = () => {
   const user: IUser = data?.data;
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
-  const { data: notifiedData } = useGetNotificationQuery(user?._id);
+  const { data: notifiedData } = useGetNotificationQuery(user?.id);
   const notifications: INotification[] = notifiedData?.data || [];
   const [unreadNotifications, setUnreadNotifications] = useState<
     INotification[]
@@ -45,7 +45,7 @@ const Navbar = () => {
   }, [socket]);
 
   return (
-    <nav className="lg:flex justify-between items-center py-5 shadow-sm relative">
+    <nav className="lg:flex justify-between items-center py-5  relative">
       <div>
         <Link className="lg:flex hidden  items-center gap-3" href={"/"}>
           <img
@@ -76,7 +76,7 @@ const Navbar = () => {
               className="m-2"
               href={{
                 pathname: "dashboard",
-                query: `uId=${user?._id}&activeView=joined-teams`,
+                query: `uId=${user?.id}&activeView=joined-teams`,
               }}
             >
               Joined Teams
@@ -111,7 +111,7 @@ const Navbar = () => {
           <Link
             href={{
               pathname: "/dashboard",
-              query: { uId: user?._id, activeView: "profile" },
+              query: { uId: user?.id, activeView: "profile" },
             }}
             className={`${
               !user.profile_picture && "border m-2 p-2 rounded-full"
@@ -179,7 +179,7 @@ const Navbar = () => {
               <Link
                 href={{
                   pathname: "/dashboard",
-                  query: { uId: user?._id, activeView: "profile" },
+                  query: { uId: user?.id, activeView: "profile" },
                 }}
                 className={`${!user.profile_picture && "border  rounded-full"}`}
               >

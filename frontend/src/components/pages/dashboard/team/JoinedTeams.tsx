@@ -7,14 +7,14 @@ import { ITeam } from "@/interfaces/team.interface";
 const JoinedTeams = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
-  const { data: teamData } = useJoinedTeamsQuery(user?._id);
+  const { data: teamData } = useJoinedTeamsQuery(user?.id);
 
   return (
     <div>
       {teamData?.data?.length > 0 && (
         <div className="flex flex-col  gap-5 p-4">
           {teamData?.data?.map((team: ITeam) => (
-            <TeamDetails key={team?._id} team={team} />
+            <TeamDetails key={team?.id} team={team} />
           ))}
         </div>
       )}

@@ -19,8 +19,8 @@ const LeaveRequestCard = ({ data }: any) => {
   const handleAcceptRequest = async () => {
     if (project) {
       const memberData = {
-        projectId: project?._id,
-        memberId: member?._id,
+        projectId: project?.id,
+        memberId: member?.id,
       };
       const result: any = await removeProjectMember(memberData);
       if (result?.data?.success) {
@@ -42,8 +42,8 @@ const LeaveRequestCard = ({ data }: any) => {
       }
     } else {
       const memberData = {
-        teamId: team?._id,
-        memberId: member?._id,
+        teamId: team?.id,
+        memberId: member?.id,
       };
       const result: any = await removeTeamMember(memberData);
       if (result?.data?.success) {
@@ -68,7 +68,7 @@ const LeaveRequestCard = ({ data }: any) => {
 
   const handleIgnoreRequest = async () => {
     if (project) {
-      const result: any = await ignoreProjectLeaveRequest(data?._id);
+      const result: any = await ignoreProjectLeaveRequest(data?.id);
       if (result?.data?.success) {
         Swal.fire({
           position: "center",
@@ -87,7 +87,7 @@ const LeaveRequestCard = ({ data }: any) => {
         });
       }
     } else {
-      const result: any = await ignoreTeamLeaveRequest(data?._id);
+      const result: any = await ignoreTeamLeaveRequest(data?.id);
       if (result?.data?.success) {
         Swal.fire({
           position: "center",

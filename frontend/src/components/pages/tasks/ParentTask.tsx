@@ -106,7 +106,7 @@ const ParentTask = ({ project }: Props) => {
 
     const token = Cookies.get("tmAccessToken");
     // Fetch tasks and update state if needed
-    fetch(`http://localhost:5000/task/by-project/${project?._id}`, {
+    fetch(`http://localhost:5000/task/by-project/${project?.id}`, {
       headers: {
         authorization: token || "",
       },
@@ -115,7 +115,7 @@ const ParentTask = ({ project }: Props) => {
       .then((data: any) => {
         const dynamicData = data?.data?.reduce(
           (acc: any, task: any) => {
-            acc.tasks[task?._id] = task;
+            acc.tasks[task?.id] = task;
 
             const statusColumnId = task?.status;
             if (!acc?.columns[statusColumnId]) {
@@ -126,7 +126,7 @@ const ParentTask = ({ project }: Props) => {
               };
             }
 
-            acc?.columns[statusColumnId]?.taskIds?.push(task?._id);
+            acc?.columns[statusColumnId]?.taskIds?.push(task?.id);
 
             return acc;
           },
@@ -138,7 +138,7 @@ const ParentTask = ({ project }: Props) => {
         );
         setState(dynamicData);
       });
-  }, [project?._id]);
+  }, [project?.id]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

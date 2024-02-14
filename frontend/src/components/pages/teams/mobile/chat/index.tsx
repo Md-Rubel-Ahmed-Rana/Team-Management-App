@@ -56,9 +56,9 @@ const Chat = ({ team, handleActive }: Props) => {
         </p>
       </div>
       <div>
-        {activeChat === "Announcement" && <Announcement teamId={team?._id} />}
-        {activeChat === "Resources" && <Resources teamId={team?._id} />}
-        {activeChat === "Discussion" && <Discussion teamId={team?._id} />}
+        {activeChat === "Announcement" && <Announcement teamId={team?.id} />}
+        {activeChat === "Resources" && <Resources teamId={team?.id} />}
+        {activeChat === "Discussion" && <Discussion teamId={team?.id} />}
       </div>
     </div>
   );

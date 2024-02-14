@@ -23,8 +23,8 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
   const router = useRouter();
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: projects } = useMyProjectsQuery(user?._id);
-  const { data: assignedProjects } = useAssignedProjectsQuery(user?._id);
+  const { data: projects } = useMyProjectsQuery(user?.id);
+  const { data: assignedProjects } = useAssignedProjectsQuery(user?.id);
   const project =
     projects?.data?.length > 0 ? projects?.data[0] : assignedProjects?.data[0];
 
@@ -97,7 +97,7 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
             pathname: "/projects",
             query: {
               team: project?.team || "unknown",
-              id: project?._id || "unknown",
+              id: project?.id || "unknown",
               name: project?.name || "unknown",
             },
           }}

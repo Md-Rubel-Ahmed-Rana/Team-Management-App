@@ -1,7 +1,7 @@
 import { IUser } from "./user.interface";
 
 export type ITeam = {
-  _id: string;
+  id: string;
   name: string;
   category: string;
   description: string;

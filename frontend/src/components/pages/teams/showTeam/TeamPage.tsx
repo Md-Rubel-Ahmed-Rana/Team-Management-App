@@ -11,7 +11,7 @@ const Teams = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
   const [isOpen, setIsOpen] = useState(false);
-  const { data: teamData } = useMyTeamsQuery(user?._id);
+  const { data: teamData } = useMyTeamsQuery(user?.id);
 
   return (
     <section className="p-5">
@@ -33,7 +33,7 @@ const Teams = () => {
       <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 py-10 gap-10">
         {teamData?.data?.map((team: ITeam) => (
           <div
-            key={team._id}
+            key={team.id}
             className="border p-8 rounded-md border-blue-400 relative"
           >
             <img
@@ -53,7 +53,7 @@ const Teams = () => {
                 <Link
                   className="border font-medium px-5 py-2 rounded-md"
                   href={{
-                    pathname: `/teams/${team._id}`,
+                    pathname: `/teams/${team.id}`,
                     query: {
                       team: team?.name,
                       category: team?.category,

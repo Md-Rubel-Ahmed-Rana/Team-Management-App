@@ -13,7 +13,7 @@ const PricingSection = () => {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {pricingData?.map((price: IPrice) => (
-          <PricingCard key={price?._id} data={price} />
+          <PricingCard key={price?.id} data={price} />
         ))}
       </div>
     </section>

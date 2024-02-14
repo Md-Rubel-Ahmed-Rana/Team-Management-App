@@ -12,7 +12,7 @@ type Props = {
 const Tasks = ({ project }: Props) => {
   const [activeStatus, setActiveStatus] = useState("Todo");
   const [isOpen, setIsOpen] = useState(false);
-  const { data: taskData } = useGetTasksByProjectQuery(project?._id);
+  const { data: taskData } = useGetTasksByProjectQuery(project?.id);
   const todoTasksArray =
     taskData?.data?.filter((task: any) => task?.status === "Todo") || [];
   const ongoingTasksArray =

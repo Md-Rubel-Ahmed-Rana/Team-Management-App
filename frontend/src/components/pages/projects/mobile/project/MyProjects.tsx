@@ -10,18 +10,18 @@ const MyProjects = ({ setSelectedProject }: any) => {
   const router = useRouter();
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: projectsData } = useMyProjectsQuery(user?._id);
+  const { data: projectsData } = useMyProjectsQuery(user?.id);
   const projects: IProject[] = projectsData?.data;
 
   const handleChangeProject = (projectId: string) => {
-    const project = projects.find((prj) => prj._id === projectId);
-    setSelectedProject(project?._id);
+    const project = projects.find((prj) => prj.id === projectId);
+    setSelectedProject(project?.id);
     router.push({
       pathname: router.pathname,
       query: {
         ...router.query,
         team: project?.team?.name,
-        id: project?._id,
+        id: project?.id,
         name: project?.name,
       },
     });
@@ -34,7 +34,7 @@ const MyProjects = ({ setSelectedProject }: any) => {
       query: {
         ...router.query,
         team: project?.team?.name || "unknown",
-        id: project?._id,
+        id: project?.id,
         name: project?.name,
       },
     });
@@ -48,7 +48,7 @@ const MyProjects = ({ setSelectedProject }: any) => {
       {projects?.length > 0 ? (
         <>
           {projects?.map((project: IProject) => (
-            <option key={Math.random()} value={project?._id}>
+            <option key={Math.random()} value={project?.id}>
               {project?.name}
             </option>
           ))}

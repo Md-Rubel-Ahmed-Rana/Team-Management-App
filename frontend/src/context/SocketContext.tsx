@@ -25,11 +25,12 @@ const SocketProvider = ({ children }: Props) => {
   const [realTimeMessages, setRealTimeMessages] = useState<IMessage[]>([]);
   const [refetchTask, setRefetchTask] = useState<any>(false);
   const user: IUser = useGetLoggedInUser();
+  console.log("User", user);
 
   // connect to socket notification room
   useEffect(() => {
-    socket.emit("notification-room", user?._id);
-  }, [socket, user?._id]);
+    socket.emit("notification-room", user?.id);
+  }, [socket, user?.id]);
 
   const values: IContext = {
     socket,
