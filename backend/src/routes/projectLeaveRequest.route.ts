@@ -18,7 +18,6 @@ router.patch(
 
 router.get(
   "/all/:adminId",
-  verifyJwt,
   ProjectLeaveRequestController.getLeaveRequestByAdmin
 );
 

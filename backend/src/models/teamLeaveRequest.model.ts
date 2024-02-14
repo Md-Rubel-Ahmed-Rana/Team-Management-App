@@ -1,6 +1,7 @@
+import { ITeamLeaveRequest } from "@/interfaces/teamLeave.interface";
 import { Schema, model } from "mongoose";
 
-const leaveRequestSchema = new Schema(
+const leaveRequestSchema = new Schema<ITeamLeaveRequest>(
   {
     admin: {
       type: Schema.Types.ObjectId,

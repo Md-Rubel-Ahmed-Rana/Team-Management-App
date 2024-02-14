@@ -20,7 +20,7 @@ class Controller extends RootController {
         req.params.adminId
       );
       this.apiResponse(res, {
-        statusCode: httpStatus.CREATED,
+        statusCode: httpStatus.OK,
         success: true,
         message: "Leave requests found",
         data: result,
