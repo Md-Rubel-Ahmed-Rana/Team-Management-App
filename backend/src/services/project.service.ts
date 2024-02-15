@@ -1,3 +1,4 @@
+import { INotification } from "@/interfaces/notification.interface";
 import { IProject } from "@/interfaces/project.interface";
 import { Project } from "@/models/project.model";
 import ApiError from "@/shared/apiError";
@@ -34,7 +35,7 @@ class Service {
   }
 
   async assignedProjects(memberId: string): Promise<GetOnlyProjectDTO[]> {
-    const result = await Project.find({ "members.member": memberId });
+    const result = await Project.find({ members: memberId });
     const mappedData = mapper.mapArray(
       result,
       ProjectEntity as ModelIdentifier,
@@ -77,7 +78,7 @@ class Service {
   async addMember(
     projectId: string,
     memberId: string
-  ): Promise<UpdateProjectDTO | null> {
+  ): Promise<INotification | undefined> {
     const project = await Project.findById(projectId);
 
     if (!project) {
@@ -96,7 +97,7 @@ class Service {
       );
     }
 
-    const result = await Project.findByIdAndUpdate(
+    await Project.findByIdAndUpdate(
       projectId,
       {
         $push: { members: memberId },
@@ -105,7 +106,7 @@ class Service {
     );
 
     if (project?.user) {
-      await NotificationService.sendNotification(
+      const result = await NotificationService.sendNotification(
         project?.user,
         memberId,
         "project_invitation",
@@ -113,13 +114,8 @@ class Service {
         `You've been added to a project (${project?.name})`,
         `projects?team=${project?.team}&id=${project._id}&name=${project?.name}`
       );
+      return result;
     }
-    const mappedData = mapper.map(
-      result,
-      ProjectEntity as ModelIdentifier,
-      UpdateProjectDTO
-    );
-    return mappedData;
   }
 
   async removeMember(

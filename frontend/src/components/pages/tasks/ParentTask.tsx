@@ -1,17 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Column from "./Column";
 import { reorderColumnList } from "@/utils/reorderTaskColumnList";
 import { useUpdateStatusMutation } from "@/features/task";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
+import { SocketContext } from "@/context/SocketContext";
+import { INewTask } from "@/interfaces/task.interface";
 
 type Props = {
   project: any;
 };
 
 const ParentTask = ({ project }: Props) => {
+  const { socket }: any = useContext(SocketContext);
   const [updateStatus] = useUpdateStatusMutation();
   const [state, setState] = useState<any>({
     tasks: {},
@@ -87,58 +90,88 @@ const ParentTask = ({ project }: Props) => {
   };
 
   useEffect(() => {
-    const initialColumns = state?.columnOrder.reduce(
-      (acc: any, columnName: string) => {
-        acc[columnName] = {
-          id: columnName,
-          title: columnName,
-          taskIds: [],
-        };
-        return acc;
-      },
-      {}
-    );
-
-    setState((prevState: any) => ({
-      ...prevState,
-      columns: initialColumns,
-    }));
-
     const token = Cookies.get("tmAccessToken");
-    // Fetch tasks and update state if needed
-    fetch(`http://localhost:5000/task/by-project/${project?.id}`, {
-      headers: {
-        authorization: token || "",
-      },
-    })
-      .then((res) => res.json())
-      .then((data: any) => {
-        const dynamicData = data?.data?.reduce(
-          (acc: any, task: any) => {
-            acc.tasks[task?.id] = task;
 
-            const statusColumnId = task?.status;
-            if (!acc?.columns[statusColumnId]) {
-              acc.columns[statusColumnId] = {
-                id: statusColumnId,
-                title: task?.status,
+    // Fetch tasks only if project id is available
+    if (project?.id) {
+      fetch(`http://localhost:5000/task/by-project/${project.id}`, {
+        headers: {
+          authorization: token || "",
+        },
+      })
+        .then((res) => res.json())
+        .then((data: any) => {
+          const tasksData = data?.data || [];
+          const updatedState: any = {
+            tasks: {},
+            columns: {
+              Todo: { id: "Todo", title: "Todo", taskIds: [] },
+              Ongoing: { id: "Ongoing", title: "Ongoing", taskIds: [] },
+              Completed: { id: "Completed", title: "Completed", taskIds: [] },
+            },
+            columnOrder: ["Todo", "Ongoing", "Completed"],
+          };
+
+          tasksData.forEach((task: any) => {
+            updatedState.tasks[task.id] = task;
+
+            // Check if the status column exists, if not, create it
+            if (!updatedState.columns[task.status]) {
+              updatedState.columns[task.status] = {
+                id: task.status,
+                title: task.status,
                 taskIds: [],
               };
             }
 
-            acc?.columns[statusColumnId]?.taskIds?.push(task?.id);
+            // Push task id to its corresponding column
+            updatedState.columns[task.status].taskIds.push(task.id);
+          });
 
-            return acc;
-          },
-          {
-            tasks: {},
-            columns: initialColumns,
-            columnOrder: ["Todo", "Ongoing", "Completed"],
-          }
-        );
-        setState(dynamicData);
-      });
+          setState(updatedState);
+        })
+        .catch((error) => {
+          console.error("Error fetching tasks:", error);
+        });
+    }
   }, [project?.id]);
+
+  // Define a function to update state with new task
+  const addNewTask = (newTask: any) => {
+    setState((prevState: any) => {
+      const updatedState = { ...prevState };
+
+      // Add the new task to the tasks object
+      updatedState.tasks[newTask.id] = newTask;
+
+      // Check if the status column exists, if not, create it
+      if (!updatedState.columns[newTask.status]) {
+        updatedState.columns[newTask.status] = {
+          id: newTask.status,
+          title: newTask.status,
+          taskIds: [],
+        };
+      }
+
+      // Push task id to its corresponding column
+      updatedState.columns[newTask.status].taskIds.push(newTask.id);
+
+      return updatedState;
+    });
+  };
+
+  // Listen for new tasks from socket
+  useEffect(() => {
+    socket.on("task", (newTask: INewTask) => {
+      console.log("New task data", newTask);
+      addNewTask(newTask);
+    });
+
+    return () => {
+      // Clean up the socket listener on component unmount
+      socket.off("task");
+    };
+  }, [socket]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

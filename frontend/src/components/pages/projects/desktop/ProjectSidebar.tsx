@@ -24,6 +24,8 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
   const { data: assignedProjects } = useAssignedProjectsQuery(user?.id);
   const router = useRouter();
 
+  console.log(assignedProjects);
+
   const handleEditProject = (project: IProject) => {
     setIsEdit(true);
     setEditableProject(project);

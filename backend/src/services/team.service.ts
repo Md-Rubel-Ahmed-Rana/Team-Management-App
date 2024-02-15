@@ -181,6 +181,18 @@ class Service {
 
     const result = await Team.findById(teamId).select({ name: 1, admin: 1 });
 
+    // remove this member from projects by member id //
+    await Project.updateMany(
+      { team: teamId },
+      { $pull: { members: { memberId: memberId } } }
+    );
+
+    // update leave request for team
+    await TeamLeaveRequest.findOneAndUpdate(
+      { team: teamId },
+      { $set: { status: "accepted" } }
+    ).sort({ createdAt: -1 });
+
     if (result && result?.admin) {
       await NotificationService.sendNotification(
         result?.admin,
@@ -191,22 +203,6 @@ class Service {
         `dashboard?uId=${memberId}activeView=joined-teams`
       );
     }
-
-    // remove this member from projects
-    const projects = await Project.find({ "members.member": memberId });
-    const updatePromises = projects.map(async (project) => {
-      project.members = project.members.filter(
-        (member: any) => member?.member.toString() !== memberId
-      );
-      return project.save();
-    });
-    await Promise.all(updatePromises);
-
-    // update leave request for team
-    await TeamLeaveRequest.findOneAndUpdate(
-      { team: teamId },
-      { $set: { status: "accepted" } }
-    ).sort({ createdAt: -1 });
   }
 }
 export const TeamService = new Service();

@@ -8,29 +8,46 @@ import { GetTaskDTO } from "@/dto/task/get";
 import { CreateTaskDTO } from "@/dto/task/create";
 import { UpdateTaskDTO } from "@/dto/task/update";
 import { DeleteTaskDTO } from "@/dto/task/delete";
+import { INotification } from "@/interfaces/notification.interface";
+
+type ICreateTask = {
+  notification: INotification | undefined;
+  data: GetTaskDTO | undefined;
+};
 
 class Service {
-  async createTask(data: ITask): Promise<CreateTaskDTO> {
-    const result = await Task.create(data);
+  async createTask(taskData: ITask): Promise<ICreateTask | undefined> {
+    const newTask = await Task.create(taskData);
     // send notification to add  new  task to project
-    if (data?.assignedTo && data?.assignedBy) {
-      await NotificationService.sendNotification(
-        data.assignedBy,
-        data.assignedTo,
+    if (taskData?.assignedTo && taskData?.assignedBy) {
+      const notification = await NotificationService.sendNotification(
+        taskData.assignedBy,
+        taskData.assignedTo,
         "task_assignment",
         "Assigned to task",
-        `You've been assigned to a task (${data?.name})`,
+        `You've been assigned to a task (${taskData?.name})`,
         "projects"
       );
+
+      const result = await Task.findById(newTask?.id).populate([
+        {
+          path: "assignedTo",
+          model: "User",
+        },
+        {
+          path: "assignedBy",
+          model: "User",
+        },
+      ]);
+
+      const data = mapper.map(
+        result,
+        TaskEntity as ModelIdentifier,
+        GetTaskDTO
+      );
+
+      return { notification, data };
     }
-
-    const mappedData = mapper.map(
-      result,
-      TaskEntity as ModelIdentifier,
-      CreateTaskDTO
-    );
-
-    return mappedData;
   }
 
   async getTasksByProjectId(projectId: string): Promise<GetTaskDTO[]> {

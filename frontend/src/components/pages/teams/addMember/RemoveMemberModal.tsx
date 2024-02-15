@@ -20,8 +20,6 @@ const RemoveMemberModal = ({ isRemove, setIsRemove, team }: any) => {
       teamId: team.id,
       memberId: member?.value,
     });
-    console.log(result?.data?.success);
-    console.log(result?.data?.message);
     if (result?.data?.success) {
       closeModal();
       Swal.fire({

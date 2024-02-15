@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ProjectSidebar from "./ProjectSidebar";
 import AddMemberToProject from "./AddMemberToProject";
 import { useLoggedInUserQuery } from "@/features/user";
@@ -15,15 +15,17 @@ import RemoveMemberFromProject from "./RemoveMemberFromProject";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import ParentTask from "../../tasks/ParentTask";
+import { SocketContext } from "@/context/SocketContext";
 
 const Projects = () => {
+  const { socket }: any = useContext(SocketContext);
   const { query } = useRouter();
   const [activeProject, setActiveProject] = useState<any>("");
   const [isOpen, setIsOpen] = useState(false);
   const [isRemove, setIsRemove] = useState(false);
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: projectData } = useGetSingleProjectQuery(query?.id);
+  const { data: projectData }: any = useGetSingleProjectQuery(query?.id);
   const project: IProject = projectData?.data;
   const { data: projects } = useMyProjectsQuery(user?.id);
   const { data: assignedProjects } = useAssignedProjectsQuery(user?.id);
@@ -31,6 +33,8 @@ const Projects = () => {
   const { data: memberLeaveRequest } = useGetMemberLeaveProjectRequestQuery(
     user?.id
   );
+
+  console.log("Project for task", project);
 
   const handleLeaveRequest = async () => {
     Swal.fire({
@@ -63,6 +67,11 @@ const Projects = () => {
   useEffect(() => {
     setActiveProject(query?.id);
   }, [query?.id]);
+
+  // connect to socket team room
+  useEffect(() => {
+    socket.emit("task-room", project?.id);
+  }, [socket, project?.id]);
 
   return (
     <div className="flex h-screen">

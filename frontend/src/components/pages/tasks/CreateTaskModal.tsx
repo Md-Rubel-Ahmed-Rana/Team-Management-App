@@ -9,8 +9,10 @@ import { useGetSingleProjectQuery } from "@/features/project";
 import { INewTask } from "@/interfaces/task.interface";
 import { useCreateTaskMutation } from "@/features/task";
 import customStyles from "@/utils/reactSelectCustomStyle";
+import { SocketContext } from "@/context/SocketContext";
 
 const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
+  const { socket }: any = useContext(SocketContext);
   const closeModal = () => {
     setIsOpen(false);
   };
@@ -29,7 +31,9 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
     data.project = project.id;
     const result: any = await createTask(data);
     if (result?.data?.success) {
-      window.location.reload();
+      // window.location.reload();
+      socket.emit("task", result?.data?.data?.data);
+      socket.emit("notification", result?.data?.data?.notification);
       Swal.fire({
         position: "center",
         icon: "success",
@@ -90,8 +94,8 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
                         options={
                           members &&
                           members?.map((member: any) => ({
-                            value: member?.member?.id,
-                            label: member?.member?.name,
+                            value: member?.id,
+                            label: member?.name,
                           }))
                         }
                         styles={customStyles}

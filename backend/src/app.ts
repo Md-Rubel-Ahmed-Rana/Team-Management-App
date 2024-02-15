@@ -101,6 +101,17 @@ io.on("connection", (socket) => {
     socket.to(data.recipient.userId).emit("notification", data);
   });
 
+  // tasks room
+  socket.on("task-room", (projectId: string) => {
+    console.log("task room", projectId);
+    socket.join(projectId);
+  });
+
+  socket.on("task", (data) => {
+    console.log("New task", data);
+    socket.to(data.project).emit("task", data);
+  });
+
   socket.on("disconnect", () => {
     console.log("User disconnected");
   });

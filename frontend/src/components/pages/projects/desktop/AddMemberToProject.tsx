@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Select from "react-select";
 import Swal from "sweetalert2";
@@ -6,7 +6,7 @@ import { useAddMemberMutation } from "@/features/project";
 import { useGetActiveMembersQuery } from "@/features/team";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
-import { projectMemberRoles } from "@/constants/projectMemberRoles";
+import { SocketContext } from "@/context/SocketContext";
 
 type Props = {
   isOpen: boolean;
@@ -16,13 +16,13 @@ type Props = {
 };
 
 const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
+  const { socket }: any = useContext(SocketContext);
   const closeModal = () => {
     setIsOpen(false);
   };
 
   const [addNewMember] = useAddMemberMutation();
   const [newMember, setNewMember] = useState({ label: "", value: "" });
-  const [role, setRole] = useState("");
   const { data: memberData } = useGetActiveMembersQuery(team?.id);
   const members = memberData?.data?.map((member: IUser) => ({
     value: member?.id,
@@ -35,12 +35,12 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
     const memberData = {
       projectId,
       memberId: newMember.value,
-      role,
     };
 
     const result: any = await addNewMember(memberData);
 
     if (result?.data?.success) {
+      socket.emit("notification", result?.data?.data);
       Swal.fire({
         position: "center",
         icon: "success",
@@ -115,32 +115,6 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
                         }}
                       />
                     </div>
-                    <div className="relative w-full py-2">
-                      <p className="text-stone-500 dark:text-white  mb-2">
-                        Assign a role
-                      </p>
-                      <Select
-                        required
-                        options={projectMemberRoles?.map((role) => ({
-                          label: role,
-                          value: role,
-                        }))}
-                        styles={customStyles}
-                        onChange={(role: any) => setRole(role?.value)}
-                        placeholder="Type a name to assign a member to project"
-                        className="mt-1 w-full"
-                        classNamePrefix="select2-selection"
-                        noOptionsMessage={({ inputValue }: any) =>
-                          !inputValue &&
-                          `No active members in your team: ${team?.name}. Please invite members to join your team`
-                        }
-                        components={{
-                          DropdownIndicator: () => null,
-                          IndicatorSeparator: () => null,
-                        }}
-                      />
-                    </div>
-
                     <div className="mt-5 lg:flex justify-between">
                       <button
                         onClick={closeModal}
