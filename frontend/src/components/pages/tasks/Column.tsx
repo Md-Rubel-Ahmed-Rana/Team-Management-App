@@ -5,6 +5,7 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa";
 import CreateTaskModal from "./CreateTaskModal";
+import moment from "moment";
 
 const Column = ({ column, tasks, project }: any) => {
   const [editedTaskMap, setEditedTaskMap] = useState<{
@@ -137,6 +138,10 @@ const Column = ({ column, tasks, project }: any) => {
                           <div>
                             <h4>Deadline: {task?.deadline || "No deadline"}</h4>
                           </div>
+                          <p className="text-sm text-gray-600">
+                            Created:
+                            {moment(task.createdAt).fromNow()}
+                          </p>
                           <div>
                             <p>Assigned to: </p>
                             <div className="flex items-center gap-2 mt-2 border px-3 py-2 rounded-md">

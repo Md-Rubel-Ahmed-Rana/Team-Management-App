@@ -7,7 +7,6 @@ import { useUpdateStatusMutation } from "@/features/task";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { SocketContext } from "@/context/SocketContext";
-import { INewTask } from "@/interfaces/task.interface";
 
 type Props = {
   project: any;
@@ -162,13 +161,12 @@ const ParentTask = ({ project }: Props) => {
 
   // Listen for new tasks from socket
   useEffect(() => {
-    socket.on("task", (newTask: INewTask) => {
+    socket.on("task", (newTask: any) => {
       console.log("New task data", newTask);
       addNewTask(newTask);
     });
 
     return () => {
-      // Clean up the socket listener on component unmount
       socket.off("task");
     };
   }, [socket]);
