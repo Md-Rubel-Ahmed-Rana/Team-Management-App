@@ -26,6 +26,7 @@ const ShowMessages = ({ messages }: Props) => {
   const [editedMessage, setEditedMessage] = useState<string | undefined>("");
   const [imageModalOpen, setImageModalOpen] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>("");
+  const [onlineUsers, setOnlineUsers] = useState({});
   const [isEditMessage, setIsEditMessage] = useState<{
     id: string | undefined;
     status: boolean;

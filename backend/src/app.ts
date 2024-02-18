@@ -10,6 +10,7 @@ import { config } from "./configurations/envConfig";
 import { RootRoutes } from "./routes/root.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import initializeDTOMapper from "./configurations/dtoMapper";
+import { redisClient } from "./configurations/redis";
 
 const app = express();
 
@@ -78,7 +79,7 @@ passport.deserializeUser((user: any, done) => {
 });
 
 // Connecting to Socket.IO
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   console.log("A user connected");
 
   // messaging room for a team
@@ -112,7 +113,7 @@ io.on("connection", (socket) => {
     socket.to(data.project).emit("task", data);
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     console.log("User disconnected");
   });
 });

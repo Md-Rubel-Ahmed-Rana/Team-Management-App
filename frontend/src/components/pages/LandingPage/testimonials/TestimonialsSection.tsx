@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import TestimonialCard from "./TestimonialCard";
 import testimonialData from "@/constants/testimonialData";
 import Link from "next/link";
+import useCardAnimation from "@/hooks/useCardAnimation";
 
 const TestimonialsSection = () => {
+  const sectionRef = useRef(null);
+  const handleAnimation = useCardAnimation();
+
+  useEffect(() => {
+    handleAnimation(sectionRef, "testimonial-card", "left-to-right");
+  }, []);
+
   return (
-    <section className="lg:p-16 p-4 text-center">
+    <section ref={sectionRef} className="lg:p-16 p-4 text-center">
       <h2 className="lg:text-3xl text-xl font-bold mb-8">
         See What Our Users Have to Say
       </h2>

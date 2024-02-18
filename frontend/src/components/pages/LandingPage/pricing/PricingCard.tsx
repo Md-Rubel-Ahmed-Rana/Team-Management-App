@@ -10,7 +10,7 @@ type Props = {
 const PricingCard = ({ data }: Props) => {
   const { id, plan, price, features } = data;
   return (
-    <div className="p-6 rounded-lg shadow-md">
+    <div className="pricing-card p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-bold mb-4">{plan}</h3>
       <p className="text-2xl mb-4 font-bold">${price} /month</p>
       <ul className="text-left">

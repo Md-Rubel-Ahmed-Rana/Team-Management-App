@@ -25,11 +25,25 @@ const SocketProvider = ({ children }: Props) => {
   const [realTimeMessages, setRealTimeMessages] = useState<IMessage[]>([]);
   const [refetchTask, setRefetchTask] = useState<any>(false);
   const user: IUser = useGetLoggedInUser();
+  const [activeUsers, setActiveUsers] = useState([]);
 
   // connect to socket notification room
   useEffect(() => {
     socket.emit("notification-room", user?.id);
   }, [socket, user?.id]);
+
+  // connect to socket active
+  useEffect(() => {
+    socket.emit("active", user?.id);
+  }, [socket, user?.id]);
+
+  // connect to socket active
+  useEffect(() => {
+    socket.on("activeUsers", (data: any) => {
+      setActiveUsers(data);
+      console.log("Active users", data);
+    });
+  }, [socket]);
 
   const values: IContext = {
     socket,

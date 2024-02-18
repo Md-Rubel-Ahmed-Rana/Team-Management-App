@@ -1,16 +1,24 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import FeatureCard from "./FeatureCard";
 import featureData from "@/constants/featureData";
 import Link from "next/link";
 import { IFeature } from "@/interfaces/feature.interface";
+import useCardAnimation from "@/hooks/useCardAnimation";
 
 type Props = {
   limit?: number;
 };
 
 const FeaturesSection = ({ limit = 3 }: Props) => {
+  const sectionRef = useRef<any>(null);
+  const handleAnimation = useCardAnimation();
+
+  useEffect(() => {
+    handleAnimation(sectionRef, "features-card");
+  }, []);
+
   return (
-    <section className="lg:py-16 p-4 text-center">
+    <section ref={sectionRef} className="lg:py-16 p-4 text-center">
       <h2 className="lg:text-3xl text-xl font-bold mb-8">
         Powerful Features Tailored for Effective Team Management
       </h2>
