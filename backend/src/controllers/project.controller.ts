@@ -60,7 +60,7 @@ class Controller extends RootController {
 
   addMember = this.catchAsync(async (req: Request, res: Response) => {
     const { projectId, role, memberId } = req.body;
-    const result = await ProjectService.addMember(projectId, memberId, role);
+    const result = await ProjectService.addMember(projectId, memberId);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

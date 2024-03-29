@@ -24,3 +24,5 @@ class RedisWrapper {
 }
 
 export const RedisClient = new RedisWrapper();
+
+export default redisClient;

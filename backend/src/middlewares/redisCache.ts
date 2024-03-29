@@ -1,4 +1,4 @@
-import { redisClient } from "@/configurations/redis";
+import redisClient from "@/configurations/redis";
 import { INotification } from "@/interfaces/notification.interface";
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";

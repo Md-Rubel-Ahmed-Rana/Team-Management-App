@@ -14,7 +14,7 @@ export const config = {
     appPass: process.env.GOOGLE_APP_PASSWORD as string,
   },
   app: {
-    port: process.env.PORT,
+    port: process.env.PORT || 5000,
     environment: process.env.NODE_ENV as string,
     frontendDomain: process.env.FRONTEND_DOMAIN as string,
   },
