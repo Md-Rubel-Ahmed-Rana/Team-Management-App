@@ -1,7 +1,15 @@
 import { createClient } from "redis";
-export const redisClient = createClient();
+import { config } from "./envConfig";
 
-class Redis {
+const redisClient = createClient({
+  socket: {
+    host: config.redis.host,
+    port: Number(config.redis.port),
+  },
+  password: config.redis.password,
+});
+
+class RedisWrapper {
   async connect() {
     try {
       await redisClient.connect();
@@ -15,4 +23,4 @@ class Redis {
   }
 }
 
-export const RedisClient = new Redis();
+export const RedisClient = new RedisWrapper();

@@ -18,6 +18,11 @@ export const config = {
     environment: process.env.NODE_ENV as string,
     frontendDomain: process.env.FRONTEND_DOMAIN as string,
   },
+  redis: {
+    password: process.env.REDIS_PASSWORD as string,
+    host: process.env.REDIS_HOST as string,
+    port: process.env.REDIS_PORT as string,
+  },
   cloudinary: {
     cloudinaryName: process.env.CLOUDINARY_API_NAME,
     cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,

@@ -10,7 +10,6 @@ import { config } from "./configurations/envConfig";
 import { RootRoutes } from "./routes/root.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import initializeDTOMapper from "./configurations/dtoMapper";
-import { redisClient } from "./configurations/redis";
 
 const app = express();
 
