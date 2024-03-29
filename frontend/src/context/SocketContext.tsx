@@ -6,7 +6,9 @@ import { ReactNode, createContext, useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 
 const initValues: IContext = {
-  socket: io("http://localhost:5000") as Socket,
+  socket: io(
+    "https://team-management-app-server-with-redis.onrender.com"
+  ) as Socket,
   realTimeMessages: [],
   setRealTimeMessages: (messages: IMessage[]) => {},
   refetchTask: false,
@@ -21,7 +23,9 @@ type Props = {
 
 const SocketProvider = ({ children }: Props) => {
   const socketIo: any = io;
-  const socket = socketIo.connect("http://localhost:5000");
+  const socket = socketIo.connect(
+    "https://team-management-app-server-with-redis.onrender.com"
+  );
   const [realTimeMessages, setRealTimeMessages] = useState<IMessage[]>([]);
   const [refetchTask, setRefetchTask] = useState<any>(false);
   const user: IUser = useGetLoggedInUser();

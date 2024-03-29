@@ -9,11 +9,14 @@ const useGetLoggedInUser = () => {
       try {
         const token = Cookies.get("tmAccessToken");
         if (token) {
-          const res = await fetch("http://localhost:5000/user/auth", {
-            headers: {
-              authorization: token,
-            },
-          });
+          const res = await fetch(
+            "https://team-management-app-server-with-redis.onrender.com/user/auth",
+            {
+              headers: {
+                authorization: token,
+              },
+            }
+          );
           const data = await res.json();
           setUser(data?.data);
         }

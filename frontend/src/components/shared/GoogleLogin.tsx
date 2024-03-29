@@ -2,7 +2,10 @@ import React from "react";
 
 const GoogleLogin = () => {
   const handleGoogleLogin = async () => {
-    window.open("http://localhost:5000/google/login", "_self");
+    window.open(
+      "https://team-management-app-server-with-redis.onrender.com/google/login",
+      "_self"
+    );
   };
   return (
     <div className="my-3 text-center font-semibold">

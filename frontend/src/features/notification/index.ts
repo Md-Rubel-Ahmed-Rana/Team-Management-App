@@ -8,7 +8,7 @@ const notificationApi = apiSlice.injectEndpoints({
         headers: {
           authorization: Cookies.get("tmAccessToken"),
         },
-        url: `http://localhost:5000/notification/single/${userId}`,
+        url: `https://team-management-app-server-with-redis.onrender.com/notification/single/${userId}`,
       }),
       providesTags: ["notification"] as any,
     }),
@@ -18,7 +18,7 @@ const notificationApi = apiSlice.injectEndpoints({
           authorization: Cookies.get("tmAccessToken"),
         },
         method: "PATCH",
-        url: `http://localhost:5000/notification/update/${userId}`,
+        url: `https://team-management-app-server-with-redis.onrender.com/notification/update/${userId}`,
         body: ids,
       }),
       invalidatesTags: ["notification"] as any,

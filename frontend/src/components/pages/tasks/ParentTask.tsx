@@ -93,11 +93,14 @@ const ParentTask = ({ project }: Props) => {
 
     // Fetch tasks only if project id is available
     if (project?.id) {
-      fetch(`http://localhost:5000/task/by-project/${project.id}`, {
-        headers: {
-          authorization: token || "",
-        },
-      })
+      fetch(
+        `https://team-management-app-server-with-redis.onrender.com/task/by-project/${project.id}`,
+        {
+          headers: {
+            authorization: token || "",
+          },
+        }
+      )
         .then((res) => res.json())
         .then((data: any) => {
           const tasksData = data?.data || [];
