@@ -37,7 +37,6 @@ class Controller extends RootController {
 
   updateUser = this.catchAsync(async (req: Request, res: Response) => {
     const id = req.params.id;
-    console.log(req.body);
     const result = await UserService.updateUser(id, req.body);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,

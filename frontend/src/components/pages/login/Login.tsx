@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import { useLoginUserMutation } from "@/features/user";
 import Link from "next/link";
-import GoogleLogin from "@/components/shared/GoogleLogin";
+// import GoogleLogin from "@/components/shared/GoogleLogin";
 
 type FormData = {
   email: string;
@@ -107,7 +107,7 @@ const Login = () => {
               )}
             </div>
           </div>
-          <div className="text-center my-4">
+          <div className="text-left my-4">
             <button className="outline-none" type="button">
               Forget password?
             </button>
@@ -120,7 +120,7 @@ const Login = () => {
               Continue
             </button>
           </div>
-          <GoogleLogin />
+          {/* <GoogleLogin /> */}
           <div className="text-center my-3">
             <p>
               <small>Don&apos; have an account? </small>

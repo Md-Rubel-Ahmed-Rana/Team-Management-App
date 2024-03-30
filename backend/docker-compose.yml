@@ -1,11 +1,11 @@
 version: "3"
 services:
 
-  tmsbackend:
+  tmbackend:
     build:
       dockerfile: Dockerfile
       context: ./
-    container_name: tmsbackend
+    container_name: tmbackend-app
     ports:
       - "5000:5000"
     restart: always

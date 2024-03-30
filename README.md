@@ -6,10 +6,8 @@ The Team Management App is a web-based application designed to facilitate team c
 
 ## Live Links
 
-###### Socket.io and Redis will not work on Free hosting
-
-- [Frontend](https://team-management-app-client.vercel.app/)
-- [Backend](https://team-management-app-server.onrender.com/)
+- [Frontend](https://team-manager-eight.vercel.app)
+- [Backend](https://team-management-app-server-with-redis.onrender.com)
 
 ###### Login to website
 

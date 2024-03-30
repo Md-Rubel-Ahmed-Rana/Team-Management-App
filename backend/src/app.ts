@@ -6,6 +6,7 @@ import http from "http";
 import session from "express-session";
 import passport from "passport";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 import { config } from "./configurations/envConfig";
 import { RootRoutes } from "./routes/root.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
@@ -16,12 +17,23 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:8080"],
+    origin: [
+      "http://localhost:3000",
+      "https://team-management-app-client.vercel.app",
+      "https://team-manager-eight.vercel.app",
+    ],
+    credentials: true,
   },
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://team-manager-eight.vercel.app"],
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
 app.use(helmet());
 app.use(
   session({

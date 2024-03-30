@@ -15,6 +15,7 @@ const useGetLoggedInUser = () => {
               headers: {
                 authorization: token,
               },
+              credentials: "include",
             }
           );
           const data = await res.json();
