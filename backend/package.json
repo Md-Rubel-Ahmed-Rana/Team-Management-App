@@ -31,8 +31,9 @@
     "zod": "^3.22.4"
   },
   "scripts": {
+    "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
-    "start": "ts-node -r tsconfig-paths/register dist/server.js",
+    "start": "node -r ./tsconfig-paths-bootstrap.js dist/server.js",
     "docker:build": "docker-compose build",
     "docker:start": "docker-compose up -d",
     "docker:stop": "docker-compose down"
