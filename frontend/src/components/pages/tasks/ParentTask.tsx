@@ -94,7 +94,7 @@ const ParentTask = ({ project }: Props) => {
     // Fetch tasks only if project id is available
     if (project?.id) {
       fetch(
-        `https://team-management-app-server.onrender.com/task/by-project/${project.id}`,
+        `https://api-team-manager.onrender.com/task/by-project/${project.id}`,
         {
           headers: {
             authorization: token || "",
