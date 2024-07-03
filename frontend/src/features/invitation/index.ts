@@ -1,13 +1,9 @@
 import apiSlice from "../api/apiSlice";
-import Cookies from "js-cookie";
 
 const invitationApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     sendInvitation: builder.mutation({
       query: ({ teamId, memberId }) => ({
-        headers: {
-          authorization: Cookies.get("tmAccessToken"),
-        },
         method: "POST",
         url: `/invitation/send/${teamId}/${memberId}`,
       }),
@@ -15,9 +11,6 @@ const invitationApi = apiSlice.injectEndpoints({
     }),
     acceptInvitation: builder.mutation({
       query: ({ teamId, memberId }) => ({
-        headers: {
-          authorization: Cookies.get("tmAccessToken"),
-        },
         method: "POST",
         url: `/invitation/accept/${teamId}/${memberId}`,
       }),
@@ -25,9 +18,6 @@ const invitationApi = apiSlice.injectEndpoints({
     }),
     rejectInvitation: builder.mutation({
       query: ({ teamId, memberId }) => ({
-        headers: {
-          authorization: Cookies.get("tmAccessToken"),
-        },
         method: "POST",
         url: `/invitation/reject/${teamId}/${memberId}`,
       }),
@@ -35,9 +25,6 @@ const invitationApi = apiSlice.injectEndpoints({
     }),
     pendingInvitations: builder.query({
       query: (memberId) => ({
-        headers: {
-          authorization: Cookies.get("tmAccessToken"),
-        },
         url: `/invitation/pending/${memberId}`,
       }),
       providesTags: ["team", "invitation"] as any,

@@ -31,16 +31,16 @@ const Navbar = () => {
     window.location.replace("/");
   };
 
-  useEffect(() => {
-    const handleNotification = (data: INotification) => {
-      console.log("New notification", data);
-      setUnreadNotifications((prev: INotification[]) => [...prev, data]);
-    };
-    socket.on("notification", handleNotification);
-    return () => {
-      socket.off("notification", handleNotification);
-    };
-  }, [socket]);
+  // useEffect(() => {
+  //   const handleNotification = (data: INotification) => {
+  //     console.log("New notification", data);
+  //     setUnreadNotifications((prev: INotification[]) => [...prev, data]);
+  //   };
+  //   socket.on("notification", handleNotification);
+  //   return () => {
+  //     socket.off("notification", handleNotification);
+  //   };
+  // }, [socket]);
 
   useEffect(() => {
     const unread = notifications.filter((notified) => !notified.read);

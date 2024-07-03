@@ -40,7 +40,7 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
     const result: any = await addNewMember(memberData);
 
     if (result?.data?.success) {
-      socket.emit("notification", result?.data?.data);
+      // socket.emit("notification", result?.data?.data);
       Swal.fire({
         position: "center",
         icon: "success",

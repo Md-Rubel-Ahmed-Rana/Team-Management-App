@@ -53,7 +53,7 @@ const AddMemberModal = ({ isOpen, setIsOpen, team }: any) => {
     if (result?.data?.success) {
       closeModal();
       // send invitation notification
-      socket.emit("notification", result?.data?.data);
+      // socket.emit("notification", result?.data?.data);
       Swal.fire({
         position: "center",
         icon: "success",

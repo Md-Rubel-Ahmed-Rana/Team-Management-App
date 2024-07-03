@@ -67,30 +67,30 @@ const ShowMessages = ({ messages }: Props) => {
     }
   };
 
-  useEffect(() => {
-    const handleMessage = (data: IMessage) => {
-      setRealTimeMessages((prev: IMessage[]) => [...prev, data]);
-    };
+  // useEffect(() => {
+  //   const handleMessage = (data: IMessage) => {
+  //     setRealTimeMessages((prev: IMessage[]) => [...prev, data]);
+  //   };
 
-    socket.on("message", handleMessage);
+  //   socket.on("message", handleMessage);
 
-    return () => {
-      socket.off("message", handleMessage);
-    };
-  }, [setRealTimeMessages, socket]);
+  //   return () => {
+  //     socket.off("message", handleMessage);
+  //   };
+  // }, [setRealTimeMessages, socket]);
 
   // keep updated message in state
-  useEffect(() => {
-    setRealTimeMessages(messages);
-  }, [messages, setRealTimeMessages]);
+  // useEffect(() => {
+  //   setRealTimeMessages(messages);
+  // }, [messages, setRealTimeMessages]);
 
   // keep user in the bottom of the message
-  useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop =
-        messagesContainerRef.current.scrollHeight;
-    }
-  }, [realTimeMessages, socket]);
+  // useEffect(() => {
+  //   if (messagesContainerRef.current) {
+  //     messagesContainerRef.current.scrollTop =
+  //       messagesContainerRef.current.scrollHeight;
+  //   }
+  // }, [realTimeMessages, socket]);
 
   return (
     <div

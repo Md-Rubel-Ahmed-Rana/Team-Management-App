@@ -7,9 +7,9 @@ const HowItWorksSection = () => {
   const sectionRef = useRef(null);
   const handleAnimation = useCardAnimation();
 
-  useEffect(() => {
-    handleAnimation(sectionRef, "how-it-works-card", "right-to-left");
-  }, []);
+  // useEffect(() => {
+  //   handleAnimation(sectionRef, "how-it-works-card", "right-to-left");
+  // }, []);
 
   return (
     <section ref={sectionRef} className="lg:py-16 p-4 text-center">

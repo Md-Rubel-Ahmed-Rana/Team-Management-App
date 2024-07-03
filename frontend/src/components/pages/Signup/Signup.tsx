@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { IUser } from "@/interfaces/user.interface";
 import { useCreateUserMutation } from "@/features/user";
 import useUploadFile from "@/hooks/useUploadFile";
-// import GoogleLogin from "@/components/shared/GoogleLogin";
+import GoogleLogin from "@/components/shared/GoogleLogin";
 
 const Signup = () => {
   const {
@@ -180,7 +180,7 @@ const Signup = () => {
               Sign up
             </button>
           </div>
-          {/* <GoogleLogin /> */}
+          <GoogleLogin />
         </form>
       </div>
     </div>
