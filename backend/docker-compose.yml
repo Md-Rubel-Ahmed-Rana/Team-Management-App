@@ -1,13 +1,13 @@
 version: "3"
 services:
 
-  tmbackend:
+  team-manager-server:
     build:
       dockerfile: Dockerfile
       context: ./
-    container_name: tmbackend-app
+    container_name: team-manager-server
     ports:
-      - "5000:5000"
+      - "7001:7001"
     restart: always
     volumes:
       - .:/app

@@ -49,7 +49,6 @@ class Controller extends rootController_1.default {
         }));
         this.updateUser = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const id = req.params.id;
-            console.log(req.body);
             const result = yield user_service_1.UserService.updateUser(id, req.body);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,

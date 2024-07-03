@@ -20,6 +20,7 @@ const http_1 = __importDefault(require("http"));
 const express_session_1 = __importDefault(require("express-session"));
 const passport_1 = __importDefault(require("passport"));
 const helmet_1 = __importDefault(require("helmet"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const envConfig_1 = require("./configurations/envConfig");
 const root_route_1 = require("./routes/root.route");
 const globalErrorHandler_1 = __importDefault(require("./middlewares/globalErrorHandler"));
@@ -28,11 +29,20 @@ const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: ["http://localhost:3000", "http://localhost:8080"],
+        origin: [
+            "http://localhost:3000",
+            "https://team-management-app-client.vercel.app",
+            "https://team-manager-eight.vercel.app",
+        ],
+        credentials: true,
     },
 });
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: ["https://team-manager-eight.vercel.app"],
+    credentials: true,
+}));
 app.use(express_1.default.json());
+app.use((0, cookie_parser_1.default)());
 app.use((0, helmet_1.default)());
 app.use((0, express_session_1.default)({
     secret: envConfig_1.config.google.clientSecret,
