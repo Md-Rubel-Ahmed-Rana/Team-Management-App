@@ -13,8 +13,8 @@ const DashboardPage: NextPageWithLayout = () => {
   useEffect(() => {
     const handleAuth = async () => {
       setLoading(true);
-      const isLoggedIn = await Cookies.get("tmAccessToken");
-      if (!isLoggedIn) {
+      const isLoggedIn = Cookies.get("tmAccessToken");
+      if (isLoggedIn === "undefined") {
         setLoading(false);
         return router.push("/login");
       } else {
