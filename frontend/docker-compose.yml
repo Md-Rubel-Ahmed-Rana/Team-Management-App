@@ -1,0 +1,18 @@
+version: "3"
+services:
+
+  team-manager-client:
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    container_name: team-manager-client
+    ports:
+      - "7001:7001"
+    restart: always
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+    env_file:
+      - .env.local
+  
