@@ -69,9 +69,9 @@ const Projects = () => {
   }, [query?.id]);
 
   // connect to socket team room
-  useEffect(() => {
-    socket.emit("task-room", project?.id);
-  }, [socket, project?.id]);
+  // useEffect(() => {
+  //   socket.emit("task-room", project?.id);
+  // }, [socket, project?.id]);
 
   return (
     <div className="flex h-screen">

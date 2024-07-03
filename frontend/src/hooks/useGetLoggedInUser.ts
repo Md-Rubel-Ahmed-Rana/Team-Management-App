@@ -10,12 +10,11 @@ const useGetLoggedInUser = () => {
         const token = Cookies.get("tmAccessToken");
         if (token) {
           const res = await fetch(
-            "https://team-management-app-server-with-redis.onrender.com/user/auth",
+            "https://team-management-app-server.onrender.com/user/auth",
             {
               headers: {
                 authorization: token,
               },
-              credentials: "include",
             }
           );
           const data = await res.json();

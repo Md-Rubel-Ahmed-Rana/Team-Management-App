@@ -94,7 +94,7 @@ const ParentTask = ({ project }: Props) => {
     // Fetch tasks only if project id is available
     if (project?.id) {
       fetch(
-        `https://team-management-app-server-with-redis.onrender.com/task/by-project/${project.id}`,
+        `https://team-management-app-server.onrender.com/task/by-project/${project.id}`,
         {
           headers: {
             authorization: token || "",
@@ -163,16 +163,16 @@ const ParentTask = ({ project }: Props) => {
   };
 
   // Listen for new tasks from socket
-  useEffect(() => {
-    socket.on("task", (newTask: any) => {
-      console.log("New task data", newTask);
-      addNewTask(newTask);
-    });
+  // useEffect(() => {
+  //   socket.on("task", (newTask: any) => {
+  //     console.log("New task data", newTask);
+  //     addNewTask(newTask);
+  //   });
 
-    return () => {
-      socket.off("task");
-    };
-  }, [socket]);
+  //   return () => {
+  //     socket.off("task");
+  //   };
+  // }, [socket]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

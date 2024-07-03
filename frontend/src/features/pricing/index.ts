@@ -1,5 +1,4 @@
 import apiSlice from "../api/apiSlice";
-import Cookies from "js-cookie";
 
 const pricingApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,9 +9,6 @@ const pricingApi = apiSlice.injectEndpoints({
     }),
     getSinglePricing: builder.query({
       query: (id) => ({
-        headers: {
-          authorization: Cookies.get("tmAccessToken"),
-        },
         url: `/plan/single/${id}`,
       }),
     }),

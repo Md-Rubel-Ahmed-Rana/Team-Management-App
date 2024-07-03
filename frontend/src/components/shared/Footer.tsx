@@ -2,7 +2,6 @@ import React from "react";
 import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from "react-icons/fa";
 import SocialIcon from "./SocialIcon";
 
-// those should come from constants data
 const socialIcons = [
   {
     icon: <FaFacebook key={""} />,

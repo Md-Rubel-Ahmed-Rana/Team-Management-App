@@ -6,11 +6,11 @@ import useCardAnimation from "@/hooks/useCardAnimation";
 
 const TestimonialsSection = () => {
   const sectionRef = useRef(null);
-  const handleAnimation = useCardAnimation();
+  // const handleAnimation = useCardAnimation();
 
-  useEffect(() => {
-    handleAnimation(sectionRef, "testimonial-card", "left-to-right");
-  }, []);
+  // useEffect(() => {
+  //   handleAnimation(sectionRef, "testimonial-card", "left-to-right");
+  // }, []);
 
   return (
     <section ref={sectionRef} className="lg:p-16 p-4 text-center">

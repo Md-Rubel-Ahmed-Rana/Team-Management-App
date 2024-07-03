@@ -3,7 +3,7 @@ import React from "react";
 const GoogleLogin = () => {
   const handleGoogleLogin = async () => {
     window.open(
-      "https://team-management-app-server-with-redis.onrender.com/google/login",
+      "https://team-management-app-server.onrender.com/google/login",
       "_self"
     );
   };

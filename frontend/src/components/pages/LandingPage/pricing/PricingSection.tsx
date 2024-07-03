@@ -10,9 +10,9 @@ const PricingSection = () => {
   const sectionRef = useRef(null);
   const handleAnimation = useCardAnimation();
 
-  useEffect(() => {
-    handleAnimation(sectionRef, "pricing-card");
-  }, []);
+  // useEffect(() => {
+  //   handleAnimation(sectionRef, "pricing-card");
+  // }, []);
   return (
     <section ref={sectionRef} className="lg:py-16 p-4 text-center">
       <h2 className="lg:text-3xl text-xl font-bold mb-8">

@@ -4,8 +4,9 @@ import Cookies from "js-cookie";
 const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://team-management-app-server-with-redis.onrender.com",
+    baseUrl: "https://team-management-app-server.onrender.com",
     headers: {
+      "Content-type": "application/json",
       authorization: Cookies.get("tmAccessToken") as string,
     },
   }),
