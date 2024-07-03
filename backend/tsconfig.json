@@ -30,5 +30,5 @@
     "emitDecoratorMetadata": true 
   },
   "files": ["./src/interfaces/index.d.ts"],
-  "include": ["index.d.ts", "src/**/*.ts"],
+  "include": ["index.d.ts", "src/**/*.ts"]
 }
