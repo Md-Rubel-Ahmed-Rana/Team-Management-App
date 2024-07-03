@@ -33,7 +33,7 @@ const Login = () => {
       });
       window.location.replace("/dashboard");
     }
-    if (result?.error?.data?.statusCode === 404) {
+    if (!result?.error?.data?.success) {
       Swal.fire({
         position: "center",
         icon: "error",
