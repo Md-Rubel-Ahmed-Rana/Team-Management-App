@@ -7,10 +7,10 @@ const useGetLoggedInUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = Cookies.get("tmAccessToken");
-        if (token) {
+        const token = Cookies.get("tmAccessToken") as string;
+        if (token !== "undefined") {
           const res = await fetch(
-            "https://team-management-app-server.onrender.com/user/auth",
+            "https://api-team-manager.onrender.com/user/auth",
             {
               headers: {
                 authorization: token,
