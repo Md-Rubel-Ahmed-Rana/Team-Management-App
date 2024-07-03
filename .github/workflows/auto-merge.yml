@@ -1,0 +1,29 @@
+name: Auto Merge Frontend/Backend to Main
+
+on:
+  push:
+    branches:
+      - frontend
+      - backend
+
+jobs:
+  merge-to-main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.ref }}
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Merge to main
+        run: |
+          git fetch origin main
+          git checkout main
+          git merge --no-ff ${{ github.event.ref }}
+          git push origin main
