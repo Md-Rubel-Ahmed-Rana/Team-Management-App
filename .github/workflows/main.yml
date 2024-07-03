@@ -1,4 +1,4 @@
-name: CI/CD
+name: Images Push To Docker Hub
 
 on:
   push:
