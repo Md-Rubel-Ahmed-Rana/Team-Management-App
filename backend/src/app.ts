@@ -26,12 +26,7 @@ const io = new Server(server, {
   },
 });
 
-app.use(
-  cors({
-    origin: ["https://team-manager-eight.vercel.app"],
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
