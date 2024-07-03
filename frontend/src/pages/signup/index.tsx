@@ -13,7 +13,7 @@ const SignupPage: NextPageWithLayout = () => {
     const handleAuth = async () => {
       setLoading(true);
       const isLoggedIn = Cookies.get("tmAccessToken");
-      if (isLoggedIn) {
+      if (isLoggedIn !== "undefined") {
         setLoading(false);
         return router.push("/dashboard");
       } else {
