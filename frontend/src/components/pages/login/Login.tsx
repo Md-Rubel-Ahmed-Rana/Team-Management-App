@@ -67,6 +67,7 @@ const Login = () => {
             <div className="my-5">
               <label htmlFor="email">Email</label>
               <input
+                autoFocus
                 aria-label="Email address"
                 type="email"
                 {...register("email", {

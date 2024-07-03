@@ -66,6 +66,7 @@ const Signup = () => {
             <div>
               <label htmlFor="name">Name</label>
               <input
+                autoFocus
                 aria-label="name"
                 type="text"
                 {...register("name", { required: "Name is required" })}
