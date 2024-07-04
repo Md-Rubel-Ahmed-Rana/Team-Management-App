@@ -72,7 +72,7 @@ const Signup = () => {
                 aria-label="name"
                 type="text"
                 {...register("name", { required: "Name is required" })}
-                className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
                   errors.name ? "border-red-500" : "border-gray-300"
                 } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Enter your full name"
@@ -89,7 +89,7 @@ const Signup = () => {
                 aria-label="email"
                 type="text"
                 {...register("email", { required: "email is required" })}
-                className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
                   errors.email ? "border-red-500" : "border-gray-300"
                 } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Enter your active email address"
@@ -108,7 +108,7 @@ const Signup = () => {
                 {...register("department", {
                   required: "Department is required",
                 })}
-                className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
                   errors.department ? "border-red-500" : "border-gray-300"
                 } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Department (Engineering)"
@@ -127,7 +127,7 @@ const Signup = () => {
                 {...register("designation", {
                   required: "Designation is required",
                 })}
-                className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
                   errors.designation ? "border-red-500" : "border-gray-300"
                 } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Designation (Full Stack Developer)"
@@ -163,7 +163,7 @@ const Signup = () => {
                     message: "Password must be at least 6 characters",
                   },
                 })}
-                className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Password"
