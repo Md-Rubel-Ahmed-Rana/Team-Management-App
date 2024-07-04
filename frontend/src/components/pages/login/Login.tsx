@@ -5,6 +5,8 @@ import Cookies from "js-cookie";
 import { useLoginUserMutation } from "@/features/user";
 import Link from "next/link";
 import GoogleLogin from "@/components/shared/GoogleLogin";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { useState } from "react";
 
 type FormData = {
   email: string;
@@ -17,13 +19,14 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({ mode: "onChange" });
+  const [togglePassword, setTogglePassword] = useState(false);
 
   const [loginUser] = useLoginUserMutation();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const result: any = await loginUser(data);
-    Cookies.set("tmAccessToken", result?.data?.data, { expires: 6 });
     if (result?.data?.success) {
+      Cookies.set("tmAccessToken", result?.data?.data, { expires: 6 });
       Swal.fire({
         position: "center",
         icon: "success",
@@ -88,11 +91,11 @@ const Login = () => {
                 </p>
               )}
             </div>
-            <div className="-mt-px">
+            <div className="-mt-px relative">
               <label htmlFor="password">Password</label>
               <input
                 aria-label="Password"
-                type="password"
+                type={togglePassword ? "text" : "password"}
                 {...register("password", {
                   required: "Password is required",
                 })}
@@ -106,6 +109,13 @@ const Login = () => {
                   {errors.password.message}
                 </p>
               )}
+              <button
+                type="button"
+                className="absolute top-9 right-2 z-50"
+                onClick={() => setTogglePassword((prev) => !prev)}
+              >
+                {togglePassword ? <IoMdEye /> : <IoMdEyeOff />}
+              </button>
             </div>
           </div>
           <div className="text-center my-4">

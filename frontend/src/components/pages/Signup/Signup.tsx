@@ -1,6 +1,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { useState } from "react";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useRouter } from "next/router";
 import { IUser } from "@/interfaces/user.interface";
 import { useCreateUserMutation } from "@/features/user";
@@ -16,6 +17,7 @@ const Signup = () => {
   const router = useRouter();
   const [createUser] = useCreateUserMutation();
   const [profilePicture, setProfilePicture] = useState("");
+  const [togglePassword, setTogglePassword] = useState(false);
 
   const handleRegister: SubmitHandler<IUser> = async (data) => {
     data.profile_picture = profilePicture;
@@ -149,11 +151,11 @@ const Signup = () => {
                 placeholder="Email address"
               />
             </div>
-            <div className="-mt-px">
+            <div className="-mt-px relative">
               <label htmlFor="password">Password</label>
               <input
                 aria-label="Password"
-                type="password"
+                type={togglePassword ? "text" : "password"}
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
@@ -171,6 +173,13 @@ const Signup = () => {
                   {errors.password.message}
                 </p>
               )}
+              <button
+                type="button"
+                className="absolute top-9 right-2 z-50"
+                onClick={() => setTogglePassword((prev) => !prev)}
+              >
+                {togglePassword ? <IoMdEye /> : <IoMdEyeOff />}
+              </button>
             </div>
           </div>
           <div className="mt-6">
