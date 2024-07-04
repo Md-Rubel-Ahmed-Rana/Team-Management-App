@@ -38,7 +38,7 @@ const io = new socket_io_1.Server(server, {
     },
 });
 app.use((0, cors_1.default)({
-    origin: ["https://team-manager-eight.vercel.app"],
+    origin: ["http://localhost:3000", "https://team-manager-eight.vercel.app"],
     credentials: true,
 }));
 app.use(express_1.default.json());
