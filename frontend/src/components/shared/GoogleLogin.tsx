@@ -2,7 +2,7 @@ import React from "react";
 
 const GoogleLogin = () => {
   const handleGoogleLogin = async () => {
-    window.open("https://api-team-manager.onrender.com/google/login", "_self");
+    window.open("http://api-team-manager.onrender.com/google/login", "_self");
   };
   return (
     <div className="my-3 text-center font-semibold">
