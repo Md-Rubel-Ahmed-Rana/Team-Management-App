@@ -26,7 +26,7 @@ const Login = () => {
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const result: any = await loginUser(data);
     if (result?.data?.success) {
-      // Cookies.set("tmAccessToken", result?.data?.data, { expires: 6 });
+      Cookies.set("tmAccessToken", result?.data?.data, { expires: 6 });
       Swal.fire({
         position: "center",
         icon: "success",
