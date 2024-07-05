@@ -60,12 +60,11 @@ class Controller extends rootController_1.default {
         this.login = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const { email, password } = req.body;
             const result = yield user_service_1.UserService.login(email, password);
-            res.cookie("tmAccessToken", result);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,
                 message: "User logged in successfully",
-                data: null,
+                data: result,
             });
         }));
     }
