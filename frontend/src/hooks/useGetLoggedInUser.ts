@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import { IUser, userInitData } from "@/interfaces/user.interface";
 
 const useGetLoggedInUser = () => {
@@ -15,10 +14,12 @@ const useGetLoggedInUser = () => {
           }
         );
         const data = await res.json();
+        console.log("User from useGetLoggedInUser hook", data);
         setUser(data?.data);
       } catch (error) {
         console.log("Failed to fetch user");
       }
+      console.log("Will call");
     };
     fetchUser();
   }, []);

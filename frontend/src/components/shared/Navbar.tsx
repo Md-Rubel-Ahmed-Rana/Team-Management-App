@@ -18,6 +18,7 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
+  console.log("User from navbar", user);
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
   const { data: notifiedData } = useGetNotificationQuery(user?.id);
