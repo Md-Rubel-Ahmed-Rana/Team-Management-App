@@ -22,7 +22,11 @@ class Controller extends rootController_1.default {
         this.login = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             if (req === null || req === void 0 ? void 0 : req.user) {
                 const result = yield googleOAuth_service_1.GoogleOAuthService.login(req.user);
-                res.cookie("tmAccessToken", result, { httpOnly: true, secure: true });
+                res.cookie("tmAccessToken", result, {
+                    httpOnly: true,
+                    sameSite: "lax",
+                    secure: true,
+                });
                 res.redirect(envConfig_1.config.google.redirectUrl);
             }
         }));
