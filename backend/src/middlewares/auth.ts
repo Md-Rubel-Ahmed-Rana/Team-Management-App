@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 
 const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
   try {
+    console.log({ Cookies: req.cookies });
+    console.log({ Token: req.cookies.tmAccessToken });
     const token = req.cookies.tmAccessToken;
     if (!token) {
       return res.json({

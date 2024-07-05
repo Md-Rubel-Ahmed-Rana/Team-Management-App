@@ -7,6 +7,8 @@ const http_status_1 = __importDefault(require("http-status"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const verifyJwt = (req, res, next) => {
     try {
+        console.log({ Cookies: req.cookies });
+        console.log({ Token: req.cookies.tmAccessToken });
         const token = req.cookies.tmAccessToken;
         if (!token) {
             return res.json({
