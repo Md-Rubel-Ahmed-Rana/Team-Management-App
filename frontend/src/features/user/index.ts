@@ -12,8 +12,9 @@ const userApi = apiSlice.injectEndpoints({
     loginUser: builder.mutation({
       query: (data) => ({
         method: "POST",
-        url: "/user/login",
+        url: "https://api-team-manager.onrender.com/user/login",
         body: data,
+        credentials: "include",
       }),
       invalidatesTags: ["user"] as any,
     }),
@@ -25,7 +26,8 @@ const userApi = apiSlice.injectEndpoints({
     }),
     loggedInUser: builder.query({
       query: () => ({
-        url: "/user/auth",
+        url: "https://api-team-manager.onrender.com/user/auth",
+        credentials: "include",
       }),
       providesTags: ["user"] as any,
     }),

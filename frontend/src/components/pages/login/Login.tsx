@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
-import Cookies from "js-cookie";
 import { useLoginUserMutation } from "@/features/user";
 import Link from "next/link";
 import GoogleLogin from "@/components/shared/GoogleLogin";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 type FormData = {
   email: string;
@@ -20,13 +20,13 @@ const Login = () => {
     formState: { errors },
   } = useForm<FormData>({ mode: "onChange" });
   const [togglePassword, setTogglePassword] = useState(false);
+  const router = useRouter();
 
   const [loginUser] = useLoginUserMutation();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const result: any = await loginUser(data);
-    if (result?.data?.success) {
-      // Cookies.set("tmAccessToken", result?.data?.data, { expires: 6 });
+    if (result?.data?.statusCode === 200) {
       Swal.fire({
         position: "center",
         icon: "success",
@@ -34,9 +34,8 @@ const Login = () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      window.location.replace("/dashboard");
-    }
-    if (!result?.error?.data?.success) {
+      router.push("/dashboard");
+    } else {
       Swal.fire({
         position: "center",
         icon: "error",

@@ -1,3 +1,4 @@
+import { config } from "@/configurations/envConfig";
 import { UserService } from "@/services/user.service";
 import RootController from "@/shared/rootController";
 import { Request, Response } from "express";
