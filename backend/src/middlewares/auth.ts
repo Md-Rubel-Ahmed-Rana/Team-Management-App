@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies.tmAccessToken;
-
     if (!token) {
       return res.json({
         statusCode: httpStatus.BAD_REQUEST,

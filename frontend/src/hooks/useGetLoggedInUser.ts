@@ -7,19 +7,15 @@ const useGetLoggedInUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = Cookies.get("tmAccessToken") as string;
-        if (token !== "undefined") {
-          const res = await fetch(
-            "https://api-team-manager.onrender.com/user/auth",
-            {
-              headers: {
-                authorization: token,
-              },
-            }
-          );
-          const data = await res.json();
-          setUser(data?.data);
-        }
+        const res = await fetch(
+          "https://api-team-manager.onrender.com/user/auth",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        const data = await res.json();
+        setUser(data?.data);
       } catch (error) {
         console.log("Failed to fetch user");
       }
