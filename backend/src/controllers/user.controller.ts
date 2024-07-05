@@ -49,11 +49,12 @@ class Controller extends RootController {
   login = this.catchAsync(async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const result = await UserService.login(email, password);
+    res.cookie("tmAccessToken", result, { httpOnly: true, secure: true });
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "User logged in successfully",
-      data: result,
+      message: "Login successful",
+      data: null,
     });
   });
 }

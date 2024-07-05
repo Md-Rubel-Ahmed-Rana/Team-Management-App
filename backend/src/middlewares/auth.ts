@@ -4,12 +4,13 @@ import jwt from "jsonwebtoken";
 
 const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.headers.authorization;
+    const token = req.cookies.tmAccessToken;
+
     if (!token) {
       return res.json({
         statusCode: httpStatus.BAD_REQUEST,
         success: false,
-        message: "Did't provide token",
+        message: "Token not provided",
         data: null,
       });
     }
@@ -35,7 +36,7 @@ const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
     res.json({
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       success: false,
-      message: "There was an error to verify token",
+      message: "There was an error verifying the token",
       error: error.message,
     });
   }
