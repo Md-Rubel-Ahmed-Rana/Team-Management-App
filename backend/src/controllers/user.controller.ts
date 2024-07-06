@@ -62,6 +62,19 @@ class Controller extends RootController {
       data: null,
     });
   });
+  logout = this.catchAsync(async (req: Request, res: Response) => {
+    res.clearCookie("tmAccessToken", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Logout successful",
+      data: null,
+    });
+  });
 }
 
 export const UserController = new Controller();
