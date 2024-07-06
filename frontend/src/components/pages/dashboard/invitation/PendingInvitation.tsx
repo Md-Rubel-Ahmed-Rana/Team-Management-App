@@ -27,7 +27,7 @@ const PendingInvitation = () => {
       memberId: user?.id,
     });
     if (result?.data?.success) {
-      // socket.emit("notification", result?.data?.data);
+      socket.emit("notification", result?.data?.data);
       Swal.fire({
         position: "center",
         icon: "success",
@@ -45,7 +45,7 @@ const PendingInvitation = () => {
     });
     if (result?.data?.success) {
       // send notification viw socket
-      // socket.emit("notification", result?.data?.data);
+      socket.emit("notification", result?.data?.data);
 
       Swal.fire({
         position: "center",

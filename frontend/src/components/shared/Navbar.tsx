@@ -18,7 +18,6 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
-  console.log("User from navbar", user);
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
   const { data: notifiedData } = useGetNotificationQuery(user?.id);
@@ -32,16 +31,15 @@ const Navbar = () => {
     window.location.replace("/");
   };
 
-  // useEffect(() => {
-  //   const handleNotification = (data: INotification) => {
-  //     console.log("New notification", data);
-  //     setUnreadNotifications((prev: INotification[]) => [...prev, data]);
-  //   };
-  //   socket.on("notification", handleNotification);
-  //   return () => {
-  //     socket.off("notification", handleNotification);
-  //   };
-  // }, [socket]);
+  useEffect(() => {
+    const handleNotification = (data: INotification) => {
+      setUnreadNotifications((prev: INotification[]) => [...prev, data]);
+    };
+    socket?.on("notification", handleNotification);
+    return () => {
+      socket?.off("notification", handleNotification);
+    };
+  }, [socket]);
 
   useEffect(() => {
     const unread = notifications.filter((notified) => !notified.read);
