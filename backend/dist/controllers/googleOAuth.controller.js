@@ -24,7 +24,7 @@ class Controller extends rootController_1.default {
                 const result = yield googleOAuth_service_1.GoogleOAuthService.login(req.user);
                 res.cookie("tmAccessToken", result, {
                     httpOnly: true,
-                    sameSite: "lax",
+                    sameSite: "none",
                     secure: true,
                 });
                 res.redirect(envConfig_1.config.google.redirectUrl);

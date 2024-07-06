@@ -62,7 +62,7 @@ class Controller extends rootController_1.default {
             const result = yield user_service_1.UserService.login(email, password);
             res.cookie("tmAccessToken", result, {
                 httpOnly: true,
-                sameSite: "lax",
+                sameSite: "none",
                 secure: true,
             });
             this.apiResponse(res, {

@@ -52,7 +52,7 @@ class Controller extends RootController {
     const result = await UserService.login(email, password);
     res.cookie("tmAccessToken", result, {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: "none",
       secure: true,
     });
     this.apiResponse(res, {
