@@ -5,7 +5,7 @@ import { BiX } from "react-icons/bi";
 import NotificationModal from "../pages/notifications/NotificationModal";
 import { useContext, useEffect, useState } from "react";
 import { IUser } from "@/interfaces/user.interface";
-import { useLoggedInUserQuery } from "@/features/user";
+import { useLoggedInUserQuery, useLogoutUserMutation } from "@/features/user";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import Cookies from "js-cookie";
@@ -17,6 +17,7 @@ const Navbar = () => {
   const { socket }: any = useContext(SocketContext);
   const { theme, setTheme } = useTheme();
   const { data }: any = useLoggedInUserQuery({});
+  const [logout] = useLogoutUserMutation({});
   const user: IUser = data?.data;
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
@@ -26,9 +27,10 @@ const Navbar = () => {
     INotification[]
   >([]);
 
-  const handleLogOut = () => {
-    Cookies.remove("tmAccessToken");
-    window.location.replace("/");
+  const handleLogOut = async () => {
+    const res = await logout("");
+    console.log(res);
+    // window.location.replace("/");
   };
 
   useEffect(() => {
