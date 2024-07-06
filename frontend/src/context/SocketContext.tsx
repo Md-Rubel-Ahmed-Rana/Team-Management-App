@@ -1,14 +1,14 @@
-import useGetLoggedInUser from "@/hooks/useGetLoggedInUser";
 import { IContext } from "@/interfaces/context.interface";
 import { IMessage } from "@/interfaces/message.interface";
-import { IUser } from "@/interfaces/user.interface";
 import { ReactNode, createContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
 const initValues: IContext = {
   realTimeMessages: [],
   setRealTimeMessages: (messages: IMessage[]) => {},
   refetchTask: false,
   setRefetchTask: () => false,
+  socket: "",
 };
 
 export const SocketContext = createContext<IContext>(initValues);
@@ -18,35 +18,42 @@ type Props = {
 };
 
 const SocketProvider = ({ children }: Props) => {
-  const socket: any = {};
+  const socket: any = io("https://api-team-manager.onrender.com");
   const [realTimeMessages, setRealTimeMessages] = useState<IMessage[]>([]);
+  const [user, setUser] = useState<any>({});
   const [refetchTask, setRefetchTask] = useState<any>(false);
-  const user: IUser = useGetLoggedInUser();
-  const [activeUsers, setActiveUsers] = useState([]);
 
-  // connect to socket notification room
-  // useEffect(() => {
-  //   socket.emit("notification-room", user?.id);
-  // }, [socket, user?.id]);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(
+          "https://api-team-manager.onrender.com/user/auth",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        const data = await res.json();
+        setUser(data?.data);
+      } catch (error) {
+        console.log("Failed to fetch user");
+      }
+    };
+    fetchUser();
+  }, []);
 
-  // // connect to socket active
-  // useEffect(() => {
-  //   socket.emit("active", user?.id);
-  // }, [socket, user?.id]);
-
-  // // connect to socket active
-  // useEffect(() => {
-  //   socket.on("activeUsers", (data: any) => {
-  //     setActiveUsers(data);
-  //     console.log("Active users", data);
-  //   });
-  // }, [socket]);
+  useEffect(() => {
+    if (user?.id) {
+      socket.emit("notification-room", user.id);
+    }
+  }, [user]);
 
   const values: IContext = {
     realTimeMessages,
     setRealTimeMessages,
     refetchTask,
     setRefetchTask,
+    socket,
   };
 
   return (

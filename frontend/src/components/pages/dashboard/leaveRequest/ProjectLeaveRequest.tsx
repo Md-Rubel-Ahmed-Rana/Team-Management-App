@@ -12,8 +12,6 @@ const ProjectLeaveRequest = () => {
   );
   const requests = requestsData?.data;
 
-  console.log("project", requests);
-
   return (
     <div>
       {requests?.length > 0 &&
