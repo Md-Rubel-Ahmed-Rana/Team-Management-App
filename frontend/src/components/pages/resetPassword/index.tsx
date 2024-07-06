@@ -1,8 +1,11 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { SubmitHandler, useForm } from "react-hook-form";
+import jwt from "jsonwebtoken";
 import Swal from "sweetalert2";
+import Link from "next/link";
+import { useResetPasswordMutation } from "@/features/user";
 
 type FormData = {
   password: string;
@@ -11,6 +14,9 @@ type FormData = {
 
 const ResetPasswordPage = () => {
   const router = useRouter();
+  const [resetPassword] = useResetPasswordMutation();
+  const [userId, setUserId] = useState<any>();
+  const [tokenError, setTokenError] = useState<string | null>(null);
   const [togglePassword, setTogglePassword] = useState<{
     password: boolean;
     confirmPassword: boolean;
@@ -18,22 +24,38 @@ const ResetPasswordPage = () => {
     password: false,
     confirmPassword: false,
   });
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<FormData>({ mode: "onChange" });
-  const handleResetPassword: SubmitHandler<FormData> = (data) => {
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Password reset successful",
-      text: "Now, try to login with new password",
-      showConfirmButton: false,
-      timer: 2000,
-    });
-    router.push("/login");
+
+  const handleResetPassword: SubmitHandler<FormData> = async (data) => {
+    const payload = {
+      userId,
+      password: data.password,
+    };
+    const res: any = await resetPassword(payload);
+    if (res?.data?.statusCode === 200) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res?.data?.message,
+        showConfirmButton: false,
+      });
+      router.push("/login");
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Something went wrong! Try again",
+        text: res?.error?.data?.message,
+        showConfirmButton: false,
+        timer: 2500,
+      });
+    }
   };
 
   const handleTogglePassword = (type: string) => {
@@ -47,17 +69,56 @@ const ResetPasswordPage = () => {
     }
   };
 
+  useEffect(() => {
+    const paths = router?.asPath;
+    const params = new URLSearchParams(paths.split("?")[1]);
+    const userId = params.get("userId");
+    const token = params.get("token") as string;
+    if (token) {
+      try {
+        jwt.verify(
+          token,
+          process.env.NEXT_PUBLIC_JWT_ACCESS_TOKEN_SECRET as string
+        );
+
+        setUserId(userId);
+      } catch (error) {
+        setTokenError(
+          "The token is expired or invalid. Please request a new password reset."
+        );
+      }
+    }
+  }, [router]);
+
   const password = watch("password");
 
+  if (tokenError) {
+    return (
+      <div className="h-screen flex items-center justify-center p-5 ">
+        <div className="dark:bg-gray-700 bg-gray-100 p-8 rounded-md shadow-md w-full max-w-md">
+          <h1 className="text-2xl font-bold mb-2">Token Error</h1>
+          <p className="mb-5">{tokenError}</p>
+          <Link
+            className="bg-blue-700  text-white px-4 py-2 rounded-md"
+            href={"/forget-password"}
+          >
+            Resend
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="h-screen flex items-center justify-center">
-      <div className="bg-gray-50 p-8 rounded shadow-md w-full max-w-md">
+    <div className="h-screen flex items-center justify-center p-5">
+      <div className="dark:bg-gray-700 bg-gray-100 p-8 rounded shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-2">Reset Password</h1>
-        <p className="mb-2 text-gray-600">Change your password carefully</p>
+        <p className="mb-2">Change your password carefully</p>
         <form onSubmit={handleSubmit(handleResetPassword)}>
           <div className="-mt-px relative mb-4">
             <label htmlFor="password">Password</label>
             <input
+              autoFocus
               aria-label="Password"
               type={togglePassword.password ? "text" : "password"}
               {...register("password", {
@@ -119,7 +180,7 @@ const ResetPasswordPage = () => {
           </div>
           <button
             type="submit"
-            className={`w-full  text-white py-2 px-4 rounded   bg-blue-500 hover:bg-blue-600`}
+            className={`w-full text-white py-2 px-4 rounded bg-blue-500 hover:bg-blue-600`}
           >
             Reset Password
           </button>
