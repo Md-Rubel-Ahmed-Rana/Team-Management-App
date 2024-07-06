@@ -1,12 +1,11 @@
 import React from "react";
-import Cookies from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import {
   useAssignedProjectsQuery,
   useMyProjectsQuery,
 } from "@/features/project";
-import { useLoggedInUserQuery } from "@/features/user";
+import { useLoggedInUserQuery, useLogoutUserMutation } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { CgProfile } from "react-icons/cg";
 import { TbBrandTeams } from "react-icons/tb";
@@ -18,10 +17,12 @@ import {
 import { FcLeave } from "react-icons/fc";
 import { BiLogoMicrosoftTeams } from "react-icons/bi";
 import { GrProjects } from "react-icons/gr";
+import Swal from "sweetalert2";
 
 const Sidebar = ({ setActiveView, activeView }: any) => {
   const router = useRouter();
   const { data: userData } = useLoggedInUserQuery({});
+  const [logout] = useLogoutUserMutation({});
   const user: IUser = userData?.data;
   const { data: projects } = useMyProjectsQuery(user?.id);
   const { data: assignedProjects } = useAssignedProjectsQuery(user?.id);
@@ -36,9 +37,17 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
     });
   };
 
-  const handleLogOut = () => {
-    Cookies.remove("tmAccessToken");
-    window.location.replace("/");
+  const handleLogOut = async () => {
+    const res: any = await logout("");
+    if (res?.data?.statusCode === 200) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res?.data?.message,
+        showConfirmButton: false,
+      });
+      window.location.replace("/");
+    }
   };
 
   return (
