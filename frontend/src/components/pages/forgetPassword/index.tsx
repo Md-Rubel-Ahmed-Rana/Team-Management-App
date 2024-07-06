@@ -1,27 +1,47 @@
+import { useForgetPasswordMutation } from "@/features/user";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
+import Swal from "sweetalert2";
 
 type FormData = {
   email: string;
 };
 
 const ForgetPasswordPage = () => {
-  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({ mode: "onChange" });
-  const handleSubmitEmail: SubmitHandler<FormData> = (data) => {
-    router.push("/reset-password");
+  const [forgetPassword] = useForgetPasswordMutation();
+  const router = useRouter();
+  const handleSubmitEmail: SubmitHandler<FormData> = async (data) => {
+    const res: any = await forgetPassword(data);
+    if (res?.data?.statusCode === 200) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Reset email was sent!",
+        text: res?.data?.message,
+        showConfirmButton: true,
+      });
+      router.push("/");
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Something went wrong! Try again",
+        text: res?.error?.data?.message,
+        showConfirmButton: false,
+        timer: 2500,
+      });
+    }
   };
   return (
-    <div className="h-screen flex items-center justify-center">
-      <div className="bg-gray-50 p-8 rounded shadow-md w-full max-w-md">
+    <div className="h-screen flex items-center justify-center p-5">
+      <div className="dark:bg-gray-700 bg-gray-100 p-8 rounded shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-4">Forgot Password</h1>
-        <p className="mb-4 text-gray-600">
-          Enter your email to reset your password.
-        </p>
+        <p className="mb-4">Enter your email to reset your password.</p>
         <form onSubmit={handleSubmit(handleSubmitEmail)}>
           <div className="mb-4">
             <input
