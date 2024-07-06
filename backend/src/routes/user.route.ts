@@ -28,4 +28,6 @@ router.post(
   UserController.login
 );
 
+router.delete("/logout", UserController.logout);
+
 export const UserRoutes = router;

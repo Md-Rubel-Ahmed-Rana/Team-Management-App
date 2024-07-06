@@ -72,6 +72,19 @@ class Controller extends rootController_1.default {
                 data: null,
             });
         }));
+        this.logout = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            res.clearCookie("tmAccessToken", {
+                httpOnly: true,
+                sameSite: "none",
+                secure: true,
+            });
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Logout successful",
+                data: null,
+            });
+        }));
     }
 }
 exports.UserController = new Controller();
