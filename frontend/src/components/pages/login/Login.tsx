@@ -117,10 +117,13 @@ const Login = () => {
               </button>
             </div>
           </div>
-          <div className="text-center my-4">
-            <button className="outline-none" type="button">
+          <div className="my-4">
+            <Link
+              className="text-sm text-blue-500 underline"
+              href={"/forget-password"}
+            >
               Forget password?
-            </button>
+            </Link>
           </div>
           <div className="mt-6">
             <button
