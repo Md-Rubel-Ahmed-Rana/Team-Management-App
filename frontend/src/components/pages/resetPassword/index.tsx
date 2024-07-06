@@ -74,6 +74,7 @@ const ResetPasswordPage = () => {
     const params = new URLSearchParams(paths.split("?")[1]);
     const userId = params.get("userId");
     const token = params.get("token") as string;
+    console.log({ userId, token });
     if (token) {
       try {
         jwt.verify(
@@ -83,12 +84,15 @@ const ResetPasswordPage = () => {
 
         setUserId(userId);
       } catch (error) {
+        console.log({ error });
         setTokenError(
           "The token is expired or invalid. Please request a new password reset."
         );
       }
     }
   }, [router]);
+
+  console.log({ tokenError });
 
   const password = watch("password");
 
