@@ -23,6 +23,7 @@ const mapper_1 = require("../mapper");
 const user_entity_1 = require("@/entities/user.entity");
 const get_1 = require("@/dto/user/get");
 const update_1 = require("@/dto/user/update");
+const mail_util_1 = require("@/utils/mail.util");
 class Service {
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -81,6 +82,35 @@ class Service {
                 expiresIn: envConfig_1.config.jwt.accessTokenExpired,
             });
             return accessToken;
+        });
+    }
+    forgetPassword(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const isUserExist = yield user_model_1.default.findOne({ email: email });
+            if (!isUserExist) {
+                return false;
+            }
+            else {
+                const jwtPayload = {
+                    userId: isUserExist._id,
+                };
+                const token = jsonwebtoken_1.default.sign(jwtPayload, envConfig_1.config.jwt.accessTokenSecret, {
+                    expiresIn: "10m",
+                });
+                const encodedEmail = encodeURIComponent(isUserExist.email);
+                const encodedName = encodeURIComponent(isUserExist.name);
+                const link = `${envConfig_1.config.app.frontendDomain}?token=${token}&userId=${isUserExist._id}&email=${encodedEmail}&name=${encodedName}`;
+                const mailResult = yield mail_util_1.MailUtilService.sendResetPasswordLink(email, link);
+                return { user: isUserExist, messageId: mailResult.messageId };
+            }
+        });
+    }
+    resetPassword(userId, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const hashedPassword = yield bcrypt_1.default.hash(password, 12);
+            yield user_model_1.default.findByIdAndUpdate(userId, {
+                $set: { password: hashedPassword },
+            });
         });
     }
 }

@@ -30,4 +30,8 @@ router.post(
 
 router.delete("/logout", UserController.logout);
 
+router.post("/forget-password", UserController.forgetPassword);
+
+router.post("/reset-password", UserController.resetPassword);
+
 export const UserRoutes = router;
