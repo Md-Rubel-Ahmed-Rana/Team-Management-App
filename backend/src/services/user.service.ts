@@ -107,7 +107,7 @@ class Service {
       });
       const encodedEmail = encodeURIComponent(isUserExist.email);
       const encodedName = encodeURIComponent(isUserExist.name);
-      const link = `${config.app.frontendDomain}?token=${token}&userId=${isUserExist._id}&email=${encodedEmail}&name=${encodedName}`;
+      const link = `${config.app.frontendDomain}/reset-password?token=${token}&userId=${isUserExist._id}&email=${encodedEmail}&name=${encodedName}`;
       const mailResult = await MailUtilService.sendResetPasswordLink(
         email,
         link

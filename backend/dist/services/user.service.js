@@ -99,7 +99,7 @@ class Service {
                 });
                 const encodedEmail = encodeURIComponent(isUserExist.email);
                 const encodedName = encodeURIComponent(isUserExist.name);
-                const link = `${envConfig_1.config.app.frontendDomain}?token=${token}&userId=${isUserExist._id}&email=${encodedEmail}&name=${encodedName}`;
+                const link = `${envConfig_1.config.app.frontendDomain}/reset-password?token=${token}&userId=${isUserExist._id}&email=${encodedEmail}&name=${encodedName}`;
                 const mailResult = yield mail_util_1.MailUtilService.sendResetPasswordLink(email, link);
                 return { user: isUserExist, messageId: mailResult.messageId };
             }
