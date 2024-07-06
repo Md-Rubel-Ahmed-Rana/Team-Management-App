@@ -31,9 +31,9 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
     data.project = project.id;
     const result: any = await createTask(data);
     if (result?.data?.success) {
-      // window.location.reload();
-      // socket.emit("task", result?.data?.data?.data);
-      // socket.emit("notification", result?.data?.data?.notification);
+      window.location.reload();
+      socket.emit("task", result?.data?.data?.data);
+      socket.emit("notification", result?.data?.data?.notification);
       Swal.fire({
         position: "center",
         icon: "success",

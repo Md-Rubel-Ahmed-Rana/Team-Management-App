@@ -28,9 +28,9 @@ const TeamDetailsPage = () => {
   };
 
   // connect to socket team room
-  // useEffect(() => {
-  //   socket.emit("join-room", team?.id);
-  // }, [socket, team?.id]);
+  useEffect(() => {
+    socket?.emit("join-room", team?.id);
+  }, [socket, team?.id]);
 
   useEffect(() => {
     setActiveNav(router?.query?.collaborate);

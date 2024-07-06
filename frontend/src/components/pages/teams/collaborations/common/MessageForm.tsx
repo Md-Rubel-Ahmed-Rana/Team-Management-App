@@ -83,7 +83,7 @@ const MessageForm = ({ teamId, type }: Props) => {
       };
 
       const emitData: IMessage = { ...message, poster };
-      // socket.emit("message", emitData);
+      socket.emit("message", emitData);
       setRealTimeMessages((prev: IMessage[]) => [...prev, emitData]);
 
       setImagePreview([]);
