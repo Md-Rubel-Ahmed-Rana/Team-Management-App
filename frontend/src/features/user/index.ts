@@ -39,6 +39,14 @@ const userApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["user", "team"] as any,
     }),
+    logoutUser: builder.mutation({
+      query: () => ({
+        method: "DELETE",
+        url: `/user/logout`,
+        credentials: "include",
+      }),
+      invalidatesTags: ["user"] as any,
+    }),
   }),
 });
 
@@ -48,4 +56,5 @@ export const {
   useLoginUserMutation,
   useLoggedInUserQuery,
   useUpdateUserMutation,
+  useLogoutUserMutation,
 } = userApi;
