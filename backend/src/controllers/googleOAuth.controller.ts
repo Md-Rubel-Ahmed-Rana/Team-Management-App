@@ -9,7 +9,7 @@ class Controller extends RootController {
       const result: string = await GoogleOAuthService.login(req.user);
       res.cookie("tmAccessToken", result, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
         secure: true,
       });
       res.redirect(config.google.redirectUrl);
