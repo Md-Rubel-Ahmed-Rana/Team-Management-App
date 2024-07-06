@@ -62,6 +62,46 @@ class Controller extends RootController {
       data: null,
     });
   });
+
+  forgetPassword = this.catchAsync(async (req: Request, res: Response) => {
+    const { email } = req.body;
+    const result: any = await UserService.forgetPassword(email);
+    if (!result?.user) {
+      this.apiResponse(res, {
+        success: false,
+        statusCode: httpStatus.NOT_FOUND,
+        message: "User not found",
+        data: null,
+      });
+    } else if (result?.messageId) {
+      this.apiResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message:
+          "Reset password link was send to your mail. Please check your inbox",
+        data: null,
+      });
+    } else {
+      this.apiResponse(res, {
+        success: false,
+        statusCode: httpStatus.BAD_REQUEST,
+        message: "Something went wrong to send reset email",
+        data: null,
+      });
+    }
+  });
+
+  resetPassword = this.catchAsync(async (req: Request, res: Response) => {
+    const { userId, password } = req.body;
+    await UserService.resetPassword(userId, password);
+    this.apiResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Your password was changed",
+      data: null,
+    });
+  });
+
   logout = this.catchAsync(async (req: Request, res: Response) => {
     res.clearCookie("tmAccessToken", {
       httpOnly: true,

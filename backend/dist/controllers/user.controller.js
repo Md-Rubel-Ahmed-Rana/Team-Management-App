@@ -72,6 +72,44 @@ class Controller extends rootController_1.default {
                 data: null,
             });
         }));
+        this.forgetPassword = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { email } = req.body;
+            const result = yield user_service_1.UserService.forgetPassword(email);
+            if (!(result === null || result === void 0 ? void 0 : result.user)) {
+                this.apiResponse(res, {
+                    success: false,
+                    statusCode: http_status_1.default.NOT_FOUND,
+                    message: "User not found",
+                    data: null,
+                });
+            }
+            else if (result === null || result === void 0 ? void 0 : result.messageId) {
+                this.apiResponse(res, {
+                    success: true,
+                    statusCode: http_status_1.default.OK,
+                    message: "Reset password link was send to your mail. Please check your inbox",
+                    data: null,
+                });
+            }
+            else {
+                this.apiResponse(res, {
+                    success: false,
+                    statusCode: http_status_1.default.BAD_REQUEST,
+                    message: "Something went wrong to send reset email",
+                    data: null,
+                });
+            }
+        }));
+        this.resetPassword = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { userId, password } = req.body;
+            yield user_service_1.UserService.resetPassword(userId, password);
+            this.apiResponse(res, {
+                success: true,
+                statusCode: http_status_1.default.OK,
+                message: "Your password was changed",
+                data: null,
+            });
+        }));
         this.logout = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             res.clearCookie("tmAccessToken", {
                 httpOnly: true,
