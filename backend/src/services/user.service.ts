@@ -10,6 +10,7 @@ import { UserEntity } from "@/entities/user.entity";
 import { GetUserDTO } from "@/dto/user/get";
 import { ModelIdentifier } from "@automapper/core";
 import { UpdateUserDTO } from "@/dto/user/update";
+import { MailUtilService } from "@/utils/mail.util";
 
 class Service {
   async getAllUsers(): Promise<GetUserDTO[]> {
@@ -90,6 +91,36 @@ class Service {
     });
 
     return accessToken;
+  }
+
+  async forgetPassword(email: string) {
+    const isUserExist = await User.findOne({ email: email });
+
+    if (!isUserExist) {
+      return false;
+    } else {
+      const jwtPayload = {
+        userId: isUserExist._id,
+      };
+      const token = jwt.sign(jwtPayload, config.jwt.accessTokenSecret, {
+        expiresIn: "10m",
+      });
+      const encodedEmail = encodeURIComponent(isUserExist.email);
+      const encodedName = encodeURIComponent(isUserExist.name);
+      const link = `${config.app.frontendDomain}?token=${token}&userId=${isUserExist._id}&email=${encodedEmail}&name=${encodedName}`;
+      const mailResult = await MailUtilService.sendResetPasswordLink(
+        email,
+        link
+      );
+      return { user: isUserExist, messageId: mailResult.messageId };
+    }
+  }
+
+  async resetPassword(userId: string, password: string) {
+    const hashedPassword = await bcrypt.hash(password, 12);
+    await User.findByIdAndUpdate(userId, {
+      $set: { password: hashedPassword },
+    });
   }
 }
 
