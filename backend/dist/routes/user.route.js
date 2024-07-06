@@ -16,4 +16,6 @@ router.get("/auth", auth_1.default, user_controller_1.UserController.auth);
 router.patch("/update/:id", (0, validateRequest_1.default)(user_validation_1.UserValidationSchema.updateZodSchema), user_controller_1.UserController.updateUser);
 router.post("/login", (0, validateRequest_1.default)(user_validation_1.UserValidationSchema.loginZodSchema), user_controller_1.UserController.login);
 router.delete("/logout", user_controller_1.UserController.logout);
+router.post("/forget-password", user_controller_1.UserController.forgetPassword);
+router.post("/reset-password", user_controller_1.UserController.resetPassword);
 exports.UserRoutes = router;
