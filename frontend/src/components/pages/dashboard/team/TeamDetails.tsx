@@ -16,8 +16,8 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
   const [isRemove, setIsRemove] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { data: userData } = useLoggedInUserQuery({});
-  const [leaveTeam] = useLeaveTeamRequestMutation();
   const user: IUser = userData?.data;
+  const [leaveTeam] = useLeaveTeamRequestMutation();
   const { data: teamLeaveRequests } = useGetMemberLeaveTeamRequestQuery(
     user?.id
   );

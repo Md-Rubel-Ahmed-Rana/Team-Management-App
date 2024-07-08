@@ -1,13 +1,23 @@
 import { useState } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { SubmitHandler, useForm } from "react-hook-form";
+import {
+  useChangePasswordMutation,
+  useLoggedInUserQuery,
+} from "@/features/user";
+import { IUser } from "@/interfaces/user.interface";
+import Swal from "sweetalert2";
 
 type FormData = {
   newPassword: string;
   oldPassword: string;
 };
 
-const ChangePassword = () => {
+type Props = {
+  setActiveView: any;
+};
+
+const ChangePassword = ({ setActiveView }: Props) => {
   const [togglePassword, setTogglePassword] = useState<{
     newPassword: boolean;
     oldPassword: boolean;
@@ -22,9 +32,41 @@ const ChangePassword = () => {
     watch,
     formState: { errors },
   } = useForm<FormData>({ mode: "onChange" });
+  const [changePassword] = useChangePasswordMutation();
+  const { data: userData } = useLoggedInUserQuery({});
+  const user: IUser = userData?.data;
 
   const handleChangePassword: SubmitHandler<FormData> = async (data) => {
-    console.log(data);
+    const payload = { ...data, userId: user.id };
+    const result: any = await changePassword(payload);
+    if (result?.data?.success === false) {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Invalid credentials",
+        text: result?.data?.message,
+        showConfirmButton: true,
+        timer: 2500,
+      });
+    } else if (result?.data?.statusCode === 200) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: result?.data?.message,
+        showConfirmButton: false,
+        timer: 2500,
+      });
+      setActiveView("profile");
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "There was a problem to change password",
+        text: result?.error?.data?.message,
+        showConfirmButton: true,
+        timer: 2500,
+      });
+    }
   };
 
   const handleTogglePassword = (type: string) => {

@@ -11,7 +11,7 @@ import TopBar from "./navigationBars/TopBar";
 import ChangePassword from "./changePassword";
 
 const Dashboard = () => {
-  const [activeView, setActiveView] = useState("");
+  const [activeView, setActiveView] = useState<any>("");
   const { query }: any = useRouter();
 
   useEffect(() => {
@@ -36,7 +36,9 @@ const Dashboard = () => {
           {activeView === "leave-requests" && <LeaveRequests />}
           {activeView === "profile" && <ProfilePage />}
           {activeView === "payments" && <PaymentPage />}
-          {activeView === "change-password" && <ChangePassword />}
+          {activeView === "change-password" && (
+            <ChangePassword setActiveView={setActiveView} />
+          )}
         </main>
       </div>
     </div>
