@@ -9,6 +9,7 @@ import { useLoggedInUserQuery, useLogoutUserMutation } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { CgProfile } from "react-icons/cg";
 import { TbBrandTeams } from "react-icons/tb";
+import { RiLockPasswordFill } from "react-icons/ri";
 import {
   MdInsertInvitation,
   MdOutlineLogout,
@@ -123,6 +124,15 @@ const Sidebar = ({ setActiveView, activeView }: any) => {
       >
         <MdOutlinePayment />
         <small>Payments</small>
+      </button>
+      <button
+        className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600  rounded-md text-left focus:outline-none ${
+          activeView === "change-password" && "bg-gray-100 dark:bg-gray-600"
+        }`}
+        onClick={() => handleSidebarNavigate("change-password")}
+      >
+        <RiLockPasswordFill />
+        <small>Change Password</small>
       </button>
       <button
         className="py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600  rounded-md  text-left focus:outline-none"
