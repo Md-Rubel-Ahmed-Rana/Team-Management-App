@@ -141,6 +141,19 @@ const TopBar = ({ setActiveView, activeView }: any) => {
             <small>Payments</small>
           </button>
         </option>
+        <option
+          selected={activeView === "change-password"}
+          value="change-password"
+        >
+          <button
+            className={`py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600  rounded-md text-left focus:outline-none ${
+              activeView === "change-password" && "bg-gray-100 dark:bg-gray-600"
+            }`}
+            onClick={() => handleSidebarNavigate("change-password")}
+          >
+            <small>Change Password</small>
+          </button>
+        </option>
         <option value="logout">
           <button
             className="py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600  rounded-md  text-left focus:outline-none"
