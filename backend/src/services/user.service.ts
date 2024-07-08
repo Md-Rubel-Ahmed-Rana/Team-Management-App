@@ -122,6 +122,26 @@ class Service {
       $set: { password: hashedPassword },
     });
   }
+  async changePassword(
+    userId: string,
+    oldPassword: string,
+    newPassword: string
+  ) {
+    const user = await User.findById(userId);
+    const isPassMatch = await bcrypt.compare(
+      oldPassword,
+      user?.password as string
+    );
+    if (!isPassMatch) {
+      return false;
+    } else {
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      await User.findByIdAndUpdate(userId, {
+        $set: { password: hashedPassword },
+      });
+      return true;
+    }
+  }
 }
 
 export const UserService = new Service();

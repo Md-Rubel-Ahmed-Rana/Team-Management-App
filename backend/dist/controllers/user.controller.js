@@ -110,6 +110,26 @@ class Controller extends rootController_1.default {
                 data: null,
             });
         }));
+        this.changePassword = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { userId, oldPassword, newPassword } = req.body;
+            const result = yield user_service_1.UserService.changePassword(userId, oldPassword, newPassword);
+            if (!result) {
+                this.apiResponse(res, {
+                    success: false,
+                    statusCode: http_status_1.default.OK,
+                    message: "Your old password was not correct",
+                    data: null,
+                });
+            }
+            else {
+                this.apiResponse(res, {
+                    success: true,
+                    statusCode: http_status_1.default.OK,
+                    message: "Your password was changed",
+                    data: null,
+                });
+            }
+        }));
         this.logout = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             res.clearCookie("tmAccessToken", {
                 httpOnly: true,
