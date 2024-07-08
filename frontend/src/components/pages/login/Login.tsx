@@ -50,7 +50,7 @@ const Login = () => {
     <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         <form
-          className="shadow-2xl px-10 py-5 rounded-md"
+          className="lg:shadow-2xl lg:px-10 py-5 rounded-md"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div>
