@@ -8,6 +8,7 @@ import PendingInvitation from "./invitation/PendingInvitation";
 import { useRouter } from "next/router";
 import LeaveRequests from "./leaveRequest/LeaveRequests";
 import TopBar from "./navigationBars/TopBar";
+import ChangePassword from "./changePassword";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("");
@@ -35,6 +36,7 @@ const Dashboard = () => {
           {activeView === "leave-requests" && <LeaveRequests />}
           {activeView === "profile" && <ProfilePage />}
           {activeView === "payments" && <PaymentPage />}
+          {activeView === "change-password" && <ChangePassword />}
         </main>
       </div>
     </div>
