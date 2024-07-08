@@ -102,6 +102,30 @@ class Controller extends RootController {
     });
   });
 
+  changePassword = this.catchAsync(async (req: Request, res: Response) => {
+    const { userId, oldPassword, newPassword } = req.body;
+    const result = await UserService.changePassword(
+      userId,
+      oldPassword,
+      newPassword
+    );
+    if (!result) {
+      this.apiResponse(res, {
+        success: false,
+        statusCode: httpStatus.OK,
+        message: "Your old password was not correct",
+        data: null,
+      });
+    } else {
+      this.apiResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Your password was changed",
+        data: null,
+      });
+    }
+  });
+
   logout = this.catchAsync(async (req: Request, res: Response) => {
     res.clearCookie("tmAccessToken", {
       httpOnly: true,

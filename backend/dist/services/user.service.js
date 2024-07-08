@@ -113,5 +113,21 @@ class Service {
             });
         });
     }
+    changePassword(userId, oldPassword, newPassword) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield user_model_1.default.findById(userId);
+            const isPassMatch = yield bcrypt_1.default.compare(oldPassword, user === null || user === void 0 ? void 0 : user.password);
+            if (!isPassMatch) {
+                return false;
+            }
+            else {
+                const hashedPassword = yield bcrypt_1.default.hash(newPassword, 12);
+                yield user_model_1.default.findByIdAndUpdate(userId, {
+                    $set: { password: hashedPassword },
+                });
+                return true;
+            }
+        });
+    }
 }
 exports.UserService = new Service();
