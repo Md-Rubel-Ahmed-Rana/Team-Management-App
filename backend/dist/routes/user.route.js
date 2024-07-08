@@ -18,4 +18,5 @@ router.post("/login", (0, validateRequest_1.default)(user_validation_1.UserValid
 router.delete("/logout", user_controller_1.UserController.logout);
 router.post("/forget-password", user_controller_1.UserController.forgetPassword);
 router.post("/reset-password", user_controller_1.UserController.resetPassword);
+router.post("/change-password", user_controller_1.UserController.changePassword);
 exports.UserRoutes = router;
