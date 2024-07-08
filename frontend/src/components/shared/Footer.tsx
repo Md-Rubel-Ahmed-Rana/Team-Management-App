@@ -23,8 +23,8 @@ const socialIcons = [
 
 const Footer = () => {
   return (
-    <footer className="shadow-lg p-16">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+    <footer className="shadow-lg  lg:p-16">
+      <div className="flex flex-col md:flex-row justify-between  items-center">
         <div className="mb-8 md:mb-0">
           <h1 className="text-2xl font-bold mb-2">Team Manager</h1>
           <p className="text-sm">Streamlining teamwork for success.</p>
