@@ -8,7 +8,6 @@ import { IUser } from "@/interfaces/user.interface";
 import { useLoggedInUserQuery, useLogoutUserMutation } from "@/features/user";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import Cookies from "js-cookie";
 import { useGetNotificationQuery } from "@/features/notification";
 import { INotification } from "@/interfaces/notification.interface";
 import { SocketContext } from "@/context/SocketContext";
@@ -118,13 +117,13 @@ const Navbar = () => {
               query: { uId: user?.id, activeView: "profile" },
             }}
             className={`${
-              !user.profile_picture && "border m-2 p-2 rounded-full"
+              !user?.profile_picture && "border m-2 p-2 rounded-full"
             }`}
           >
-            {user.profile_picture ? (
+            {user?.profile_picture ? (
               <img
                 className="w-10 h-10 rounded-full"
-                src={user.profile_picture}
+                src={user?.profile_picture}
                 alt=""
               />
             ) : (
@@ -185,12 +184,14 @@ const Navbar = () => {
                   pathname: "/dashboard",
                   query: { uId: user?.id, activeView: "profile" },
                 }}
-                className={`${!user.profile_picture && "border  rounded-full"}`}
+                className={`${
+                  !user?.profile_picture && "border  rounded-full"
+                }`}
               >
-                {user.profile_picture ? (
+                {user?.profile_picture ? (
                   <img
                     className="w-10 h-10 rounded-full"
-                    src={user.profile_picture}
+                    src={user?.profile_picture}
                     alt=""
                   />
                 ) : (
@@ -227,7 +228,7 @@ const Navbar = () => {
               </>
             )}
 
-            {user.email && (
+            {user?.email && (
               <>
                 <button
                   className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
