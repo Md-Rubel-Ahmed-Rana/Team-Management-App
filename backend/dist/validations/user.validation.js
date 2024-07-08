@@ -6,7 +6,7 @@ const registerZodSchema = zod_1.z.object({
     body: zod_1.z
         .object({
         name: zod_1.z.string().min(1).max(255),
-        profile_picture: zod_1.z.string(),
+        profile_picture: zod_1.z.string().optional(),
         email: zod_1.z.string().email(),
         department: zod_1.z.string().min(1).max(255),
         designation: zod_1.z.string().min(1).max(255),
