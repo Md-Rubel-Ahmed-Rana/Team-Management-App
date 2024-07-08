@@ -137,12 +137,12 @@ const Navbar = () => {
         <div>
           {!toggle && (
             <button onClick={() => setToggle(!toggle)}>
-              <FaBars />
+              <FaBars className="text-3xl" />
             </button>
           )}
           {toggle && (
             <button onClick={() => setToggle(!toggle)}>
-              <BiX className="text-xl" />
+              <BiX className="text-3xl" />
             </button>
           )}
         </div>
@@ -202,30 +202,67 @@ const Navbar = () => {
         </div>
       </div>
       {toggle && (
-        <div className="flex lg:hidden flex-col gap-3 z-10 absolute top-20 w-full  p-10 bg-gray-200">
-          <button onClick={() => setToggle(false)}>
-            <Link href="/">Home</Link>
-          </button>
-          <button onClick={() => setToggle(false)}>Availability</button>
-          <button onClick={() => setToggle(false)}>Integration</button>
-          <button onClick={() => setToggle(false)}>Community</button>
-          {!user?.email && (
-            <>
-              <button onClick={() => setToggle(false)}>
-                <Link href="/signup">Signup</Link>
-              </button>
-              <button onClick={() => setToggle(false)}>
-                <Link href="/login">Login</Link>
-              </button>
-            </>
-          )}
-
-          {user?.email && (
-            <button onClick={() => setToggle(false)}>
-              <Link href="/teams">My Teams</Link>
+        <div className="flex justify-center items-center">
+          <div className="w-[90%] flex lg:hidden rounded-md flex-col text-start gap-3 z-10 absolute top-20 p-3 shadow-lg dark:bg-gray-700 bg-gray-100">
+            <button
+              className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+              onClick={() => setToggle(false)}
+            >
+              <Link href="/">Home</Link>
             </button>
-          )}
-          {user?.email && <button onClick={handleLogOut}>Logout</button>}
+            {!user?.email && (
+              <>
+                <button
+                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  onClick={() => setToggle(false)}
+                >
+                  <Link href="/signup">Signup</Link>
+                </button>
+                <button
+                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  onClick={() => setToggle(false)}
+                >
+                  <Link href="/login">Login</Link>
+                </button>
+              </>
+            )}
+
+            {user.email && (
+              <>
+                <button
+                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  onClick={() => setToggle(false)}
+                >
+                  <Link href="/teams">My Teams</Link>
+                </button>
+                <button
+                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  onClick={() => setToggle(false)}
+                >
+                  <Link
+                    href={{
+                      pathname: "dashboard",
+                      query: `uId=${user?.id}&activeView=joined-teams`,
+                    }}
+                  >
+                    Joined Teams
+                  </Link>
+                </button>
+                <button
+                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  onClick={() => setToggle(false)}
+                >
+                  <Link href="/projects">Projects</Link>
+                </button>
+                <button
+                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  onClick={handleLogOut}
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
         </div>
       )}
       {isOpen && (
