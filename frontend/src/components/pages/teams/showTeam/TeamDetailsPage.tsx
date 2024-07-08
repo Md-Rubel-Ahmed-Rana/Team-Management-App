@@ -85,9 +85,9 @@ const TeamDetailsPage = () => {
           </ul>
         </nav>
         <div>
-          {activeNav === "Announcement" && <Announcement teamId={team?.id} />}
-          {activeNav === "Resources" && <Resources teamId={team?.id} />}
-          {activeNav === "Discussion" && <Discussion teamId={team?.id} />}
+          {activeNav === "Announcement" && <Announcement team={team} />}
+          {activeNav === "Resources" && <Resources team={team} />}
+          {activeNav === "Discussion" && <Discussion team={team} />}
         </div>
       </div>
     </div>

@@ -21,7 +21,7 @@ const TeamDetailsMobilePage = () => {
       setActive(text);
     }
   };
-  
+
   return (
     <div>
       {!isChat && (
