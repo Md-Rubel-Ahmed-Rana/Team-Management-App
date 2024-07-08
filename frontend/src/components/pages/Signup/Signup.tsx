@@ -5,7 +5,6 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useRouter } from "next/router";
 import { IUser } from "@/interfaces/user.interface";
 import { useCreateUserMutation } from "@/features/user";
-import useUploadFile from "@/hooks/useUploadFile";
 import GoogleLogin from "@/components/shared/GoogleLogin";
 
 const Signup = () => {
@@ -13,14 +12,12 @@ const Signup = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IUser>();
+  } = useForm<IUser>({ mode: "onChange" });
   const router = useRouter();
   const [createUser] = useCreateUserMutation();
-  const [profilePicture, setProfilePicture] = useState("");
   const [togglePassword, setTogglePassword] = useState(false);
 
   const handleRegister: SubmitHandler<IUser> = async (data) => {
-    data.profile_picture = profilePicture;
     const result: any = await createUser(data);
     if (result?.data?.success) {
       if (result?.data?.success) {
@@ -44,19 +41,11 @@ const Signup = () => {
     }
   };
 
-  const uploadFile = useUploadFile();
-
-  const handleFileChange = async (e: any) => {
-    const selectedFile = e.target.files[0];
-    const uploadedFile: any = await uploadFile(selectedFile);
-    setProfilePicture(uploadedFile?.url);
-  };
-
   return (
     <div className="flex items-center justify-center py-5 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[620px] w-full">
         <form
-          className="shadow-2xl lg:px-10 px-5 py-5 rounded-md"
+          className="lg:shadow-2xl lg:px-10 py-5 rounded-md"
           onSubmit={handleSubmit(handleRegister)}
         >
           <div>
@@ -137,19 +126,6 @@ const Signup = () => {
                   {errors.designation.message}
                 </p>
               )}
-            </div>
-            <div className="my-5">
-              <label htmlFor="profile_picture">Profile Picture</label>
-              <input
-                aria-label="Profile Image"
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
-                  errors.profile_picture ? "border-red-500" : "border-gray-300"
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                placeholder="Email address"
-              />
             </div>
             <div className="-mt-px relative">
               <label htmlFor="password">Password</label>
