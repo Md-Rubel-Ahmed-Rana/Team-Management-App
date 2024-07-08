@@ -13,52 +13,30 @@ type Props = {
 const Chat = ({ team, handleActive }: Props) => {
   const [activeChat, setActiveChat] = useState("Discussion");
   return (
-    <div className="p-4">
+    <div className="lg:p-4 px-4">
       <div>
         <button
           onClick={() => handleActive("Team info")}
-          className="flex text-xl items-center bg-gray-200 dark:bg-gray-600 px-4 py-2 gap-2 rounded-md mb-4 font-semibold"
+          className="flex text-xl items-center bg-gray-200 dark:bg-gray-600 px-4 py-1 lg:py-2 gap-2 rounded-md mb-4 font-semibold"
         >
           <MdOutlineArrowBackIos />
           <small>Back</small>
         </button>
       </div>
-      <div className="flex justify-between items-center gap-3">
-        <p className="w-1/3">
-          <button
-            onClick={() => setActiveChat("Announcement")}
-            className={`border w-full px-4 py-2 rounded-md ${
-              activeChat === "Announcement" && "bg-gray-200 dark:bg-gray-600"
-            }`}
-          >
-            Announcement
-          </button>
-        </p>
-        <p className="w-1/3">
-          <button
-            onClick={() => setActiveChat("Resources")}
-            className={`border w-full px-4 py-2 rounded-md  ${
-              activeChat === "Resources" && "bg-gray-200 dark:bg-gray-600"
-            }`}
-          >
-            Resources
-          </button>
-        </p>
-        <p className="w-1/3">
-          <button
-            onClick={() => setActiveChat("Discussion")}
-            className={`border w-full px-4 py-2 rounded-md   ${
-              activeChat === "Discussion" && "bg-gray-200 dark:bg-gray-600"
-            }`}
-          >
-            Discussion
-          </button>
-        </p>
-      </div>
+      <select
+        className="border-2 w-full border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500 flex-grow"
+        name="category"
+        id="category"
+        onChange={(e: any) => setActiveChat(e.target.value)}
+      >
+        <option value="Announcement">Announcement</option>
+        <option value="Resources">Resources</option>
+        <option value="Discussion">Discussion</option>
+      </select>
       <div>
-        {activeChat === "Announcement" && <Announcement teamId={team?.id} />}
-        {activeChat === "Resources" && <Resources teamId={team?.id} />}
-        {activeChat === "Discussion" && <Discussion teamId={team?.id} />}
+        {activeChat === "Announcement" && <Announcement team={team} />}
+        {activeChat === "Resources" && <Resources team={team} />}
+        {activeChat === "Discussion" && <Discussion team={team} />}
       </div>
     </div>
   );

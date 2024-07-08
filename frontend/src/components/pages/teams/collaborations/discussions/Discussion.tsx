@@ -2,19 +2,20 @@ import React from "react";
 import ShowMessages from "../common/ShowMessages";
 import MessageForm from "../common/MessageForm";
 import { useGetMessagesByTypeQuery } from "@/features/message";
+import { ITeam } from "@/interfaces/team.interface";
 
 type Props = {
-  teamId: string;
+  team: ITeam;
 };
-const Discussion = ({ teamId }: Props) => {
+const Discussion = ({ team }: Props) => {
   const { data: messageData } = useGetMessagesByTypeQuery({
     type: "discussion",
-    conversationId: teamId,
+    conversationId: team?.id,
   });
   return (
     <div>
-      <ShowMessages messages={messageData?.data} />
-      <MessageForm teamId={teamId} type={"discussion"} />
+      <ShowMessages team={team} messages={messageData?.data} />
+      <MessageForm teamId={team?.id} type={"discussion"} />
     </div>
   );
 };

@@ -13,12 +13,14 @@ import toast from "react-hot-toast";
 import { FaRegTrashAlt, FaPencilAlt } from "react-icons/fa";
 import moment from "moment";
 import { formattedDate } from "@/utils/formattedDate";
+import { ITeam } from "@/interfaces/team.interface";
 
 interface Props {
   messages: IMessage[];
+  team: ITeam;
 }
 
-const ShowMessages = ({ messages }: Props) => {
+const ShowMessages = ({ messages, team }: Props) => {
   const { socket, realTimeMessages, setRealTimeMessages }: any =
     useContext(SocketContext);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -94,16 +96,16 @@ const ShowMessages = ({ messages }: Props) => {
   return (
     <div
       ref={messagesContainerRef}
-      className="mx-auto mt-8 h-60  overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
+      className="mx-auto mt-8 h-screen  overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
     >
       {realTimeMessages?.map((post: IMessage, index: number) => (
         <div
           key={post?.id}
-          className="mx-auto shadow-lg rounded-md p-6 mb-8"
+          className="mx-auto border-b py-6"
           onMouseOver={() => setIsEdit({ index: index, status: true })}
           onMouseLeave={() => setIsEdit({ index: 0, status: false })}
         >
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center mb-4">
               <img
                 src={post?.poster?.profile_picture}
@@ -111,44 +113,49 @@ const ShowMessages = ({ messages }: Props) => {
                 className="w-10 h-10 rounded-full mr-4"
               />
               <div className="flex flex-col gap-1">
-                <span className="font-bold">{post?.poster?.name}</span>
+                <span className="font-bold text-xs lg:text-lg">
+                  {post?.poster?.name}
+                </span>
                 <span className="text-sm text-gray-500">
                   {moment(post?.createdAt).fromNow()}
                 </span>
               </div>
             </div>
-            {isEdit.status &&
-              isEdit.index === index &&
-              user.id === post?.poster?.id && (
+            {(isEdit.status &&
+              isEdit?.index === index &&
+              user?.id === post?.poster?.id) ||
+              (user?.id === team?.admin?.id && (
                 <div className="flex items-center gap-3 mb-4">
-                  <button
-                    title="Edit Message"
-                    onClick={() =>
-                      setIsEditMessage({ id: post?.id, status: true })
-                    }
-                    className="bg-gray-400 p-2 rounded-md text-white"
-                  >
-                    <FaPencilAlt />
-                  </button>
+                  {user.id === post.poster.id && (
+                    <button
+                      title="Edit Message"
+                      onClick={() =>
+                        setIsEditMessage({ id: post?.id, status: true })
+                      }
+                      className="bg-gray-400 p-2 rounded-md text-white"
+                    >
+                      <FaPencilAlt className="text-xs lg:text-xl" />
+                    </button>
+                  )}
                   <button
                     title="Delete Message"
                     onClick={() => handleDeleteMessage(post?.id)}
                     className="bg-gray-400 p-2 rounded-md text-white"
                   >
-                    <FaRegTrashAlt />
+                    <FaRegTrashAlt className="text-xs lg:text-xl" />
                   </button>
                 </div>
-              )}
+              ))}
           </div>
-          {isEditMessage.status && isEditMessage.id === post?.id ? (
-            <div className="flex flex-col gap-3">
+          {isEditMessage?.status && isEditMessage.id === post?.id ? (
+            <div className="flex flex-col gap-1 mb-2">
               <p>
                 <textarea
                   defaultValue={post.text}
                   onChange={(e) => setEditedMessage(e.target.value)}
                   name="text"
                   id="text"
-                  className="border-2 border-gray-300 px-2 w-full rounded-md focus:outline-none focus:border-blue-500 flex-grow"
+                  className="border-2 border-gray-300 p-2 w-full rounded-md focus:outline-none focus:border-blue-500"
                 />
               </p>
               <p className="flex gap-2">

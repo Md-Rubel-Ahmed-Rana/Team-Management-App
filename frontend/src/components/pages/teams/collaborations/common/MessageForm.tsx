@@ -147,7 +147,7 @@ const MessageForm = ({ teamId, type }: Props) => {
   };
 
   return (
-    <div className="mx-auto bg-gray-200 dark:bg-gray-700 shadow-md px-6 py-2 rounded-md mt-8">
+    <div className="mx-auto bg-gray-200 dark:bg-gray-700 shadow-md lg:px-6 p-2 lg:py-2 rounded-md mt-8 mb-40 lg:mb-0">
       {/* Image Preview Section */}
       {imagePreview.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">
@@ -209,14 +209,17 @@ const MessageForm = ({ teamId, type }: Props) => {
 
       <form
         onSubmit={handleSubmit(handleSendMessage)}
-        className="flex  gap-3 items-center"
+        className="flex  lg:gap-3 gap-2 items-center"
       >
-        <label className="cursor-pointer" onClick={openLinkModal}>
+        <label
+          className="hidden lg:block cursor-pointer"
+          onClick={openLinkModal}
+        >
           <FaLink className="text-blue-500 hover:underline" />
           <input type="text" {...register("links")} className="hidden" />
         </label>
 
-        <label htmlFor="images" className="cursor-pointer">
+        <label htmlFor="images" className="hidden lg:block cursor-pointer">
           <FaImage className="text-blue-500 hover:underline" />
           <input
             type="file"
@@ -229,7 +232,7 @@ const MessageForm = ({ teamId, type }: Props) => {
           />
         </label>
 
-        <label htmlFor="files" className="cursor-pointer">
+        <label htmlFor="files" className="hidden lg:block cursor-pointer">
           <FaFile
             title="Only pdf and video file supported"
             className="text-blue-500 hover:underline"
