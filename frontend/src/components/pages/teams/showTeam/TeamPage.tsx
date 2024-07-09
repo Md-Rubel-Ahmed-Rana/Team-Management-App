@@ -44,14 +44,14 @@ const Teams = () => {
             <h2 className="text-2xl font-bold my-2">{team.name}</h2>
             <h4 className="text-xl font-semibold mb-3">{team.category}</h4>
             <p className="w-full mb-10">{team.description}</p>
-            <div>
-              <p className="absolute bottom-3 left-8 border font-medium px-5 py-2 rounded-md flex items-center gap-1">
+            <div className="flex justify-between items-center gap-2 absolute bottom-4 w-full right-0 left-0 px-5">
+              <p className="border font-medium px-2 lg:px-5 py-1 lg:py-2 rounded-md flex items-center gap-1">
                 <span> Members: </span>
                 <span>{Number(team.activeMembers?.length)}</span>
               </p>
-              <p className="absolute bottom-5 right-8">
+              <p>
                 <Link
-                  className="border font-medium px-5 py-2 rounded-md"
+                  className="border font-medium px-2  lg:px-5 py-2 rounded-md"
                   href={{
                     pathname: `/teams/${team.id}`,
                     query: {

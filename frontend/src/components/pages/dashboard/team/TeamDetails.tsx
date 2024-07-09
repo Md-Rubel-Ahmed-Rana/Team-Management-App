@@ -98,23 +98,23 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
         <div className="flex flex-col md:flex-row items-center gap-5">
           {admin.id === user.id && (
             <>
-              <p>
+              <p className="w-full lg:w-auto">
                 <button
                   onClick={() => setIsOpen(true)}
-                  className="mx-auto outline-none border px-5 py-2 rounded-lg"
+                  className="mx-auto outline-none border w-full lg:w-auto px-5 py-2 rounded-lg"
                 >
                   Add members
                 </button>
               </p>
-              <p>
+              <p className="w-full lg:w-auto">
                 <button
                   onClick={() => setIsRemove(true)}
-                  className="mx-auto  border px-5 py-2 rounded-lg"
+                  className="mx-auto  border px-5 py-2 rounded-lg w-full lg:w-auto"
                 >
                   Remove members
                 </button>
               </p>
-              <p>
+              <p className="w-full lg:w-auto">
                 <Link
                   href={{
                     pathname: `/teams/edit-team/${team?.id}`,
@@ -126,7 +126,7 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
                     },
                   }}
                 >
-                  <button className="mx-auto  border px-5 py-2 rounded-lg">
+                  <button className="mx-auto  border px-5 py-2 w-full lg:w-auto rounded-lg">
                     Edit Team
                   </button>
                 </Link>
@@ -134,20 +134,20 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
             </>
           )}
           {admin?.id !== user?.id && (
-            <p>
+            <p className="w-full lg:w-auto">
               <button
                 onClick={handleRequestToLeave}
                 disabled={teamIds?.includes(id)}
                 className={` ${
                   teamIds?.includes(id) ? "cursor-not-allowed" : "shadow-md"
-                } mx-auto outline-none  border px-5 py-2 rounded-lg`}
+                } mx-auto outline-none  border px-5 py-2 rounded-lg w-full lg:w-auto`}
               >
                 {teamIds?.includes(id) ? "Requested" : "Request to leave"}
               </button>
             </p>
           )}
 
-          <p>
+          <p className="w-full lg:w-auto">
             <Link
               href={{
                 pathname: `/teams/${team?.id}`,
@@ -158,7 +158,7 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
                 },
               }}
             >
-              <button className="font-medium border px-5 py-2 rounded-md">
+              <button className="font-medium w-full border px-5 py-2 rounded-md lg:w-auto">
                 View details
               </button>
             </Link>

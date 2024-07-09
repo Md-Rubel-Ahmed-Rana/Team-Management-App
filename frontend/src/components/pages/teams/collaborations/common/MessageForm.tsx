@@ -46,7 +46,7 @@ const MessageForm = ({ teamId, type }: Props) => {
   const uploadImages = useUploadMultipleImage();
   const uploadFiles = useUploadMultipleFile();
   const [sendMessage] = useSendMessageMutation();
-  const [isMessage, setIsMessage] = useState(false);
+  const [isMessage, setIsMessage] = useState<any>({ status: false, value: "" });
 
   const openLinkModal = () => {
     setShowLinkModal(true);
@@ -73,6 +73,8 @@ const MessageForm = ({ teamId, type }: Props) => {
     data.poster = user.id;
     data.conversationId = teamId;
     data.type = type;
+    data.text = data?.text || isMessage?.value;
+    console.log({ payload: data });
     const result: any = await sendMessage(data);
     if (result?.data?.success) {
       const message = result?.data?.data;
@@ -249,10 +251,17 @@ const MessageForm = ({ teamId, type }: Props) => {
         </label>
 
         <input
+          autoFocus
           type="text"
           {...register("text")}
+          name="text"
           placeholder="Type your message..."
-          onChange={(e) => setIsMessage(e.target.value ? true : false)}
+          onChange={(e) =>
+            setIsMessage({
+              status: e.target.value ? true : false,
+              value: e.target.value,
+            })
+          }
           className="border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500 flex-grow"
         />
 
@@ -261,14 +270,14 @@ const MessageForm = ({ teamId, type }: Props) => {
             links.length <= 0 &&
             filePreview.length <= 0 &&
             imagePreview.length <= 0 &&
-            !isMessage
+            !isMessage?.status
           }
           type="submit"
           className={`${
             links.length <= 0 &&
             filePreview.length <= 0 &&
             imagePreview.length <= 0 &&
-            !isMessage
+            !isMessage?.status
               ? "bg-gray-500 hover:bg-gray-600"
               : "bg-blue-500 hover:bg-blue-600"
           } text-white px-4 py-2 rounded-md  focus:outline-none`}

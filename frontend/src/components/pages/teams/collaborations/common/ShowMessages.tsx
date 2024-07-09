@@ -11,6 +11,7 @@ import { IUser } from "@/interfaces/user.interface";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaRegTrashAlt, FaPencilAlt } from "react-icons/fa";
+import { HiDotsVertical } from "react-icons/hi";
 import moment from "moment";
 import { formattedDate } from "@/utils/formattedDate";
 import { ITeam } from "@/interfaces/team.interface";
@@ -24,17 +25,11 @@ const ShowMessages = ({ messages, team }: Props) => {
   const { socket, realTimeMessages, setRealTimeMessages }: any =
     useContext(SocketContext);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const [isEdit, setIsEdit] = useState({ index: 0, status: false });
   const [editedMessage, setEditedMessage] = useState<string | undefined>("");
   const [imageModalOpen, setImageModalOpen] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>("");
-  const [isEditMessage, setIsEditMessage] = useState<{
-    id: string | undefined;
-    status: boolean;
-  }>({
-    id: "",
-    status: false,
-  });
+  const [msIndex, setMsIndex] = useState<number | null>(null);
+  const [isEditMessage, setIsEditMessage] = useState<any>("");
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const [deleteMessage] = useDeleteMessageMutation();
@@ -49,22 +44,35 @@ const ShowMessages = ({ messages, team }: Props) => {
     const result: any = await deleteMessage(id);
     if (result?.data?.success) {
       toast.success("Message deleted");
+      setMsIndex(null);
     }
     if (result?.error) {
       toast.error("Message was not deleted");
     }
   };
 
+  const handleShowDropdown = (index: number) => {
+    if (msIndex === index) {
+      setMsIndex(null);
+    } else {
+      setMsIndex(index);
+    }
+  };
+
   const handleEditMessage = async () => {
     const result: any = await editMessage({
-      id: isEditMessage.id,
+      id: isEditMessage,
       text: editedMessage,
     });
     if (result?.data?.success) {
       toast.success("Message updated");
+      setMsIndex(null);
+      setIsEditMessage("");
     }
     if (result?.error) {
       toast.error("Message was not updated");
+      setMsIndex(null);
+      setIsEditMessage("");
     }
   };
 
@@ -99,13 +107,8 @@ const ShowMessages = ({ messages, team }: Props) => {
       className="mx-auto mt-8 h-screen  overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
     >
       {realTimeMessages?.map((post: IMessage, index: number) => (
-        <div
-          key={post?.id}
-          className="mx-auto border-b py-6"
-          onMouseOver={() => setIsEdit({ index: index, status: true })}
-          onMouseLeave={() => setIsEdit({ index: 0, status: false })}
-        >
-          <div className="flex items-center justify-between">
+        <div key={post?.id} className="mx-auto border-b py-6">
+          <div className="flex  justify-between items-start">
             <div className="flex items-center mb-4">
               <img
                 src={post?.poster?.profile_picture}
@@ -121,33 +124,47 @@ const ShowMessages = ({ messages, team }: Props) => {
                 </span>
               </div>
             </div>
-            {(isEdit.status &&
-              isEdit?.index === index &&
-              user?.id === post?.poster?.id) ||
-              (user?.id === team?.admin?.id && (
-                <div className="flex items-center gap-3 mb-4">
-                  {user.id === post.poster.id && (
+            {(user?.id === post?.poster?.id ||
+              user?.id === team?.admin?.id) && (
+              <div className="relative">
+                <button
+                  onClick={() => handleShowDropdown(index)}
+                  title="Drop down button"
+                  className="bg-gray-400 p-2 rounded-md text-white"
+                >
+                  <HiDotsVertical className="text-xs lg:text-xl" />
+                </button>
+                {msIndex === index && (
+                  <div className="absolute right-0 flex w-40 flex-col gap-2 top-10 rounded-md dark:bg-gray-700 z-50  p-2 text-start">
+                    {user?.id === post?.poster?.id && (
+                      <button
+                        onClick={() => {
+                          setIsEditMessage(post?.id);
+                          setMsIndex(null);
+                        }}
+                        className="text-start w-full dark:bg-gray-800 px-2 py-1 rounded-md"
+                      >
+                        Edit
+                      </button>
+                    )}
                     <button
-                      title="Edit Message"
-                      onClick={() =>
-                        setIsEditMessage({ id: post?.id, status: true })
-                      }
-                      className="bg-gray-400 p-2 rounded-md text-white"
+                      onClick={() => handleDeleteMessage(post.id)}
+                      className="text-start w-full dark:bg-gray-800 px-2 py-1 rounded-md"
                     >
-                      <FaPencilAlt className="text-xs lg:text-xl" />
+                      Delete
                     </button>
-                  )}
-                  <button
-                    title="Delete Message"
-                    onClick={() => handleDeleteMessage(post?.id)}
-                    className="bg-gray-400 p-2 rounded-md text-white"
-                  >
-                    <FaRegTrashAlt className="text-xs lg:text-xl" />
-                  </button>
-                </div>
-              ))}
+                    <button
+                      onClick={() => handleShowDropdown(index)}
+                      className="text-start w-full dark:bg-gray-800 px-2 py-1 rounded-md"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-          {isEditMessage?.status && isEditMessage.id === post?.id ? (
+          {isEditMessage === post?.id ? (
             <div className="flex flex-col gap-1 mb-2">
               <p>
                 <textarea
@@ -160,7 +177,7 @@ const ShowMessages = ({ messages, team }: Props) => {
               </p>
               <p className="flex gap-2">
                 <button
-                  onClick={() => setIsEditMessage({ id: "", status: false })}
+                  onClick={() => setIsEditMessage("")}
                   className="border px-3 rounded-sm"
                 >
                   Cancel
