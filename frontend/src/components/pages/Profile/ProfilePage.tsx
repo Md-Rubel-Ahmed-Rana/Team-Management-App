@@ -28,7 +28,7 @@ const ProfilePage = () => {
       {!isEdit && (
         <div className="p-4">
           <h1 className="text-2xl font-semibold">Profile</h1>
-          <div className="mt-4">
+          <div className="mt-4 mb-7">
             {!user?.profile_picture && (
               <div className="my-3 border w-64 rounded-md p-4 text-lg">
                 <p className="mb-2 font-semibold">No Profile picture</p>
