@@ -11,6 +11,7 @@ import { useTheme } from "next-themes";
 import { useGetNotificationQuery } from "@/features/notification";
 import { INotification } from "@/interfaces/notification.interface";
 import { SocketContext } from "@/context/SocketContext";
+import Swal from "sweetalert2";
 
 const Navbar = () => {
   const { socket }: any = useContext(SocketContext);
@@ -27,9 +28,16 @@ const Navbar = () => {
   >([]);
 
   const handleLogOut = async () => {
-    const res = await logout("");
-    console.log(res);
-    // window.location.replace("/");
+    const res: any = await logout("");
+    if (res?.data?.statusCode === 200) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res?.data?.message,
+        showConfirmButton: false,
+      });
+      window.location.replace("/");
+    }
   };
 
   useEffect(() => {
