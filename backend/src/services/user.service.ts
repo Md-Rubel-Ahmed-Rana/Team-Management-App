@@ -1,6 +1,3 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import httpStatus from "http-status";
 import { IUser } from "@/interfaces/user.interface";
 import User from "@/models/user.model";
 import ApiError from "@/shared/apiError";
@@ -11,6 +8,9 @@ import { GetUserDTO } from "@/dto/user/get";
 import { ModelIdentifier } from "@automapper/core";
 import { UpdateUserDTO } from "@/dto/user/update";
 import { MailUtilService } from "@/utils/mail.util";
+import { BcryptInstance } from "lib/bcrypt";
+import { JwtInstance } from "lib/jwt";
+import { HttpStatusInstance } from "lib/httpStatus";
 
 class Service {
   async getAllUsers(): Promise<GetUserDTO[]> {
@@ -28,10 +28,13 @@ class Service {
       email: user?.email,
     });
     if (isExist) {
-      throw new ApiError(httpStatus.CONFLICT, "This email already exist");
+      throw new ApiError(
+        HttpStatusInstance.CONFLICT,
+        "This email already exist"
+      );
     }
 
-    const hashedPassword = await bcrypt.hash(user?.password, 12);
+    const hashedPassword = await BcryptInstance.hash(user.password);
     user.password = hashedPassword;
 
     await User.create(user);
@@ -40,7 +43,7 @@ class Service {
   async auth(id: string): Promise<GetUserDTO | null> {
     const user = await User.findById(id);
     if (!user) {
-      throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+      throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found");
     }
 
     const mappedUser = mapper.map(
@@ -73,10 +76,13 @@ class Service {
       email,
     });
     if (!isExist) {
-      throw new ApiError(httpStatus.NOT_FOUND, "User not found!");
+      throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found!");
     }
 
-    const isMatchedPassword = await bcrypt.compare(password, isExist.password);
+    const isMatchedPassword = await BcryptInstance.compare(
+      password,
+      isExist.password
+    );
     if (!isMatchedPassword) {
       throw new ApiError(401, "Password doesn't match");
     }
@@ -86,9 +92,7 @@ class Service {
       email: isExist.email,
     };
 
-    const accessToken = jwt.sign(jwtPayload, config.jwt.accessTokenSecret, {
-      expiresIn: config.jwt.accessTokenExpired,
-    });
+    const accessToken = await JwtInstance.accessToken(jwtPayload);
 
     return accessToken;
   }
@@ -100,11 +104,10 @@ class Service {
       return false;
     } else {
       const jwtPayload = {
-        userId: isUserExist._id,
+        id: isUserExist._id,
+        email: isUserExist.email,
       };
-      const token = jwt.sign(jwtPayload, config.jwt.accessTokenSecret, {
-        expiresIn: "10m",
-      });
+      const token = await JwtInstance.accessToken(jwtPayload);
       const encodedEmail = encodeURIComponent(isUserExist.email);
       const encodedName = encodeURIComponent(isUserExist.name);
       const link = `${config.app.frontendDomain}/reset-password?token=${token}&userId=${isUserExist._id}&email=${encodedEmail}&name=${encodedName}`;
@@ -117,7 +120,7 @@ class Service {
   }
 
   async resetPassword(userId: string, password: string) {
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await BcryptInstance.hash(password);
     await User.findByIdAndUpdate(userId, {
       $set: { password: hashedPassword },
     });
@@ -128,14 +131,14 @@ class Service {
     newPassword: string
   ) {
     const user = await User.findById(userId);
-    const isPassMatch = await bcrypt.compare(
+    const isPassMatch = await BcryptInstance.compare(
       oldPassword,
       user?.password as string
     );
     if (!isPassMatch) {
       return false;
     } else {
-      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      const hashedPassword = await BcryptInstance.hash(newPassword);
       await User.findByIdAndUpdate(userId, {
         $set: { password: hashedPassword },
       });

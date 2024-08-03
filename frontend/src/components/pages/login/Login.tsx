@@ -7,6 +7,7 @@ import GoogleLogin from "@/components/shared/GoogleLogin";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import SocialLogin from "@/components/socialLogin";
 
 type FormData = {
   email: string;
@@ -130,14 +131,14 @@ const Login = () => {
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-2"
             >
-              Continue
+              Login
             </button>
           </div>
-          <GoogleLogin />
+          <SocialLogin />
           <div className="text-center my-3">
             <p>
               <small>Don&apos; have an account? </small>
-              <Link className="text-blue-400" href="/signup">
+              <Link className="text-blue-400 underline" href="/signup">
                 Sign up
               </Link>
             </p>
