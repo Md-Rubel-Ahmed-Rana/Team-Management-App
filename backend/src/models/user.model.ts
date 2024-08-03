@@ -17,11 +17,9 @@ const userSchema = new Schema<IUser>(
     },
     department: {
       type: String,
-      required: true,
     },
     designation: {
       type: String,
-      required: true,
     },
     phoneNumber: {
       type: String,
@@ -41,7 +39,6 @@ const userSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: true,
     },
   },
   {

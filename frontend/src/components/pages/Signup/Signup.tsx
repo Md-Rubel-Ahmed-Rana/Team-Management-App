@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { IUser } from "@/interfaces/user.interface";
 import { useCreateUserMutation } from "@/features/user";
 import GoogleLogin from "@/components/shared/GoogleLogin";
+import SocialLogin from "@/components/socialLogin";
 
 const Signup = () => {
   const {
@@ -43,9 +44,9 @@ const Signup = () => {
 
   return (
     <div className="flex items-center justify-center py-5 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[620px] w-full">
+      <div className="max-w-md w-full">
         <form
-          className="lg:shadow-2xl lg:px-10 py-5 rounded-md"
+          className="lg:shadow-2xl lg:px-10 py-10 rounded-md"
           onSubmit={handleSubmit(handleRegister)}
         >
           <div>
@@ -166,7 +167,7 @@ const Signup = () => {
               Sign up
             </button>
           </div>
-          <GoogleLogin />
+          <SocialLogin />
         </form>
       </div>
     </div>

@@ -11,6 +11,7 @@ const redisClient = createClient({
 
 class RedisWrapper {
   async connect() {
+    console.log("Redis database connecting...");
     try {
       await redisClient.connect();
       console.log("Redis connected successfully");
