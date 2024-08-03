@@ -13,9 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const http_status_1 = __importDefault(require("http-status"));
 const user_model_1 = __importDefault(require("@/models/user.model"));
 const apiError_1 = __importDefault(require("@/shared/apiError"));
 const envConfig_1 = require("@/configurations/envConfig");
@@ -24,6 +21,9 @@ const user_entity_1 = require("@/entities/user.entity");
 const get_1 = require("@/dto/user/get");
 const update_1 = require("@/dto/user/update");
 const mail_util_1 = require("@/utils/mail.util");
+const bcrypt_1 = require("lib/bcrypt");
+const jwt_1 = require("lib/jwt");
+const httpStatus_1 = require("lib/httpStatus");
 class Service {
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -38,9 +38,9 @@ class Service {
                 email: user === null || user === void 0 ? void 0 : user.email,
             });
             if (isExist) {
-                throw new apiError_1.default(http_status_1.default.CONFLICT, "This email already exist");
+                throw new apiError_1.default(httpStatus_1.HttpStatusInstance.CONFLICT, "This email already exist");
             }
-            const hashedPassword = yield bcrypt_1.default.hash(user === null || user === void 0 ? void 0 : user.password, 12);
+            const hashedPassword = yield bcrypt_1.BcryptInstance.hash(user.password);
             user.password = hashedPassword;
             yield user_model_1.default.create(user);
         });
@@ -49,7 +49,7 @@ class Service {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield user_model_1.default.findById(id);
             if (!user) {
-                throw new apiError_1.default(http_status_1.default.NOT_FOUND, "User not found");
+                throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found");
             }
             const mappedUser = mapper_1.mapper.map(user, user_entity_1.UserEntity, get_1.GetUserDTO);
             return mappedUser;
@@ -68,9 +68,9 @@ class Service {
                 email,
             });
             if (!isExist) {
-                throw new apiError_1.default(http_status_1.default.NOT_FOUND, "User not found!");
+                throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found!");
             }
-            const isMatchedPassword = yield bcrypt_1.default.compare(password, isExist.password);
+            const isMatchedPassword = yield bcrypt_1.BcryptInstance.compare(password, isExist.password);
             if (!isMatchedPassword) {
                 throw new apiError_1.default(401, "Password doesn't match");
             }
@@ -78,9 +78,7 @@ class Service {
                 id: isExist._id,
                 email: isExist.email,
             };
-            const accessToken = jsonwebtoken_1.default.sign(jwtPayload, envConfig_1.config.jwt.accessTokenSecret, {
-                expiresIn: envConfig_1.config.jwt.accessTokenExpired,
-            });
+            const accessToken = yield jwt_1.JwtInstance.accessToken(jwtPayload);
             return accessToken;
         });
     }
@@ -92,11 +90,10 @@ class Service {
             }
             else {
                 const jwtPayload = {
-                    userId: isUserExist._id,
+                    id: isUserExist._id,
+                    email: isUserExist.email,
                 };
-                const token = jsonwebtoken_1.default.sign(jwtPayload, envConfig_1.config.jwt.accessTokenSecret, {
-                    expiresIn: "10m",
-                });
+                const token = yield jwt_1.JwtInstance.accessToken(jwtPayload);
                 const encodedEmail = encodeURIComponent(isUserExist.email);
                 const encodedName = encodeURIComponent(isUserExist.name);
                 const link = `${envConfig_1.config.app.frontendDomain}/reset-password?token=${token}&userId=${isUserExist._id}&email=${encodedEmail}&name=${encodedName}`;
@@ -107,7 +104,7 @@ class Service {
     }
     resetPassword(userId, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const hashedPassword = yield bcrypt_1.default.hash(password, 12);
+            const hashedPassword = yield bcrypt_1.BcryptInstance.hash(password);
             yield user_model_1.default.findByIdAndUpdate(userId, {
                 $set: { password: hashedPassword },
             });
@@ -116,12 +113,12 @@ class Service {
     changePassword(userId, oldPassword, newPassword) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield user_model_1.default.findById(userId);
-            const isPassMatch = yield bcrypt_1.default.compare(oldPassword, user === null || user === void 0 ? void 0 : user.password);
+            const isPassMatch = yield bcrypt_1.BcryptInstance.compare(oldPassword, user === null || user === void 0 ? void 0 : user.password);
             if (!isPassMatch) {
                 return false;
             }
             else {
-                const hashedPassword = yield bcrypt_1.default.hash(newPassword, 12);
+                const hashedPassword = yield bcrypt_1.BcryptInstance.hash(newPassword);
                 yield user_model_1.default.findByIdAndUpdate(userId, {
                     $set: { password: hashedPassword },
                 });

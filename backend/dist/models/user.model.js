@@ -16,11 +16,9 @@ const userSchema = new mongoose_1.Schema({
     },
     department: {
         type: String,
-        required: true,
     },
     designation: {
         type: String,
-        required: true,
     },
     phoneNumber: {
         type: String,
@@ -40,7 +38,6 @@ const userSchema = new mongoose_1.Schema({
     },
     password: {
         type: String,
-        required: true,
     },
 }, {
     timestamps: true,

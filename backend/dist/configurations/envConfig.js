@@ -18,6 +18,28 @@ exports.config = {
         appUser: process.env.GOOGLE_APP_USER,
         appPass: process.env.GOOGLE_APP_PASSWORD,
     },
+    facebook: {
+        appId: process.env.FACEBOOK_APP_ID,
+        appSecret: process.env.FACEBOOK_APP_SECRET,
+        callbackUrl: process.env.FACEBOOK_CALLBACK_URL,
+        redirectUrl: process.env.FACEBOOK_REDIRECT_URL,
+    },
+    github: {
+        appId: process.env.GITHUB_APP_ID,
+        clientId: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackUrl: process.env.GITHUB_CALLBACK_URL,
+        redirectUrl: process.env.GITHUB_REDIRECT_URL,
+        api: process.env.GITHUB_API,
+    },
+    twitter: {
+        clientId: process.env.TWITTER_CLIENT_ID,
+        clientSecret: process.env.TWITTER_CLIENT_SECRET,
+        consumerKey: process.env.TWITTER_CONSUMER_KEY,
+        consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+        callbackUrl: process.env.TWITTER_CALLBACK_URL,
+        redirectUrl: process.env.TWITTER_REDIRECT_URL,
+    },
     app: {
         port: process.env.PORT || 5000,
         environment: process.env.NODE_ENV,
@@ -35,7 +57,9 @@ exports.config = {
     },
     jwt: {
         accessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET,
-        accessTokenExpired: process.env.ACCESS_TOKEN_EXPIRES_IN,
+        accessTokenExpired: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN,
+        refreshTokenSecret: process.env.JWT_REFRESH_TOKEN_SECRET,
+        refreshTokenExpired: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN,
     },
     stripe: {
         secretKey: process.env.STRIPE_SECRET_KEY,

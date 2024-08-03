@@ -8,33 +8,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RedisClient = void 0;
-const redis_1 = require("redis");
-const envConfig_1 = require("./envConfig");
-const redisClient = (0, redis_1.createClient)({
-    socket: {
-        host: envConfig_1.config.redis.host,
-        port: Number(envConfig_1.config.redis.port),
-    },
-    password: envConfig_1.config.redis.password,
-});
-class RedisWrapper {
-    connect() {
+exports.BcryptInstance = void 0;
+const bcrypt_1 = __importDefault(require("bcrypt"));
+class Bcrypt {
+    hash(password) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("Redis database connecting...");
-            try {
-                yield redisClient.connect();
-                console.log("Redis connected successfully");
-            }
-            catch (error) {
-                console.log({
-                    message: "Redis not connected",
-                    error: error.message,
-                });
-            }
+            const hashedPassword = yield bcrypt_1.default.hash(password, 12);
+            return hashedPassword;
+        });
+    }
+    compare(password, encryptedPassword) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const isMatchedPassword = yield bcrypt_1.default.compare(password, encryptedPassword);
+            return isMatchedPassword;
         });
     }
 }
-exports.RedisClient = new RedisWrapper();
-exports.default = redisClient;
+exports.BcryptInstance = new Bcrypt();

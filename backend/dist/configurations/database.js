@@ -19,6 +19,7 @@ class DB {
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("MongoDB database connecting...");
                 yield mongoose_1.default.connect(envConfig_1.config.db.url);
                 // set logger to log db connection info
                 console.log("Database connected successfully!");
@@ -26,24 +27,21 @@ class DB {
             catch (error) {
                 // set logger to log db connection info
                 console.log({
-                    message: "Database not connected!",
+                    message: "Database was not connected!",
                     error: error === null || error === void 0 ? void 0 : error.message,
                 });
             }
         });
     }
 }
-mongoose_1.default.connection.on("connected", () => {
-    console.log("Mongo has connected succesfully");
-});
 mongoose_1.default.connection.on("reconnected", () => {
-    console.log("Mongo has reconnected");
+    console.log("MongoDb has reconnected");
 });
 mongoose_1.default.connection.on("error", (error) => {
-    console.log("Mongo connection has an error", error);
+    console.log("MongoDB connection error", error);
     mongoose_1.default.disconnect();
 });
 mongoose_1.default.connection.on("disconnected", () => {
-    console.log("Mongo connection is disconnected");
+    console.log("MongoDB is disconnected");
 });
 exports.Database = new DB();

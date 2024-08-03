@@ -28,7 +28,7 @@ class ErrorHandler {
             else if (error instanceof Error) {
                 this.handleGenericError(error);
             }
-            res.status(this.statusCode).json({
+            res.status(Number(this.statusCode)).json({
                 success: false,
                 message: this.message,
                 errorMessages: this.errorMessages,
