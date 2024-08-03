@@ -5,7 +5,7 @@ import { IGenericErrorMessage } from "@/interfaces/util";
 import mongoose from "mongoose";
 
 class ErrorHandler {
-  private statusCode: number = 500;
+  private statusCode: number | string = 500;
   private message: string = "Something went wrong";
   private errorMessages: IGenericErrorMessage[] = [];
 
@@ -97,7 +97,7 @@ class ErrorHandler {
       this.handleGenericError(error);
     }
 
-    res.status(this.statusCode).json({
+    res.status(Number(this.statusCode)).json({
       success: false,
       message: this.message,
       errorMessages: this.errorMessages,
