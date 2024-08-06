@@ -25,6 +25,7 @@ const envConfig_1 = require("./configurations/envConfig");
 const root_route_1 = require("./routes/root.route");
 const globalErrorHandler_1 = __importDefault(require("./middlewares/globalErrorHandler"));
 const dtoMapper_1 = __importDefault(require("./configurations/dtoMapper"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
@@ -63,6 +64,63 @@ app.get("/", (req, res) => {
         data: null,
     });
 });
+const jwtSecret = "this is jwt secret";
+const generateToken = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const accessToken = yield jsonwebtoken_1.default.sign(payload, jwtSecret, { expiresIn: 60 });
+    const refreshToken = yield jsonwebtoken_1.default.sign(payload, jwtSecret, { expiresIn: "10h" });
+    return { accessToken, refreshToken };
+});
+const verifyToken = (token) => {
+    return jsonwebtoken_1.default.verify(token, jwtSecret);
+};
+app.get("/token", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const payload = {
+        id: "fkjhdifhvweiruthwier",
+        name: "Rubel",
+        email: "rubel@gmail.com",
+    };
+    const tokens = yield generateToken(payload);
+    res.status(http_status_1.default.OK).json({
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "You got a token",
+        data: tokens,
+    });
+}));
+app.get("/verify-token", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { accessToken } = req.body;
+        const verified = verifyToken(accessToken);
+        res.status(http_status_1.default.OK).json({
+            statusCode: http_status_1.default.OK,
+            success: true,
+            message: "Your token verified",
+            data: verified,
+        });
+    }
+    catch (error) {
+        if (error.name === "TokenExpiredError") {
+            const { refreshToken } = req.body;
+            const verified = verifyToken(refreshToken);
+            const { id, name, email } = verified;
+            const tokens = yield generateToken({ id, name, email });
+            res.status(http_status_1.default.OK).json({
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Tokens rotated successfully",
+                data: tokens,
+            });
+        }
+        else {
+            res.status(http_status_1.default.INTERNAL_SERVER_ERROR).json({
+                statusCode: http_status_1.default.INTERNAL_SERVER_ERROR,
+                success: false,
+                message: "Internal server error",
+                data: null,
+            });
+        }
+    }
+}));
 // routes
 app.use(root_route_1.RootRoutes);
 app.use(globalErrorHandler_1.default.globalErrorHandler);
