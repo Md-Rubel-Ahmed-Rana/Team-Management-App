@@ -1,11 +1,10 @@
+import { baseApi } from "@/features/api";
 import FacebookLogin from "./FacebookLogin";
 import GithubLogin from "./GithubLogin";
 import GoogleLogin from "./GoogleLogin";
 import TwitterLogin from "./TwitterLogin";
 
 const SocialLogin = () => {
-  const baseApi = process.env.NEXT_PUBLIC_BASE_API;
-  console.log({ baseApi });
   return (
     <div>
       <div className="flex items-center gap-2 mt-3">
