@@ -11,6 +11,7 @@ import { config } from "./configurations/envConfig";
 import { RootRoutes } from "./routes/root.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import initializeDTOMapper from "./configurations/dtoMapper";
+import jwt from "jsonwebtoken";
 
 const app = express();
 
@@ -58,6 +59,70 @@ app.get("/", (req, res) => {
     message: "Team Manager server is running",
     data: null,
   });
+});
+
+const jwtSecret = "this is jwt secret";
+
+const generateToken = async (payload: {
+  id: string;
+  name: string;
+  email: string;
+}) => {
+  const accessToken = await jwt.sign(payload, jwtSecret, { expiresIn: 60 });
+  const refreshToken = await jwt.sign(payload, jwtSecret, { expiresIn: "10h" });
+  return { accessToken, refreshToken };
+};
+
+const verifyToken = (token: string) => {
+  return jwt.verify(token, jwtSecret);
+};
+
+app.get("/token", async (req, res) => {
+  const payload = {
+    id: "fkjhdifhvweiruthwier",
+    name: "Rubel",
+    email: "rubel@gmail.com",
+  };
+  const tokens = await generateToken(payload);
+  res.status(httpStatus.OK).json({
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "You got a token",
+    data: tokens,
+  });
+});
+
+app.get("/verify-token", async (req, res) => {
+  try {
+    const { accessToken }: any = req.body;
+    const verified = verifyToken(accessToken);
+    res.status(httpStatus.OK).json({
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Your token verified",
+      data: verified,
+    });
+  } catch (error: any) {
+    if (error.name === "TokenExpiredError") {
+      const { refreshToken }: any = req.body;
+      const verified = verifyToken(refreshToken);
+      const { id, name, email }: any = verified;
+      const tokens = await generateToken({ id, name, email });
+      res.status(httpStatus.OK).json({
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Tokens rotated successfully",
+        data: tokens,
+      });
+    } else {
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+        statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+        success: false,
+        message: "Internal server error",
+        data: null,
+      });
+    }
+  }
 });
 
 // routes

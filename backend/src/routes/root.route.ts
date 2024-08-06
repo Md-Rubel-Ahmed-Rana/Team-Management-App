@@ -8,12 +8,10 @@ import { ProjectRoutes } from "./project.route";
 import { TaskRoutes } from "./task.route";
 import { TeamLeaveRequestRoutes } from "./teamLeaveRequest.route";
 import { ProjectLeaveRequestRoutes } from "./projectLeaveRequest.route";
-import { GooglOAuthRoutes } from "./googleOAuth.route";
 import { MailRoutes } from "./mail.route";
 import { MessageRoutes } from "./message.route";
 import { NotificationRoutes } from "./notification.route";
 import { FileUploadRoutes } from "./uploadFile.route";
-import { SocialAuthRoutes } from "./social.routes";
 import { AuthRoutes } from "./auth.routes";
 
 const router = Router();
@@ -37,10 +35,6 @@ router.use("/task", TaskRoutes);
 router.use("/leave-team", TeamLeaveRequestRoutes);
 
 router.use("/leave-project", ProjectLeaveRequestRoutes);
-
-router.use("/google", GooglOAuthRoutes);
-
-router.use("/socials", SocialAuthRoutes);
 
 router.use("/mail", MailRoutes);
 
