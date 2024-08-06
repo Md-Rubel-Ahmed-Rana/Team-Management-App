@@ -12,6 +12,7 @@ import { RootRoutes } from "./routes/root.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import initializeDTOMapper from "./configurations/dtoMapper";
 import jwt from "jsonwebtoken";
+import "./configurations/passport";
 
 const app = express();
 

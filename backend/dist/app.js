@@ -26,6 +26,7 @@ const root_route_1 = require("./routes/root.route");
 const globalErrorHandler_1 = __importDefault(require("./middlewares/globalErrorHandler"));
 const dtoMapper_1 = __importDefault(require("./configurations/dtoMapper"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+require("./configurations/passport");
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
