@@ -6,6 +6,7 @@ const google = {
     clientID: envConfig_1.config.google.clientId,
     clientSecret: envConfig_1.config.google.clientSecret,
     callbackURL: envConfig_1.config.google.callbackUrl,
+    redirectUrl: envConfig_1.config.google.redirectUrl,
     scope: ["profile", "email"],
 };
 const facebook = {
