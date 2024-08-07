@@ -25,7 +25,6 @@ const FacebookStrategy = passport_facebook_1.default.Strategy;
 const GitHubStrategy = passport_github_1.default.Strategy;
 const TwitterStrategy = passport_twitter_1.default.Strategy;
 const { google, facebook, twitter, github } = oAuth_1.StrategyConfigs;
-console.log({ google, facebook, twitter, github });
 // Configure google strategy
 passport_1.default.use(new GoogleStrategy(google, (accessToken, refreshToken, profile, done) => {
     try {
