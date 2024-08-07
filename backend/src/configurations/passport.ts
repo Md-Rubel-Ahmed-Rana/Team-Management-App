@@ -14,6 +14,8 @@ const TwitterStrategy = twitterOAuth.Strategy;
 
 const { google, facebook, twitter, github } = StrategyConfigs;
 
+console.log({ google, facebook, twitter, github });
+
 // Configure google strategy
 passport.use(
   new GoogleStrategy(google, (accessToken, refreshToken, profile, done) => {
