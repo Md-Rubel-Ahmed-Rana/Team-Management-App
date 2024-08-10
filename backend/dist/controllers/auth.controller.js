@@ -16,49 +16,69 @@ exports.AuthController = void 0;
 const envConfig_1 = require("@/configurations/envConfig");
 const auth_service_1 = require("@/services/auth.service");
 const rootController_1 = __importDefault(require("@/shared/rootController"));
+const cookies_1 = require("@/utils/cookies");
+const http_status_1 = __importDefault(require("http-status"));
 class Controller extends rootController_1.default {
     constructor() {
         super(...arguments);
+        this.auth = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const id = req === null || req === void 0 ? void 0 : req.id;
+            const result = yield auth_service_1.AuthService.auth(id);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "User fetched  successfully",
+                data: result,
+            });
+        }));
+        this.login = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { email, password } = req.body;
+            const { accessToken, refreshToken } = yield auth_service_1.AuthService.login(email, password);
+            cookies_1.cookieManager.setTokens(res, accessToken, refreshToken);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Login successful",
+                data: null,
+            });
+        }));
         this.googleLogin = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             if (req === null || req === void 0 ? void 0 : req.user) {
                 const tokens = yield auth_service_1.AuthService.googleLogin(req.user);
-                this.setCookies(res, tokens);
+                cookies_1.cookieManager.setTokens(res, tokens.accessToken, tokens.refreshToken);
                 res.redirect(envConfig_1.config.google.redirectUrl);
             }
         }));
         this.facebookLogin = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             if (req === null || req === void 0 ? void 0 : req.user) {
                 const tokens = yield auth_service_1.AuthService.facebookLogin(req.user);
-                this.setCookies(res, tokens);
+                cookies_1.cookieManager.setTokens(res, tokens.accessToken, tokens.refreshToken);
                 res.redirect(envConfig_1.config.facebook.redirectUrl);
             }
         }));
         this.githubLogin = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             if (req === null || req === void 0 ? void 0 : req.user) {
                 const tokens = yield auth_service_1.AuthService.githubLogin(req.user);
-                this.setCookies(res, tokens);
+                cookies_1.cookieManager.setTokens(res, tokens.accessToken, tokens.refreshToken);
                 res.redirect(envConfig_1.config.github.redirectUrl);
             }
         }));
         this.twitterLogin = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             if (req === null || req === void 0 ? void 0 : req.user) {
                 const tokens = yield auth_service_1.AuthService.twitterLogin(req.user);
-                this.setCookies(res, tokens);
+                cookies_1.cookieManager.setTokens(res, tokens.accessToken, tokens.refreshToken);
                 res.redirect(envConfig_1.config.twitter.redirectUrl);
             }
         }));
-    }
-    setCookies(res, tokens) {
-        res.cookie("tmAccessToken", tokens.accessToken, {
-            httpOnly: true,
-            sameSite: "none",
-            secure: true,
-        });
-        res.cookie("tmRefreshToken", tokens.refreshToken, {
-            httpOnly: true,
-            sameSite: "none",
-            secure: true,
-        });
+        this.logout = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            cookies_1.cookieManager.clearTokens(res);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Logout successful",
+                data: null,
+            });
+        }));
     }
 }
 exports.AuthController = new Controller();

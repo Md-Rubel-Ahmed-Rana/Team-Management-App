@@ -26,6 +26,8 @@ const root_route_1 = require("./routes/root.route");
 const globalErrorHandler_1 = __importDefault(require("./middlewares/globalErrorHandler"));
 const dtoMapper_1 = __importDefault(require("./configurations/dtoMapper"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const morgan_1 = __importDefault(require("morgan"));
+require("./configurations/passport");
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
@@ -46,6 +48,7 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 app.use((0, helmet_1.default)());
+app.use((0, morgan_1.default)("dev"));
 app.use((0, express_session_1.default)({
     secret: envConfig_1.config.google.clientSecret,
     resave: true,

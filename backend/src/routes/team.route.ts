@@ -1,5 +1,4 @@
 import { TeamController } from "@/controllers/team.controller";
-import verifyJwt from "@/middlewares/auth";
 import validateRequest from "@/middlewares/validateRequest";
 import { TeamValidationSchema } from "@/validations/team.validation";
 import { Router } from "express";
@@ -21,11 +20,7 @@ router.get("/single/:id", TeamController.getTeam);
 
 router.delete("/delete/:id", TeamController.deleteTeam);
 
-router.patch(
-  "/remove-member/:teamId/:memberId",
-  verifyJwt,
-  TeamController.removeMember
-);
+router.patch("/remove-member/:teamId/:memberId", TeamController.removeMember);
 
 router.patch(
   "/update/:id",

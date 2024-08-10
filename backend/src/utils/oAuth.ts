@@ -4,6 +4,7 @@ const google = {
   clientID: config.google.clientId,
   clientSecret: config.google.clientSecret,
   callbackURL: config.google.callbackUrl,
+  redirectUrl: config.google.redirectUrl,
   scope: ["profile", "email"],
 };
 

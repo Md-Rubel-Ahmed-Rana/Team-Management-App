@@ -1,7 +1,18 @@
 import { AuthController } from "@/controllers/auth.controller";
+import validateRequest from "@/middlewares/validateRequest";
+import { UserValidationSchema } from "@/validations/user.validation";
 import { Router } from "express";
+import { JwtInstance } from "lib/jwt";
 import passport from "passport";
 const router = Router();
+
+router.get("/", JwtInstance.verifyToken, AuthController.auth);
+
+router.post(
+  "/login",
+  validateRequest(UserValidationSchema.loginZodSchema),
+  AuthController.login
+);
 
 // google route
 router.get(
@@ -41,5 +52,7 @@ router.get(
   passport.authenticate("twitter", { failureRedirect: "/" }),
   AuthController.twitterLogin
 );
+
+router.delete("/logout", JwtInstance.verifyToken, AuthController.logout);
 
 export const AuthRoutes = router;
