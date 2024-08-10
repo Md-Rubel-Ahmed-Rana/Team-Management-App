@@ -1,10 +1,9 @@
 import { PlanController } from "@/controllers/plan.controller";
-import verifyJwt from "@/middlewares/auth";
 import { Router } from "express";
 
 const router = Router();
 
-router.post("/create", verifyJwt, PlanController.createPlan);
+router.post("/create", PlanController.createPlan);
 
 router.get("/", PlanController.getPlans);
 

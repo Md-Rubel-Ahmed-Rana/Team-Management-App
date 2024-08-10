@@ -28,16 +28,6 @@ class Controller extends rootController_1.default {
                 data: result,
             });
         }));
-        this.auth = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const id = req === null || req === void 0 ? void 0 : req.id;
-            const result = yield user_service_1.UserService.auth(id);
-            this.apiResponse(res, {
-                statusCode: http_status_1.default.OK,
-                success: true,
-                message: "User fetched  successfully",
-                data: result,
-            });
-        }));
         this.register = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             yield user_service_1.UserService.register(req.body);
             this.apiResponse(res, {
@@ -55,21 +45,6 @@ class Controller extends rootController_1.default {
                 success: true,
                 message: "User updated successfully",
                 data: result,
-            });
-        }));
-        this.login = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { email, password } = req.body;
-            const result = yield user_service_1.UserService.login(email, password);
-            res.cookie("tmAccessToken", result, {
-                httpOnly: true,
-                sameSite: "none",
-                secure: true,
-            });
-            this.apiResponse(res, {
-                statusCode: http_status_1.default.OK,
-                success: true,
-                message: "Login successful",
-                data: null,
             });
         }));
         this.forgetPassword = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -129,19 +104,6 @@ class Controller extends rootController_1.default {
                     data: null,
                 });
             }
-        }));
-        this.logout = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            res.clearCookie("tmAccessToken", {
-                httpOnly: true,
-                sameSite: "none",
-                secure: true,
-            });
-            this.apiResponse(res, {
-                statusCode: http_status_1.default.OK,
-                success: true,
-                message: "Logout successful",
-                data: null,
-            });
         }));
     }
 }

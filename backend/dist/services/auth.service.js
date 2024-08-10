@@ -15,29 +15,60 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const user_model_1 = __importDefault(require("@/models/user.model"));
 const jwt_1 = require("lib/jwt");
+const user_service_1 = require("./user.service");
+const apiError_1 = __importDefault(require("@/shared/apiError"));
+const httpStatus_1 = require("lib/httpStatus");
+const bcrypt_1 = require("lib/bcrypt");
 class Service {
     checkUserExistence(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isExist = yield user_model_1.default.findOne({ email: data.email });
+            const isExist = yield user_service_1.UserService.findUserByEmail(data === null || data === void 0 ? void 0 : data.email);
             const jwtPayload = {
                 id: "",
                 email: "",
             };
             if (isExist) {
-                jwtPayload.id = isExist._id;
+                jwtPayload.id = isExist.id;
                 jwtPayload.email = isExist.email;
-                const accessToken = yield jwt_1.JwtInstance.accessToken(jwtPayload);
-                const refreshToken = yield jwt_1.JwtInstance.refreshToken(jwtPayload);
+                const accessToken = yield jwt_1.JwtInstance.generateAccessToken(jwtPayload);
+                const refreshToken = yield jwt_1.JwtInstance.generateRefreshToken(jwtPayload);
                 return { accessToken, refreshToken };
             }
             else {
                 const result = yield user_model_1.default.create(data);
                 jwtPayload.id = result._id;
                 jwtPayload.email = result.email;
-                const accessToken = yield jwt_1.JwtInstance.accessToken(jwtPayload);
-                const refreshToken = yield jwt_1.JwtInstance.refreshToken(jwtPayload);
+                const accessToken = yield jwt_1.JwtInstance.generateAccessToken(jwtPayload);
+                const refreshToken = yield jwt_1.JwtInstance.generateRefreshToken(jwtPayload);
                 return { accessToken, refreshToken };
             }
+        });
+    }
+    auth(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield user_service_1.UserService.findUserById(id);
+            return user;
+        });
+    }
+    login(email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const isExist = yield user_model_1.default.findOne({
+                email,
+            });
+            if (!isExist) {
+                throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found!");
+            }
+            const isMatchedPassword = yield bcrypt_1.BcryptInstance.compare(password, isExist.password);
+            if (!isMatchedPassword) {
+                throw new apiError_1.default(401, "Password doesn't match");
+            }
+            const jwtPayload = {
+                id: isExist._id,
+                email: isExist.email,
+            };
+            const accessToken = yield jwt_1.JwtInstance.generateAccessToken(jwtPayload);
+            const refreshToken = yield jwt_1.JwtInstance.generateRefreshToken(jwtPayload);
+            return { accessToken, refreshToken };
         });
     }
     googleLogin(data) {

@@ -40,8 +40,22 @@ class Service {
     await User.create(user);
   }
 
-  async auth(id: string): Promise<GetUserDTO | null> {
+  async findUserById(id: string): Promise<GetUserDTO | null> {
     const user = await User.findById(id);
+    if (!user) {
+      throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found");
+    }
+
+    const mappedUser = mapper.map(
+      user,
+      UserEntity as ModelIdentifier,
+      GetUserDTO
+    );
+    return mappedUser;
+  }
+
+  async findUserByEmail(email: string): Promise<GetUserDTO | null> {
+    const user = await User.findOne({ email: email });
     if (!user) {
       throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found");
     }
@@ -71,32 +85,6 @@ class Service {
     return mappedUser;
   }
 
-  async login(email: string, password: string): Promise<string> {
-    const isExist = await User.findOne({
-      email,
-    });
-    if (!isExist) {
-      throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found!");
-    }
-
-    const isMatchedPassword = await BcryptInstance.compare(
-      password,
-      isExist.password
-    );
-    if (!isMatchedPassword) {
-      throw new ApiError(401, "Password doesn't match");
-    }
-
-    const jwtPayload = {
-      id: isExist._id,
-      email: isExist.email,
-    };
-
-    const accessToken = await JwtInstance.accessToken(jwtPayload);
-
-    return accessToken;
-  }
-
   async forgetPassword(email: string) {
     const isUserExist = await User.findOne({ email: email });
 
@@ -107,7 +95,7 @@ class Service {
         id: isUserExist._id,
         email: isUserExist.email,
       };
-      const token = await JwtInstance.accessToken(jwtPayload);
+      const token = await JwtInstance.generateAccessToken(jwtPayload);
       const encodedEmail = encodeURIComponent(isUserExist.email);
       const encodedName = encodeURIComponent(isUserExist.name);
       const link = `${config.app.frontendDomain}/reset-password?token=${token}&userId=${isUserExist._id}&email=${encodedEmail}&name=${encodedName}`;
@@ -125,6 +113,7 @@ class Service {
       $set: { password: hashedPassword },
     });
   }
+
   async changePassword(
     userId: string,
     oldPassword: string,
