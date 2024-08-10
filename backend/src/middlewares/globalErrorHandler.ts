@@ -3,6 +3,7 @@ import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import ApiError from "@/shared/apiError";
 import { IGenericErrorMessage } from "@/interfaces/util";
 import mongoose from "mongoose";
+import { TokenExpiredError } from "jsonwebtoken";
 
 class ErrorHandler {
   private statusCode: number | string = 500;

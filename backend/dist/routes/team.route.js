@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TeamRoutes = void 0;
 const team_controller_1 = require("@/controllers/team.controller");
-const auth_1 = __importDefault(require("@/middlewares/auth"));
 const validateRequest_1 = __importDefault(require("@/middlewares/validateRequest"));
 const team_validation_1 = require("@/validations/team.validation");
 const express_1 = require("express");
@@ -16,6 +15,6 @@ router.get("/joined-teams/:memberId", team_controller_1.TeamController.joinedTea
 router.get("/active-members/:teamId", team_controller_1.TeamController.getActiveMembers);
 router.get("/single/:id", team_controller_1.TeamController.getTeam);
 router.delete("/delete/:id", team_controller_1.TeamController.deleteTeam);
-router.patch("/remove-member/:teamId/:memberId", auth_1.default, team_controller_1.TeamController.removeMember);
+router.patch("/remove-member/:teamId/:memberId", team_controller_1.TeamController.removeMember);
 router.patch("/update/:id", (0, validateRequest_1.default)(team_validation_1.TeamValidationSchema.updateTeamValidation), team_controller_1.TeamController.updateTeam);
 exports.TeamRoutes = router;

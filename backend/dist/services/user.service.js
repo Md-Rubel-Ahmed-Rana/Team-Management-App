@@ -45,9 +45,19 @@ class Service {
             yield user_model_1.default.create(user);
         });
     }
-    auth(id) {
+    findUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield user_model_1.default.findById(id);
+            if (!user) {
+                throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found");
+            }
+            const mappedUser = mapper_1.mapper.map(user, user_entity_1.UserEntity, get_1.GetUserDTO);
+            return mappedUser;
+        });
+    }
+    findUserByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield user_model_1.default.findOne({ email: email });
             if (!user) {
                 throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found");
             }
@@ -62,26 +72,6 @@ class Service {
             return mappedUser;
         });
     }
-    login(email, password) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const isExist = yield user_model_1.default.findOne({
-                email,
-            });
-            if (!isExist) {
-                throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found!");
-            }
-            const isMatchedPassword = yield bcrypt_1.BcryptInstance.compare(password, isExist.password);
-            if (!isMatchedPassword) {
-                throw new apiError_1.default(401, "Password doesn't match");
-            }
-            const jwtPayload = {
-                id: isExist._id,
-                email: isExist.email,
-            };
-            const accessToken = yield jwt_1.JwtInstance.accessToken(jwtPayload);
-            return accessToken;
-        });
-    }
     forgetPassword(email) {
         return __awaiter(this, void 0, void 0, function* () {
             const isUserExist = yield user_model_1.default.findOne({ email: email });
@@ -93,7 +83,7 @@ class Service {
                     id: isUserExist._id,
                     email: isUserExist.email,
                 };
-                const token = yield jwt_1.JwtInstance.accessToken(jwtPayload);
+                const token = yield jwt_1.JwtInstance.generateAccessToken(jwtPayload);
                 const encodedEmail = encodeURIComponent(isUserExist.email);
                 const encodedName = encodeURIComponent(isUserExist.name);
                 const link = `${envConfig_1.config.app.frontendDomain}/reset-password?token=${token}&userId=${isUserExist._id}&email=${encodedEmail}&name=${encodedName}`;

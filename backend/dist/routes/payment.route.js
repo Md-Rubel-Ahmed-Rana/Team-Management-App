@@ -22,16 +22,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentRoutes = void 0;
 const payment_controller_1 = require("@/controllers/payment.controller");
-const auth_1 = __importDefault(require("@/middlewares/auth"));
 const express_1 = __importStar(require("express"));
 const router = (0, express_1.Router)();
-router.post("/checkout", auth_1.default, payment_controller_1.PaymentController.checkout);
+router.post("/checkout", payment_controller_1.PaymentController.checkout);
 router.post("/webhook", express_1.default.json({ type: "application/json" }), payment_controller_1.PaymentController.webhook);
 router.get("/:userId", payment_controller_1.PaymentController.myPayments);
 exports.PaymentRoutes = router;

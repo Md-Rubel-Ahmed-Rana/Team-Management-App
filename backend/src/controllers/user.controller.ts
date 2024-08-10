@@ -1,6 +1,6 @@
-import { config } from "@/configurations/envConfig";
 import { UserService } from "@/services/user.service";
 import RootController from "@/shared/rootController";
+import { cookieManager } from "@/utils/cookies";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 
@@ -11,17 +11,6 @@ class Controller extends RootController {
       statusCode: httpStatus.OK,
       success: true,
       message: "Users fetched  successfully",
-      data: result,
-    });
-  });
-
-  auth = this.catchAsync(async (req: Request, res: Response) => {
-    const id: any = req?.id;
-    const result = await UserService.auth(id);
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User fetched  successfully",
       data: result,
     });
   });
@@ -44,22 +33,6 @@ class Controller extends RootController {
       success: true,
       message: "User updated successfully",
       data: result,
-    });
-  });
-
-  login = this.catchAsync(async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    const result = await UserService.login(email, password);
-    res.cookie("tmAccessToken", result, {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-    });
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Login successful",
-      data: null,
     });
   });
 
@@ -124,20 +97,6 @@ class Controller extends RootController {
         data: null,
       });
     }
-  });
-
-  logout = this.catchAsync(async (req: Request, res: Response) => {
-    res.clearCookie("tmAccessToken", {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-    });
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Logout successful",
-      data: null,
-    });
   });
 }
 

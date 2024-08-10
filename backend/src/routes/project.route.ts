@@ -1,5 +1,4 @@
 import { ProjectController } from "@/controllers/project.controller";
-import verifyJwt from "@/middlewares/auth";
 import validateRequest from "@/middlewares/validateRequest";
 import { ProjectValidationSchema } from "@/validations/project.validation";
 import { Router } from "express";
@@ -21,9 +20,9 @@ router.patch(
   ProjectController.updateProject
 );
 
-router.post("/add-member", verifyJwt, ProjectController.addMember);
+router.post("/add-member", ProjectController.addMember);
 
-router.post("/remove-member", verifyJwt, ProjectController.removeMember);
+router.post("/remove-member", ProjectController.removeMember);
 
 router.get("/single/:id", ProjectController.getSingleProject);
 

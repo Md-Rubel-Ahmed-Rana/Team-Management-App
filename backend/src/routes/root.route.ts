@@ -13,6 +13,7 @@ import { MessageRoutes } from "./message.route";
 import { NotificationRoutes } from "./notification.route";
 import { FileUploadRoutes } from "./uploadFile.route";
 import { AuthRoutes } from "./auth.routes";
+import { JwtInstance } from "lib/jwt";
 
 const router = Router();
 
@@ -20,28 +21,32 @@ router.use("/user", UserRoutes);
 
 router.use("/auth", AuthRoutes);
 
-router.use("/team", TeamRoutes);
+router.use("/team", JwtInstance.verifyToken, TeamRoutes);
 
-router.use("/invitation", InvitationRoutes);
+router.use("/invitation", JwtInstance.verifyToken, InvitationRoutes);
 
-router.use("/payment", PaymentRoutes);
+router.use("/payment", JwtInstance.verifyToken, PaymentRoutes);
 
 router.use("/plan", PlanRoutes);
 
-router.use("/project", ProjectRoutes);
+router.use("/project", JwtInstance.verifyToken, ProjectRoutes);
 
-router.use("/task", TaskRoutes);
+router.use("/task", JwtInstance.verifyToken, TaskRoutes);
 
-router.use("/leave-team", TeamLeaveRequestRoutes);
+router.use("/leave-team", JwtInstance.verifyToken, TeamLeaveRequestRoutes);
 
-router.use("/leave-project", ProjectLeaveRequestRoutes);
+router.use(
+  "/leave-project",
+  JwtInstance.verifyToken,
+  ProjectLeaveRequestRoutes
+);
 
 router.use("/mail", MailRoutes);
 
-router.use("/message", MessageRoutes);
+router.use("/message", JwtInstance.verifyToken, MessageRoutes);
 
 router.use("/cloudinary", FileUploadRoutes);
 
-router.use("/notification", NotificationRoutes);
+router.use("/notification", JwtInstance.verifyToken, NotificationRoutes);
 
 export const RootRoutes = router;
