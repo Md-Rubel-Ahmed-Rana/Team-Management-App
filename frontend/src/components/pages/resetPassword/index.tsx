@@ -83,7 +83,6 @@ const ResetPasswordPage = () => {
 
         setUserId(userId);
       } catch (error) {
-        console.log({ error });
         setTokenError(
           "The token is expired or invalid. Please request a new password reset."
         );

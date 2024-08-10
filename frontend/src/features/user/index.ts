@@ -12,7 +12,7 @@ const userApi = apiSlice.injectEndpoints({
     loginUser: builder.mutation({
       query: (data) => ({
         method: "POST",
-        url: "/user/login",
+        url: "/auth/login",
         body: data,
         credentials: "include",
       }),
@@ -26,7 +26,7 @@ const userApi = apiSlice.injectEndpoints({
     }),
     loggedInUser: builder.query({
       query: () => ({
-        url: "/user/auth",
+        url: "/auth",
         credentials: "include",
       }),
       providesTags: ["user"] as any,
@@ -42,7 +42,7 @@ const userApi = apiSlice.injectEndpoints({
     logoutUser: builder.mutation({
       query: () => ({
         method: "DELETE",
-        url: `/user/logout`,
+        url: `/auth/logout`,
         credentials: "include",
       }),
       invalidatesTags: ["user"] as any,

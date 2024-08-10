@@ -3,7 +3,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { useLoginUserMutation } from "@/features/user";
 import Link from "next/link";
-import GoogleLogin from "@/components/shared/GoogleLogin";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -23,7 +22,7 @@ const Login = () => {
   const [togglePassword, setTogglePassword] = useState(false);
   const router = useRouter();
 
-  const [loginUser] = useLoginUserMutation();
+  const [loginUser, { isLoading }] = useLoginUserMutation();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const result: any = await loginUser(data);
@@ -129,9 +128,14 @@ const Login = () => {
           <div className="mt-6">
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-2"
+              disabled={isLoading}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium text-white rounded-md ${
+                isLoading
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : " bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-2"
+              } `}
             >
-              Login
+              {isLoading ? "Preparing dashboard..." : "Login"}
             </button>
           </div>
           <SocialLogin />

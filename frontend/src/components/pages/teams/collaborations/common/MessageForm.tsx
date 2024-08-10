@@ -74,7 +74,6 @@ const MessageForm = ({ teamId, type }: Props) => {
     data.conversationId = teamId;
     data.type = type;
     data.text = data?.text || isMessage?.value;
-    console.log({ payload: data });
     const result: any = await sendMessage(data);
     if (result?.data?.success) {
       const message = result?.data?.data;
