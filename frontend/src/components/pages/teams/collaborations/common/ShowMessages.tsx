@@ -10,7 +10,6 @@ import { IMessage } from "@/interfaces/message.interface";
 import { IUser } from "@/interfaces/user.interface";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { FaRegTrashAlt, FaPencilAlt } from "react-icons/fa";
 import { HiDotsVertical } from "react-icons/hi";
 import moment from "moment";
 import { formattedDate } from "@/utils/formattedDate";
@@ -104,7 +103,7 @@ const ShowMessages = ({ messages, team }: Props) => {
   return (
     <div
       ref={messagesContainerRef}
-      className="mx-auto mt-8 h-screen  overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
+      className="mx-auto mt-8 min-h-[300px] h-auto  overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
     >
       {realTimeMessages?.map((post: IMessage, index: number) => (
         <div key={post?.id} className="mx-auto border-b py-6">
@@ -135,7 +134,7 @@ const ShowMessages = ({ messages, team }: Props) => {
                   <HiDotsVertical className="text-xs lg:text-xl" />
                 </button>
                 {msIndex === index && (
-                  <div className="absolute right-0 flex w-40 flex-col gap-2 top-10 rounded-md dark:bg-gray-700 z-50  p-2 text-start">
+                  <div className="absolute right-0 flex w-40 flex-col gap-2 top-10 rounded-md bg-gray-300 dark:bg-gray-700 z-50  p-2 text-start">
                     {user?.id === post?.poster?.id && (
                       <button
                         onClick={() => {

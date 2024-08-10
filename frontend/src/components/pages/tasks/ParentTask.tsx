@@ -7,6 +7,7 @@ import { useUpdateStatusMutation } from "@/features/task";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { SocketContext } from "@/context/SocketContext";
+import { baseApi } from "@/features/api";
 
 type Props = {
   project: any;
@@ -89,13 +90,9 @@ const ParentTask = ({ project }: Props) => {
   };
 
   useEffect(() => {
-    const token = Cookies.get("tmAccessToken");
-
     // Fetch tasks only if project id is available
     if (project?.id) {
-      fetch(
-        `https://api-team-manager.onrender.com/task/by-project/${project.id}`
-      )
+      fetch(`${baseApi}/task/by-project/${project.id}`)
         .then((res) => res.json())
         .then((data: any) => {
           const tasksData = data?.data || [];

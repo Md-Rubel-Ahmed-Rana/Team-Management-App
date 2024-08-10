@@ -1,6 +1,8 @@
+import { baseApi } from "@/features/api";
 import { IContext } from "@/interfaces/context.interface";
 import { IMessage } from "@/interfaces/message.interface";
 import { ReactNode, createContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
 const initValues: IContext = {
@@ -18,7 +20,7 @@ type Props = {
 };
 
 const SocketProvider = ({ children }: Props) => {
-  const socket: any = io("https://api-team-manager.onrender.com");
+  const socket: any = io(baseApi);
   const [realTimeMessages, setRealTimeMessages] = useState<IMessage[]>([]);
   const [user, setUser] = useState<any>({});
   const [refetchTask, setRefetchTask] = useState<any>(false);
@@ -26,17 +28,14 @@ const SocketProvider = ({ children }: Props) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(
-          "https://api-team-manager.onrender.com/user/auth",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const res = await fetch(`${baseApi}/auth`, {
+          method: "GET",
+          credentials: "include",
+        });
         const data = await res.json();
         setUser(data?.data);
-      } catch (error) {
-        console.log("Failed to fetch user");
+      } catch (error: any) {
+        toast.error(error.message);
       }
     };
     fetchUser();
