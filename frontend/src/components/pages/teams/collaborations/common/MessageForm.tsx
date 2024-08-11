@@ -1,10 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { FaLink, FaImage, FaFile } from "react-icons/fa";
+import { FaImage, FaFile } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
-import LinkModal from "./LinkModal";
 import useUploadMultipleImage from "@/hooks/useUploadMultipleImage";
 import useUploadMultipleFile from "@/hooks/useUploadMultipleFiles";
 import { useSendMessageMutation } from "@/features/message";
@@ -39,7 +38,6 @@ const MessageForm = ({ teamId, type }: Props) => {
   const [filePreview, setFilePreview] = useState<string[]>([]);
   const [images, setImages] = useState<FileList | undefined | null>(null);
   const [files, setFiles] = useState<FileList | undefined | null>(null);
-  const [showLinkModal, setShowLinkModal] = useState(false);
   const [links, setLinks] = useState<string[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [filesUrls, setFileUrls] = useState<string[]>([]);
@@ -47,18 +45,6 @@ const MessageForm = ({ teamId, type }: Props) => {
   const uploadFiles = useUploadMultipleFile();
   const [sendMessage] = useSendMessageMutation();
   const [isMessage, setIsMessage] = useState<any>({ status: false, value: "" });
-
-  const openLinkModal = () => {
-    setShowLinkModal(true);
-  };
-
-  const closeLinkModal = () => {
-    setShowLinkModal(false);
-  };
-
-  const handleLinkModalSubmit = (link: string) => {
-    setLinks((prev: string[]) => [...prev, link]);
-  };
 
   const handleSendMessage: SubmitHandler<Inputs> = async (data) => {
     if (files && files?.length > 0) {
@@ -69,7 +55,6 @@ const MessageForm = ({ teamId, type }: Props) => {
     }
     data.files = filesUrls!;
     data.images = imageUrls!;
-    data.links = links;
     data.poster = user.id;
     data.conversationId = teamId;
     data.type = type;
@@ -91,7 +76,6 @@ const MessageForm = ({ teamId, type }: Props) => {
       setFilePreview([]);
       setImages(null);
       setFiles(null);
-      setShowLinkModal(false);
       setLinks([]);
       setImageUrls([]);
       setFileUrls([]);
@@ -142,11 +126,6 @@ const MessageForm = ({ teamId, type }: Props) => {
     setFiles(updatedFilesList);
   };
 
-  const removeLink = (link: string) => {
-    const remainingLinks = links.filter((lk) => lk !== link);
-    setLinks(remainingLinks);
-  };
-
   return (
     <div className="mx-auto bg-gray-200 dark:bg-gray-700 shadow-md lg:px-6 p-2 lg:py-2 rounded-md mt-8 mb-40 lg:mb-0">
       {/* Image Preview Section */}
@@ -189,37 +168,10 @@ const MessageForm = ({ teamId, type }: Props) => {
         </div>
       )}
 
-      {/* links Preview Section */}
-      {links.length > 0 && (
-        <div className="mb-4">
-          {links?.map((link, index) => (
-            <div key={index} className="relative">
-              <div className="text-blue-500 hover:underline block mb-2">
-                <small>{link}</small>
-              </div>
-              <button
-                onClick={() => removeLink(link)}
-                className="absolute top-0 right-0 p-1 bg-white rounded-full text-red-500 hover:bg-gray-100"
-              >
-                <RxCross2 />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
       <form
         onSubmit={handleSubmit(handleSendMessage)}
         className="flex  lg:gap-3 gap-2 items-center"
       >
-        <label
-          className="hidden lg:block cursor-pointer"
-          onClick={openLinkModal}
-        >
-          <FaLink className="text-blue-500 hover:underline" />
-          <input type="text" {...register("links")} className="hidden" />
-        </label>
-
         <label htmlFor="images" className="hidden lg:block cursor-pointer">
           <FaImage className="text-blue-500 hover:underline" />
           <input
@@ -284,14 +236,6 @@ const MessageForm = ({ teamId, type }: Props) => {
           <IoSend />
         </button>
       </form>
-      {/* Link Modal */}
-      {showLinkModal && (
-        <LinkModal
-          isOpen={showLinkModal}
-          onClose={closeLinkModal}
-          onSubmit={handleLinkModalSubmit}
-        />
-      )}
     </div>
   );
 };
