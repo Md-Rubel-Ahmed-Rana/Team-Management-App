@@ -2,15 +2,13 @@ import { Application } from "express";
 import session from "express-session";
 import passport from "passport";
 import RedisStore from "connect-redis";
-import { createClient } from "redis";
 import { config } from "./envConfig";
+import Redis from "ioredis";
 
 // Create a new Redis client
-const redisClient = createClient({
-  socket: {
-    host: config.redis.host,
-    port: Number(config.redis.port),
-  },
+const redisClient = new Redis({
+  host: config.redis.host,
+  port: Number(config.redis.port),
   password: config.redis.password,
 });
 
