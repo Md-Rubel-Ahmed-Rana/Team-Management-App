@@ -40,7 +40,6 @@ passport.use(
     try {
       const { displayName, id } = profile;
       const email = generateEmailFromCredentials(displayName, id);
-      console.log(displayName, email);
       done(null, { name: displayName, email });
     } catch (error) {
       console.log("Failed to login with Facebook", error);
@@ -56,7 +55,6 @@ passport.use(
       const profile_picture = profile.photos && profile.photos[0].value;
       const displayName = profile.displayName;
       const email = generateEmailFromCredentials(displayName, profile.id);
-      console.log(displayName, email, profile_picture);
       done(null, { name: displayName, email, profile_picture });
     } catch (error) {
       console.log("Failed to login with Twitter", error);
@@ -79,8 +77,6 @@ passport.use(
 
         const email = emails[0]?.email;
         const { displayName } = profile;
-        console.log(displayName, email);
-
         done(null, { email, name: displayName });
       } catch (error) {
         console.log("Failed to login with Github", error);

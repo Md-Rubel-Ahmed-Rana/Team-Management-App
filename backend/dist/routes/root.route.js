@@ -14,9 +14,9 @@ const projectLeaveRequest_route_1 = require("./projectLeaveRequest.route");
 const mail_route_1 = require("./mail.route");
 const message_route_1 = require("./message.route");
 const notification_route_1 = require("./notification.route");
-const uploadFile_route_1 = require("./uploadFile.route");
 const auth_routes_1 = require("./auth.routes");
 const jwt_1 = require("lib/jwt");
+const uploadfile_route_1 = require("./uploadfile.route");
 const router = (0, express_1.Router)();
 router.use("/user", user_route_1.UserRoutes);
 router.use("/auth", auth_routes_1.AuthRoutes);
@@ -30,6 +30,6 @@ router.use("/leave-team", jwt_1.JwtInstance.verifyToken, teamLeaveRequest_route_
 router.use("/leave-project", jwt_1.JwtInstance.verifyToken, projectLeaveRequest_route_1.ProjectLeaveRequestRoutes);
 router.use("/mail", mail_route_1.MailRoutes);
 router.use("/message", jwt_1.JwtInstance.verifyToken, message_route_1.MessageRoutes);
-router.use("/cloudinary", uploadFile_route_1.FileUploadRoutes);
+router.use("/cloudinary", uploadfile_route_1.FileUploadRoutes);
 router.use("/notification", jwt_1.JwtInstance.verifyToken, notification_route_1.NotificationRoutes);
 exports.RootRoutes = router;
