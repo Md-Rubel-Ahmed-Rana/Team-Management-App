@@ -11,10 +11,10 @@ type Props = {
 };
 
 const FeatureCard = ({ feature }: Props) => {
-  const { title, description, image } = feature;
+  const { title, description, image, animation } = feature;
   return (
     <div
-      data-aos="fade-up"
+      data-aos={animation}
       className="features-card p-6 rounded-lg shadow-md lg:flex flex-col gap-4"
     >
       <img className="w-full h-60 rounded-lg" src={image} alt={title} />
