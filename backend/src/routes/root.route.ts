@@ -13,7 +13,7 @@ import { MessageRoutes } from "./message.route";
 import { NotificationRoutes } from "./notification.route";
 import { AuthRoutes } from "./auth.routes";
 import { JwtInstance } from "lib/jwt";
-import { FileUploadRoutes } from "./uploadfile.route";
+import { FileUploadRoutes } from "./file.route";
 
 const router = Router();
 
