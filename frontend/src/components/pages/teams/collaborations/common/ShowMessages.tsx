@@ -14,6 +14,7 @@ import { HiDotsVertical } from "react-icons/hi";
 import moment from "moment";
 import { formattedDate } from "@/utils/formattedDate";
 import { ITeam } from "@/interfaces/team.interface";
+import { detectLinks } from "@/utils/detectLinkFromText";
 
 interface Props {
   messages: IMessage[];
@@ -190,7 +191,11 @@ const ShowMessages = ({ messages, team }: Props) => {
               </p>
             </div>
           ) : (
-            <p className="mb-4">{post?.text}</p>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: detectLinks(post?.text).join(" "),
+              }}
+            />
           )}
 
           {post?.images?.length > 0 && (
@@ -243,7 +248,7 @@ const ShowMessages = ({ messages, team }: Props) => {
               ))}
             </div>
           )}
-          <p>{formattedDate(post.createdAt)}</p>
+          <p className="mt-2 text-gray-400">{formattedDate(post.createdAt)}</p>
         </div>
       ))}
     </div>
