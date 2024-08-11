@@ -48,7 +48,6 @@ passport_1.default.use(new FacebookStrategy(facebook, (accessToken, refreshToken
     try {
         const { displayName, id } = profile;
         const email = (0, generateEmailFromCredentials_1.generateEmailFromCredentials)(displayName, id);
-        console.log(displayName, email);
         done(null, { name: displayName, email });
     }
     catch (error) {
@@ -62,7 +61,6 @@ passport_1.default.use(new TwitterStrategy(twitter, (accessToken, refreshToken, 
         const profile_picture = profile.photos && profile.photos[0].value;
         const displayName = profile.displayName;
         const email = (0, generateEmailFromCredentials_1.generateEmailFromCredentials)(displayName, profile.id);
-        console.log(displayName, email, profile_picture);
         done(null, { name: displayName, email, profile_picture });
     }
     catch (error) {
@@ -81,7 +79,6 @@ passport_1.default.use(new GitHubStrategy(github, (accessToken, refreshToken, pr
         }).then((res) => res.json());
         const email = (_a = emails[0]) === null || _a === void 0 ? void 0 : _a.email;
         const { displayName } = profile;
-        console.log(displayName, email);
         done(null, { email, name: displayName });
     }
     catch (error) {

@@ -11,9 +11,9 @@ import { ProjectLeaveRequestRoutes } from "./projectLeaveRequest.route";
 import { MailRoutes } from "./mail.route";
 import { MessageRoutes } from "./message.route";
 import { NotificationRoutes } from "./notification.route";
-import { FileUploadRoutes } from "./uploadFile.route";
 import { AuthRoutes } from "./auth.routes";
 import { JwtInstance } from "lib/jwt";
+import { FileUploadRoutes } from "./uploadfile.route";
 
 const router = Router();
 
