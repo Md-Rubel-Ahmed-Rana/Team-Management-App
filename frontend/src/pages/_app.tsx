@@ -8,6 +8,8 @@ import "@/styles/globals.css";
 import SocketProvider from "@/context/SocketContext";
 import { ThemeProvider } from "next-themes";
 import NextNProgress from "nextjs-progressbar";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -19,6 +21,14 @@ type AppPropsWithLayout = AppProps & {
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      easing: "ease-in-out",
+      once: false,
+    });
+  }, []);
 
   return (
     <div className={`max-w-[1280px] w-full mx-auto`}>
