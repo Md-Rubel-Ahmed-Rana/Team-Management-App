@@ -1,81 +1,76 @@
-import cors from "cors";
-import express, { NextFunction, Request, Response } from "express";
-import httpStatus from "http-status";
+import express from "express";
 import { Server } from "socket.io";
 import http from "http";
-import helmet from "helmet";
-import cookieParser from "cookie-parser";
 import { RootRoutes } from "./routes/root.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import initializeDTOMapper from "./configurations/dtoMapper";
-import morgan from "morgan";
 import "./configurations/passport";
 import { initiateSocketIo } from "./configurations/socket.io";
 import { initiatePassportSession } from "./configurations/passport.session";
-import { apiLimiter } from "./configurations/apiRateLimiter";
+import handle404NotFoundError from "./errors/notFoundError";
+import appMiddlewares from "./middlewares/appMiddlewares";
+import { corsConfig } from "./configurations/cors";
+import healthCheck from "./utils/healthCheck";
+import {
+  upload,
+  uploadMultipleFiles,
+  uploadSingleFile,
+} from "./middlewares/cloudinary";
 
 const app = express();
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: [
-      "http://localhost:3000",
-      "https://team-management-app-client.vercel.app",
-      "https://team-manager-eight.vercel.app",
-    ],
-    credentials: true,
-  },
+  cors: corsConfig,
 });
 
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "https://team-manager-eight.vercel.app"],
-    credentials: true,
-  })
-);
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(helmet());
-app.use(morgan("dev"));
-app.use(apiLimiter);
+// app middlewares
+appMiddlewares(app);
 
 // initialize passport session
 initiatePassportSession(app);
 
-// * Mappers initiate
+// Mappers initiate
 initializeDTOMapper();
 
-// base route to check application health
-app.get("/", (req, res) => {
-  res.status(httpStatus.OK).json({
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Team Manager server is running",
-    data: null,
-  });
-});
+app.post(
+  "/new-post",
+  upload.single("file"),
+  uploadSingleFile("profile"),
+  (req, res) => {
+    const data = { ...req.body, url: req.link || "" };
+    res.status(200).json({
+      success: true,
+      message: "Post created successfully",
+      data: data,
+    });
+  }
+);
 
-// routes
+app.post(
+  "/multiple",
+  upload.array("files"),
+  uploadMultipleFiles("projects"),
+  (req, res) => {
+    res.status(200).json({
+      success: true,
+      message: "Post created successfully",
+      data: req.links || [],
+    });
+  }
+);
+
+// app health check
+healthCheck(app);
+
+// api endpoints
 app.use(RootRoutes);
 
+// global error handler
 app.use(globalErrorHandler.globalErrorHandler);
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.status(httpStatus.NOT_FOUND).json({
-    statusCode: httpStatus.NOT_FOUND,
-    success: false,
-    message: "Not Found",
-    errorMessages: [
-      {
-        path: req.originalUrl,
-        message: "API Not Found",
-      },
-    ],
-  });
-  next();
-});
+// handle 404 not found error
+handle404NotFoundError(app);
 
 // Connecting to Socket.IO
 initiateSocketIo(io);

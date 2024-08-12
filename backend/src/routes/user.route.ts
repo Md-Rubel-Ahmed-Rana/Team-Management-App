@@ -1,4 +1,5 @@
 import { UserController } from "@/controllers/user.controller";
+import { upload, uploadSingleFile } from "@/middlewares/cloudinary";
 import validateRequest from "@/middlewares/validateRequest";
 import { UserValidationSchema } from "@/validations/user.validation";
 import { Router } from "express";
@@ -15,6 +16,8 @@ router.get("/", UserController.getAllUsers);
 
 router.patch(
   "/update/:id",
+  upload.single("file"),
+  uploadSingleFile("profiles"),
   validateRequest(UserValidationSchema.updateZodSchema),
   UserController.updateUser
 );
