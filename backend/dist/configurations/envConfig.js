@@ -41,7 +41,7 @@ exports.config = {
         redirectUrl: process.env.TWITTER_REDIRECT_URL,
     },
     app: {
-        port: process.env.PORT || 5000,
+        port: Number(process.env.PORT) || 5000,
         environment: process.env.NODE_ENV,
         frontendDomain: process.env.FRONTEND_DOMAIN,
     },
@@ -51,6 +51,7 @@ exports.config = {
         port: process.env.REDIS_PORT,
     },
     cloudinary: {
+        cloudinaryApi: process.env.CLOUDINARY_API,
         cloudinaryName: process.env.CLOUDINARY_API_NAME,
         cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
         cloudinarySecretKey: process.env.CLOUDINARY_API_SECRET,

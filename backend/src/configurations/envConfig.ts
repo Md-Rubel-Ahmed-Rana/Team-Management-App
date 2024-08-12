@@ -36,7 +36,7 @@ export const config = {
     redirectUrl: process.env.TWITTER_REDIRECT_URL as string,
   },
   app: {
-    port: process.env.PORT || 5000,
+    port: Number(process.env.PORT) || (5000 as number),
     environment: process.env.NODE_ENV as string,
     frontendDomain: process.env.FRONTEND_DOMAIN as string,
   },
@@ -46,9 +46,10 @@ export const config = {
     port: process.env.REDIS_PORT as string,
   },
   cloudinary: {
-    cloudinaryName: process.env.CLOUDINARY_API_NAME,
-    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
-    cloudinarySecretKey: process.env.CLOUDINARY_API_SECRET,
+    cloudinaryApi: process.env.CLOUDINARY_API as string,
+    cloudinaryName: process.env.CLOUDINARY_API_NAME as string,
+    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY as string,
+    cloudinarySecretKey: process.env.CLOUDINARY_API_SECRET as string,
   },
   jwt: {
     accessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET as string,
