@@ -23,12 +23,6 @@ const createTeamValidation = z.object({
           invalid_type_error: "Team description must be string",
         })
         .min(1),
-      image: z
-        .string({
-          required_error: "Team image is required",
-          invalid_type_error: "Team image must be a url/link",
-        })
-        .url(),
       admin: z
         .string({
           required_error: "Team admin id is required",
