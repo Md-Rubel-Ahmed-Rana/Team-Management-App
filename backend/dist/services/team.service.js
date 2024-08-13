@@ -98,6 +98,15 @@ class Service {
             }
         });
     }
+    getTeamById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield team_model_1.default.findById(id);
+            if (!result) {
+                throw new apiError_1.default(404, "Team not found!");
+            }
+            return result;
+        });
+    }
     getTeam(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield team_model_1.default.findById(id).populate([

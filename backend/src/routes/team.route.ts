@@ -1,4 +1,5 @@
 import { TeamController } from "@/controllers/team.controller";
+import { upload, uploadSingleFile } from "@/middlewares/cloudinary";
 import validateRequest from "@/middlewares/validateRequest";
 import { TeamValidationSchema } from "@/validations/team.validation";
 import { Router } from "express";
@@ -6,6 +7,8 @@ const router = Router();
 
 router.post(
   "/create",
+  upload.single("file"),
+  uploadSingleFile("team-logos"),
   validateRequest(TeamValidationSchema.createTeamValidation),
   TeamController.createTeam
 );
@@ -24,6 +27,8 @@ router.patch("/remove-member/:teamId/:memberId", TeamController.removeMember);
 
 router.patch(
   "/update/:id",
+  upload.single("file"),
+  uploadSingleFile("team-logos"),
   validateRequest(TeamValidationSchema.updateTeamValidation),
   TeamController.updateTeam
 );
