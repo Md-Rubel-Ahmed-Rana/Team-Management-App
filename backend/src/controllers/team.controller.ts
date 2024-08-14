@@ -1,6 +1,6 @@
+import { deleteSingleFileFromCloudinary } from "@/utils/deletePreviousFileFromCloudinary";
 import { TeamService } from "@/services/team.service";
 import RootController from "@/shared/rootController";
-import deletePreviousFileFromCloudinary from "@/utils/deletePreviousFileFromCloudinary";
 import extractCloudinaryPublicId from "@/utils/getCloudinaryFilePublicIdFromUrl";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
@@ -68,7 +68,7 @@ class Controller extends RootController {
       const teamLogo = team?.image;
       if (teamLogo) {
         const public_id = extractCloudinaryPublicId(teamLogo);
-        await deletePreviousFileFromCloudinary(public_id);
+        await deleteSingleFileFromCloudinary(public_id);
       }
       const result = await TeamService.updateTeam(id, {
         ...req.body,
