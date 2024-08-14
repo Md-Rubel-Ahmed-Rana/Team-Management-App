@@ -39,7 +39,7 @@ class Service {
             return mappedData;
         });
     }
-    getMessageById(messageId) {
+    getMessage(messageId) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield message_model_1.Message.findById(messageId).populate({
                 path: "poster",
@@ -47,6 +47,11 @@ class Service {
             });
             const mappedData = mapper_1.mapper.map(result, message_entity_1.MessageEntity, get_1.GetMessageDTO);
             return mappedData;
+        });
+    }
+    getMessageById(messageId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield message_model_1.Message.findById(messageId);
         });
     }
     updateMessage(messageId, text) {

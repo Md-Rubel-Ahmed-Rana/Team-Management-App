@@ -1,5 +1,6 @@
 import { MessageService } from "@/services/message.service";
 import RootController from "@/shared/rootController";
+import deleteMessageFilesFromCloudinary from "@/utils/deleteMessageFilesFromCloudinary";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 
@@ -29,6 +30,17 @@ class Controller extends RootController {
     });
   });
 
+  getMessage = this.catchAsync(async (req: Request, res: Response) => {
+    const messageId = req.params.id;
+    const message = await MessageService.getMessage(messageId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Message found",
+      data: message,
+    });
+  });
+
   getMessageById = this.catchAsync(async (req: Request, res: Response) => {
     const messageId = req.params.id;
     const message = await MessageService.getMessageById(messageId);
@@ -54,6 +66,7 @@ class Controller extends RootController {
 
   deleteMessage = this.catchAsync(async (req: Request, res: Response) => {
     const messageId = req.params.id;
+    await deleteMessageFilesFromCloudinary(messageId);
     const result = await MessageService.deleteMessage(messageId);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,

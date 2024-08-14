@@ -10,5 +10,4 @@ export type IMessage = {
   text?: string;
   images?: string[];
   files?: string[];
-  links?: string[];
 };

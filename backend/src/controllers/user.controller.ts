@@ -1,6 +1,6 @@
+import { deleteSingleFileFromCloudinary } from "@/utils/deletePreviousFileFromCloudinary";
 import { UserService } from "@/services/user.service";
 import RootController from "@/shared/rootController";
-import deletePreviousFileFromCloudinary from "@/utils/deletePreviousFileFromCloudinary";
 import extractCloudinaryPublicId from "@/utils/getCloudinaryFilePublicIdFromUrl";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
@@ -33,7 +33,7 @@ class Controller extends RootController {
       const profile_picture = user?.profile_picture;
       if (profile_picture) {
         const public_id = extractCloudinaryPublicId(profile_picture);
-        await deletePreviousFileFromCloudinary(public_id);
+        await deleteSingleFileFromCloudinary(public_id);
       }
     }
     const data = req.link

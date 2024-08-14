@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessageController = void 0;
 const message_service_1 = require("@/services/message.service");
 const rootController_1 = __importDefault(require("@/shared/rootController"));
+const deleteMessageFilesFromCloudinary_1 = __importDefault(require("@/utils/deleteMessageFilesFromCloudinary"));
 const http_status_1 = __importDefault(require("http-status"));
 class Controller extends rootController_1.default {
     constructor() {
@@ -37,6 +38,16 @@ class Controller extends rootController_1.default {
                 success: true,
                 message: "Messages found",
                 data: messages,
+            });
+        }));
+        this.getMessage = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const messageId = req.params.id;
+            const message = yield message_service_1.MessageService.getMessage(messageId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Message found",
+                data: message,
             });
         }));
         this.getMessageById = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -62,6 +73,7 @@ class Controller extends rootController_1.default {
         }));
         this.deleteMessage = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const messageId = req.params.id;
+            yield (0, deleteMessageFilesFromCloudinary_1.default)(messageId);
             const result = yield message_service_1.MessageService.deleteMessage(messageId);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
