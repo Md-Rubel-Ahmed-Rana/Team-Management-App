@@ -1,6 +1,7 @@
+import { deleteSingleFileFromCloudinary } from "@/utils/deletePreviousFileFromCloudinary";
 import { UserService } from "@/services/user.service";
 import RootController from "@/shared/rootController";
-import { cookieManager } from "@/utils/cookies";
+import extractCloudinaryPublicId from "@/utils/getCloudinaryFilePublicIdFromUrl";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 
@@ -27,7 +28,18 @@ class Controller extends RootController {
 
   updateUser = this.catchAsync(async (req: Request, res: Response) => {
     const id = req.params.id;
-    const result = await UserService.updateUser(id, req.body);
+    if (req.link) {
+      const user = await UserService.findUserById(id);
+      const profile_picture = user?.profile_picture;
+      if (profile_picture) {
+        const public_id = extractCloudinaryPublicId(profile_picture);
+        await deleteSingleFileFromCloudinary(public_id);
+      }
+    }
+    const data = req.link
+      ? { ...req.body, profile_picture: req.link }
+      : req.body;
+    const result = await UserService.updateUser(id, data);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

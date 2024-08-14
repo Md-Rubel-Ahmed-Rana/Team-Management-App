@@ -1,11 +1,16 @@
+import { deleteSingleFileFromCloudinary } from "@/utils/deletePreviousFileFromCloudinary";
 import { TeamService } from "@/services/team.service";
 import RootController from "@/shared/rootController";
+import extractCloudinaryPublicId from "@/utils/getCloudinaryFilePublicIdFromUrl";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 
 class Controller extends RootController {
   createTeam = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await TeamService.createTeam(req.body);
+    const result = await TeamService.createTeam({
+      ...req.body,
+      image: req.link || "",
+    });
     this.apiResponse(res, {
       statusCode: httpStatus.CREATED,
       success: true,
@@ -57,13 +62,33 @@ class Controller extends RootController {
   });
 
   updateTeam = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await TeamService.updateTeam(req.params.id, req.body);
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Team updated successfully",
-      data: result,
-    });
+    const id = req.params.id;
+    if (req.link) {
+      const team = await TeamService.getTeamById(id);
+      const teamLogo = team?.image;
+      if (teamLogo) {
+        const public_id = extractCloudinaryPublicId(teamLogo);
+        await deleteSingleFileFromCloudinary(public_id);
+      }
+      const result = await TeamService.updateTeam(id, {
+        ...req.body,
+        image: req.link,
+      });
+      this.apiResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Team updated successfully",
+        data: result,
+      });
+    } else {
+      const result = await TeamService.updateTeam(id, req.body);
+      this.apiResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Team updated successfully",
+        data: result,
+      });
+    }
   });
 
   deleteTeam = this.catchAsync(async (req: Request, res: Response) => {

@@ -97,6 +97,13 @@ class Service {
     }
   }
 
+  async getTeamById(id: string): Promise<ITeam> {
+    const result = await Team.findById(id);
+    if (!result) {
+      throw new ApiError(404, "Team not found!");
+    }
+    return result;
+  }
   async getTeam(id: string): Promise<GetTeamDTO> {
     const result = await Team.findById(id).populate([
       {

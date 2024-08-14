@@ -3,73 +3,54 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
-const http_status_1 = __importDefault(require("http-status"));
 const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
-const helmet_1 = __importDefault(require("helmet"));
-const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const root_route_1 = require("./routes/root.route");
 const globalErrorHandler_1 = __importDefault(require("./middlewares/globalErrorHandler"));
 const dtoMapper_1 = __importDefault(require("./configurations/dtoMapper"));
-const morgan_1 = __importDefault(require("morgan"));
 require("./configurations/passport");
 const socket_io_2 = require("./configurations/socket.io");
 const passport_session_1 = require("./configurations/passport.session");
-const apiRateLimiter_1 = require("./configurations/apiRateLimiter");
+const notFoundError_1 = __importDefault(require("./errors/notFoundError"));
+const appMiddlewares_1 = __importDefault(require("./middlewares/appMiddlewares"));
+const cors_1 = require("./configurations/cors");
+const healthCheck_1 = __importDefault(require("./utils/healthCheck"));
+const cloudinary_1 = require("./middlewares/cloudinary");
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
-    cors: {
-        origin: [
-            "http://localhost:3000",
-            "https://team-management-app-client.vercel.app",
-            "https://team-manager-eight.vercel.app",
-        ],
-        credentials: true,
-    },
+    cors: cors_1.corsConfig,
 });
-app.use((0, cors_1.default)({
-    origin: ["http://localhost:3000", "https://team-manager-eight.vercel.app"],
-    credentials: true,
-}));
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: true }));
-app.use((0, cookie_parser_1.default)());
-app.use((0, helmet_1.default)());
-app.use((0, morgan_1.default)("dev"));
-app.use(apiRateLimiter_1.apiLimiter);
+// app middlewares
+(0, appMiddlewares_1.default)(app);
 // initialize passport session
 (0, passport_session_1.initiatePassportSession)(app);
-// * Mappers initiate
+// Mappers initiate
 (0, dtoMapper_1.default)();
-// base route to check application health
-app.get("/", (req, res) => {
-    res.status(http_status_1.default.OK).json({
-        statusCode: http_status_1.default.OK,
+app.post("/new-post", cloudinary_1.upload.single("file"), (0, cloudinary_1.uploadSingleFile)("profile"), (req, res) => {
+    const data = Object.assign(Object.assign({}, req.body), { url: req.link || "" });
+    res.status(200).json({
         success: true,
-        message: "Team Manager server is running",
-        data: null,
+        message: "Post created successfully",
+        data: data,
     });
 });
-// routes
+app.post("/multiple", cloudinary_1.upload.array("files"), (0, cloudinary_1.uploadMultipleFiles)("projects"), (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "Post created successfully",
+        data: req.links || [],
+    });
+});
+// app health check
+(0, healthCheck_1.default)(app);
+// api endpoints
 app.use(root_route_1.RootRoutes);
+// global error handler
 app.use(globalErrorHandler_1.default.globalErrorHandler);
-app.use((req, res, next) => {
-    res.status(http_status_1.default.NOT_FOUND).json({
-        statusCode: http_status_1.default.NOT_FOUND,
-        success: false,
-        message: "Not Found",
-        errorMessages: [
-            {
-                path: req.originalUrl,
-                message: "API Not Found",
-            },
-        ],
-    });
-    next();
-});
+// handle 404 not found error
+(0, notFoundError_1.default)(app);
 // Connecting to Socket.IO
 (0, socket_io_2.initiateSocketIo)(io);
 exports.default = server;

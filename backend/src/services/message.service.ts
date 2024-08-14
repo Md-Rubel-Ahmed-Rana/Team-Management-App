@@ -40,7 +40,7 @@ class Service {
     return mappedData;
   }
 
-  async getMessageById(messageId: string): Promise<GetMessageDTO> {
+  async getMessage(messageId: string): Promise<GetMessageDTO> {
     const result = await Message.findById(messageId).populate({
       path: "poster",
       model: "User",
@@ -51,6 +51,9 @@ class Service {
       GetMessageDTO
     );
     return mappedData;
+  }
+  async getMessageById(messageId: string): Promise<IMessage | null> {
+    return await Message.findById(messageId);
   }
 
   async updateMessage(

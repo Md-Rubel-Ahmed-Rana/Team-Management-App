@@ -13,7 +13,6 @@ import { MessageRoutes } from "./message.route";
 import { NotificationRoutes } from "./notification.route";
 import { AuthRoutes } from "./auth.routes";
 import { JwtInstance } from "lib/jwt";
-import { FileUploadRoutes } from "./file.route";
 
 const router = Router();
 
@@ -44,8 +43,6 @@ router.use(
 router.use("/mail", MailRoutes);
 
 router.use("/message", JwtInstance.verifyToken, MessageRoutes);
-
-router.use("/cloudinary", FileUploadRoutes);
 
 router.use("/notification", JwtInstance.verifyToken, NotificationRoutes);
 

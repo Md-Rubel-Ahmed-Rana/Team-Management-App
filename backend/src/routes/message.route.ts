@@ -1,4 +1,5 @@
 import { MessageController } from "@/controllers/message.controller";
+import { upload, uploadMessageImageAndFiles } from "@/middlewares/cloudinary";
 import { Router } from "express";
 const router = Router();
 
@@ -9,9 +10,16 @@ router.get(
   MessageController.getMessagesByType
 );
 
-router.get("/by-id/:id", MessageController.getMessageById);
+router.get("/by-id/:id", MessageController.getMessage);
 
-router.post("/send", MessageController.createMessage);
+router.get("/single/:id", MessageController.getMessageById);
+
+router.post(
+  "/send",
+  upload.fields([{ name: "files" }, { name: "images" }]),
+  uploadMessageImageAndFiles("messages"),
+  MessageController.createMessage
+);
 
 router.patch("/update/:id", MessageController.updateMessage);
 

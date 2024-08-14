@@ -13,8 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
+const deletePreviousFileFromCloudinary_1 = require("@/utils/deletePreviousFileFromCloudinary");
 const user_service_1 = require("@/services/user.service");
 const rootController_1 = __importDefault(require("@/shared/rootController"));
+const getCloudinaryFilePublicIdFromUrl_1 = __importDefault(require("@/utils/getCloudinaryFilePublicIdFromUrl"));
 const http_status_1 = __importDefault(require("http-status"));
 class Controller extends rootController_1.default {
     constructor() {
@@ -39,7 +41,17 @@ class Controller extends rootController_1.default {
         }));
         this.updateUser = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const id = req.params.id;
-            const result = yield user_service_1.UserService.updateUser(id, req.body);
+            if (req.link) {
+                const user = yield user_service_1.UserService.findUserById(id);
+                const profile_picture = user === null || user === void 0 ? void 0 : user.profile_picture;
+                if (profile_picture) {
+                    const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(profile_picture);
+                    yield (0, deletePreviousFileFromCloudinary_1.deleteSingleFileFromCloudinary)(public_id);
+                }
+            }
+            const data = req.link
+                ? Object.assign(Object.assign({}, req.body), { profile_picture: req.link }) : req.body;
+            const result = yield user_service_1.UserService.updateUser(id, data);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,

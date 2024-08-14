@@ -22,7 +22,6 @@ const messageSchema = new Schema<IMessage>(
     },
     images: [{ type: String }],
     files: [{ type: String }],
-    links: [{ type: String }],
   },
   {
     timestamps: true,
