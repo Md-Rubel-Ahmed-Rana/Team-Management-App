@@ -1,7 +1,7 @@
 import { config } from "@/configurations/envConfig";
 import axios from "axios";
 
-const deletePreviousFileFromCloudinary = async (public_id: string) => {
+const deleteSingleFileFromCloudinary = async (public_id: string) => {
   try {
     const response = await axios.delete(
       `${config.cloudinary.cloudinaryApi}/delete/single`,
@@ -9,23 +9,46 @@ const deletePreviousFileFromCloudinary = async (public_id: string) => {
         data: { public_id },
       }
     );
-    return response.data;
-  } catch (error) {
+    console.log("File deleted successfully:", public_id);
+    return { success: true, data: response.data };
+  } catch (error: any) {
     if (axios.isAxiosError(error)) {
       console.error(
         "Error deleting file from Cloudinary:",
         error.response?.data || error.message
       );
-      throw new Error(
-        `Failed to delete file: ${
-          error.response?.data?.message || error.message
-        }`
-      );
     } else {
       console.error("Unexpected error:", error);
-      throw new Error("An unexpected error occurred while deleting the file.");
     }
+    // Return an object with success: false but do not throw an error
+    return { success: false, error: error.message };
   }
 };
 
-export default deletePreviousFileFromCloudinary;
+const deleteMultipleFileFromCloudinary = async (
+  public_ids: { public_id: string }[]
+) => {
+  try {
+    const response = await axios.delete(
+      `${config.cloudinary.cloudinaryApi}/delete/many`,
+      {
+        data: public_ids,
+      }
+    );
+    console.log("Files deleted successfully:", public_ids);
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error deleting files from Cloudinary:",
+        error.response?.data || error.message
+      );
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    // Return an object with success: false but do not throw an error
+    return { success: false, error: error.message };
+  }
+};
+
+export { deleteSingleFileFromCloudinary, deleteMultipleFileFromCloudinary };

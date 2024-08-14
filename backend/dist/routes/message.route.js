@@ -2,11 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessageRoutes = void 0;
 const message_controller_1 = require("@/controllers/message.controller");
+const cloudinary_1 = require("@/middlewares/cloudinary");
 const express_1 = require("express");
 const router = (0, express_1.Router)();
 router.delete("/delete/:id", message_controller_1.MessageController.deleteMessage);
 router.get("/by-type/:type/:conversationId", message_controller_1.MessageController.getMessagesByType);
-router.get("/by-id/:id", message_controller_1.MessageController.getMessageById);
-router.post("/send", message_controller_1.MessageController.createMessage);
+router.get("/by-id/:id", message_controller_1.MessageController.getMessage);
+router.get("/single/:id", message_controller_1.MessageController.getMessageById);
+router.post("/send", cloudinary_1.upload.fields([{ name: "files" }, { name: "images" }]), (0, cloudinary_1.uploadMessageImageAndFiles)("messages"), message_controller_1.MessageController.createMessage);
 router.patch("/update/:id", message_controller_1.MessageController.updateMessage);
 exports.MessageRoutes = router;

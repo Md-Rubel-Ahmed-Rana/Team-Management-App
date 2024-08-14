@@ -13,9 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TeamController = void 0;
+const deletePreviousFileFromCloudinary_1 = require("@/utils/deletePreviousFileFromCloudinary");
 const team_service_1 = require("@/services/team.service");
 const rootController_1 = __importDefault(require("@/shared/rootController"));
-const deletePreviousFileFromCloudinary_1 = __importDefault(require("@/utils/deletePreviousFileFromCloudinary"));
 const getCloudinaryFilePublicIdFromUrl_1 = __importDefault(require("@/utils/getCloudinaryFilePublicIdFromUrl"));
 const http_status_1 = __importDefault(require("http-status"));
 class Controller extends rootController_1.default {
@@ -76,7 +76,7 @@ class Controller extends rootController_1.default {
                 const teamLogo = team === null || team === void 0 ? void 0 : team.image;
                 if (teamLogo) {
                     const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(teamLogo);
-                    yield (0, deletePreviousFileFromCloudinary_1.default)(public_id);
+                    yield (0, deletePreviousFileFromCloudinary_1.deleteSingleFileFromCloudinary)(public_id);
                 }
                 const result = yield team_service_1.TeamService.updateTeam(id, Object.assign(Object.assign({}, req.body), { image: req.link }));
                 this.apiResponse(res, {

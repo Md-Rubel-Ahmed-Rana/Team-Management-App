@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadMultipleFiles = exports.uploadSingleFile = exports.upload = void 0;
+exports.uploadMessageImageAndFiles = exports.uploadMultipleFiles = exports.uploadSingleFile = exports.upload = void 0;
 const multer_1 = __importDefault(require("multer"));
 const fs_1 = __importDefault(require("fs"));
 const axios_1 = __importDefault(require("axios"));
@@ -21,8 +21,9 @@ const makeUrlFromFileObject_1 = __importDefault(require("@/utils/makeUrlFromFile
 const envConfig_1 = require("@/configurations/envConfig");
 const upload = (0, multer_1.default)({ dest: "uploads/" });
 exports.upload = upload;
+const rootFolder = "team-manager";
 const uploadSingleFile = (folderName) => {
-    const folder = folderName ? `team-manager/${folderName}` : "team-manager";
+    const folder = folderName ? `${rootFolder}/${folderName}` : rootFolder;
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b;
         if (!req.file) {
@@ -57,7 +58,7 @@ const uploadSingleFile = (folderName) => {
 };
 exports.uploadSingleFile = uploadSingleFile;
 const uploadMultipleFiles = (folderName) => {
-    const folder = folderName ? `team-manager/${folderName}` : "team-manager";
+    const folder = folderName ? `${rootFolder}/${folderName}` : rootFolder;
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         if (!req.files || !Array.isArray(req.files)) {
             delete req.body.files;
@@ -93,3 +94,61 @@ const uploadMultipleFiles = (folderName) => {
     });
 };
 exports.uploadMultipleFiles = uploadMultipleFiles;
+const uploadMessageImageAndFiles = (folderName) => {
+    const folder = folderName ? `${rootFolder}/${folderName}` : rootFolder;
+    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b;
+        const images = ((_a = req.files) === null || _a === void 0 ? void 0 : _a.images) || [];
+        const files = ((_b = req.files) === null || _b === void 0 ? void 0 : _b.files) || [];
+        let uploadedFiles = [];
+        let uploadedImages = [];
+        try {
+            if (files.length > 0) {
+                uploadedFiles = yield handleUpload(files, `${folder}/files`);
+            }
+            if (images.length > 0) {
+                uploadedImages = yield handleUpload(images, `${folder}/images`);
+            }
+            req.body.images = uploadedImages;
+            req.body.files = uploadedFiles;
+        }
+        catch (error) {
+            console.error("Error uploading files or images:", error);
+        }
+        finally {
+            next();
+        }
+    });
+};
+exports.uploadMessageImageAndFiles = uploadMessageImageAndFiles;
+const handleUpload = (files, folder) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const uploadedFiles = [];
+    const formData = new form_data_1.default();
+    files.forEach((file) => {
+        formData.append("files", fs_1.default.createReadStream(file.path));
+    });
+    try {
+        const response = yield axios_1.default.post(`${envConfig_1.config.cloudinary.cloudinaryApi}/upload/many?folderName=${folder}`, formData, {
+            headers: formData.getHeaders(),
+        });
+        (_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.data.forEach((obj, index) => {
+            var _a, _b;
+            const extension = (_b = (_a = files[index]) === null || _a === void 0 ? void 0 : _a.originalname) === null || _b === void 0 ? void 0 : _b.split(".").pop();
+            const dataUrl = (0, makeUrlFromFileObject_1.default)(Object.assign(Object.assign({}, obj), { extension: extension }));
+            uploadedFiles.push(dataUrl);
+        });
+    }
+    catch (error) {
+        console.error("Failed to upload files:", error);
+    }
+    finally {
+        files.forEach((file) => {
+            fs_1.default.unlink(file.path, (err) => {
+                if (err)
+                    console.error("Failed to delete uploaded file:", err);
+            });
+        });
+    }
+    return uploadedFiles;
+});

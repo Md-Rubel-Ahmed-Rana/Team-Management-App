@@ -22,7 +22,6 @@ const messageSchema = new mongoose_1.Schema({
     },
     images: [{ type: String }],
     files: [{ type: String }],
-    links: [{ type: String }],
 }, {
     timestamps: true,
     toJSON: {
