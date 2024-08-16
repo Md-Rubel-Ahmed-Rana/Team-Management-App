@@ -33,7 +33,9 @@ class Controller extends RootController {
       const profile_picture = user?.profile_picture;
       if (profile_picture) {
         const public_id = extractCloudinaryPublicId(profile_picture);
-        await deleteSingleFileFromCloudinary(public_id);
+        if (public_id) {
+          await deleteSingleFileFromCloudinary(public_id);
+        }
       }
     }
     const data = req.link

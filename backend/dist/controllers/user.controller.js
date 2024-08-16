@@ -46,7 +46,9 @@ class Controller extends rootController_1.default {
                 const profile_picture = user === null || user === void 0 ? void 0 : user.profile_picture;
                 if (profile_picture) {
                     const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(profile_picture);
-                    yield (0, deletePreviousFileFromCloudinary_1.deleteSingleFileFromCloudinary)(public_id);
+                    if (public_id) {
+                        yield (0, deletePreviousFileFromCloudinary_1.deleteSingleFileFromCloudinary)(public_id);
+                    }
                 }
             }
             const data = req.link

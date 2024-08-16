@@ -8,15 +8,19 @@ const deleteMessageFilesFromCloudinary = async (messageId: string) => {
   if (message?.images && message?.images?.length > 0) {
     message?.images.forEach((imageUrl) => {
       const public_id = extractCloudinaryPublicId(imageUrl);
-      const newId = { public_id: public_id };
-      publicIds.push(newId);
+      if (public_id) {
+        const newId = { public_id: public_id };
+        publicIds.push(newId);
+      }
     });
   }
   if (message?.files && message?.files?.length > 0) {
     message?.files.forEach((fileUrl) => {
       const public_id = extractCloudinaryPublicId(fileUrl);
-      const newId = { public_id: public_id };
-      publicIds.push(newId);
+      if (public_id) {
+        const newId = { public_id: public_id };
+        publicIds.push(newId);
+      }
     });
   }
 
