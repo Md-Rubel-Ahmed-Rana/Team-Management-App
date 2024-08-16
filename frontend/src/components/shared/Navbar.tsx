@@ -213,58 +213,62 @@ const Navbar = () => {
       {toggle && (
         <div className="flex justify-center items-center">
           <div className="w-[90%] flex lg:hidden rounded-md flex-col text-start gap-3 z-10 absolute top-20 p-3 shadow-lg dark:bg-gray-700 bg-gray-100">
-            <button
-              className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+            <Link
               onClick={() => setToggle(false)}
+              className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+              href="/"
             >
-              <Link href="/">Home</Link>
-            </button>
+              Home
+            </Link>
             {!user?.email && (
               <>
-                <button
-                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                <Link
+                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
                   onClick={() => setToggle(false)}
+                  href="/signup"
                 >
-                  <Link href="/signup">Signup</Link>
-                </button>
-                <button
-                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  Signup
+                </Link>
+                <Link
+                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
                   onClick={() => setToggle(false)}
+                  href="/login"
                 >
-                  <Link href="/login">Login</Link>
-                </button>
+                  Login
+                </Link>
               </>
             )}
 
             {user?.email && (
               <>
-                <button
-                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                <Link
+                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
                   onClick={() => setToggle(false)}
+                  href="/teams"
                 >
-                  <Link href="/teams">My Teams</Link>
-                </button>
-                <button
-                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  My Teams
+                </Link>
+
+                <Link
                   onClick={() => setToggle(false)}
+                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  href={{
+                    pathname: "dashboard",
+                    query: `uId=${user?.id}&activeView=joined-teams`,
+                  }}
                 >
-                  <Link
-                    href={{
-                      pathname: "dashboard",
-                      query: `uId=${user?.id}&activeView=joined-teams`,
-                    }}
-                  >
-                    Joined Teams
-                  </Link>
-                </button>
-                <button
-                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  Joined Teams
+                </Link>
+
+                <Link
                   onClick={() => setToggle(false)}
+                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  href="/projects"
                 >
-                  <Link href="/projects">Projects</Link>
-                </button>
+                  Projects
+                </Link>
                 <button
-                  className="text-start dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
                   onClick={handleLogOut}
                 >
                   Logout

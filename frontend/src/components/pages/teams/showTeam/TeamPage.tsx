@@ -5,12 +5,10 @@ import { ITeam } from "@/interfaces/team.interface";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import CreateTeamModal from "../teamCreation/CreateTeam";
 
 const Teams = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
-  const [isOpen, setIsOpen] = useState(false);
   const { data: teamData } = useMyTeamsQuery(user?.id);
 
   return (
@@ -22,12 +20,12 @@ const Teams = () => {
           </h1>
         </div>
         <div>
-          <button
+          <Link
+            href={"/create-team"}
             className="flex items-center mt-3 lg:mt-0 gap-2  border px-5 py-2 rounded-md"
-            onClick={() => setIsOpen(true)}
           >
             <FaPlus /> <small>Create a team</small>
-          </button>
+          </Link>
         </div>
       </div>
       <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 py-10 gap-10">
@@ -75,7 +73,6 @@ const Teams = () => {
           <p>Your created team will be displayed here</p>
         </div>
       )}
-      {isOpen && <CreateTeamModal isOpen={isOpen} setIsOpen={setIsOpen} />}
     </section>
   );
 };
