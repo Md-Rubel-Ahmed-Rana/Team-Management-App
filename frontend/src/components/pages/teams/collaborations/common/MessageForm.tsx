@@ -4,13 +4,12 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { FaImage, FaFile } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
-import useUploadMultipleImage from "@/hooks/useUploadMultipleImage";
-import useUploadMultipleFile from "@/hooks/useUploadMultipleFiles";
 import { useSendMessageMutation } from "@/features/message";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { SocketContext } from "@/context/SocketContext";
 import { IMessage } from "@/interfaces/message.interface";
+import { acceptableFiles } from "@/constants/acceptableFiles";
 
 type Inputs = {
   poster?: string;
@@ -38,28 +37,43 @@ const MessageForm = ({ teamId, type }: Props) => {
   const [filePreview, setFilePreview] = useState<string[]>([]);
   const [images, setImages] = useState<FileList | undefined | null>(null);
   const [files, setFiles] = useState<FileList | undefined | null>(null);
-  const [links, setLinks] = useState<string[]>([]);
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [filesUrls, setFileUrls] = useState<string[]>([]);
-  const uploadImages = useUploadMultipleImage();
-  const uploadFiles = useUploadMultipleFile();
-  const [sendMessage] = useSendMessageMutation();
+  const [sendMessage, { isLoading }] = useSendMessageMutation();
   const [isMessage, setIsMessage] = useState<any>({ status: false, value: "" });
 
   const handleSendMessage: SubmitHandler<Inputs> = async (data) => {
-    if (files && files?.length > 0) {
-      await uploadFiles(files, setFileUrls);
+    const formData = new FormData();
+
+    // Append files to formData
+    if (files && files.length > 0) {
+      Array.from(files).forEach((file) => {
+        formData.append("files", file);
+      });
     }
+
+    // Append images to formData
     if (images && images.length > 0) {
-      await uploadImages(images, setImageUrls);
+      Array.from(images).forEach((file) => {
+        formData.append("images", file);
+      });
     }
-    data.files = filesUrls!;
-    data.images = imageUrls!;
-    data.poster = user.id;
-    data.conversationId = teamId;
-    data.type = type;
-    data.text = data?.text || isMessage?.value;
-    const result: any = await sendMessage(data);
+
+    // Append other data
+    formData.append("poster", user.id);
+    formData.append("conversationId", teamId);
+    formData.append("type", type);
+    formData.append("text", data?.text || isMessage?.value);
+
+    // reset fields data
+    setImagePreview([]);
+    setFilePreview([]);
+    setImages(null);
+    setFiles(null);
+    setIsMessage({ status: false, value: "" });
+    reset({ text: "" });
+
+    // Send the formData using your sendMessage function
+    const result: any = await sendMessage(formData);
+
     if (result?.data?.success) {
       const message = result?.data?.data;
       const poster = {
@@ -76,10 +90,7 @@ const MessageForm = ({ teamId, type }: Props) => {
       setFilePreview([]);
       setImages(null);
       setFiles(null);
-      setLinks([]);
-      setImageUrls([]);
-      setFileUrls([]);
-      setIsMessage(false);
+      setIsMessage({ status: false, value: "" });
       reset();
     }
   };
@@ -172,8 +183,17 @@ const MessageForm = ({ teamId, type }: Props) => {
         onSubmit={handleSubmit(handleSendMessage)}
         className="flex  lg:gap-3 gap-2 items-center"
       >
-        <label htmlFor="images" className="hidden lg:block cursor-pointer">
-          <FaImage className="text-blue-500 hover:underline" />
+        <label
+          htmlFor="images"
+          className={`hidden lg:block cursor-pointer ${
+            isLoading ? "cursor-not-allowed opacity-50" : ""
+          }`}
+        >
+          <FaImage
+            className={`text-blue-500 hover:underline ${
+              isLoading ? "cursor-not-allowed" : ""
+            }`}
+          />
           <input
             type="file"
             id="images"
@@ -181,22 +201,35 @@ const MessageForm = ({ teamId, type }: Props) => {
             className="hidden"
             accept="image/*"
             multiple
-            onChange={handleImageChange}
+            onChange={(e) => {
+              if (!isLoading) handleImageChange(e);
+            }}
+            disabled={isLoading}
           />
         </label>
 
-        <label htmlFor="files" className="hidden lg:block cursor-pointer">
+        <label
+          htmlFor="files"
+          className={`hidden lg:block cursor-pointer ${
+            isLoading ? "cursor-not-allowed opacity-50" : ""
+          }`}
+        >
           <FaFile
-            title="Only pdf and video file supported"
-            className="text-blue-500 hover:underline"
+            title="File size must be 10MB or less"
+            className={`text-blue-500 hover:underline ${
+              isLoading ? "cursor-not-allowed" : ""
+            }`}
           />
           <input
             type="file"
             id="files"
             {...register("files")}
             className="hidden"
-            accept="application/pdf, pdf,mp4,avi,mov,mkv,wmv,flv,mpeg,mpg,webm,3gp"
-            onChange={handleFileChange}
+            accept={acceptableFiles}
+            onChange={(e) => {
+              if (!isLoading) handleFileChange(e);
+            }}
+            disabled={isLoading}
             multiple
           />
         </label>
@@ -204,36 +237,66 @@ const MessageForm = ({ teamId, type }: Props) => {
         <input
           autoFocus
           type="text"
+          readOnly={isLoading}
           {...register("text")}
           name="text"
           placeholder="Type your message..."
-          onChange={(e) =>
-            setIsMessage({
-              status: e.target.value ? true : false,
-              value: e.target.value,
-            })
-          }
-          className="border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500 flex-grow"
+          onChange={(e) => {
+            if (!isLoading) {
+              setIsMessage({
+                status: e.target.value ? true : false,
+                value: e.target.value,
+              });
+            }
+          }}
+          className={`border-2 p-2 rounded-md focus:outline-none flex-grow ${
+            isLoading
+              ? "bg-gray-200 cursor-not-allowed"
+              : "border-gray-300 focus:border-blue-500"
+          }`}
         />
 
         <button
           disabled={
-            links.length <= 0 &&
             filePreview.length <= 0 &&
             imagePreview.length <= 0 &&
-            !isMessage?.status
+            !isMessage?.status &&
+            isLoading
           }
           type="submit"
           className={`${
-            links.length <= 0 &&
             filePreview.length <= 0 &&
             imagePreview.length <= 0 &&
-            !isMessage?.status
-              ? "bg-gray-500 hover:bg-gray-600"
+            !isMessage?.status &&
+            isLoading
+              ? "bg-gray-500 hover:bg-gray-600 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-          } text-white px-4 py-2 rounded-md  focus:outline-none`}
+          } text-white px-4 py-2 rounded-md focus:outline-none flex items-center justify-center`}
         >
-          <IoSend />
+          {isLoading ? (
+            <svg
+              className="animate-spin h-5 w-5 mr-2 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              ></path>
+            </svg>
+          ) : (
+            <IoSend />
+          )}
         </button>
       </form>
     </div>

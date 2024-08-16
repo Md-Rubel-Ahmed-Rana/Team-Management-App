@@ -15,6 +15,10 @@ import moment from "moment";
 import { formattedDate } from "@/utils/formattedDate";
 import { ITeam } from "@/interfaces/team.interface";
 import { detectLinks } from "@/utils/detectLinkFromText";
+import detectFileExtensionFromLink from "@/utils/detectFileExtensionFromLink";
+import GetFileIcon from "@/components/shared/generateFileIconBasedExtension";
+import { acceptableExtensions } from "@/constants/acceptableFiles";
+import DownloadFileButton from "@/components/shared/DownloadFileButton";
 
 interface Props {
   messages: IMessage[];
@@ -104,7 +108,7 @@ const ShowMessages = ({ messages, team }: Props) => {
   return (
     <div
       ref={messagesContainerRef}
-      className="mx-auto mt-8 min-h-[300px] h-auto  overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
+      className="mx-auto mt-8 max-h-[300px] overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
     >
       {realTimeMessages?.map((post: IMessage, index: number) => (
         <div key={post?.id} className="mx-auto border-b py-6">
@@ -192,8 +196,9 @@ const ShowMessages = ({ messages, team }: Props) => {
             </div>
           ) : (
             <div
+              className="mb-3"
               dangerouslySetInnerHTML={{
-                __html: detectLinks(post?.text).join(" "),
+                __html: post?.text ? detectLinks(post?.text).join(" ") : "",
               }}
             />
           )}
@@ -202,11 +207,11 @@ const ShowMessages = ({ messages, team }: Props) => {
             <div className="my-4 flex flex-wrap gap-4">
               {post?.images?.map((image: string, imageIndex: number) => (
                 <img
-                  onClick={() => handleShowImageFullScreen(image)}
+                  onMouseOver={() => handleShowImageFullScreen(image)}
                   key={imageIndex}
                   src={image}
                   alt={"message image"}
-                  className="w-20 h-20 rounded-md cursor-pointer"
+                  className="w-28 h-28 rounded-md cursor-pointer border-2"
                 />
               ))}
             </div>
@@ -222,32 +227,76 @@ const ShowMessages = ({ messages, team }: Props) => {
           )}
 
           {post?.files?.length > 0 && (
-            <div className="mb-4">
-              {post?.files?.map((file: string, fileIndex: number) => (
-                <a
-                  key={fileIndex}
-                  href={file}
-                  className="text-blue-500 hover:underline block mb-2"
-                >
-                  <small>{file}</small>
-                </a>
-              ))}
+            <div>
+              {/* Display all files except audio and video */}
+              <div className="grid grid-cols-5 gap-4 mb-4">
+                {post?.files?.map((url: string, fileIndex: number) => {
+                  const extension = detectFileExtensionFromLink(url);
+
+                  if (
+                    !acceptableExtensions.audio.includes(extension) &&
+                    !acceptableExtensions.video.includes(extension)
+                  ) {
+                    return (
+                      <div
+                        className="flex flex-col justify-center items-center border rounded-md"
+                        key={fileIndex}
+                      >
+                        <GetFileIcon extension={extension} />
+                        <DownloadFileButton
+                          fileUrl={url}
+                          extension={extension}
+                        />
+                      </div>
+                    );
+                  }
+                  return null; // Skip audio and video files here
+                })}
+              </div>
+
+              {/* Display video files */}
+              {post?.files?.map((url: string, fileIndex: number) => {
+                const extension = detectFileExtensionFromLink(url);
+
+                if (acceptableExtensions.video.includes(extension)) {
+                  return (
+                    <div key={fileIndex} className="mb-4 w-full">
+                      <video
+                        controls
+                        className="w-full h-48 border rounded-md mt-1"
+                      >
+                        <source
+                          className="w-full"
+                          src={url}
+                          type={`video/${extension}`}
+                        />
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
+                  );
+                }
+                return null;
+              })}
+
+              {/* Display audio files */}
+              {post?.files?.map((url: string, fileIndex: number) => {
+                const extension = detectFileExtensionFromLink(url);
+
+                if (acceptableExtensions.audio.includes(extension)) {
+                  return (
+                    <div key={fileIndex} className="mb-4">
+                      <audio controls className="w-full">
+                        <source src={url} type={`audio/${extension}`} />
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                  );
+                }
+                return null;
+              })}
             </div>
           )}
 
-          {post?.links?.length > 0 && (
-            <div className="mb-4">
-              {post?.links?.map((link: string, linkIndex: number) => (
-                <a
-                  key={linkIndex}
-                  href={link}
-                  className="text-blue-500 hover:underline block mb-2"
-                >
-                  <small>{link}</small>
-                </a>
-              ))}
-            </div>
-          )}
           <p className="mt-2 text-gray-400">{formattedDate(post.createdAt)}</p>
         </div>
       ))}

@@ -6,14 +6,12 @@ import {
   useAssignedProjectsQuery,
   useMyProjectsQuery,
 } from "@/features/project";
-import { useLoggedInUserQuery, useLogoutUserMutation } from "@/features/user";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import Swal from "sweetalert2";
 
 const TopBar = ({ setActiveView, activeView }: any) => {
   const router = useRouter();
   const { data: userData } = useLoggedInUserQuery({});
-  const [logout] = useLogoutUserMutation({});
   const user: IUser = userData?.data;
   const { data: projects } = useMyProjectsQuery(user?.id);
   const { data: assignedProjects } = useAssignedProjectsQuery(user?.id);
@@ -36,19 +34,6 @@ const TopBar = ({ setActiveView, activeView }: any) => {
         pathname: router.pathname,
         query: { ...router.query, activeView: text },
       });
-    }
-  };
-
-  const handleLogOut = async () => {
-    const res: any = await logout("");
-    if (res?.data?.statusCode === 200) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: res?.data?.message,
-        showConfirmButton: false,
-      });
-      window.location.replace("/");
     }
   };
 
@@ -152,14 +137,6 @@ const TopBar = ({ setActiveView, activeView }: any) => {
             onClick={() => handleSidebarNavigate("change-password")}
           >
             <small>Change Password</small>
-          </button>
-        </option>
-        <option value="logout">
-          <button
-            className="py-2 px-4 flex items-center gap-2 text-xl w-full hover:bg-gray-100 dark:hover:bg-gray-600  rounded-md  text-left focus:outline-none"
-            onClick={handleLogOut}
-          >
-            <small>Logout</small>
           </button>
         </option>
       </select>
