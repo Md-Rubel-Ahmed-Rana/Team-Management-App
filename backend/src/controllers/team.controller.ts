@@ -68,7 +68,9 @@ class Controller extends RootController {
       const teamLogo = team?.image;
       if (teamLogo) {
         const public_id = extractCloudinaryPublicId(teamLogo);
-        await deleteSingleFileFromCloudinary(public_id);
+        if (public_id) {
+          await deleteSingleFileFromCloudinary(public_id);
+        }
       }
       const result = await TeamService.updateTeam(id, {
         ...req.body,

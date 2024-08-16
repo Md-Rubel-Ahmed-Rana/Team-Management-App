@@ -22,15 +22,19 @@ const deleteMessageFilesFromCloudinary = (messageId) => __awaiter(void 0, void 0
     if ((message === null || message === void 0 ? void 0 : message.images) && ((_a = message === null || message === void 0 ? void 0 : message.images) === null || _a === void 0 ? void 0 : _a.length) > 0) {
         message === null || message === void 0 ? void 0 : message.images.forEach((imageUrl) => {
             const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(imageUrl);
-            const newId = { public_id: public_id };
-            publicIds.push(newId);
+            if (public_id) {
+                const newId = { public_id: public_id };
+                publicIds.push(newId);
+            }
         });
     }
     if ((message === null || message === void 0 ? void 0 : message.files) && ((_b = message === null || message === void 0 ? void 0 : message.files) === null || _b === void 0 ? void 0 : _b.length) > 0) {
         message === null || message === void 0 ? void 0 : message.files.forEach((fileUrl) => {
             const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(fileUrl);
-            const newId = { public_id: public_id };
-            publicIds.push(newId);
+            if (public_id) {
+                const newId = { public_id: public_id };
+                publicIds.push(newId);
+            }
         });
     }
     if (publicIds.length > 0) {
