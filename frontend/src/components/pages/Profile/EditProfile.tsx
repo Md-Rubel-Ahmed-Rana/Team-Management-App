@@ -4,39 +4,46 @@ import { useState } from "react";
 import { FaCamera } from "react-icons/fa";
 import { useLoggedInUserQuery, useUpdateUserMutation } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import useUploadFile from "@/hooks/useUploadFile";
 
 const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
   const [isChangeImage, setIsChangeImage] = useState(false);
+  const [newFile, setNewFile] = useState<File | null>(null);
   const [updateUser] = useUpdateUserMutation();
-  const uploadFile = useUploadFile();
   const { register, handleSubmit } = useForm<IUser>({
     defaultValues: user,
   });
 
   const handleEditProfile: SubmitHandler<IUser> = async (data) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("department", data.department);
+    formData.append("designation", data.designation);
+    formData.append("phoneNumber", data.phoneNumber);
+    formData.append("permanentAddress", data.permanentAddress);
+    formData.append("presentAddress", data.presentAddress);
+    formData.append("country", data.country);
+
+    // If new file is selected, append it to FormData
+    if (newFile) {
+      formData.append("file", newFile);
+    }
     const updated: any = await updateUser({
       id: user.id,
-      data,
+      data: formData, // Pass formData here
     });
+
     if (updated?.data?.success) {
       setIsEdit(false);
     }
   };
 
-  const handleChangeProfileImage = async (e: any) => {
-    const result = await uploadFile(e?.target?.files[0]);
-    if (result?.url) {
-      const updated: any = await updateUser({
-        id: user.id,
-        data: { profile_picture: result?.url },
-      });
-      if (updated?.data?.success) {
-        setIsChangeImage(false);
-        setIsEdit(false);
-      }
+  const handleChangeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewFile(file);
     }
   };
 
@@ -44,37 +51,46 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
     <div className="p-4">
       <h1 className="text-2xl font-semibold">Edit Profile</h1>
       <form onSubmit={handleSubmit(handleEditProfile)} className="mt-4">
-        {!isChangeImage && (
-          <div className="mb-4 relative">
-            <img
-              className="w-20 h-20 rounded-full border-2 "
-              src={user?.profile_picture}
-              alt="Profile image"
-            />
+        <div className="mb-4 relative">
+          <img
+            className="w-20 h-20 rounded-full border-2"
+            src={newFile ? URL.createObjectURL(newFile) : user?.profile_picture}
+            alt="Profile image"
+          />
 
+          {!isChangeImage && (
             <div className="flex justify-center items-center absolute bottom-2 left-12 rounded-full">
               <button
                 onClick={() => setIsChangeImage(true)}
                 className="bg-gray-600 p-3 rounded-full"
               >
-                <FaCamera className=" text-white" />
+                <FaCamera className="text-white" />
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+
         {isChangeImage && (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-600">
-              Image
-            </label>
-            <input
-              onChange={(e) => handleChangeProfileImage(e)}
-              type="file"
-              className="mt-1 p-2 w-full border rounded-md bg-white"
-            />
+            {!newFile && (
+              <>
+                <label className="block text-sm font-medium text-gray-600">
+                  Image
+                </label>
+                <input
+                  onChange={handleChangeProfileImage}
+                  type="file"
+                  accept="image/*"
+                  className="mt-1 p-2 w-full border rounded-md bg-white"
+                />
+              </>
+            )}
             <button
               className="bg-sky-600 px-4 py-1 mt-2 rounded-md text-white"
-              onClick={() => setIsChangeImage(false)}
+              onClick={() => {
+                setIsChangeImage(false);
+                setNewFile(null);
+              }}
             >
               Cancel
             </button>
@@ -162,12 +178,15 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           />
         </div>
         <div className="mt-4 flex items-center gap-4">
-          <button type="submit" className="border px-4 py-2 rounded-md">
+          <button
+            type="submit"
+            className="border bg-blue-600 text-white px-4 py-2 rounded-md"
+          >
             Save Changes
           </button>
           <button
             onClick={() => setIsEdit(false)}
-            className="border px-4 py-2 rounded-md"
+            className="border bg-yellow-500 px-4 py-2 rounded-md"
           >
             Cancel
           </button>

@@ -1,62 +1,47 @@
-/* eslint-disable @next/next/no-img-element */
 import { useCreateTeamMutation } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
-import useUploadFile from "@/hooks/useUploadFile";
-import { ITeam } from "@/interfaces/team.interface";
-import { Dialog, Transition } from "@headlessui/react";
+import { INewTeam } from "@/interfaces/team.interface";
 import { useRouter } from "next/router";
-import { Fragment, useState } from "react";
-import { toast } from "react-hot-toast";
 import Swal from "sweetalert2";
+import { useForm, Controller } from "react-hook-form";
+import { SetStateAction, useState } from "react";
 
-const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
+const CreateTeamPage = () => {
   const { data }: any = useLoggedInUserQuery({});
   const user = data?.data;
-  const [page, setPage] = useState(1);
   const router = useRouter();
   const [createTeam] = useCreateTeamMutation();
-  const uploadFile = useUploadFile();
+  const [teamLogo, setTeamLogo] = useState<any>(null);
+  const [loading, setLoading] = useState(false); // Loading state
 
-  const [teamData, setTeamData] = useState<Partial<ITeam>>({
-    name: "",
-    image: "",
-    category: "",
-    description: "",
-    admin: user?.id || user?.id,
+  const { handleSubmit, control, setValue, watch } = useForm<INewTeam>({
+    defaultValues: {
+      name: "",
+      image: "",
+      category: "",
+      description: "",
+      admin: user?.id || "",
+    },
   });
 
-  const closeModal = () => {
-    setIsOpen(false);
-  };
+  const onSubmit = async (data: INewTeam) => {
+    setLoading(true); // Start loading
+    const formData = new FormData();
 
-  const handlePageOne = () => {
-    if (teamData?.name === "" && teamData.image === "") {
-      setPage(1);
-      return toast.error("Team name and image are required");
-    } else {
-      setPage((prev) => prev + 1);
-    }
-  };
+    // Append text fields to FormData
+    formData.append("name", data.name);
+    formData.append("category", data.category);
+    formData.append("description", data.description);
+    formData.append("admin", data.admin || user?.id);
 
-  const handleFileChange = async (e: any) => {
-    const selectedFile = e.target.files[0];
-    const uploadedFile: any = await uploadFile(selectedFile);
-    setTeamData((prev) => ({
-      ...prev,
-      image: uploadedFile?.url,
-    }));
-  };
-
-  const handleCreateTeamCategory = async (e: any) => {
-    e.preventDefault();
-    if (!teamData.category && !teamData.description) {
-      setPage(2);
-      return toast.error("Team category and description are required");
+    if (teamLogo) {
+      formData.append("file", teamLogo);
     }
 
-    const result: any = await createTeam(teamData);
+    const result: any = await createTeam(formData);
+    setLoading(false); // End loading
+
     if (result?.data?.success) {
-      closeModal();
       Swal.fire({
         position: "center",
         icon: "success",
@@ -65,8 +50,7 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
         timer: 1500,
       });
       router.push("/teams");
-    }
-    if (result?.error) {
+    } else if (result?.error) {
       Swal.fire({
         position: "center",
         icon: "error",
@@ -78,166 +62,152 @@ const CreateTeamModal = ({ isOpen, setIsOpen }: any) => {
   };
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={closeModal}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
-        </Transition.Child>
+    <div className="p-6 mx-auto max-w-2xl">
+      <h3 className="text-xl font-bold mb-5">Create a new team</h3>
 
-        <div className=" fixed inset-0 flex flex-col items-center justify-center">
-          <div className="p-4 text-center">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 p-6 text-left  shadow-xl transition-all relative">
-                {/* modal content */}
-                <div className="mt-3">
-                  {page === 1 && (
-                    <form onSubmit={handlePageOne}>
-                      <h3 className="text-xl font-bold mb-5">
-                        Create a new team
-                      </h3>
-                      <div className="relative w-full py-2">
-                        <p className="text-stone-500 dark:text-white mb-2">
-                          Team name
-                        </p>
-                        <input
-                          defaultValue={teamData.name}
-                          required
-                          onChange={(e) =>
-                            setTeamData((prev) => ({
-                              ...prev,
-                              name: e.target.value,
-                            }))
-                          }
-                          type="text"
-                          id="teamName"
-                          placeholder="Team Name"
-                          className="w-full rounded-lg dark:text-white bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]    py-3 outline-none px-2 shadow-sm sm:text-sm"
-                        />
-                      </div>
-                      <div className="relative w-full py-2">
-                        {teamData.image && (
-                          <div className="w-full flex justify-between items-center rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm">
-                            <h4 className="dark:text-white ">Team image</h4>
-                            <img
-                              className="w-14 h-14 rounded-full"
-                              src={teamData.image}
-                              alt=""
-                            />
-                          </div>
-                        )}
-                        {!teamData.image && (
-                          <div>
-                            <p className="text-stone-500 dark:text-white  mb-2">
-                              Team image
-                            </p>
-                            <input
-                              aria-label="Profile Image"
-                              type="file"
-                              accept="image/*"
-                              onChange={handleFileChange}
-                              className="w-full rounded-lg dark:text-white  bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
-                            />
-                          </div>
-                        )}
-                      </div>
-                      <div className="mt-5 lg:flex justify-between">
-                        <button
-                          disabled
-                          type="button"
-                          className="border-2 cursor-not-allowed mb-4 lg:mb-0 mx-auto outline-none border-black rounded-full px-10 py-2  text-sm flex items-center gap-2"
-                        >
-                          Back
-                        </button>
-                        <button
-                          type="submit"
-                          className="border mx-auto outline-none rounded-full px-10 py-2 bg-blue-700 text-white text-md flex items-center gap-2"
-                        >
-                          Continue
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                  {page === 2 && (
-                    <form onSubmit={handleCreateTeamCategory}>
-                      <div className="relative w-full py-2">
-                        <p className="text-stone-500 dark:text-white mb-2">
-                          Team category
-                        </p>
-                        <input
-                          required
-                          onChange={(e) =>
-                            setTeamData((prev) => ({
-                              ...prev,
-                              category: e.target.value,
-                            }))
-                          }
-                          defaultValue={teamData.category}
-                          type="text"
-                          id="teamTitle"
-                          placeholder="Category (Digital Generation)"
-                          className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
-                        />
-                      </div>
-                      <div className="relative w-full py-2">
-                        <p className="text-stone-500 dark:text-white mb-2">
-                          Team description
-                        </p>
-                        <textarea
-                          rows={5}
-                          required
-                          onChange={(e) =>
-                            setTeamData((prev) => ({
-                              ...prev,
-                              description: e.target.value,
-                            }))
-                          }
-                          defaultValue={teamData.description}
-                          id="teamTitle"
-                          placeholder="Description (Grow Your Team With Ease: Effortlessly Add Members For Increase Performance And Achievement)"
-                          className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
-                        />
-                      </div>
-                      <div className="mt-5 lg:flex justify-between">
-                        <button
-                          onClick={() => setPage((prev) => prev - 1)}
-                          type="button"
-                          className="border-2 mb-4 lg:mb-0 mx-auto outline-none border-black rounded-full px-10 py-2  text-sm flex items-center gap-2"
-                        >
-                          Back
-                        </button>
-                        <button
-                          type="submit"
-                          className="border mx-auto outline-none rounded-full px-10 py-2 bg-blue-700 text-white text-md flex items-center gap-2"
-                        >
-                          Submit
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="relative w-full py-2">
+          <p className="text-stone-500 dark:text-white mb-2">Team name</p>
+          <Controller
+            name="name"
+            control={control}
+            rules={{ required: "Team name is required" }}
+            render={({ field, fieldState }) => (
+              <div>
+                <input
+                  {...field}
+                  type="text"
+                  placeholder="Team Name"
+                  className={`w-full rounded-lg dark:text-white bg-transparent border ${
+                    fieldState.error ? "border-red-500" : "border-[#BCBCBC]"
+                  } placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B] py-3 outline-none px-2 shadow-sm sm:text-sm`}
+                />
+                {fieldState.error && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {fieldState.error.message}
+                  </p>
+                )}
+              </div>
+            )}
+          />
         </div>
-      </Dialog>
-    </Transition>
+
+        <div className="relative w-full py-2">
+          <Controller
+            name="image"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <p className="text-stone-500 dark:text-white mb-2">
+                  Team image
+                </p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setTeamLogo(file);
+                      setValue("image", URL.createObjectURL(file));
+                    }
+                  }}
+                  className="w-full rounded-lg dark:text-white bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B] py-3 outline-none px-2 shadow-sm sm:text-sm"
+                />
+                {watch("image") && (
+                  <div className="w-full flex justify-between items-center mt-2 rounded-lg bg-transparent border border-[#BCBCBC] py-3 outline-none px-2 shadow-sm">
+                    <h4 className="dark:text-white">Team image</h4>
+                    <img
+                      className="w-14 h-14 border-2 rounded-full"
+                      src={watch("image")}
+                      alt="Selected"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          />
+        </div>
+
+        <div className="relative w-full py-2">
+          <p className="text-stone-500 dark:text-white mb-2">Team category</p>
+          <Controller
+            name="category"
+            control={control}
+            rules={{ required: "Team category is required" }}
+            render={({ field, fieldState }) => (
+              <div>
+                <input
+                  {...field}
+                  type="text"
+                  placeholder="Category (Digital Generation)"
+                  className={`w-full rounded-lg bg-transparent border ${
+                    fieldState.error ? "border-red-500" : "border-[#BCBCBC]"
+                  } placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B] py-3 outline-none px-2 shadow-sm sm:text-sm`}
+                />
+                {fieldState.error && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {fieldState.error.message}
+                  </p>
+                )}
+              </div>
+            )}
+          />
+        </div>
+
+        <div className="relative w-full py-2">
+          <p className="text-stone-500 dark:text-white mb-2">
+            Team description
+          </p>
+          <Controller
+            name="description"
+            control={control}
+            rules={{ required: "Team description is required" }}
+            render={({ field, fieldState }) => (
+              <div>
+                <textarea
+                  {...field}
+                  rows={5}
+                  placeholder="Description (Grow Your Team With Ease: Effortlessly Add Members For Increase Performance And Achievement)"
+                  className={`w-full rounded-lg bg-transparent border ${
+                    fieldState.error ? "border-red-500" : "border-[#BCBCBC]"
+                  } placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B] py-3 outline-none px-2 shadow-sm sm:text-sm`}
+                />
+                {fieldState.error && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {fieldState.error.message}
+                  </p>
+                )}
+              </div>
+            )}
+          />
+        </div>
+
+        <div className="mt-5 flex justify-between items-center gap-5">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className={`border border-gray-300 w-full rounded-full px-6 py-2 ${
+              loading
+                ? "bg-gray-400 text-gray-300 cursor-not-allowed"
+                : "bg-gray-400 text-white hover:bg-gray-500"
+            } transition-colors duration-200`}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Back"}
+          </button>
+          <button
+            type="submit"
+            className={`bg-blue-700 text-white  w-full rounded-full px-6 py-2 ${
+              loading ? "bg-blue-600 cursor-not-allowed" : "hover:bg-blue-800"
+            } transition-colors duration-200`}
+            disabled={loading}
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
-export default CreateTeamModal;
+export default CreateTeamPage;

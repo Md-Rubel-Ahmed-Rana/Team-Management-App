@@ -12,3 +12,11 @@ export type ITeam = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
 };
+
+export type INewTeam = {
+  name: string;
+  category: string;
+  description: string;
+  image: string;
+  admin: string;
+};

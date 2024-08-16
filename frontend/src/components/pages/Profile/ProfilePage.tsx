@@ -1,27 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import EditProfilePage from "./EditProfile";
-import { useLoggedInUserQuery, useUpdateUserMutation } from "@/features/user";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import useUploadFile from "@/hooks/useUploadFile";
 
 const ProfilePage = () => {
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
   const [isEdit, setIsEdit] = useState<any>(false);
-  const [updateUser] = useUpdateUserMutation();
-
-  const uploadFile = useUploadFile();
-
-  const handleChangeProfileImage = async (e: any) => {
-    const result = await uploadFile(e?.target?.files[0]);
-    if (result?.url) {
-      const updated = await updateUser({
-        id: user.id,
-        data: { profile_picture: result?.url },
-      });
-    }
-  };
 
   return (
     <div>
@@ -30,16 +16,11 @@ const ProfilePage = () => {
           <h1 className="text-2xl font-semibold">Profile</h1>
           <div className="mt-4 mb-7">
             {!user?.profile_picture && (
-              <div className="my-3 border w-64 rounded-md p-4 text-lg">
-                <p className="mb-2 font-semibold">No Profile picture</p>
-                <input
-                  onChange={(e) => handleChangeProfileImage(e)}
-                  type="file"
-                  accept="image/*"
-                  name="profile_picture"
-                  id="profile_picture"
-                />
-              </div>
+              <img
+                src={user?.profile_picture}
+                alt="Profile picture"
+                className="w-24 h-24 rounded-full object-cover"
+              />
             )}
             {user?.profile_picture && (
               <img
