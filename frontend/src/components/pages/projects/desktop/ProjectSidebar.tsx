@@ -20,8 +20,8 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const { data: projects } = useMyProjectsQuery(user?.id);
-  const { data: teamData } = useMyTeamsQuery(user?.id);
   const { data: assignedProjects } = useAssignedProjectsQuery(user?.id);
+  const { data: teamData } = useMyTeamsQuery(user?.id);
   const router = useRouter();
 
   const handleOpenCreateProjectModal = () => {
