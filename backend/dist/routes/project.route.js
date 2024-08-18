@@ -16,4 +16,5 @@ router.patch("/update/:id", (0, validateRequest_1.default)(project_validation_1.
 router.post("/add-member", project_controller_1.ProjectController.addMember);
 router.post("/remove-member", project_controller_1.ProjectController.removeMember);
 router.get("/single/:id", project_controller_1.ProjectController.getSingleProject);
+router.delete("/delete/:id", project_controller_1.ProjectController.deleteProject);
 exports.ProjectRoutes = router;
