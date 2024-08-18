@@ -3,7 +3,7 @@ import React from "react";
 
 const WelcomePage = () => {
   return (
-    <section className="shadow-md  lg:py-36 py-10 px-2 text-center">
+    <section className="lg:py-36 py-10 px-2 text-center">
       <h1 data-aos="fade-up" className="lg:text-4xl text-2xl font-bold mb-4">
         Welcome to Team Manager
       </h1>
