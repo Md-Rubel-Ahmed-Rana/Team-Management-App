@@ -12,6 +12,7 @@ import { CreateProjectDTO } from "@/dto/project/create";
 import { GetOnlyProjectDTO } from "@/dto/project/getOnlyProject";
 import { GetProjectDTO } from "@/dto/project/get";
 import { UpdateProjectDTO } from "@/dto/project/update";
+import { DeleteProjectDTO } from "@/dto/project/delete";
 
 class Service {
   async createProject(data: IProject): Promise<CreateProjectDTO> {
@@ -59,6 +60,16 @@ class Service {
       result,
       ProjectEntity as ModelIdentifier,
       GetOnlyProjectDTO
+    );
+    return mappedData;
+  }
+
+  async deleteProject(id: string): Promise<DeleteProjectDTO | null> {
+    const result = await Project.findByIdAndDelete(id);
+    const mappedData = mapper.map(
+      result,
+      ProjectEntity as ModelIdentifier,
+      DeleteProjectDTO
     );
     return mappedData;
   }

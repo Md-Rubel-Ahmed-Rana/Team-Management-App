@@ -58,6 +58,16 @@ class Controller extends rootController_1.default {
                 data: result,
             });
         }));
+        this.deleteProject = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const id = req.params.id;
+            const result = yield project_service_1.ProjectService.deleteProject(id);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Project deleted successfully",
+                data: result,
+            });
+        }));
         this.getSingleProject = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const id = req.params.id;
             const result = yield project_service_1.ProjectService.getSingleProject(id);
