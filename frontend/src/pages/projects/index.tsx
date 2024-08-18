@@ -4,6 +4,7 @@ import { NextPageWithLayout } from "pages/_app";
 import React, { ReactElement } from "react";
 import GetHead from "@/utils/Head";
 import ProjectMobileView from "@/components/pages/projects/mobile/project/ProjectMobileView";
+import ProjectsContainer from "@/components/pages/projects";
 
 const ProjectPage: NextPageWithLayout = () => {
   return (
@@ -13,14 +14,15 @@ const ProjectPage: NextPageWithLayout = () => {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <div>
+      <ProjectsContainer />
+      {/* <div>
         <div className="hidden lg:block">
           <Projects />
         </div>
         <div className="sm:hidden">
           <ProjectMobileView />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
