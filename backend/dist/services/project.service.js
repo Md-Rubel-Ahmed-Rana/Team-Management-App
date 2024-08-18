@@ -24,6 +24,7 @@ const create_1 = require("@/dto/project/create");
 const getOnlyProject_1 = require("@/dto/project/getOnlyProject");
 const get_1 = require("@/dto/project/get");
 const update_1 = require("@/dto/project/update");
+const delete_1 = require("@/dto/project/delete");
 class Service {
     createProject(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -51,6 +52,13 @@ class Service {
             const { name, category } = data;
             const result = yield project_model_1.Project.findOneAndUpdate({ _id: id }, { $set: { name, category } }, { new: true });
             const mappedData = mapper_1.mapper.map(result, project_entity_1.ProjectEntity, getOnlyProject_1.GetOnlyProjectDTO);
+            return mappedData;
+        });
+    }
+    deleteProject(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield project_model_1.Project.findByIdAndDelete(id);
+            const mappedData = mapper_1.mapper.map(result, project_entity_1.ProjectEntity, delete_1.DeleteProjectDTO);
             return mappedData;
         });
     }
