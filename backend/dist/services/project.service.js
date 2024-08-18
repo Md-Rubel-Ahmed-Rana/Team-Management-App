@@ -25,6 +25,9 @@ const getOnlyProject_1 = require("@/dto/project/getOnlyProject");
 const get_1 = require("@/dto/project/get");
 const update_1 = require("@/dto/project/update");
 const delete_1 = require("@/dto/project/delete");
+const team_service_1 = require("./team.service");
+const user_service_1 = require("./user.service");
+const task_service_1 = require("./task.service");
 class Service {
     createProject(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -35,16 +38,70 @@ class Service {
     }
     myProjects(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield project_model_1.Project.find({ user: userId });
-            const mappedData = mapper_1.mapper.mapArray(result, project_entity_1.ProjectEntity, getOnlyProject_1.GetOnlyProjectDTO);
-            return mappedData;
+            const result = yield project_model_1.Project.aggregate([
+                {
+                    $match: { user: userId },
+                },
+                {
+                    $lookup: {
+                        from: "tasks",
+                        localField: "_id",
+                        foreignField: "project",
+                        as: "tasks",
+                    },
+                },
+                {
+                    $addFields: {
+                        tasks: { $size: "$tasks" },
+                    },
+                },
+            ]);
+            const promises = result.map((project) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
+                const [team, user] = yield Promise.all([
+                    team_service_1.TeamService.getTeamById(project.team),
+                    user_service_1.UserService.findUserById(project.user),
+                ]);
+                return {
+                    id: project === null || project === void 0 ? void 0 : project._id,
+                    name: project === null || project === void 0 ? void 0 : project.name,
+                    category: project === null || project === void 0 ? void 0 : project.category,
+                    createdAt: project === null || project === void 0 ? void 0 : project.createdAt,
+                    user: { name: user === null || user === void 0 ? void 0 : user.name, id: user === null || user === void 0 ? void 0 : user.id },
+                    team: { name: team === null || team === void 0 ? void 0 : team.name, id: team === null || team === void 0 ? void 0 : team._id },
+                    members: (_a = project === null || project === void 0 ? void 0 : project.members) === null || _a === void 0 ? void 0 : _a.length,
+                    tasks: project === null || project === void 0 ? void 0 : project.tasks,
+                };
+            }));
+            const mappedResult = yield Promise.all(promises);
+            return mappedResult;
         });
     }
     assignedProjects(memberId) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield project_model_1.Project.find({ members: memberId });
-            const mappedData = mapper_1.mapper.mapArray(result, project_entity_1.ProjectEntity, getOnlyProject_1.GetOnlyProjectDTO);
-            return mappedData;
+            const promises = result.map((project) => __awaiter(this, void 0, void 0, function* () {
+                const projectId = project === null || project === void 0 ? void 0 : project._id;
+                const teamId = project === null || project === void 0 ? void 0 : project.team;
+                const userId = project === null || project === void 0 ? void 0 : project.user;
+                const [team, user, tasks] = yield Promise.all([
+                    team_service_1.TeamService.getTeamById(teamId),
+                    user_service_1.UserService.findUserById(userId),
+                    task_service_1.TaskService.getTasksByProjectId(projectId),
+                ]);
+                return {
+                    id: project === null || project === void 0 ? void 0 : project._id,
+                    name: project === null || project === void 0 ? void 0 : project.name,
+                    category: project === null || project === void 0 ? void 0 : project.category,
+                    createdAt: project === null || project === void 0 ? void 0 : project.createdAt,
+                    user: { name: user === null || user === void 0 ? void 0 : user.name, id: user === null || user === void 0 ? void 0 : user.id },
+                    team: { name: team === null || team === void 0 ? void 0 : team.name, id: team === null || team === void 0 ? void 0 : team._id },
+                    members: Array.isArray(project === null || project === void 0 ? void 0 : project.members) ? project.members.length : 0,
+                    tasks: tasks === null || tasks === void 0 ? void 0 : tasks.length,
+                };
+            }));
+            const mappedResult = yield Promise.all(promises);
+            return mappedResult;
         });
     }
     updateProject(id, data) {

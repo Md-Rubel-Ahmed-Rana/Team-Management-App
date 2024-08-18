@@ -1,6 +1,7 @@
 import { AutoMap } from "@automapper/classes";
 import { GetUserDTO } from "../user/get";
 import { ProjectEntity } from "@/entities/project.entity";
+import { GetOnlyProjectForTaskDTO } from "../project/getOnlyProjectForTask";
 
 export class GetTaskDTO {
   @AutoMap()
@@ -18,8 +19,8 @@ export class GetTaskDTO {
   @AutoMap(() => GetUserDTO)
   assignedBy!: GetUserDTO;
 
-  @AutoMap(() => ProjectEntity)
-  project!: ProjectEntity;
+  @AutoMap(() => GetOnlyProjectForTaskDTO)
+  project!: GetOnlyProjectForTaskDTO;
 
   @AutoMap()
   status!: string;

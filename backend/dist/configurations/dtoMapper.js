@@ -48,6 +48,7 @@ const create_9 = require("@/dto/payment/create");
 const get_9 = require("@/dto/payment/get");
 const update_9 = require("@/dto/payment/update");
 const delete_9 = require("@/dto/payment/delete");
+const getOnlyProjectForTask_1 = require("@/dto/project/getOnlyProjectForTask");
 const initializeDTOMapper = () => {
     //  ===== user dto =========
     // create user
@@ -82,6 +83,9 @@ const initializeDTOMapper = () => {
     // get
     (0, core_1.createMap)(mapper_1.mapper, project_entity_1.ProjectEntity, get_3.GetProjectDTO);
     (0, core_1.createMap)(mapper_1.mapper, get_3.GetProjectDTO, project_entity_1.ProjectEntity);
+    // get only for task
+    (0, core_1.createMap)(mapper_1.mapper, project_entity_1.ProjectEntity, getOnlyProjectForTask_1.GetOnlyProjectForTaskDTO);
+    (0, core_1.createMap)(mapper_1.mapper, getOnlyProjectForTask_1.GetOnlyProjectForTaskDTO, project_entity_1.ProjectEntity);
     // get only project
     (0, core_1.createMap)(mapper_1.mapper, project_entity_1.ProjectEntity, getOnlyProject_1.GetOnlyProjectDTO);
     (0, core_1.createMap)(mapper_1.mapper, getOnlyProject_1.GetOnlyProjectDTO, project_entity_1.ProjectEntity);
