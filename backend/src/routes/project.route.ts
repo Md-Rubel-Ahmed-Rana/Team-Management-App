@@ -26,4 +26,6 @@ router.post("/remove-member", ProjectController.removeMember);
 
 router.get("/single/:id", ProjectController.getSingleProject);
 
+router.delete("/delete/:id", ProjectController.deleteProject);
+
 export const ProjectRoutes = router;

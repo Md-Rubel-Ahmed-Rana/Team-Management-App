@@ -47,6 +47,17 @@ class Controller extends RootController {
     });
   });
 
+  deleteProject = this.catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const result = await ProjectService.deleteProject(id);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Project deleted successfully",
+      data: result,
+    });
+  });
+
   getSingleProject = this.catchAsync(async (req: Request, res: Response) => {
     const id = req.params.id;
     const result = await ProjectService.getSingleProject(id);
