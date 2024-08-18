@@ -108,7 +108,7 @@ const ShowMessages = ({ messages, team }: Props) => {
   return (
     <div
       ref={messagesContainerRef}
-      className="mx-auto mt-8 max-h-[300px] overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
+      className="mx-auto mt-8 h-[300px]  overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
     >
       {realTimeMessages?.map((post: IMessage, index: number) => (
         <div key={post?.id} className="mx-auto border-b py-6">
@@ -229,7 +229,7 @@ const ShowMessages = ({ messages, team }: Props) => {
           {post?.files?.length > 0 && (
             <div>
               {/* Display all files except audio and video */}
-              <div className="grid grid-cols-5 gap-4 mb-4">
+              <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
                 {post?.files?.map((url: string, fileIndex: number) => {
                   const extension = detectFileExtensionFromLink(url);
 
