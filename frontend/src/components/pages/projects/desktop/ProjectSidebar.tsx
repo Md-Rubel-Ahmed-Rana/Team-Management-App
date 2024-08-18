@@ -24,11 +24,6 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
   const { data: assignedProjects } = useAssignedProjectsQuery(user?.id);
   const router = useRouter();
 
-  const handleEditProject = (project: IProject) => {
-    setIsEdit(true);
-    setEditableProject(project);
-  };
-
   const handleOpenCreateProjectModal = () => {
     if (teamData?.data?.length <= 0) {
       Swal.fire({
@@ -75,27 +70,17 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
           <div className="flex flex-col gap-2 overflow-hidden hover:overflow-auto h-48 scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100">
             {projects?.data?.map((project: IProject) => (
               <p
+                onClick={() => handleChangeProject(project)}
                 key={project?.id}
-                className={`px-2 py-1 w-full hover:bg-gray-100 dark:hover:bg-gray-600 flex text-xl font-semibold justify-between   rounded-md ${
+                className={`px-2 py-1 w-full hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-600 flex text-xl font-semibold justify-between   rounded-md ${
                   project?.id == activeProject && "bg-gray-100 dark:bg-gray-600"
                 }`}
               >
-                <button
-                  className="w-full text-left text-lg"
-                  onClick={() => handleChangeProject(project)}
-                >
-                  {project?.name.length > 20 ? (
-                    <small>{project?.name?.slice(0, 20)} ...</small>
-                  ) : (
-                    <small>{project?.name}</small>
-                  )}
-                </button>
-                <button
-                  onClick={() => handleEditProject(project)}
-                  className="hover:bg-gray-200 dark:hover:bg-gray-500 p-2 rounded-full"
-                >
-                  <FaEllipsisV />
-                </button>
+                {project?.name.length > 20 ? (
+                  <small>{project?.name?.slice(0, 20)} ...</small>
+                ) : (
+                  <small>{project?.name}</small>
+                )}
               </p>
             ))}
           </div>
@@ -113,21 +98,17 @@ const ProjectSidebar = ({ activeProject, setActiveProject }: any) => {
           <div className="flex flex-col text-xl font-semibold gap-2 overflow-hidden hover:overflow-auto h-48 scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100">
             {assignedProjects?.data?.map((project: IProject) => (
               <p
+                onClick={() => handleChangeProject(project)}
                 key={project?.id}
-                className={`px-2 py-1 w-full hover:bg-gray-100 dark:hover:bg-gray-600 flex justify-between   rounded-md ${
+                className={`px-2 py-1 w-full hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-600 flex justify-between   rounded-md ${
                   project?.id == activeProject && "bg-gray-100 dark:bg-gray-600"
                 }`}
               >
-                <button
-                  className="w-full text-left"
-                  onClick={() => handleChangeProject(project)}
-                >
-                  {project?.name.length > 20 ? (
-                    <small>{project?.name?.slice(0, 20)} ...</small>
-                  ) : (
-                    <small>{project?.name}</small>
-                  )}
-                </button>
+                {project?.name.length > 20 ? (
+                  <small>{project?.name?.slice(0, 20)} ...</small>
+                ) : (
+                  <small>{project?.name}</small>
+                )}
               </p>
             ))}
           </div>
