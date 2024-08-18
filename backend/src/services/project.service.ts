@@ -13,6 +13,9 @@ import { GetOnlyProjectDTO } from "@/dto/project/getOnlyProject";
 import { GetProjectDTO } from "@/dto/project/get";
 import { UpdateProjectDTO } from "@/dto/project/update";
 import { DeleteProjectDTO } from "@/dto/project/delete";
+import { TeamService } from "./team.service";
+import { UserService } from "./user.service";
+import { TaskService } from "./task.service";
 
 class Service {
   async createProject(data: IProject): Promise<CreateProjectDTO> {
@@ -25,24 +28,74 @@ class Service {
     return mappedData;
   }
 
-  async myProjects(userId: string): Promise<GetOnlyProjectDTO[]> {
-    const result = await Project.find({ user: userId });
-    const mappedData = mapper.mapArray(
-      result,
-      ProjectEntity as ModelIdentifier,
-      GetOnlyProjectDTO
-    );
-    return mappedData;
+  async myProjects(userId: string): Promise<any> {
+    const result = await Project.aggregate([
+      {
+        $match: { user: userId },
+      },
+      {
+        $lookup: {
+          from: "tasks",
+          localField: "_id",
+          foreignField: "project",
+          as: "tasks",
+        },
+      },
+      {
+        $addFields: {
+          tasks: { $size: "$tasks" },
+        },
+      },
+    ]);
+
+    const promises = result.map(async (project) => {
+      const [team, user] = await Promise.all([
+        TeamService.getTeamById(project.team),
+        UserService.findUserById(project.user),
+      ]);
+
+      return {
+        id: project?._id,
+        name: project?.name,
+        category: project?.category,
+        createdAt: project?.createdAt,
+        user: { name: user?.name, id: user?.id },
+        team: { name: team?.name, id: team?._id },
+        members: project?.members?.length,
+        tasks: project?.tasks,
+      };
+    });
+
+    const mappedResult = await Promise.all(promises);
+    return mappedResult;
   }
 
-  async assignedProjects(memberId: string): Promise<GetOnlyProjectDTO[]> {
+  async assignedProjects(memberId: string): Promise<any> {
     const result = await Project.find({ members: memberId });
-    const mappedData = mapper.mapArray(
-      result,
-      ProjectEntity as ModelIdentifier,
-      GetOnlyProjectDTO
-    );
-    return mappedData;
+    const promises = result.map(async (project) => {
+      const projectId = project?._id as any;
+      const teamId = project?.team as any;
+      const userId = project?.user as any;
+      const [team, user, tasks] = await Promise.all([
+        TeamService.getTeamById(teamId),
+        UserService.findUserById(userId),
+        TaskService.getTasksByProjectId(projectId),
+      ]);
+
+      return {
+        id: project?._id,
+        name: project?.name,
+        category: project?.category,
+        createdAt: project?.createdAt,
+        user: { name: user?.name, id: user?.id },
+        team: { name: team?.name, id: team?._id },
+        members: Array.isArray(project?.members) ? project.members.length : 0,
+        tasks: tasks?.length,
+      };
+    });
+
+    const mappedResult = await Promise.all(promises);
+    return mappedResult;
   }
 
   async updateProject(
