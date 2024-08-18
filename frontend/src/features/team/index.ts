@@ -56,6 +56,13 @@ const teamApi = apiSlice.injectEndpoints({
       providesTags: ["team"] as any,
     }),
 
+    deleteTeam: builder.mutation({
+      query: (id: string) => ({
+        method: "DELETE",
+        url: `/team/delete/${id}`,
+      }),
+      providesTags: ["team"] as any,
+    }),
     getTeams: builder.query({
       query: (id) => ({
         url: `/api/team/my-team?admin=${id}`,
@@ -108,4 +115,5 @@ export const {
   useIgnoreTeamLeaveRequestMutation,
   useGetMemberLeaveTeamRequestQuery,
   useUpdateTeamMutation,
+  useDeleteTeamMutation,
 } = teamApi;
