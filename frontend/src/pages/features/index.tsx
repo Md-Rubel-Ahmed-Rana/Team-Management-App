@@ -12,7 +12,7 @@ const FeaturesPage: NextPageWithLayout = () => {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <FeaturesSection limit={1000} />
+      <FeaturesSection limit={1000} animation={false} />
     </>
   );
 };

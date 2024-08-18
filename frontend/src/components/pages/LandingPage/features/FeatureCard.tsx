@@ -1,20 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import { IFeature } from "@/interfaces/feature.interface";
-import React from "react";
-import { SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-
 type Props = {
   feature: IFeature;
+  animation: boolean;
 };
 
-const FeatureCard = ({ feature }: Props) => {
-  const { title, description, image, animation } = feature;
+const FeatureCard = ({ feature, animation }: Props) => {
+  const { title, description, image, animation: animate } = feature;
   return (
     <div
-      data-aos={animation}
+      data-aos={animation ? animate : ""}
       className="features-card p-6 rounded-lg shadow-md lg:flex flex-col gap-4"
     >
       <img className="w-full h-60 rounded-lg" src={image} alt={title} />
