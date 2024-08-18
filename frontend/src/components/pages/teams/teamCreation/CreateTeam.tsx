@@ -4,7 +4,7 @@ import { INewTeam } from "@/interfaces/team.interface";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import { useForm, Controller } from "react-hook-form";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 
 const CreateTeamPage = () => {
   const { data }: any = useLoggedInUserQuery({});
@@ -30,6 +30,7 @@ const CreateTeamPage = () => {
 
     // Append text fields to FormData
     formData.append("name", data.name);
+    formData.append("image", data.image);
     formData.append("category", data.category);
     formData.append("description", data.description);
     formData.append("admin", data.admin || user?.id);

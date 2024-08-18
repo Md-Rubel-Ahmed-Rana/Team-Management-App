@@ -10,7 +10,7 @@ const HomePage = () => {
   return (
     <div className="flex flex-col gap-20">
       <WelcomePage />
-      <FeaturesSection />
+      <FeaturesSection animation={true} />
       <TestimonialsSection />
       <HowItWorksSection />
       <PricingSection />

@@ -11,9 +11,11 @@ import {
   useGetMemberLeaveTeamRequestQuery,
   useLeaveTeamRequestMutation,
 } from "@/features/team";
+import TeamDeleteModal from "@/components/shared/TeamDeleteModal";
 
 const TeamDetails = ({ team }: { team: ITeam }) => {
   const [isRemove, setIsRemove] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
@@ -101,7 +103,7 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
               <p className="w-full lg:w-auto">
                 <button
                   onClick={() => setIsOpen(true)}
-                  className="mx-auto outline-none border w-full lg:w-auto px-5 py-2 rounded-lg"
+                  className="mx-auto outline-none border w-full lg:w-auto px-2 py-1 rounded-md"
                 >
                   Add members
                 </button>
@@ -109,7 +111,7 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
               <p className="w-full lg:w-auto">
                 <button
                   onClick={() => setIsRemove(true)}
-                  className="mx-auto  border px-5 py-2 rounded-lg w-full lg:w-auto"
+                  className="mx-auto  border px-2 py-1 rounded-md w-full lg:w-auto"
                 >
                   Remove members
                 </button>
@@ -126,8 +128,8 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
                     },
                   }}
                 >
-                  <button className="mx-auto  border px-5 py-2 w-full lg:w-auto rounded-lg">
-                    Edit Team
+                  <button className="mx-auto  border px-2 py-1 w-full lg:w-auto rounded-md">
+                    Edit
                   </button>
                 </Link>
               </p>
@@ -140,7 +142,7 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
                 disabled={teamIds?.includes(id)}
                 className={` ${
                   teamIds?.includes(id) ? "cursor-not-allowed" : "shadow-md"
-                } mx-auto outline-none  border px-5 py-2 rounded-lg w-full lg:w-auto`}
+                } mx-auto outline-none  border px-2 py-1 rounded-md w-full lg:w-auto`}
               >
                 {teamIds?.includes(id) ? "Requested" : "Request to leave"}
               </button>
@@ -158,15 +160,32 @@ const TeamDetails = ({ team }: { team: ITeam }) => {
                 },
               }}
             >
-              <button className="font-medium w-full border px-5 py-2 rounded-md lg:w-auto">
-                View details
+              <button className="font-medium w-full border px-2 py-1  rounded-md lg:w-auto">
+                details
               </button>
             </Link>
           </p>
+          {admin?.id === user?.id && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className="border px-2 py-1 rounded-md bg-red-500 text-white"
+            >
+              Delete
+            </button>
+          )}
         </div>
       </div>
       {isOpen && (
         <AddMemberModal team={team} isOpen={isOpen} setIsOpen={setIsOpen} />
+      )}
+
+      {modalOpen && (
+        <TeamDeleteModal
+          teamId={id}
+          teamName={name}
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+        />
       )}
 
       {isRemove && (
