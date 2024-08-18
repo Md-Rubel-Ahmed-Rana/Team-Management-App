@@ -10,6 +10,13 @@ const projectApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["project"] as any,
     }),
+    deleteProject: builder.mutation({
+      query: (id: string) => ({
+        method: "DELETE",
+        url: `/project/delete/${id}`,
+      }),
+      providesTags: ["project"] as any,
+    }),
     updateProject: builder.mutation({
       query: ({ id, data }) => ({
         url: `/project/update/${id}`,
@@ -95,4 +102,5 @@ export const {
   useGetLeaveProjectRequestsByAdminQuery,
   useIgnoreProjectLeaveRequestMutation,
   useGetMemberLeaveProjectRequestQuery,
+  useDeleteProjectMutation,
 } = projectApi;

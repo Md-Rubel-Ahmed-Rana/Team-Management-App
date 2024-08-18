@@ -16,6 +16,10 @@ import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import ParentTask from "../../tasks/ParentTask";
 import { SocketContext } from "@/context/SocketContext";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { FiEdit } from "react-icons/fi";
+import ProjectDeleteModal from "@/components/shared/ProjectDeleteModal";
+import EditProjectModal from "./EditProjectModal";
 
 const Projects = () => {
   const { socket }: any = useContext(SocketContext);
@@ -23,6 +27,8 @@ const Projects = () => {
   const [activeProject, setActiveProject] = useState<any>("");
   const [isOpen, setIsOpen] = useState(false);
   const [isRemove, setIsRemove] = useState(false);
+  const [isDeleteProject, setIsDeleteProject] = useState(false);
+  const [isEditProject, setIsEditProject] = useState(false);
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const { data: projectData }: any = useGetSingleProjectQuery(query?.id);
@@ -83,8 +89,20 @@ const Projects = () => {
           <>
             <div className="flex  justify-between items-center mb-4">
               <div className="flex flex-col gap-2">
-                <h2 className="text-2xl font-bold ">
-                  Project: {project?.name}
+                <h2 className="text-2xl flex items-center gap-4">
+                  <span>
+                    <b>Project: </b> {project?.name}
+                  </span>
+                  <FiEdit
+                    onClick={() => setIsEditProject(true)}
+                    className="cursor-pointer text-sky-500"
+                    title="Edit project"
+                  />
+                  <FaRegTrashAlt
+                    onClick={() => setIsDeleteProject(true)}
+                    className="cursor-pointer text-red-500"
+                    title="Delete project"
+                  />
                 </h2>
                 <h5 className="font-semibold">Team: {project?.team?.name}</h5>
                 <h5 className="font-semibold">Category: {project?.category}</h5>
@@ -151,6 +169,22 @@ const Projects = () => {
           setIsOpen={setIsOpen}
           projectId={activeProject}
           team={project?.team}
+        />
+      )}
+      {isDeleteProject && (
+        <ProjectDeleteModal
+          isOpen={isDeleteProject}
+          setIsOpen={setIsDeleteProject}
+          projectId={project?.id}
+          projectName={project?.name}
+        />
+      )}
+
+      {isEditProject && (
+        <EditProjectModal
+          isEdit={isEditProject}
+          setIsEdit={setIsEditProject}
+          project={project}
         />
       )}
 
