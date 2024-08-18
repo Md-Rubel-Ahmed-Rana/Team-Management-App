@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import TeamDeleteModal from "@/components/shared/TeamDeleteModal";
 import { useMyTeamsQuery } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import { ITeam } from "@/interfaces/team.interface";
@@ -8,8 +9,15 @@ import { FaPlus } from "react-icons/fa";
 
 const Teams = () => {
   const { data: userData } = useLoggedInUserQuery({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<any>({});
   const user = userData?.data;
   const { data: teamData } = useMyTeamsQuery(user?.id);
+
+  const handleSelectTeam = (team: ITeam) => {
+    setSelectedTeam(team);
+    setModalOpen(true);
+  };
 
   return (
     <section className="p-5">
@@ -43,13 +51,13 @@ const Teams = () => {
             <h4 className="text-xl font-semibold mb-3">{team.category}</h4>
             <p className="w-full mb-10">{team.description}</p>
             <div className="flex justify-between items-center gap-2 absolute bottom-4 w-full right-0 left-0 px-5">
-              <p className="border font-medium px-2 lg:px-5 py-1 lg:py-2 rounded-md flex items-center gap-1">
+              <p className="border font-medium px-2  py-1 rounded-md flex items-center gap-1">
                 <span> Members: </span>
                 <span>{Number(team.activeMembers?.length)}</span>
               </p>
-              <p>
+
+              <p className="border font-medium px-2 py-1 rounded-md">
                 <Link
-                  className="border font-medium px-2  lg:px-5 py-2 rounded-md"
                   href={{
                     pathname: `/teams/${team.id}`,
                     query: {
@@ -59,9 +67,15 @@ const Teams = () => {
                     },
                   }}
                 >
-                  View team
+                  Details
                 </Link>
               </p>
+              <button
+                onClick={() => handleSelectTeam(team)}
+                className="border  font-medium px-2 py-1 rounded-md bg-red-500 text-white"
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}
@@ -72,6 +86,14 @@ const Teams = () => {
           <h4>You haven&apos; have created any team yet</h4>
           <p>Your created team will be displayed here</p>
         </div>
+      )}
+      {modalOpen && selectedTeam?.id && (
+        <TeamDeleteModal
+          teamId={selectedTeam?.id}
+          teamName={selectedTeam.name}
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+        />
       )}
     </section>
   );
