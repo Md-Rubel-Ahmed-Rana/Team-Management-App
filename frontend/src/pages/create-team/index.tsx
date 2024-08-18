@@ -5,14 +5,14 @@ import React, { ReactElement } from "react";
 
 const TeamCreate = () => {
   return (
-    <div>
+    <>
       <GetHead
         title="Create Team: Team Manager"
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
       <CreateTeamPage />
-    </div>
+    </>
   );
 };
 

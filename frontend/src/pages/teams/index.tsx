@@ -1,14 +1,14 @@
 import Teams from "@/components/pages/teams/showTeam/TeamPage";
 import RootLayout from "@/layout/RootLayout";
 import { NextPageWithLayout } from "pages/_app";
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement } from "react";
 import GetHead from "@/utils/Head";
 
 const TeamPage: NextPageWithLayout = () => {
   return (
     <div>
       <GetHead
-        title="Team: Team Manager"
+        title="Teams: Team Manager"
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />

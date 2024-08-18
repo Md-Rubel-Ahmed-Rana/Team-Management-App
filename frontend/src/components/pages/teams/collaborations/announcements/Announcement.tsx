@@ -14,10 +14,10 @@ const Announcement = ({ team }: Props) => {
     conversationId: team?.id,
   });
   return (
-    <div>
+    <>
       <ShowMessages team={team} messages={messageData?.data} />
       <MessageForm teamId={team?.id} type={"announcement"} />
-    </div>
+    </>
   );
 };
 
