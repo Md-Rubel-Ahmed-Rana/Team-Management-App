@@ -109,7 +109,7 @@ const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
                         type="submit"
                         className="border mx-auto outline-none rounded-full px-10 py-2 bg-blue-700 text-white text-md flex items-center gap-2"
                       >
-                        Submit
+                        Save changes
                       </button>
                     </div>
                   </form>
