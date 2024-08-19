@@ -1,9 +1,7 @@
-import Projects from "@/components/pages/projects/desktop/ProjectPage";
 import RootLayout from "@/layout/RootLayout";
 import { NextPageWithLayout } from "pages/_app";
 import React, { ReactElement } from "react";
 import GetHead from "@/utils/Head";
-import ProjectMobileView from "@/components/pages/projects/mobile/project/ProjectMobileView";
 import ProjectsContainer from "@/components/pages/projects";
 
 const ProjectPage: NextPageWithLayout = () => {
@@ -15,14 +13,6 @@ const ProjectPage: NextPageWithLayout = () => {
         keywords="team management, project collaboration, task tracking, project details"
       />
       <ProjectsContainer />
-      {/* <div>
-        <div className="hidden lg:block">
-          <Projects />
-        </div>
-        <div className="sm:hidden">
-          <ProjectMobileView />
-        </div>
-      </div> */}
     </div>
   );
 };
