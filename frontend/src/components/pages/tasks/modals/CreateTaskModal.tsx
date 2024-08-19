@@ -22,7 +22,7 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
   const members = projectData?.data?.members;
   const [selectedMember, setSelectedMember] = useState<any>();
   const { register, handleSubmit } = useForm<INewTask>();
-  const [createTask] = useCreateTaskMutation();
+  const [createTask, { isLoading }] = useCreateTaskMutation();
 
   const handleCreateNewTask: SubmitHandler<INewTask> = async (data) => {
     data.assignedTo = selectedMember?.value;
@@ -79,14 +79,14 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 lg:p-6 p-3 text-left  shadow-xl transition-all relative">
                 <div className="mt-3">
                   <form onSubmit={handleSubmit(handleCreateNewTask)}>
-                    <h3 className="text-xl font-bold mb-5">
+                    <h3 className="text-xl font-bold lg:mb-5">
                       Create a new task for {status}
                     </h3>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 dark:text-white mb-2 ">
+                      <p className="text-stone-500 dark:text-white">
                         Select a member
                       </p>
                       <Select
@@ -100,12 +100,12 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
                         }
                         styles={customStyles}
                         onChange={(user: any) => setSelectedMember(user)}
-                        placeholder="Type a name to assign a task to member"
-                        className="mt-1 w-full"
+                        placeholder="Type a name of member"
+                        className="w-full"
                         classNamePrefix="select2-selection"
                         noOptionsMessage={({ inputValue }: any) =>
                           !inputValue &&
-                          `No members in your project: ${project?.name}. Please add member then assign task`
+                          `No members in your project: "${project?.name}". Please add member then assign task`
                         }
                         components={{
                           DropdownIndicator: () => null,
@@ -114,7 +114,7 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
                       />
                     </div>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 dark:text-white mb-2">
+                      <p className="text-stone-500 dark:text-white">
                         Task name
                       </p>
                       <input
@@ -123,11 +123,11 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
                         type="text"
                         id="taskName"
                         placeholder="Enter your task name (e.g: Develop API)"
-                        className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
+                        className="w-full rounded-sm bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  lg:py-3 py-2 outline-none px-2 shadow-sm sm:text-sm"
                       />
                     </div>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 dark:text-white mb-2">
+                      <p className="text-stone-500 dark:text-white">
                         Task deadline
                       </p>
                       <input
@@ -136,23 +136,33 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
                         type="text"
                         id="deadline"
                         placeholder="Enter deadline (e.g: 3 hours/2 days/4 weeks)"
-                        className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
+                        className="w-full rounded-sm bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  lg:py-3 py-2 outline-none px-2 shadow-sm sm:text-sm"
                       />
                     </div>
 
-                    <div className="mt-5 lg:flex justify-between">
+                    <div className="mt-5 flex justify-between gap-2">
                       <button
+                        disabled={isLoading}
                         onClick={closeModal}
                         type="button"
-                        className="border-2 mb-4 lg:mb-0 dark:text-white mx-auto outline-none border-black rounded-full px-10 py-2  text-sm flex items-center gap-2"
+                        className={`w-full rounded-md lg:rounded-full py-1 lg:py-3 ${
+                          isLoading
+                            ? "opacity-50 cursor-not-allowed bg-gray-400"
+                            : ""
+                        } dark:text-white mx-auto outline-none border-2 text-sm`}
                       >
-                        Cancel
+                        {isLoading ? "Loading..." : "Cancel"}
                       </button>
                       <button
+                        disabled={isLoading}
                         type="submit"
-                        className="border mx-auto outline-none rounded-full px-10 py-2 bg-blue-700 text-white text-md flex items-center gap-2"
+                        className={`border w-full rounded-md lg:rounded-full py-1 lg:py-3 outline-none bg-blue-700 text-white text-md ${
+                          isLoading
+                            ? "opacity-50 cursor-not-allowed bg-gray-400"
+                            : ""
+                        }`}
                       >
-                        Create
+                        {isLoading ? "Adding..." : "Add Task"}
                       </button>
                     </div>
                   </form>

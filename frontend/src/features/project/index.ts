@@ -15,7 +15,7 @@ const projectApi = apiSlice.injectEndpoints({
         method: "DELETE",
         url: `/project/delete/${id}`,
       }),
-      providesTags: ["project"] as any,
+      invalidatesTags: ["project"] as any,
     }),
     updateProject: builder.mutation({
       query: ({ id, data }) => ({
