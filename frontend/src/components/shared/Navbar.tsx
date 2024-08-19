@@ -67,7 +67,7 @@ const Navbar = () => {
         </Link>
       </div>
       {isUserLoading ? (
-        <button className="px-4 hidden lg:block py-2 rounded-lg bg-gray-300 text-gray-500">
+        <button className="px-4 hidden lg:block py-2 rounded-lg bg-blue-600 text-white">
           <svg
             className="animate-spin h-5 w-5 text-white"
             xmlns="http://www.w3.org/2000/svg"
@@ -180,7 +180,7 @@ const Navbar = () => {
         </div>
 
         {isUserLoading ? (
-          <button className="px-4 py-2 rounded-lg bg-gray-300 text-gray-500">
+          <button className="px-4 hidden lg:block py-2 rounded-lg bg-blue-600 text-white">
             <svg
               className="animate-spin h-5 w-5 text-white"
               xmlns="http://www.w3.org/2000/svg"
@@ -263,7 +263,7 @@ const Navbar = () => {
       {toggle && (
         <div className="flex justify-center items-center">
           {isUserLoading ? (
-            <button className="px-4 py-2 rounded-lg bg-gray-300 text-gray-500">
+            <button className="px-4 hidden lg:block py-2 rounded-lg bg-blue-600 text-white">
               <svg
                 className="animate-spin h-5 w-5 text-white"
                 xmlns="http://www.w3.org/2000/svg"

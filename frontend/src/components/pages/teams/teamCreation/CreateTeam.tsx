@@ -30,7 +30,6 @@ const CreateTeamPage = () => {
 
     // Append text fields to FormData
     formData.append("name", data.name);
-    formData.append("image", data.image);
     formData.append("category", data.category);
     formData.append("description", data.description);
     formData.append("admin", data.admin || user?.id);
