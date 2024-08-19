@@ -12,7 +12,7 @@ const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
   const closeModal = () => {
     setIsEdit(false);
   };
-  const [updateProject] = useUpdateProjectMutation();
+  const [updateProject, { isLoading }] = useUpdateProjectMutation();
 
   const handleEditProject: SubmitHandler<Partial<IProject>> = async (data) => {
     const result: any = await updateProject({
@@ -65,51 +65,57 @@ const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 dark:text-white p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="lg:w-[400px] w-[300px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 dark:text-white lg:p-6 p-3 text-left  shadow-xl transition-all relative">
                 <div className="mt-3">
                   <form onSubmit={handleSubmit(handleEditProject)}>
-                    <h3 className="text-xl font-bold mb-5">Edit Project</h3>
+                    <h3 className="text-xl font-bold">Edit Project</h3>
 
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 dark:text-white mb-2">
-                        Name
-                      </p>
+                      <p className="text-stone-500 dark:text-white">Name</p>
                       <input
                         {...register("name", { required: true })}
                         required
                         type="text"
                         id="name"
                         defaultValue={project?.name}
-                        className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
+                        className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  p-2 outline-none   shadow-sm sm:text-sm"
                       />
                     </div>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 dark:text-white mb-2">
-                        Category
-                      </p>
+                      <p className="text-stone-500 dark:text-white">Category</p>
                       <input
                         {...register("category", { required: true })}
                         required
                         type="text"
                         id="category"
                         defaultValue={project?.category}
-                        className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-3 outline-none px-2 shadow-sm sm:text-sm"
+                        className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  p-2 outline-none   shadow-sm sm:text-sm"
                       />
                     </div>
 
-                    <div className="mt-5 lg:flex justify-between">
+                    <div className="mt-5 flex justify-between gap-2">
                       <button
+                        disabled={isLoading}
                         onClick={closeModal}
                         type="button"
-                        className="border-2 mb-4 lg:mb-0 mx-auto outline-none border-black rounded-full px-10 py-2  text-sm flex items-center gap-2"
+                        className={`w-full rounded-md lg:rounded-full py-1 lg:py-3 ${
+                          isLoading
+                            ? "opacity-50 cursor-not-allowed bg-gray-400"
+                            : ""
+                        } dark:text-white mx-auto outline-none border-2 text-sm`}
                       >
-                        Cancel
+                        {isLoading ? "Loading..." : "Cancel"}
                       </button>
                       <button
+                        disabled={isLoading}
                         type="submit"
-                        className="border mx-auto outline-none rounded-full px-10 py-2 bg-blue-700 text-white text-md flex items-center gap-2"
+                        className={`border w-full rounded-md lg:rounded-full py-1 lg:py-3 outline-none bg-blue-700 text-white text-md ${
+                          isLoading
+                            ? "opacity-50 cursor-not-allowed bg-gray-400"
+                            : ""
+                        }`}
                       >
-                        Save changes
+                        {isLoading ? "Saving..." : "Save changes"}
                       </button>
                     </div>
                   </form>

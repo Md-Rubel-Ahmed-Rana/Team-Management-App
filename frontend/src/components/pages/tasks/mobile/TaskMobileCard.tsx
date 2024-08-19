@@ -6,6 +6,7 @@ import {
 } from "@/features/task";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 type Props = {
   task: any;
@@ -14,9 +15,10 @@ type Props = {
 const TaskMobileCard = ({ task }: Props) => {
   const [editedTaskName, setEditedTaskName] = useState("");
   const [isEdit, setIsEdit] = useState(false);
-  const [deleteTask] = useDeleteTaskMutation();
-  const [updateTask] = useUpdateTaskMutation();
+  const [deleteTask, { isLoading: isDeletingTask }] = useDeleteTaskMutation();
+  const [updateTask, { isLoading: isUpdatingTask }] = useUpdateTaskMutation();
   const [updateStatus] = useUpdateStatusMutation();
+  const [toggleTask, setToggleTask] = useState("");
 
   const handleDeleteTask = async () => {
     const result: any = await deleteTask(task?.id);
@@ -58,35 +60,76 @@ const TaskMobileCard = ({ task }: Props) => {
           className="w-full rounded-md  border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  py-1 outline-none px-2 shadow-sm sm:text-sm"
         />
       ) : (
-        <h3
-          title="Click to edit/delete task"
-          onClick={() => setIsEdit(true)}
-          className="text-md font-semibold cursor-pointer"
-        >
-          {task?.name}
-        </h3>
+        <div className=" flex justify-between gap-3 items-start relative">
+          <span className="text-lg lg:text-xl">{task?.name}</span>
+          <BsThreeDotsVertical
+            title="Click to edit/delete task"
+            className="cursor-pointer font-semibold text-xl"
+            onClick={() => setToggleTask(task?.id)}
+          />
+          {toggleTask && toggleTask === task?.id && (
+            <div className="absolute right-0 font-sans top-5 w-28 flex flex-col gap-2 justify-start text-start dark:bg-gray-700 bg-gray-200 rounded-md p-2">
+              {isDeletingTask ? (
+                <button className="text-sm font-semibold py-3 text-start rounded-sm">
+                  Deleting task...
+                </button>
+              ) : (
+                <>
+                  <button
+                    className="bg-white text-start px-2 rounded-sm"
+                    onClick={() => {
+                      setToggleTask("");
+                      setIsEdit(true);
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={handleDeleteTask}
+                    className="bg-white text-start px-2 rounded-sm"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className="bg-white text-start px-2 rounded-sm"
+                    onClick={() => setToggleTask("")}
+                  >
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
       )}
 
       {isEdit && (
         <div className="flex justify-end gap-2 text-sm">
-          <button
-            onClick={handleDeleteTask}
-            className="border px-2 py-1 rounded-md dark:bg-gray-700 bg-gray-200"
-          >
-            Delete
-          </button>
-          <button
-            onClick={() => setIsEdit(false)}
-            className="border px-2 py-1 rounded-md dark:bg-gray-700 bg-gray-200"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleEditTask}
-            className="border px-2 py-1 rounded-md dark:bg-gray-700 bg-gray-200"
-          >
-            Save changes
-          </button>
+          {isUpdatingTask ? (
+            <button
+              disabled={isUpdatingTask}
+              className={`border ${
+                isUpdatingTask ? "cursor-not-allowed" : ""
+              } px-2 py-1 rounded-md dark:bg-gray-700 bg-gray-400 text-white`}
+            >
+              Updating task...
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => setIsEdit(false)}
+                className="border px-2 py-1 rounded-md dark:bg-gray-700 bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEditTask}
+                className="border px-2 py-1 rounded-md dark:bg-gray-700 bg-gray-200"
+              >
+                Save changes
+              </button>
+            </>
+          )}
         </div>
       )}
       <div className="text-sm">

@@ -32,7 +32,6 @@ const ProjectDeleteModal = ({
     formState: { errors },
   } = useForm<FormValues>();
   const [deleteProject, { isLoading }] = useDeleteProjectMutation();
-  const router = useRouter();
 
   const closeModal = () => {
     setIsOpen(false);
@@ -43,7 +42,6 @@ const ProjectDeleteModal = ({
     if (result?.data?.statusCode === 200) {
       toast.success(result?.data?.message || "Project deleted successfully");
       setIsOpen(false);
-      router.reload();
     } else {
       setIsOpen(false);
       toast.error(result?.error?.message || "Project was not deleted");
@@ -85,7 +83,7 @@ const ProjectDeleteModal = ({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="lg:w-[400px] mx-auto bg-white dark:bg-gray-400 dark:text-black rounded-xl p-6 text-left shadow-xl transition-all relative">
+            <div className="lg:w-[400px] w-[300px] bg-white dark:bg-gray-400 dark:text-black rounded-xl lg:p-6 p-3 text-left shadow-xl transition-all relative">
               <div className="flex justify-between items-center mb-4">
                 <h1 className="text-xl font-bold">Delete {projectName}</h1>
                 <button

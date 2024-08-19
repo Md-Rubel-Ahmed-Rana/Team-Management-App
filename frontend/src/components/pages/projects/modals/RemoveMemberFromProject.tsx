@@ -24,7 +24,7 @@ const RemoveMemberFromProject = ({
     setIsRemove(false);
   };
 
-  const [removeMember] = useRemoveMemberMutation();
+  const [removeMember, { isLoading }] = useRemoveMemberMutation();
   const [newMember, setNewMember] = useState({ label: "", value: "" });
   const { data: memberData } = useGetActiveMembersQuery(team?.id);
   const members = memberData?.data?.map((member: IUser) => ({
@@ -89,14 +89,14 @@ const RemoveMemberFromProject = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="lg:w-[400px] w-[300px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 lg:p-6 p-3 text-left  shadow-xl transition-all relative">
                 <div className="mt-3">
                   <form onSubmit={handleRemoveMember}>
-                    <h3 className="text-xl font-bold mb-5">
+                    <h3 className="text-md lg:text-xl font-bold">
                       Remove member from this project
                     </h3>
                     <div className="relative w-full py-2">
-                      <p className="text-stone-500 dark:text-white mb-2 ">
+                      <p className="text-stone-500 dark:text-white">
                         Select a member
                       </p>
                       <Select
@@ -104,8 +104,8 @@ const RemoveMemberFromProject = ({
                         options={members}
                         styles={customStyles}
                         onChange={(user: any) => setNewMember(user)}
-                        placeholder="Type a name to assign a member to project"
-                        className="mt-1 w-full"
+                        placeholder="Type a name of member"
+                        className="w-full"
                         classNamePrefix="select2-selection"
                         noOptionsMessage={({ inputValue }: any) =>
                           !inputValue &&
@@ -117,19 +117,29 @@ const RemoveMemberFromProject = ({
                         }}
                       />
                     </div>
-                    <div className="mt-5 lg:flex justify-between">
+                    <div className="mt-5 flex justify-between gap-2">
                       <button
+                        disabled={isLoading}
                         onClick={closeModal}
                         type="button"
-                        className="border-2 mb-4 lg:mb-0 mx-auto outline-none border-black rounded-full px-10 py-2  text-sm flex items-center gap-2"
+                        className={`w-full rounded-md lg:rounded-full py-1 lg:py-3 ${
+                          isLoading
+                            ? "opacity-50 cursor-not-allowed bg-gray-400"
+                            : ""
+                        } dark:text-white mx-auto outline-none border-2 text-sm`}
                       >
-                        Cancel
+                        {isLoading ? "Loading..." : "Cancel"}
                       </button>
                       <button
+                        disabled={isLoading}
                         type="submit"
-                        className="border mx-auto outline-none rounded-full px-10 py-2 bg-blue-700 text-white text-md flex items-center gap-2"
+                        className={`border w-full rounded-md lg:rounded-full py-1 lg:py-3 outline-none bg-blue-700 text-white text-md ${
+                          isLoading
+                            ? "opacity-50 cursor-not-allowed bg-gray-400"
+                            : ""
+                        }`}
                       >
-                        Remove
+                        {isLoading ? "Removing..." : "Remove Member"}
                       </button>
                     </div>
                   </form>

@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 const Navbar = () => {
   const { socket }: any = useContext(SocketContext);
   const { theme, setTheme } = useTheme();
-  const { data }: any = useLoggedInUserQuery({});
+  const { data, isLoading: isUserLoading } = useLoggedInUserQuery({});
   const [logout] = useLogoutUserMutation({});
   const user: IUser = data?.data;
   const [isOpen, setIsOpen] = useState(false);
@@ -66,80 +66,105 @@ const Navbar = () => {
           />
         </Link>
       </div>
-      <div className="lg:flex hidden  items-center gap-4">
-        {!user?.email && (
-          <>
-            <Link className="m-2" href="/signup">
-              Signup
-            </Link>
-            <Link className="m-2" href="/login">
-              Login
-            </Link>
-          </>
-        )}
-
-        {user?.email && (
-          <>
-            <Link className="m-2" href="/teams">
-              My Teams
-            </Link>
-            <Link
-              className="m-2"
-              href={{
-                pathname: "dashboard",
-                query: `uId=${user?.id}&activeView=joined-teams`,
-              }}
-            >
-              Joined Teams
-            </Link>
-            <Link className="m-2" href="/projects">
-              Projects
-            </Link>
-          </>
-        )}
-
-        <button
-          onClick={() =>
-            theme == "dark" ? setTheme("light") : setTheme("dark")
-          }
-        >
-          {theme === "dark" ? <FaSun /> : <FaRegMoon />}
+      {isUserLoading ? (
+        <button className="px-4 hidden lg:block py-2 rounded-lg bg-gray-300 text-gray-500">
+          <svg
+            className="animate-spin h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+          </svg>
         </button>
+      ) : (
+        <div className="lg:flex hidden  items-center gap-4">
+          {!user?.email && (
+            <>
+              <Link className="m-2" href="/signup">
+                Signup
+              </Link>
+              <Link className="m-2" href="/login">
+                Login
+              </Link>
+            </>
+          )}
 
-        {user?.email && (
+          {user?.email && (
+            <>
+              <Link className="m-2" href="/teams">
+                My Teams
+              </Link>
+              <Link
+                className="m-2"
+                href={{
+                  pathname: "dashboard",
+                  query: `uId=${user?.id}&activeView=joined-teams`,
+                }}
+              >
+                Joined Teams
+              </Link>
+              <Link className="m-2" href="/projects">
+                Projects
+              </Link>
+            </>
+          )}
+
           <button
-            onClick={() => setIsOpen(true)}
-            className="relative m-2 p-2 border-2 rounded-full"
+            onClick={() =>
+              theme == "dark" ? setTheme("light") : setTheme("dark")
+            }
           >
-            <FaRegBell />
-            <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-              {unreadNotifications?.length || 0}
-            </small>
+            {theme === "dark" ? <FaSun /> : <FaRegMoon />}
           </button>
-        )}
 
-        {user?.email && (
-          <Link
-            href={{
-              pathname: "/dashboard",
-              query: { uId: user?.id, activeView: "profile" },
-            }}
-            className={`${
-              !user?.profile_picture && "border m-2 p-2 rounded-full"
-            }`}
-          >
-            {user?.profile_picture ? (
-              <img
-                className="w-10 h-10 rounded-full"
-                src={user?.profile_picture}
-                alt=""
-              />
-            ) : (
-              <FaUser />
-            )}
-          </Link>
-        )}
-      </div>
+          {user?.email && (
+            <button
+              onClick={() => setIsOpen(true)}
+              className="relative m-2 p-2 border-2 rounded-full"
+            >
+              <FaRegBell />
+              <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
+                {unreadNotifications?.length || 0}
+              </small>
+            </button>
+          )}
+
+          {user?.email && (
+            <Link
+              href={{
+                pathname: "/dashboard",
+                query: { uId: user?.id, activeView: "profile" },
+              }}
+              className={`${
+                !user?.profile_picture && "border m-2 p-2 rounded-full"
+              }`}
+            >
+              {user?.profile_picture ? (
+                <img
+                  className="w-10 h-10 rounded-full"
+                  src={user?.profile_picture}
+                  alt=""
+                />
+              ) : (
+                <FaUser />
+              )}
+            </Link>
+          )}
+        </div>
+      )}
       <div className="flex lg:hidden items-center justify-between px-5">
         <div>
           {!toggle && (
@@ -154,128 +179,178 @@ const Navbar = () => {
           )}
         </div>
 
-        <div className="flex gap-4">
-          <button
-            onClick={() =>
-              theme == "dark" ? setTheme("light") : setTheme("dark")
-            }
-          >
-            {theme === "dark" ? <FaSun /> : <FaRegMoon />}
+        {isUserLoading ? (
+          <button className="px-4 py-2 rounded-lg bg-gray-300 text-gray-500">
+            <svg
+              className="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              ></path>
+            </svg>
           </button>
-          {!user?.email && (
-            <>
-              <button onClick={() => setToggle(false)}>
-                <Link href="/login">Login</Link>
-              </button>
-            </>
-          )}
-
-          {user?.email && (
+        ) : (
+          <div className="flex gap-4">
             <button
-              onClick={() => {
-                setIsOpen(true);
-                setToggle(false);
-              }}
-              className="relative  p-2 border-2 rounded-full"
+              onClick={() =>
+                theme == "dark" ? setTheme("light") : setTheme("dark")
+              }
             >
-              <FaRegBell />
-              <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-                {unreadNotifications?.length || 0}
-              </small>
+              {theme === "dark" ? <FaSun /> : <FaRegMoon />}
             </button>
-          )}
-
-          <div>
-            {user?.email && (
-              <Link
-                href={{
-                  pathname: "/dashboard",
-                  query: { uId: user?.id, activeView: "profile" },
-                }}
-                className={`${
-                  !user?.profile_picture && "border  rounded-full"
-                }`}
-              >
-                {user?.profile_picture ? (
-                  <img
-                    className="w-10 h-10 rounded-full"
-                    src={user?.profile_picture}
-                    alt=""
-                  />
-                ) : (
-                  <FaUser />
-                )}
-              </Link>
-            )}
-          </div>
-        </div>
-      </div>
-      {toggle && (
-        <div className="flex justify-center items-center">
-          <div className="w-[90%] flex lg:hidden rounded-md flex-col text-start gap-3 z-10 absolute top-20 p-3 shadow-lg dark:bg-gray-700 bg-gray-100">
-            <Link
-              onClick={() => setToggle(false)}
-              className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
-              href="/"
-            >
-              Home
-            </Link>
             {!user?.email && (
               <>
-                <Link
-                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
-                  onClick={() => setToggle(false)}
-                  href="/signup"
-                >
-                  Signup
-                </Link>
-                <Link
-                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
-                  onClick={() => setToggle(false)}
-                  href="/login"
-                >
-                  Login
-                </Link>
-              </>
-            )}
-
-            {user?.email && (
-              <>
-                <Link
-                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
-                  onClick={() => setToggle(false)}
-                  href="/teams"
-                >
-                  My Teams
-                </Link>
-
-                <Link
-                  onClick={() => setToggle(false)}
-                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
-                  href={{
-                    pathname: "dashboard",
-                    query: `uId=${user?.id}&activeView=joined-teams`,
-                  }}
-                >
-                  Joined Teams
-                </Link>
-
-                <Link
-                  onClick={() => setToggle(false)}
-                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
-                  href="/projects"
-                >
-                  Projects
-                </Link>
-                <button
-                  className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
-                  onClick={handleLogOut}
-                >
-                  Logout
+                <button onClick={() => setToggle(false)}>
+                  <Link href="/login">Login</Link>
                 </button>
               </>
             )}
+
+            {user?.email && (
+              <button
+                onClick={() => {
+                  setIsOpen(true);
+                  setToggle(false);
+                }}
+                className="relative  p-2 border-2 rounded-full"
+              >
+                <FaRegBell />
+                <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
+                  {unreadNotifications?.length || 0}
+                </small>
+              </button>
+            )}
+
+            <div>
+              {user?.email && (
+                <Link
+                  href={{
+                    pathname: "/dashboard",
+                    query: { uId: user?.id, activeView: "profile" },
+                  }}
+                  className={`${
+                    !user?.profile_picture && "border  rounded-full"
+                  }`}
+                >
+                  {user?.profile_picture ? (
+                    <img
+                      className="w-10 h-10 rounded-full"
+                      src={user?.profile_picture}
+                      alt=""
+                    />
+                  ) : (
+                    <FaUser />
+                  )}
+                </Link>
+              )}
+            </div>
           </div>
+        )}
+      </div>
+      {toggle && (
+        <div className="flex justify-center items-center">
+          {isUserLoading ? (
+            <button className="px-4 py-2 rounded-lg bg-gray-300 text-gray-500">
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                ></path>
+              </svg>
+            </button>
+          ) : (
+            <div className="w-[90%] flex lg:hidden rounded-md flex-col text-start gap-3 z-10 absolute top-20 p-3 shadow-lg dark:bg-gray-700 bg-gray-100">
+              <Link
+                onClick={() => setToggle(false)}
+                className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                href="/"
+              >
+                Home
+              </Link>
+              {!user?.email && (
+                <>
+                  <Link
+                    className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    onClick={() => setToggle(false)}
+                    href="/signup"
+                  >
+                    Signup
+                  </Link>
+                  <Link
+                    className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    onClick={() => setToggle(false)}
+                    href="/login"
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
+
+              {user?.email && (
+                <>
+                  <Link
+                    className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    onClick={() => setToggle(false)}
+                    href="/teams"
+                  >
+                    My Teams
+                  </Link>
+
+                  <Link
+                    onClick={() => setToggle(false)}
+                    className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    href={{
+                      pathname: "dashboard",
+                      query: `uId=${user?.id}&activeView=joined-teams`,
+                    }}
+                  >
+                    Joined Teams
+                  </Link>
+
+                  <Link
+                    onClick={() => setToggle(false)}
+                    className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    href="/projects"
+                  >
+                    Projects
+                  </Link>
+                  <button
+                    className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    onClick={handleLogOut}
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
+            </div>
+          )}
         </div>
       )}
       {isOpen && (

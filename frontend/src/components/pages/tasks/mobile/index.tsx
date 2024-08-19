@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import TaskMobileCard from "./TaskMobileCard";
 import TaskStatusNav from "./TaskStatusNav";
-import { IProject } from "@/interfaces/project.interface";
 import { useGetTasksByProjectQuery } from "@/features/task";
-import CreateTaskModal from "@/components/pages/tasks/CreateTaskModal";
+import CreateTaskModal from "@/components/pages/tasks/modals/CreateTaskModal";
+import { useRouter } from "next/router";
+import { useGetSingleProjectQuery } from "@/features/project";
 
-type Props = {
-  project: IProject;
-};
-
-const Tasks = ({ project }: Props) => {
+const TasksForMobileView = () => {
   const [activeStatus, setActiveStatus] = useState("Todo");
   const [isOpen, setIsOpen] = useState(false);
-  const { data: taskData } = useGetTasksByProjectQuery(project?.id);
+  const { query } = useRouter();
+  const { data: project } = useGetSingleProjectQuery(query?.id);
+  const { data: taskData } = useGetTasksByProjectQuery(project?.data?.id);
   const todoTasksArray =
     taskData?.data?.filter((task: any) => task?.status === "Todo") || [];
   const ongoingTasksArray =
@@ -21,7 +20,7 @@ const Tasks = ({ project }: Props) => {
     taskData?.data?.filter((task: any) => task?.status === "Completed") || [];
 
   return (
-    <div>
+    <div className="px-2 py-5">
       <TaskStatusNav
         activeStatus={activeStatus}
         setActiveStatus={setActiveStatus}
@@ -55,11 +54,11 @@ const Tasks = ({ project }: Props) => {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           status={activeStatus}
-          project={project}
+          project={project?.data}
         />
       )}
     </div>
   );
 };
 
-export default Tasks;
+export default TasksForMobileView;
