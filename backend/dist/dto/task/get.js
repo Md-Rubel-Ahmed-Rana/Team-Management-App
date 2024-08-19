@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetTaskDTO = void 0;
 const classes_1 = require("@automapper/classes");
 const get_1 = require("../user/get");
-const project_entity_1 = require("@/entities/project.entity");
+const getOnlyProjectForTask_1 = require("../project/getOnlyProjectForTask");
 class GetTaskDTO {
 }
 exports.GetTaskDTO = GetTaskDTO;
@@ -37,8 +37,8 @@ __decorate([
     __metadata("design:type", get_1.GetUserDTO)
 ], GetTaskDTO.prototype, "assignedBy", void 0);
 __decorate([
-    (0, classes_1.AutoMap)(() => project_entity_1.ProjectEntity),
-    __metadata("design:type", project_entity_1.ProjectEntity)
+    (0, classes_1.AutoMap)(() => getOnlyProjectForTask_1.GetOnlyProjectForTaskDTO),
+    __metadata("design:type", getOnlyProjectForTask_1.GetOnlyProjectForTaskDTO)
 ], GetTaskDTO.prototype, "project", void 0);
 __decorate([
     (0, classes_1.AutoMap)(),

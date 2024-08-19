@@ -55,10 +55,17 @@ class Service {
       {
         path: "assignedTo",
         model: "User",
+        select: { name: 1, profile_picture: 1 },
       },
       {
         path: "assignedBy",
         model: "User",
+        select: { name: 1, profile_picture: 1 },
+      },
+      {
+        path: "project",
+        model: "Project",
+        select: { name: 1, category: 1 },
       },
     ]);
 

@@ -46,6 +46,7 @@ import { CreatePaymentDTO } from "@/dto/payment/create";
 import { GetPaymentDTO } from "@/dto/payment/get";
 import { UpdatePaymentDTO } from "@/dto/payment/update";
 import { DeletePaymentDTO } from "@/dto/payment/delete";
+import { GetOnlyProjectForTaskDTO } from "@/dto/project/getOnlyProjectForTask";
 
 const initializeDTOMapper = () => {
   //  ===== user dto =========
@@ -83,6 +84,9 @@ const initializeDTOMapper = () => {
   // get
   createMap(mapper, ProjectEntity, GetProjectDTO);
   createMap(mapper, GetProjectDTO, ProjectEntity);
+  // get only for task
+  createMap(mapper, ProjectEntity, GetOnlyProjectForTaskDTO);
+  createMap(mapper, GetOnlyProjectForTaskDTO, ProjectEntity);
   // get only project
   createMap(mapper, ProjectEntity, GetOnlyProjectDTO);
   createMap(mapper, GetOnlyProjectDTO, ProjectEntity);
