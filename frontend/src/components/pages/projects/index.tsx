@@ -39,11 +39,25 @@ const ProjectsContainer = () => {
             </span>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 lg:gap-5">
-            {myProjects?.data?.map((project: IProject) => (
-              <ProjectCard key={project.id} project={project} admin={user} />
-            ))}
-          </div>
+          <>
+            {myProjects?.data?.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 lg:gap-5">
+                {myProjects?.data?.map((project: IProject) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    admin={user}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-10">
+                <span className="text-lg lg:text-2xl">
+                  You have not created any projects yet.
+                </span>
+              </div>
+            )}
+          </>
         )}
       </div>
       <hr />
@@ -58,11 +72,25 @@ const ProjectsContainer = () => {
             </span>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-2 lg:gap-5">
-            {assignedProjects?.data?.map((project: IProject) => (
-              <ProjectCard key={project.id} project={project} admin={user} />
-            ))}
-          </div>
+          <>
+            {assignedProjects?.data?.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  gap-2 lg:gap-5">
+                {assignedProjects?.data?.map((project: IProject) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    admin={user}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-10">
+                <span className="text-lg lg:text-2xl">
+                  You have't been assigned to a project yet.
+                </span>
+              </div>
+            )}
+          </>
         )}
       </div>
       {isCreateNewProject && (
