@@ -165,6 +165,7 @@ const Navbar = () => {
           )}
         </div>
       )}
+
       <div className="flex lg:hidden items-center justify-between px-5">
         <div>
           {!toggle && (
@@ -180,7 +181,7 @@ const Navbar = () => {
         </div>
 
         {isUserLoading ? (
-          <button className="px-4 hidden lg:block py-2 rounded-lg bg-blue-600 text-white">
+          <button className="px-4 lg:hidden block py-2 rounded-lg bg-blue-600 text-white">
             <svg
               className="animate-spin h-5 w-5 text-white"
               xmlns="http://www.w3.org/2000/svg"
