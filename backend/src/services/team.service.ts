@@ -14,6 +14,8 @@ import { UserEntity } from "@/entities/user.entity";
 import { GetUserDTO } from "@/dto/user/get";
 import { UpdateTeamDTO } from "@/dto/team/update";
 import { DeleteTeamDTO } from "@/dto/team/delete";
+import { Types } from "mongoose";
+import { ProjectService } from "./project.service";
 
 class Service {
   async createTeam(data: ITeam): Promise<CreateTeamDTO> {
@@ -95,6 +97,96 @@ class Service {
       );
       return mappedData;
     }
+  }
+
+  async getTeamsForCard(adminId: string) {
+    const objectIdAdmin = new Types.ObjectId(adminId);
+    const result = await Team.aggregate([
+      {
+        $match: { admin: objectIdAdmin },
+      },
+      {
+        $addFields: {
+          activeMembers: { $size: "$activeMembers" },
+          pendingMembers: { $size: "$pendingMembers" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: "$_id",
+          name: 1,
+          category: 1,
+          description: 1,
+          image: 1,
+          admin: 1,
+          activeMembers: 1,
+          pendingMembers: 1,
+          projects: 1,
+        },
+      },
+    ]);
+
+    const promises = result.map(async (team) => {
+      const [projects] = await Promise.all([
+        ProjectService.getProjectByTeamId(team?.id),
+      ]);
+
+      return {
+        id: team?.id,
+        name: team?.name,
+        category: team?.category,
+        description: team?.description,
+        image: team?.image,
+        admin: team?.admin,
+        activeMembers: team?.activeMembers,
+        pendingMembers: team?.pendingMembers,
+        projects: projects?.length,
+      };
+    });
+
+    const mappedResult = await Promise.all(promises);
+
+    return mappedResult;
+  }
+
+  async getSingleTeamWithDetails(teamId: string) {
+    const userProjection = {
+      name: 1,
+      profile_picture: 1,
+      email: 1,
+    };
+    const team = await Team.findById(teamId).populate([
+      {
+        path: "activeMembers",
+        model: "User",
+        select: userProjection,
+      },
+      {
+        path: "pendingMembers",
+        model: "User",
+        select: userProjection,
+      },
+      {
+        path: "admin",
+        model: "User",
+        select: userProjection,
+      },
+    ]);
+
+    const projects = await ProjectService.getProjectByTeamId(team?.id);
+
+    return {
+      id: team?.id,
+      name: team?.name,
+      category: team?.category,
+      description: team?.description,
+      image: team?.image,
+      admin: team?.admin,
+      activeMembers: team?.activeMembers,
+      pendingMembers: team?.pendingMembers,
+      projects: projects,
+    };
   }
 
   async getTeamById(id: string): Promise<ITeam> {
