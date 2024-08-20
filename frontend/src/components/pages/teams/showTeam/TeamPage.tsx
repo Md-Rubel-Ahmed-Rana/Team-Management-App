@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import TeamDeleteModal from "@/components/shared/TeamDeleteModal";
+import TeamDeleteModal from "@/components/pages/teams/modals/TeamDeleteModal";
 import { useMyTeamsQuery } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import { ITeam } from "@/interfaces/team.interface";
@@ -82,7 +82,7 @@ const Teams = () => {
       </div>
 
       {teamData?.data?.length <= 0 && (
-        <div className="text-2xl font-semibold flex flex-col gap-4 py-20">
+        <div className="text-lg lg:text-2xl font-semibold flex flex-col justify-center items-center gap-4 py-20">
           <h4>You haven&apos; have created any team yet</h4>
           <p>Your created team will be displayed here</p>
         </div>

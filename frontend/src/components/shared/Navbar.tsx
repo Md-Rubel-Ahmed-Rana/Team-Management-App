@@ -104,16 +104,10 @@ const Navbar = () => {
 
           {user?.email && (
             <>
-              <Link className="m-2" href="/teams">
+              <Link className="m-2" href={"/my-teams"}>
                 My Teams
               </Link>
-              <Link
-                className="m-2"
-                href={{
-                  pathname: "dashboard",
-                  query: `uId=${user?.id}&activeView=joined-teams`,
-                }}
-              >
+              <Link className="m-2" href={"/joined-teams"}>
                 Joined Teams
               </Link>
               <Link className="m-2" href="/projects">
@@ -319,7 +313,7 @@ const Navbar = () => {
                   <Link
                     className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
                     onClick={() => setToggle(false)}
-                    href="/teams"
+                    href={"/my-teams"}
                   >
                     My Teams
                   </Link>
@@ -327,10 +321,7 @@ const Navbar = () => {
                   <Link
                     onClick={() => setToggle(false)}
                     className="text-start  w-full dark:bg-gray-800 bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
-                    href={{
-                      pathname: "dashboard",
-                      query: `uId=${user?.id}&activeView=joined-teams`,
-                    }}
+                    href={"/joined-teams"}
                   >
                     Joined Teams
                   </Link>

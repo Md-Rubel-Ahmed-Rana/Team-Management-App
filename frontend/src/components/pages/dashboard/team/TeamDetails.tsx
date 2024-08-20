@@ -11,7 +11,7 @@ import {
   useGetMemberLeaveTeamRequestQuery,
   useLeaveTeamRequestMutation,
 } from "@/features/team";
-import TeamDeleteModal from "@/components/shared/TeamDeleteModal";
+import TeamDeleteModal from "@/components/pages/teams/modals/TeamDeleteModal";
 
 const TeamDetails = ({ team }: { team: ITeam }) => {
   const [isRemove, setIsRemove] = useState(false);

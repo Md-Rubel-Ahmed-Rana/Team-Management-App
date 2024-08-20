@@ -1,19 +1,19 @@
-import Teams from "@/components/pages/teams/showTeam/TeamPage";
 import RootLayout from "@/layout/RootLayout";
 import { NextPageWithLayout } from "pages/_app";
 import React, { ReactElement } from "react";
 import GetHead from "@/utils/Head";
+import MyTeams from "@/components/pages/teams/my-teams";
 
 const TeamPage: NextPageWithLayout = () => {
   return (
-    <div>
+    <>
       <GetHead
-        title="Teams: Team Manager"
+        title="My Teams: Team Manager"
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <Teams />
-    </div>
+      <MyTeams />
+    </>
   );
 };
 

@@ -91,7 +91,7 @@ const TeamDeleteModal = ({
                   onClick={closeModal}
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  <RxCross2 />
+                  <RxCross2 className="text-3xl text-blue-500" />
                 </button>
               </div>
 
