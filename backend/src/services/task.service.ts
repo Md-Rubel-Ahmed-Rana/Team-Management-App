@@ -43,7 +43,7 @@ class Service {
       const data = mapper.map(
         result,
         TaskEntity as ModelIdentifier,
-        GetTaskDTO
+        CreateTaskDTO
       );
 
       return { notification, data };
@@ -82,11 +82,27 @@ class Service {
     taskId: string,
     status: string
   ): Promise<UpdateTaskDTO> {
+    const userProjection = {
+      name: 1,
+      profile_picture: 1,
+      email: 1,
+    };
     const result = await Task.findByIdAndUpdate(
       taskId,
       { $set: { status } },
       { new: true }
-    );
+    ).populate([
+      {
+        path: "assignedTo",
+        model: "User",
+        select: userProjection,
+      },
+      {
+        path: "assignedBy",
+        model: "User",
+        select: userProjection,
+      },
+    ]);
 
     const mappedData = mapper.map(
       result,
@@ -98,11 +114,28 @@ class Service {
   }
 
   async updateTask(taskId: string, name: string): Promise<UpdateTaskDTO> {
+    const userProjection = {
+      name: 1,
+      profile_picture: 1,
+      email: 1,
+    };
     const result = await Task.findByIdAndUpdate(
       taskId,
       { $set: { name } },
       { new: true }
-    );
+    ).populate([
+      {
+        path: "assignedTo",
+        model: "User",
+        select: userProjection,
+      },
+      {
+        path: "assignedBy",
+        model: "User",
+        select: userProjection,
+      },
+    ]);
+    console.log(result);
 
     const mappedData = mapper.map(
       result,
