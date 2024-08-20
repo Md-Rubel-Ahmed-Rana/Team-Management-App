@@ -29,16 +29,29 @@ class Controller extends RootController {
     });
   });
 
-  getTeamsForCard = this.catchAsync(async (req: Request, res: Response) => {
+  getMyTeamsForCard = this.catchAsync(async (req: Request, res: Response) => {
     const id = req.params.adminId;
-    const result = await TeamService.getTeamsForCard(id);
+    const result = await TeamService.getMyTeamsForCard(id);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Team cards found",
+      message: "My Team cards found",
       data: result,
     });
   });
+
+  getJoinedTeamsForCard = this.catchAsync(
+    async (req: Request, res: Response) => {
+      const id = req.params.memberId;
+      const result = await TeamService.getJoinedTeamsForCard(id);
+      this.apiResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Joined Team cards found",
+        data: result,
+      });
+    }
+  );
 
   getSingleTeamWithDetails = this.catchAsync(
     async (req: Request, res: Response) => {

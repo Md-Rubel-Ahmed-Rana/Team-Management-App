@@ -40,13 +40,23 @@ class Controller extends rootController_1.default {
                 data: result,
             });
         }));
-        this.getTeamsForCard = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getMyTeamsForCard = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const id = req.params.adminId;
-            const result = yield team_service_1.TeamService.getTeamsForCard(id);
+            const result = yield team_service_1.TeamService.getMyTeamsForCard(id);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,
-                message: "Team cards found",
+                message: "My Team cards found",
+                data: result,
+            });
+        }));
+        this.getJoinedTeamsForCard = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const id = req.params.memberId;
+            const result = yield team_service_1.TeamService.getJoinedTeamsForCard(id);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Joined Team cards found",
                 data: result,
             });
         }));
