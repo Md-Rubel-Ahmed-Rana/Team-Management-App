@@ -1,4 +1,4 @@
-import { ITeam } from "@/interfaces/team.interface";
+import { ITeam, ITeamCard } from "@/interfaces/team.interface";
 import Link from "next/link";
 import { useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -7,9 +7,10 @@ import AddMemberToTeam from "../modals/AddMemberToTeam";
 import RemoveMemberFromTeam from "../modals/RemoveMemberFromTeam";
 import TeamDeleteModal from "../modals/TeamDeleteModal";
 import { IUser } from "@/interfaces/user.interface";
+import { useSingleTeamQuery } from "@/features/team";
 
 type Props = {
-  team: ITeam;
+  team: ITeamCard;
   admin: IUser;
 };
 
@@ -18,6 +19,7 @@ const TeamCard = ({ team, admin }: Props) => {
   const [isAddMember, setIsAddMember] = useState(false);
   const [isRemoveMember, setIsRemoveMember] = useState(false);
   const [isDeleteTeam, setIsDeleteTeam] = useState(false);
+  const { data: singleTeam } = useSingleTeamQuery(team?.id);
   return (
     <>
       <div className="border p-5 rounded-md border-blue-400 flex flex-col justify-between gap-1">
@@ -27,7 +29,7 @@ const TeamCard = ({ team, admin }: Props) => {
             src={team?.image}
             alt={team?.name}
           />
-          {admin?.id === team?.admin?.id && (
+          {admin?.id === team?.admin && (
             <button
               onClick={() => setToggleAction(true)}
               className="border px-2 py-1 rounded-sm"
@@ -48,9 +50,9 @@ const TeamCard = ({ team, admin }: Props) => {
         </div>
         <h2 className="text-xl lg:text-2xl font-bold">{team?.name}</h2>
         <h4 className="text-lg lg:text-xl font-medium">{team?.category}</h4>
-        <h4>Active Members: 0 </h4>
-        <h4>Pending Members: 0</h4>
-        <h4>Projects: 0</h4>
+        <h4>Active Members: {team.activeMembers} </h4>
+        <h4>Pending Members: {team.pendingMembers} </h4>
+        <h4>Projects: {team.projects} </h4>
         <p className="text-gray-600">{team?.description}</p>
         <div className="flex justify-between gap-2 lg:gap-4 mt-2">
           <Link
@@ -73,7 +75,7 @@ const TeamCard = ({ team, admin }: Props) => {
         <AddMemberToTeam
           isOpen={isAddMember}
           setIsOpen={setIsAddMember}
-          team={team}
+          team={singleTeam?.data}
         />
       )}
 
@@ -82,7 +84,7 @@ const TeamCard = ({ team, admin }: Props) => {
         <RemoveMemberFromTeam
           isRemove={isRemoveMember}
           setIsRemove={setIsRemoveMember}
-          team={team}
+          team={singleTeam?.data}
         />
       )}
 

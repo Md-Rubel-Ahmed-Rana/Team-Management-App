@@ -1,7 +1,7 @@
 import useHandlePropagation from "@/hooks/useHandlePropagation";
 import { useEffect, useRef, useState } from "react";
 import AddMemberToTeam from "../modals/AddMemberToTeam";
-import { ITeam } from "@/interfaces/team.interface";
+import { ITeam, ITeamCard } from "@/interfaces/team.interface";
 import RemoveMemberFromTeam from "../modals/RemoveMemberFromTeam";
 import TeamDeleteModal from "../modals/TeamDeleteModal";
 import Link from "next/link";
@@ -11,7 +11,7 @@ type Props = {
   setIsAddMember: (value: boolean) => void;
   setIsRemoveMember: (value: boolean) => void;
   setIsDeleteTeam: (value: boolean) => void;
-  team: ITeam;
+  team: ITeamCard;
 };
 
 const TeamActions = ({

@@ -1,12 +1,12 @@
-interface Poster {
-  id?: string;
+export type IMessagePoster = {
+  id: string;
   name: string;
   profile_picture: string;
-}
+};
 
 export interface IMessage {
-  poster: Poster;
-  id?: string;
+  poster: IMessagePoster;
+  id: string;
   text: string;
   images: string[];
   files: string[];

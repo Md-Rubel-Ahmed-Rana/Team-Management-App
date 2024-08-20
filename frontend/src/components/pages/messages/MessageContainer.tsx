@@ -25,7 +25,7 @@ interface Props {
   team: ITeam;
 }
 
-const ShowMessages = ({ messages, team }: Props) => {
+const MessageContainer = ({ messages, team }: Props) => {
   const { socket, realTimeMessages, setRealTimeMessages }: any =
     useContext(SocketContext);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -108,7 +108,7 @@ const ShowMessages = ({ messages, team }: Props) => {
   return (
     <div
       ref={messagesContainerRef}
-      className="mx-auto mt-8 h-[300px]  overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
+      className="mx-auto h-[400px] border overflow-hidden hover:overflow-auto  scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thin-rounded-md scrollbar-track-slate-100"
     >
       {realTimeMessages?.map((post: IMessage, index: number) => (
         <div key={post?.id} className="mx-auto border-b py-6">
@@ -304,4 +304,4 @@ const ShowMessages = ({ messages, team }: Props) => {
   );
 };
 
-export default ShowMessages;
+export default MessageContainer;

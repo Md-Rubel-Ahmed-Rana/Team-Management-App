@@ -40,6 +40,8 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
     return !isInActive && !isInPending && !isAdmin;
   });
 
+  console.log(remainingUsers);
+
   const closeModal = () => {
     setIsOpen(false);
   };

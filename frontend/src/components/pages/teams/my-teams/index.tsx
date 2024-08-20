@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useMyTeamsQuery } from "@/features/team";
+import { useGetMyTeamsCardQuery } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
@@ -8,7 +8,7 @@ import TeamContainer from "../common/TeamContainer";
 const MyTeams = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
-  const { data: teamData, isLoading } = useMyTeamsQuery(user?.id);
+  const { data: teamData, isLoading } = useGetMyTeamsCardQuery(user?.id);
 
   return (
     <section className="p-5">

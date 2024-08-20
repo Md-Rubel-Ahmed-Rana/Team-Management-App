@@ -31,7 +31,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   }, []);
 
   return (
-    <div className={`max-w-[1280px] w-full mx-auto`}>
+    <div className={``}>
       <SocketProvider>
         <ThemeProvider enableSystem={true} attribute="class">
           <Provider store={store}>

@@ -35,6 +35,27 @@ const teamApi = apiSlice.injectEndpoints({
       providesTags: ["team"] as any,
     }),
 
+    getMyTeamsCard: builder.query({
+      query: (adminId: string) => ({
+        url: `/team/cards/my-teams/${adminId}`,
+      }),
+      providesTags: ["team"] as any,
+    }),
+
+    getJoinedTeamsCard: builder.query({
+      query: (memberId: string) => ({
+        url: `/team/cards/joined-teams/${memberId}`,
+      }),
+      providesTags: ["team"] as any,
+    }),
+
+    getTeamDetails: builder.query({
+      query: (teamId: string) => ({
+        url: `/team/details/${teamId}`,
+      }),
+      providesTags: ["team"] as any,
+    }),
+
     joinedTeams: builder.query({
       query: (id) => ({
         url: `/team/joined-teams/${id}`,
@@ -116,4 +137,7 @@ export const {
   useGetMemberLeaveTeamRequestQuery,
   useUpdateTeamMutation,
   useDeleteTeamMutation,
+  useGetMyTeamsCardQuery,
+  useGetJoinedTeamsCardQuery,
+  useGetTeamDetailsQuery,
 } = teamApi;

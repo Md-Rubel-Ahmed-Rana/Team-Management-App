@@ -98,10 +98,10 @@ const ProjectCard = ({ project, admin }: Props) => {
           </span>
         </p>
 
-        <div className="flex justify-between items-center gap-2 text-sm mt-2">
+        <div className="flex justify-between items-center gap-2 mt-2">
           <Link
             href={`/tasks/${id}?project_name=${name}&project_id=${id}&project_category=${category}`}
-            className="bg-blue-600 px-2 py-1 text-center rounded-md text-white w-full"
+            className="bg-blue-500 hover:bg-blue-600  px-2 py-2 text-center rounded-md text-white w-full"
           >
             All tasks
           </Link>
