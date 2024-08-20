@@ -127,6 +127,10 @@ class Service {
     return mappedData;
   }
 
+  async getProjectByTeamId(teamId: string): Promise<any> {
+    return await Project.find({ team: teamId });
+  }
+
   async getSingleProject(id: string): Promise<GetProjectDTO | null> {
     const result = await Project.findById(id)
       .populate("members")

@@ -15,9 +15,13 @@ router.post(
 
 router.get("/my-teams/:adminId", TeamController.myTeams);
 
+router.get("/cards/:adminId", TeamController.getTeamsForCard);
+
 router.get("/joined-teams/:memberId", TeamController.joinedTeams);
 
 router.get("/active-members/:teamId", TeamController.getActiveMembers);
+
+router.get("/details/:teamId", TeamController.getSingleTeamWithDetails);
 
 router.get("/single/:id", TeamController.getTeam);
 
