@@ -23,7 +23,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
   return (
     <>
       <aside className="w-1/5 bg-gray-200 flex flex-col h-screen">
-        <div className="flex items-center lg:gap-2 p-3 lg:p-4 bg-gray-200 text-gray-800 shadow-md">
+        <div className="flex items-center lg:gap-2 p-4 lg:p-4 bg-gray-200 text-gray-800 shadow-md">
           <RiWechatChannelsFill className="text-3xl" />
           <h1 className="hidden lg:block text-sm lg:text-xl font-bold ">
             Channels
@@ -72,7 +72,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 </button>
               </li>
             </ul>
-            <div className="pb-5">
+            <div className="pb-4">
               <ul className="flex flex-col justify-between gap-3">
                 <li className="w-full">
                   <Link

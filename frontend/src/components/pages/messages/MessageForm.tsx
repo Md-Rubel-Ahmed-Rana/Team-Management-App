@@ -114,7 +114,7 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
   };
 
   return (
-    <div className="p-4 bg-gray-100 border-t border-gray-300 flex  justify-between items-center relative">
+    <div className="p-1 lg:p-4 bg-gray-100 border-t border-gray-300 flex  justify-between items-center relative">
       {/* Image Preview Section */}
       {(imagePreview.length > 0 || filePreview.length > 0) && (
         <div className="flex flex-wrap gap-2 w-[97%] absolute bottom-16 bg-gray-300 p-2 rounded-md">
@@ -135,9 +135,9 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
 
       <form
         onSubmit={handleSubmit(handleSendMessage)}
-        className="flex relative gap-2 justify-between items-center w-full"
+        className="flex relative gap-1 lg:gap-2 justify-between items-center w-full"
       >
-        <div className="w-1/12 flex">
+        <div className="w-2/12 lg:w-1/12 flex">
           <label
             htmlFor="images"
             className={`cursor-pointer w-[60px] ${
@@ -145,7 +145,7 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
             }`}
           >
             <FaImage
-              className={`text-blue-500 w-full text-2xl hover:underline ${
+              className={`text-blue-500 w-full text-lg lg:text-2xl hover:underline ${
                 isLoading ? "cursor-not-allowed" : ""
               }`}
             />
@@ -171,7 +171,7 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
           >
             <FaFile
               title="File size must be 10MB or less"
-              className={`text-blue-500 w-full text-2xl hover:underline ${
+              className={`text-blue-500 w-full text-lg lg:text-2xl  hover:underline ${
                 isLoading ? "cursor-not-allowed" : ""
               }`}
             />
@@ -191,7 +191,6 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
         </div>
 
         <input
-          autoFocus
           type="text"
           readOnly={isLoading}
           {...register("text")}
@@ -227,9 +226,13 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
             isLoading
               ? "bg-gray-500 hover:bg-gray-600 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-          } text-white lg:px-4 px-2 py-2 rounded-md w-[70px] focus:outline-none flex items-center justify-center`}
+          } text-white p-2 lg:px-4 lg:py-2 rounded-full lg:rounded-md w-[40] lg:w-[70px] focus:outline-none flex items-center justify-center`}
         >
-          {isLoading ? <SmallLoader /> : <IoSend className="text-2xl" />}
+          {isLoading ? (
+            <SmallLoader />
+          ) : (
+            <IoSend className="text-lg lg:text-2xl" />
+          )}
         </button>
       </form>
     </div>
