@@ -56,7 +56,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="lg:flex justify-between items-center py-5  relative">
+    <nav className="lg:flex justify-between items-center lg:px-5 py-5  relative">
       <div>
         <Link className="lg:flex hidden  items-center gap-3" href={"/"}>
           <img
@@ -138,10 +138,7 @@ const Navbar = () => {
 
           {user?.email && (
             <Link
-              href={{
-                pathname: "/dashboard",
-                query: { uId: user?.id, activeView: "profile" },
-              }}
+              href={"/dashboard/profile"}
               className={`${
                 !user?.profile_picture && "border m-2 p-2 rounded-full"
               }`}
@@ -160,7 +157,7 @@ const Navbar = () => {
         </div>
       )}
 
-      <div className="flex lg:hidden items-center justify-between px-5">
+      <div className="flex lg:hidden items-center justify-between px-2 lg:px-5">
         <div>
           {!toggle && (
             <button onClick={() => setToggle(!toggle)}>

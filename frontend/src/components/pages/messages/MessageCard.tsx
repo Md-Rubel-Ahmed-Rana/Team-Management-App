@@ -31,12 +31,15 @@ const MessageCard = ({ message }: Props) => {
           <MessageActions messageId={message.id} messageText={message.text} />
         )}
       </div>
-      <div
-        className="mb-3 text-gray-700"
-        dangerouslySetInnerHTML={{
-          __html: message?.text ? detectLinks(message?.text).join(" ") : "",
-        }}
-      />
+      {message?.text && (
+        <div
+          className="mb-3 text-gray-700"
+          dangerouslySetInnerHTML={{
+            __html: message?.text ? detectLinks(message?.text).join(" ") : "",
+          }}
+        />
+      )}
+
       {message?.images?.length > 0 && (
         <MessageImages images={message?.images || []} />
       )}

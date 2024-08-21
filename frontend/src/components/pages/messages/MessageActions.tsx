@@ -26,13 +26,16 @@ const MessageActions = ({ messageId, messageText }: Props) => {
 
   return (
     <div className="flex gap-2 lg:gap-4">
-      <HiPencilAlt
-        onClick={() => setIsEditMessage(true)}
-        className="text-2xl text-blue-500 cursor-pointer"
-      />
+      {messageText && (
+        <HiPencilAlt
+          onClick={() => setIsEditMessage(true)}
+          className="text-lg lg:text-2xl text-blue-500 cursor-pointer"
+        />
+      )}
+
       <FaTrashAlt
         onClick={handleDeleteMessage}
-        className="text-2xl text-red-500 cursor-pointer"
+        className="text-lg lg:text-2xl text-red-500 cursor-pointer"
       />
       {isEditMessage && (
         <MessageEdit

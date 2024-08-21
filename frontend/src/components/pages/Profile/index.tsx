@@ -4,15 +4,15 @@ import EditProfilePage from "./EditProfile";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 
-const ProfilePage = () => {
+const Profile = () => {
   const { data }: any = useLoggedInUserQuery({});
   const user: IUser = data?.data;
   const [isEdit, setIsEdit] = useState<any>(false);
 
   return (
-    <div>
+    <>
       {!isEdit && (
-        <div className="p-4">
+        <div>
           <h1 className="text-2xl font-semibold">Profile</h1>
           <div className="mt-4 mb-7">
             {!user?.profile_picture && (
@@ -70,8 +70,8 @@ const ProfilePage = () => {
         </div>
       )}
       {isEdit && <EditProfilePage setIsEdit={setIsEdit} />}
-    </div>
+    </>
   );
 };
 
-export default ProfilePage;
+export default Profile;

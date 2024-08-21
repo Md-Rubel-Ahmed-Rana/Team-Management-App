@@ -20,7 +20,7 @@ const TeamDetails = () => {
           </span>
         </div>
       ) : (
-        <div className="bg-white rounded-lg">
+        <div>
           {/* Team Info */}
           <TeamCardForDetail team={team} />
 

@@ -2,6 +2,8 @@ import DownloadFileButton from "@/components/shared/DownloadFileButton";
 import GetFileIcon from "@/components/shared/generateFileIconBasedExtension";
 import { acceptableExtensions } from "@/constants/acceptableFiles";
 import detectFileExtensionFromLink from "@/utils/detectFileExtensionFromLink";
+import MessageVideoPlayer from "./MessageVideoPlayer";
+import MessageAudioPlayer from "./MessageAudioPlayer";
 
 type Props = {
   files: string[];
@@ -10,7 +12,7 @@ type Props = {
 const MessageFiles = ({ files }: Props) => {
   return (
     <div>
-      <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-10 gap-4 mb-4">
         {files?.map((url: string, fileIndex: number) => {
           const extension = detectFileExtensionFromLink(url);
 
@@ -39,14 +41,7 @@ const MessageFiles = ({ files }: Props) => {
         if (acceptableExtensions.video.includes(extension)) {
           return (
             <div key={fileIndex} className="mb-4 w-full">
-              <video controls className="w-full h-48 border rounded-md mt-1">
-                <source
-                  className="w-full"
-                  src={url}
-                  type={`video/${extension}`}
-                />
-                Your browser does not support the video tag.
-              </video>
+              <MessageVideoPlayer url={url} extension={extension} />
             </div>
           );
         }
@@ -60,10 +55,7 @@ const MessageFiles = ({ files }: Props) => {
         if (acceptableExtensions.audio.includes(extension)) {
           return (
             <div key={fileIndex} className="mb-4">
-              <audio controls className="w-full">
-                <source src={url} type={`audio/${extension}`} />
-                Your browser does not support the audio element.
-              </audio>
+              <MessageAudioPlayer url={url} extension={extension} />
             </div>
           );
         }

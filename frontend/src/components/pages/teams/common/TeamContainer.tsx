@@ -1,4 +1,4 @@
-import { ITeam, ITeamCard } from "@/interfaces/team.interface";
+import { ITeamCard } from "@/interfaces/team.interface";
 import TeamCard from "./TeamCard";
 import { IUser } from "@/interfaces/user.interface";
 

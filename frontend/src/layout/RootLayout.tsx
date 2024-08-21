@@ -15,9 +15,9 @@ const RootLayout = ({ children }: Props) => {
         </div>
       }
     >
-      <div className="max-w-[1280px] w-full mx-auto">
+      <div>
         <Navbar />
-        <main>{children}</main>
+        <main className="max-w-[1280px] w-full mx-auto">{children}</main>
         <Footer />
       </div>
     </Suspense>

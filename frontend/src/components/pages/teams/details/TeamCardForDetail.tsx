@@ -1,7 +1,6 @@
 import { useLoggedInUserQuery } from "@/features/user";
 import { ITeamDetails } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
-import Image from "next/image";
 import { useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import TeamActions from "../common/TeamActions";
@@ -28,12 +27,10 @@ const TeamCardForDetail = ({ team }: Props) => {
     <>
       <div className="flex items-center">
         <div className="w-24 h-24 mr-6">
-          <Image
+          <img
             src={team.image}
             alt={`${team.name} logo`}
-            width={96}
-            height={96}
-            className="rounded-full object-cover"
+            className="rounded-full w-24 h-24"
           />
         </div>
         <div>

@@ -1,9 +1,6 @@
 import useHandlePropagation from "@/hooks/useHandlePropagation";
-import { useEffect, useRef, useState } from "react";
-import AddMemberToTeam from "../modals/AddMemberToTeam";
-import { ITeam, ITeamCard } from "@/interfaces/team.interface";
-import RemoveMemberFromTeam from "../modals/RemoveMemberFromTeam";
-import TeamDeleteModal from "../modals/TeamDeleteModal";
+import { useEffect, useRef } from "react";
+import { ITeamCard } from "@/interfaces/team.interface";
 import Link from "next/link";
 
 type Props = {

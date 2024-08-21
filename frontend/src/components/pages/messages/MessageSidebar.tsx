@@ -6,6 +6,8 @@ import { TbBrandTeams, TbSpeakerphone } from "react-icons/tb";
 import { GoHome } from "react-icons/go";
 import { CgProfile } from "react-icons/cg";
 import { BiLogoMicrosoftTeams } from "react-icons/bi";
+import { RiWechatChannelsFill } from "react-icons/ri";
+import { MdDashboard } from "react-icons/md";
 
 type Props = {
   activeChannel: string;
@@ -16,8 +18,11 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
   return (
     <>
       <aside className="w-1/5 bg-gray-200 flex flex-col h-screen">
-        <div className="flex items-center justify-between p-4 bg-gray-200">
-          <h1 className="text-xl font-bold text-gray-700">Channels</h1>
+        <div className="flex items-center lg:gap-2 p-3 lg:p-4 bg-gray-200 shadow-md">
+          <RiWechatChannelsFill className="text-3xl" />
+          <h1 className="hidden lg:block text-sm lg:text-xl font-bold text-gray-700">
+            Channels
+          </h1>
         </div>
         <div className="flex-grow overflow-y-auto">
           <div className="flex flex-col justify-between h-full">
@@ -67,10 +72,10 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 <li className="w-full">
                   <Link
                     className={`px-4 py-2 flex   items-center gap-2 text-xl   shadow-md w-full`}
-                    href={"/my-profile"}
+                    href={"/dashboard/profile"}
                   >
-                    <CgProfile />
-                    <small className="hidden lg:block">Profile</small>
+                    <MdDashboard />
+                    <small className="hidden lg:block">Dashboard</small>
                   </Link>
                 </li>
                 <li className="w-full">

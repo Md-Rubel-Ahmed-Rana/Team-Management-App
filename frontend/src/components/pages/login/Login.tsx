@@ -34,7 +34,7 @@ const Login = () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      router.push("/dashboard");
+      router.push("/dashboard/profile");
     } else {
       Swal.fire({
         position: "center",

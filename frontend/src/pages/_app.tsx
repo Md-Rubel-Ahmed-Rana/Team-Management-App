@@ -31,7 +31,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   }, []);
 
   return (
-    <div className={``}>
+    <div>
       <SocketProvider>
         <ThemeProvider enableSystem={true} attribute="class">
           <Provider store={store}>

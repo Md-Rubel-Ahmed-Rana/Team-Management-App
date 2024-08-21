@@ -7,7 +7,7 @@ type Props = {
   setFiles: (values: FileList) => void;
 };
 
-const NewMessageFilePreview = ({
+const MessageFilePreview = ({
   filePreview,
   setFilePreview,
   files,
@@ -46,4 +46,4 @@ const NewMessageFilePreview = ({
   );
 };
 
-export default NewMessageFilePreview;
+export default MessageFilePreview;

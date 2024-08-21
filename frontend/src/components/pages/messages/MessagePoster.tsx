@@ -12,7 +12,7 @@ const MessagePoster = ({ poster, messageCreatedAt }: Props) => {
       <img
         src={poster?.profile_picture}
         alt={poster?.name}
-        className="w-10 h-10 rounded-full mr-4"
+        className="w-12 h-12 rounded-full mr-4"
       />
       <div className="flex flex-col gap-1">
         <span className="font-bold text-xs lg:text-lg text-gray-700">

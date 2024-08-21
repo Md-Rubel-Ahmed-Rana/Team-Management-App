@@ -3,13 +3,15 @@ import React, { useContext, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FaImage, FaFile } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
-import { RxCross2 } from "react-icons/rx";
 import { useSendMessageMutation } from "@/features/message";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { SocketContext } from "@/context/SocketContext";
 import { IMessage } from "@/interfaces/message.interface";
 import { acceptableFiles } from "@/constants/acceptableFiles";
+import { useRouter } from "next/router";
+import MessageFilePreview from "./MessageFilePreview";
+import MessageImagesPreview from "./MessageImagesPreview";
 
 type Inputs = {
   poster?: string;
@@ -20,12 +22,8 @@ type Inputs = {
   files?: FileList | string[];
 };
 
-type Props = {
-  teamId: string;
-  type: string;
-};
-
-const MessageForm = ({ teamId, type }: Props) => {
+const MessageForm = ({ messageType }: { messageType: string }) => {
+  const { query } = useRouter();
   const { data: userData } = useLoggedInUserQuery({});
   const { socket, setRealTimeMessages }: any = useContext(SocketContext);
   const user: IUser = userData?.data;
@@ -58,8 +56,8 @@ const MessageForm = ({ teamId, type }: Props) => {
 
     // Append other data
     formData.append("poster", user.id);
-    formData.append("conversationId", teamId);
-    formData.append("type", type);
+    formData.append("conversationId", query?.teamId as string);
+    formData.append("type", messageType);
     formData.append("text", data?.text || isMessage?.value);
 
     // reset fields data
@@ -70,7 +68,7 @@ const MessageForm = ({ teamId, type }: Props) => {
     setIsMessage({ status: false, value: "" });
     reset({ text: "" });
 
-    // Send the formData using your sendMessage function
+    // // Send the formData using your sendMessage function
     const result: any = await sendMessage(formData);
 
     if (result?.data?.success) {
@@ -114,127 +112,82 @@ const MessageForm = ({ teamId, type }: Props) => {
     }
   };
 
-  const removeImage = (index: number) => {
-    const updatedImages = [...imagePreview];
-    updatedImages.splice(index, 1);
-    setImagePreview(updatedImages);
-
-    const updatedFiles = Array.from(images!).filter(
-      (_, i) => i !== index
-    ) as unknown as FileList;
-    setImages(updatedFiles);
-  };
-
-  const removeFile = (index: number) => {
-    const updatedFiles = [...filePreview];
-    updatedFiles.splice(index, 1);
-    setFilePreview(updatedFiles);
-
-    const updatedFilesList = Array.from(files!).filter(
-      (_, i) => i !== index
-    ) as unknown as FileList;
-    setFiles(updatedFilesList);
-  };
-
-  console.log({ imagePreview });
-
   return (
-    <div className="mx-auto bg-gray-200 dark:bg-gray-700 shadow-md lg:px-6 p-2 lg:py-2 rounded-md mt-8 mb-40 lg:mb-0">
+    <div className="p-4 bg-gray-100 border-t border-gray-300 flex  justify-between items-center relative">
       {/* Image Preview Section */}
-      <div className="flex flex-wrap gap-2 mb-4 w-full">
-        {imagePreview?.map((url, index) => {
-          console.log({ imageUrl: url });
-          return (
-            <div key={index} className="relative">
-              <img
-                src={url}
-                alt={`Preview ${index}`}
-                className="w-16 h-16 rounded-md"
-              />
-              <button
-                onClick={() => removeImage(index)}
-                className="absolute top-0 right-0 p-1 bg-white rounded-full text-red-500 hover:bg-gray-100"
-              >
-                <RxCross2 />
-              </button>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* File Preview Section */}
-      {filePreview.length > 0 && (
-        <div className="mb-4">
-          {filePreview?.map((fileName, index) => (
-            <div key={index} className="relative">
-              <div className="text-blue-500 hover:underline block mb-2">
-                <small>{fileName}</small>
-              </div>
-              <button
-                onClick={() => removeFile(index)}
-                className="absolute top-0 right-0 p-1 bg-white rounded-full text-red-500 hover:bg-gray-100"
-              >
-                <RxCross2 />
-              </button>
-            </div>
-          ))}
+      {(imagePreview.length > 0 || filePreview.length > 0) && (
+        <div className="flex flex-wrap gap-2 w-[97%] absolute bottom-16 bg-gray-300 p-2 rounded-md">
+          <MessageImagesPreview
+            imagePreview={imagePreview}
+            setImagePreview={setImagePreview}
+            images={images}
+            setImages={setImages}
+          />
+          <MessageFilePreview
+            filePreview={filePreview}
+            setFilePreview={setFilePreview}
+            files={files}
+            setFiles={setFiles}
+          />
         </div>
       )}
 
       <form
         onSubmit={handleSubmit(handleSendMessage)}
-        className="flex relative gap-2 items-center w-full"
+        className="flex relative gap-2 justify-between items-center w-full"
       >
-        <label
-          htmlFor="images"
-          className={`cursor-pointer w-1/12 ${
-            isLoading ? "cursor-not-allowed opacity-50" : ""
-          }`}
-        >
-          <FaImage
-            className={`text-blue-500 w-full hover:underline ${
-              isLoading ? "cursor-not-allowed" : ""
+        <div className="w-1/12 flex">
+          <label
+            htmlFor="images"
+            className={`cursor-pointer w-[60px] ${
+              isLoading ? "cursor-not-allowed opacity-50" : ""
             }`}
-          />
-          <input
-            type="file"
-            id="images"
-            {...register("images")}
-            className="hidden"
-            accept="image/*"
-            multiple
-            onChange={(e) => {
-              if (!isLoading) handleImageChange(e);
-            }}
-            disabled={isLoading}
-          />
-        </label>
+          >
+            <FaImage
+              className={`text-blue-500 w-full text-2xl hover:underline ${
+                isLoading ? "cursor-not-allowed" : ""
+              }`}
+            />
+            <input
+              type="file"
+              id="images"
+              {...register("images")}
+              className="hidden"
+              accept="image/*"
+              multiple
+              onChange={(e) => {
+                if (!isLoading) handleImageChange(e);
+              }}
+              disabled={isLoading}
+            />
+          </label>
 
-        <label
-          htmlFor="files"
-          className={`cursor-pointer w-1/12 ${
-            isLoading ? "cursor-not-allowed opacity-50" : ""
-          }`}
-        >
-          <FaFile
-            title="File size must be 10MB or less"
-            className={`text-blue-500 w-full hover:underline ${
-              isLoading ? "cursor-not-allowed" : ""
+          <label
+            htmlFor="files"
+            className={`cursor-pointer w-[60px] ${
+              isLoading ? "cursor-not-allowed opacity-50" : ""
             }`}
-          />
-          <input
-            type="file"
-            id="files"
-            {...register("files")}
-            className="hidden"
-            accept={acceptableFiles}
-            onChange={(e) => {
-              if (!isLoading) handleFileChange(e);
-            }}
-            disabled={isLoading}
-            multiple
-          />
-        </label>
+          >
+            <FaFile
+              title="File size must be 10MB or less"
+              className={`text-blue-500 w-full text-2xl hover:underline ${
+                isLoading ? "cursor-not-allowed" : ""
+              }`}
+            />
+            <input
+              type="file"
+              id="files"
+              {...register("files")}
+              className="hidden"
+              accept={acceptableFiles}
+              onChange={(e) => {
+                if (!isLoading) handleFileChange(e);
+              }}
+              disabled={isLoading}
+              multiple
+            />
+          </label>
+        </div>
 
         <input
           autoFocus
@@ -251,10 +204,10 @@ const MessageForm = ({ teamId, type }: Props) => {
               });
             }
           }}
-          className={`border-2 p-2 rounded-md w-8/12 focus:outline-none ${
+          className={`border-2 p-2 rounded-md w-full focus:outline-none ${
             isLoading
               ? "bg-gray-200 cursor-not-allowed"
-              : "border-gray-300 focus:border-blue-500"
+              : "border-white-300  focus:border-blue-500"
           }`}
         />
 
@@ -273,7 +226,7 @@ const MessageForm = ({ teamId, type }: Props) => {
             isLoading
               ? "bg-gray-500 hover:bg-gray-600 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-          } text-white lg:px-4 px-2 py-2 rounded-md w-2/12 focus:outline-none flex items-center justify-center`}
+          } text-white lg:px-4 px-2 py-2 rounded-md w-[70px] focus:outline-none flex items-center justify-center`}
         >
           {isLoading ? (
             <svg
@@ -297,7 +250,7 @@ const MessageForm = ({ teamId, type }: Props) => {
               ></path>
             </svg>
           ) : (
-            <IoSend />
+            <IoSend className="text-2xl" />
           )}
         </button>
       </form>

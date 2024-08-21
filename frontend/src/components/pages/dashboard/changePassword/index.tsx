@@ -13,11 +13,7 @@ type FormData = {
   oldPassword: string;
 };
 
-type Props = {
-  setActiveView: any;
-};
-
-const ChangePassword = ({ setActiveView }: Props) => {
+const ChangePassword = () => {
   const [togglePassword, setTogglePassword] = useState<{
     newPassword: boolean;
     oldPassword: boolean;
@@ -56,7 +52,6 @@ const ChangePassword = ({ setActiveView }: Props) => {
         showConfirmButton: false,
         timer: 2500,
       });
-      setActiveView("profile");
     } else {
       Swal.fire({
         position: "center",
@@ -87,7 +82,7 @@ const ChangePassword = ({ setActiveView }: Props) => {
 
   return (
     <div className="flex items-center justify-center p-5">
-      <div className="dark:bg-gray-700 bg-gray-100 p-8 rounded shadow-md w-full max-w-md">
+      <div className="dark:bg-gray-700 bg-gray-100 p-3 lg:p-8 rounded shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-2">Change Password</h1>
         <p className="mb-2">Change your password carefully</p>
         <form onSubmit={handleSubmit(handleChangePassword)}>

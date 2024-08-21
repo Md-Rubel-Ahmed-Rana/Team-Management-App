@@ -7,7 +7,7 @@ type Props = {
   setImages: (values: FileList | undefined | null) => void;
 };
 
-const NewMessageImagesPreview = ({
+const MessageImagesPreview = ({
   imagePreview,
   setImagePreview,
   images,
@@ -50,4 +50,4 @@ const NewMessageImagesPreview = ({
   );
 };
 
-export default NewMessageImagesPreview;
+export default MessageImagesPreview;

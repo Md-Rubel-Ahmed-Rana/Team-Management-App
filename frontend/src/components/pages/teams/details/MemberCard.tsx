@@ -26,7 +26,7 @@ const MemberCard = ({ member, memberType }: IProps) => {
       <img
         src={member?.profile_picture}
         alt={member?.name}
-        className="rounded-full object-cover h-16 w-16 ring-1"
+        className="rounded-full h-16 w-16 ring-1"
       />
       <div>
         <p className="text-lg font-medium flex items-center gap-3">
