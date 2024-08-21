@@ -15,6 +15,7 @@ const notification_service_1 = require("./notification.service");
 const mapper_1 = require("../mapper");
 const task_entity_1 = require("@/entities/task.entity");
 const get_1 = require("@/dto/task/get");
+const create_1 = require("@/dto/task/create");
 const update_1 = require("@/dto/task/update");
 const delete_1 = require("@/dto/task/delete");
 class Service {
@@ -34,7 +35,7 @@ class Service {
                         model: "User",
                     },
                 ]);
-                const data = mapper_1.mapper.map(result, task_entity_1.TaskEntity, get_1.GetTaskDTO);
+                const data = mapper_1.mapper.map(result, task_entity_1.TaskEntity, create_1.CreateTaskDTO);
                 return { notification, data };
             }
         });
@@ -64,14 +65,47 @@ class Service {
     }
     updateTaskStatus(taskId, status) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield task_model_1.Task.findByIdAndUpdate(taskId, { $set: { status } }, { new: true });
+            const userProjection = {
+                name: 1,
+                profile_picture: 1,
+                email: 1,
+            };
+            const result = yield task_model_1.Task.findByIdAndUpdate(taskId, { $set: { status } }, { new: true }).populate([
+                {
+                    path: "assignedTo",
+                    model: "User",
+                    select: userProjection,
+                },
+                {
+                    path: "assignedBy",
+                    model: "User",
+                    select: userProjection,
+                },
+            ]);
             const mappedData = mapper_1.mapper.map(result, task_entity_1.TaskEntity, update_1.UpdateTaskDTO);
             return mappedData;
         });
     }
     updateTask(taskId, name) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield task_model_1.Task.findByIdAndUpdate(taskId, { $set: { name } }, { new: true });
+            const userProjection = {
+                name: 1,
+                profile_picture: 1,
+                email: 1,
+            };
+            const result = yield task_model_1.Task.findByIdAndUpdate(taskId, { $set: { name } }, { new: true }).populate([
+                {
+                    path: "assignedTo",
+                    model: "User",
+                    select: userProjection,
+                },
+                {
+                    path: "assignedBy",
+                    model: "User",
+                    select: userProjection,
+                },
+            ]);
+            console.log(result);
             const mappedData = mapper_1.mapper.map(result, task_entity_1.TaskEntity, update_1.UpdateTaskDTO);
             return mappedData;
         });

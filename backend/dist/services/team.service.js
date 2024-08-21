@@ -27,6 +27,8 @@ const user_entity_1 = require("@/entities/user.entity");
 const get_2 = require("@/dto/user/get");
 const update_1 = require("@/dto/team/update");
 const delete_1 = require("@/dto/team/delete");
+const mongoose_1 = require("mongoose");
+const project_service_1 = require("./project.service");
 class Service {
     createTeam(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -96,6 +98,140 @@ class Service {
                 const mappedData = mapper_1.mapper.mapArray(members, user_entity_1.UserEntity, get_2.GetUserDTO);
                 return mappedData;
             }
+        });
+    }
+    getMyTeamsForCard(adminId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const objectIdAdmin = new mongoose_1.Types.ObjectId(adminId);
+            const result = yield team_model_1.default.aggregate([
+                {
+                    $match: { admin: objectIdAdmin },
+                },
+                {
+                    $addFields: {
+                        activeMembers: { $size: "$activeMembers" },
+                        pendingMembers: { $size: "$pendingMembers" },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        id: "$_id",
+                        name: 1,
+                        category: 1,
+                        description: 1,
+                        image: 1,
+                        admin: 1,
+                        activeMembers: 1,
+                        pendingMembers: 1,
+                        projects: 1,
+                    },
+                },
+            ]);
+            const promises = result.map((team) => __awaiter(this, void 0, void 0, function* () {
+                const [projects] = yield Promise.all([
+                    project_service_1.ProjectService.getProjectByTeamId(team === null || team === void 0 ? void 0 : team.id),
+                ]);
+                return {
+                    id: team === null || team === void 0 ? void 0 : team.id,
+                    name: team === null || team === void 0 ? void 0 : team.name,
+                    category: team === null || team === void 0 ? void 0 : team.category,
+                    description: team === null || team === void 0 ? void 0 : team.description,
+                    image: team === null || team === void 0 ? void 0 : team.image,
+                    admin: team === null || team === void 0 ? void 0 : team.admin,
+                    activeMembers: team === null || team === void 0 ? void 0 : team.activeMembers,
+                    pendingMembers: team === null || team === void 0 ? void 0 : team.pendingMembers,
+                    projects: projects === null || projects === void 0 ? void 0 : projects.length,
+                };
+            }));
+            const mappedResult = yield Promise.all(promises);
+            return mappedResult;
+        });
+    }
+    getJoinedTeamsForCard(memberId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const objectIdMember = new mongoose_1.Types.ObjectId(memberId);
+            const result = yield team_model_1.default.aggregate([
+                {
+                    $match: { activeMembers: objectIdMember },
+                },
+                {
+                    $addFields: {
+                        activeMembers: { $size: "$activeMembers" },
+                        pendingMembers: { $size: "$pendingMembers" },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        id: "$_id",
+                        name: 1,
+                        category: 1,
+                        description: 1,
+                        image: 1,
+                        admin: 1,
+                        activeMembers: 1,
+                        pendingMembers: 1,
+                        projects: 1,
+                    },
+                },
+            ]);
+            const promises = result.map((team) => __awaiter(this, void 0, void 0, function* () {
+                const [projects] = yield Promise.all([
+                    project_service_1.ProjectService.getProjectByTeamId(team === null || team === void 0 ? void 0 : team.id),
+                ]);
+                return {
+                    id: team === null || team === void 0 ? void 0 : team.id,
+                    name: team === null || team === void 0 ? void 0 : team.name,
+                    category: team === null || team === void 0 ? void 0 : team.category,
+                    description: team === null || team === void 0 ? void 0 : team.description,
+                    image: team === null || team === void 0 ? void 0 : team.image,
+                    admin: team === null || team === void 0 ? void 0 : team.admin,
+                    activeMembers: team === null || team === void 0 ? void 0 : team.activeMembers,
+                    pendingMembers: team === null || team === void 0 ? void 0 : team.pendingMembers,
+                    projects: projects === null || projects === void 0 ? void 0 : projects.length,
+                };
+            }));
+            const mappedResult = yield Promise.all(promises);
+            return mappedResult;
+        });
+    }
+    getSingleTeamWithDetails(teamId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userProjection = {
+                name: 1,
+                profile_picture: 1,
+                email: 1,
+            };
+            const team = yield team_model_1.default.findById(teamId).populate([
+                {
+                    path: "activeMembers",
+                    model: "User",
+                    select: userProjection,
+                },
+                {
+                    path: "pendingMembers",
+                    model: "User",
+                    select: userProjection,
+                },
+                {
+                    path: "admin",
+                    model: "User",
+                    select: userProjection,
+                },
+            ]);
+            const projects = yield project_service_1.ProjectService.getProjectByTeamId(team === null || team === void 0 ? void 0 : team.id);
+            return {
+                id: team === null || team === void 0 ? void 0 : team.id,
+                name: team === null || team === void 0 ? void 0 : team.name,
+                category: team === null || team === void 0 ? void 0 : team.category,
+                description: team === null || team === void 0 ? void 0 : team.description,
+                image: team === null || team === void 0 ? void 0 : team.image,
+                admin: team === null || team === void 0 ? void 0 : team.admin,
+                activeMembers: team === null || team === void 0 ? void 0 : team.activeMembers,
+                pendingMembers: team === null || team === void 0 ? void 0 : team.pendingMembers,
+                projects: projects,
+            };
         });
     }
     getTeamById(id) {

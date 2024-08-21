@@ -119,6 +119,11 @@ class Service {
             return mappedData;
         });
     }
+    getProjectByTeamId(teamId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield project_model_1.Project.find({ team: teamId });
+        });
+    }
     getSingleProject(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield project_model_1.Project.findById(id)
