@@ -1,4 +1,5 @@
 import Link from "next/link";
+import React, { useState } from "react";
 import { GrProjects, GrResources } from "react-icons/gr";
 import { RiMessage2Line } from "react-icons/ri";
 import { TbBrandTeams, TbSpeakerphone } from "react-icons/tb";
@@ -20,7 +21,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
   const queries = `userId=${user?.id}&name=${user?.name}&email=${user?.email}`;
   return (
     <>
-      <aside className="w-1/5 bg-gray-200 flex flex-col h-screen">
+      <aside className="w-1/5  bg-gray-200 flex flex-col h-screen">
         <div className="flex items-center lg:gap-2 p-4 lg:p-4 bg-gray-200 text-gray-800 shadow-md">
           <RiWechatChannelsFill className="text-3xl" />
           <h1 className="hidden lg:block text-sm lg:text-xl font-bold ">
@@ -70,7 +71,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 </button>
               </li>
             </ul>
-            <div>
+            <div className="mb-7 lg:mb-0">
               <ul className="flex flex-col justify-between gap-3">
                 <li className="w-full">
                   <Link
