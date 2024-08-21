@@ -114,7 +114,7 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
   };
 
   return (
-    <div className="p-1 lg:p-4 bg-gray-100 border-t border-gray-300 flex  justify-between items-center relative">
+    <div className="p-1 lg:p-4 bg-gray-100 border-t border-gray-300 flex mb-5 lg:mb-0  justify-between items-center relative">
       {/* Image Preview Section */}
       {(imagePreview.length > 0 || filePreview.length > 0) && (
         <div className="flex flex-wrap gap-2 w-[97%] absolute bottom-16 bg-gray-300 p-2 rounded-md">

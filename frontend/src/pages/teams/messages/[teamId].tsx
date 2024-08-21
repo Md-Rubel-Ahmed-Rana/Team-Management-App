@@ -42,7 +42,7 @@ const MessagesPage = () => {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <div className="flex justify-center items-center h-screen w-full bg-gray-100 mt-7 lg:mt-0">
+      <div className="flex justify-center items-center h-screen w-full bg-gray-100 mt-3 lg:mt-0">
         <MessageSidebar
           activeChannel={activeChannel}
           setActiveChannel={setActiveChannel}
