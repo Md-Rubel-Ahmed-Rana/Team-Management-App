@@ -32,7 +32,7 @@ const JoinedTeams = () => {
           </span>
         </div>
       ) : (
-        <TeamContainer teams={teamData?.data || []} admin={user} />
+        <TeamContainer teams={teamData?.data || []} />
       )}
 
       {teamData?.data?.length <= 0 && (

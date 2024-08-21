@@ -1,8 +1,8 @@
-import TeamDetailsPage from "@/components/pages/teams/showTeam/TeamDetailsPage";
 import RootLayout from "@/layout/RootLayout";
 import { NextPageWithLayout } from "pages/_app";
 import React, { ReactElement } from "react";
 import GetHead from "@/utils/Head";
+import MyTeams from "@/components/pages/teams/my-teams";
 
 const TeamDetails: NextPageWithLayout = () => {
   return (
@@ -12,7 +12,7 @@ const TeamDetails: NextPageWithLayout = () => {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <TeamDetailsPage />
+      <MyTeams />
     </div>
   );
 };

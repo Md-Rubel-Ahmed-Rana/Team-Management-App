@@ -15,8 +15,10 @@ const DashboardLayout = ({ children }: Props) => {
       }
     >
       <div className="flex h-screen gap-2">
-        <DashboardSidebar />
-        <main className="flex-1 flex flex-col overflow-hidden px-2">
+        <div className="w-1/5">
+          <DashboardSidebar />
+        </div>
+        <main className="w-4/5 flex-1 flex flex-col overflow-hidden px-2">
           {children}
         </main>
       </div>

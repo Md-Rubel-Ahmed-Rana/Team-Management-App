@@ -20,7 +20,7 @@ export type ITeamCard = {
   category: string;
   description: string;
   image: string;
-  admin: string;
+  admin: IUser | string;
   activeMembers: number;
   pendingMembers: number;
   projects: number;
@@ -48,7 +48,7 @@ export type ITeamDetails = {
   description: string;
   image: string;
   activeMembers: ITeamDetailsMember[];
-  admin: ITeamDetailsMember;
+  admin: ITeamDetailsMember | IUser;
   pendingMembers: ITeamDetailsMember[];
   projects: IProjectForTeamDetails[];
 };

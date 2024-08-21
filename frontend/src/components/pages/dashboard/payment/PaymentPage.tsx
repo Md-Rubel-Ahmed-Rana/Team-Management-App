@@ -7,15 +7,15 @@ import React from "react";
 const Payments = () => {
   const { data: userData }: any = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data } = useMyPaymentsQuery(user.id);
+  const { data } = useMyPaymentsQuery(user?.id);
   const payments: IPayment[] = data?.data;
 
   return (
     <div>
       <h3 className="text-xl font-bold mb-4">Payment History</h3>
-      <div className="flex-grow h-screen overflow-y-auto bg-white">
+      <div className="flex-grow h-screen overflow-y-auto bg-white pb-20">
         {payments?.map((payment: IPayment) => (
-          <div key={payment.id} className="shadow-md p-4 rounded-md mb-4">
+          <div key={payment?.id} className="shadow-md p-4 rounded-md mb-4">
             <p>
               <span className="font-bold">Plan:</span> {payment?.package?.plan}
             </p>

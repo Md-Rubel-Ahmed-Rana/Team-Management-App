@@ -8,6 +8,8 @@ import { CgProfile } from "react-icons/cg";
 import { BiLogoMicrosoftTeams } from "react-icons/bi";
 import { RiWechatChannelsFill } from "react-icons/ri";
 import { MdDashboard } from "react-icons/md";
+import { useLoggedInUserQuery } from "@/features/user";
+import { IUser } from "@/interfaces/user.interface";
 
 type Props = {
   activeChannel: string;
@@ -15,12 +17,15 @@ type Props = {
 };
 
 const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
+  const { data: userData } = useLoggedInUserQuery({});
+  const user: IUser = userData?.data;
+  const queries = `userId=${user?.id}&name=${user?.name}&email=${user?.email}`;
   return (
     <>
       <aside className="w-1/5 bg-gray-200 flex flex-col h-screen">
-        <div className="flex items-center lg:gap-2 p-3 lg:p-4 bg-gray-200 shadow-md">
+        <div className="flex items-center lg:gap-2 p-3 lg:p-4 bg-gray-200 text-gray-800 shadow-md">
           <RiWechatChannelsFill className="text-3xl" />
-          <h1 className="hidden lg:block text-sm lg:text-xl font-bold text-gray-700">
+          <h1 className="hidden lg:block text-sm lg:text-xl font-bold ">
             Channels
           </h1>
         </div>
@@ -33,7 +38,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                   className={`${
                     activeChannel === "discussion" &&
                     "bg-gray-100 dark:bg-gray-600"
-                  }   px-4 py-2 lg:py-3 flex  items-center gap-2 text-xl shadow-md w-full`}
+                  }   px-4 py-2 lg:py-3 flex  items-center gap-2 text-xl text-gray-700 shadow-md w-full`}
                   onClick={() => setActiveChannel("discussion")}
                 >
                   <RiMessage2Line />
@@ -47,7 +52,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                   className={`${
                     activeChannel === "announcement" &&
                     "bg-gray-100 dark:bg-gray-600"
-                  }   px-4  py-2 lg:py-3 flex items-center gap-2 text-xl shadow-md w-full`}
+                  }   px-4  py-2 lg:py-3 flex items-center gap-2 text-xl text-gray-700 shadow-md w-full`}
                 >
                   <TbSpeakerphone />
                   <small className="hidden lg:block">Announcement</small>
@@ -59,7 +64,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                   className={`${
                     activeChannel === "resources" &&
                     "bg-gray-100 dark:bg-gray-600"
-                  }   px-4  py-2 lg:py-3 flex   items-center gap-2 text-xl shadow-md w-full`}
+                  }   px-4  py-2 lg:py-3 flex   items-center gap-2 text-xl text-gray-700 shadow-md w-full`}
                   onClick={() => setActiveChannel("resources")}
                 >
                   <GrResources />
@@ -71,8 +76,8 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
               <ul className="flex flex-col justify-between gap-3">
                 <li className="w-full">
                   <Link
-                    className={`px-4 py-2 flex   items-center gap-2 text-xl   shadow-md w-full`}
-                    href={"/dashboard/profile"}
+                    className={`px-4 py-2 flex   items-center gap-2 text-xl text-gray-700  shadow-md w-full`}
+                    href={`/dashboard/profile?${queries}`}
                   >
                     <MdDashboard />
                     <small className="hidden lg:block">Dashboard</small>
@@ -80,7 +85,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 </li>
                 <li className="w-full">
                   <Link
-                    className={`px-4 py-2 flex   items-center gap-2 text-xl shadow-md w-full`}
+                    className={`px-4 py-2 flex   items-center gap-2 text-xl text-gray-700 shadow-md w-full`}
                     href={"/"}
                   >
                     <GoHome />
@@ -89,8 +94,8 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 </li>
                 <li className="w-full">
                   <Link
-                    className={`px-4 py-2 flex   items-center gap-2 text-xl  shadow-md w-full`}
-                    href={"/my-teams"}
+                    className={`px-4 py-2 flex   items-center gap-2 text-xl text-gray-700  shadow-md w-full`}
+                    href={`/my-teams?${queries}`}
                   >
                     <TbBrandTeams />
                     <small className="hidden lg:block">My Teams</small>
@@ -98,8 +103,8 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 </li>
                 <li className="w-full">
                   <Link
-                    className={`px-4 py-2 flex   items-center gap-2 text-xl   shadow-md w-full`}
-                    href={"/joined-teams"}
+                    className={`px-4 py-2 flex   items-center gap-2 text-xl text-gray-700   shadow-md w-full`}
+                    href={`/joined-teams?${queries}`}
                   >
                     <BiLogoMicrosoftTeams />
                     <small className="hidden lg:block">Joined Teams</small>
@@ -107,8 +112,8 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 </li>
                 <li className="w-full">
                   <Link
-                    className={`px-4 py-2 flex   items-center gap-2 text-xl  shadow-md w-full`}
-                    href={"/projects"}
+                    className={`px-4 py-2 flex   items-center gap-2 text-xl text-gray-700  shadow-md w-full`}
+                    href={`/projects?${queries}`}
                   >
                     <GrProjects />
                     <small className="hidden lg:block">Projects</small>

@@ -6,15 +6,13 @@ import TeamActions from "./TeamActions";
 import AddMemberToTeam from "../modals/AddMemberToTeam";
 import RemoveMemberFromTeam from "../modals/RemoveMemberFromTeam";
 import TeamDeleteModal from "../modals/TeamDeleteModal";
-import { IUser } from "@/interfaces/user.interface";
 import { useSingleTeamQuery } from "@/features/team";
 
 type Props = {
   team: ITeamCard;
-  admin: IUser;
 };
 
-const TeamCard = ({ team, admin }: Props) => {
+const TeamCard = ({ team }: Props) => {
   const [toggleAction, setToggleAction] = useState(false);
   const [isAddMember, setIsAddMember] = useState(false);
   const [isRemoveMember, setIsRemoveMember] = useState(false);
@@ -29,14 +27,12 @@ const TeamCard = ({ team, admin }: Props) => {
             src={team?.image}
             alt={team?.name}
           />
-          {admin?.id === team?.admin && (
-            <button
-              onClick={() => setToggleAction(true)}
-              className="border px-2 py-1 rounded-sm"
-            >
-              <BsThreeDotsVertical className="text-xl" />
-            </button>
-          )}
+          <button
+            onClick={() => setToggleAction(true)}
+            className="border px-2 py-1 rounded-sm"
+          >
+            <BsThreeDotsVertical className="text-xl" />
+          </button>
 
           {toggleAction && (
             <TeamActions

@@ -36,15 +36,13 @@ const TeamCardForDetail = ({ team }: Props) => {
         <div>
           <div className="inline-flex items-center gap-2 relative">
             <h2 className="text-2xl font-bold">{team.name}</h2>
-            {user?.id === team?.admin.id && (
-              <button
-                title="Team actions"
-                onClick={() => setToggleAction(true)}
-                className="border px-2 py-1 rounded-sm"
-              >
-                <BsThreeDotsVertical className="text-xl" />
-              </button>
-            )}
+            <button
+              title="Team actions"
+              onClick={() => setToggleAction(true)}
+              className="border px-2 py-1 rounded-sm"
+            >
+              <BsThreeDotsVertical className="text-xl" />
+            </button>
             <Link
               href={`/teams/messages/${team.id}?team_name=${team.name}&team_category=${team.category}&team_description=${team.description}`}
             >

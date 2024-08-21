@@ -21,20 +21,27 @@ const LeaveRequests = () => {
   return (
     <div>
       <div className="flex lg:flex-row flex-col gap-4 justify-between items-center lg:px-0 px-4 lg:mt-0 mt-5">
-        <h3 className="lg:text-2xl font-semibold">
+        <h3 className="text-lg lg:text-2xl">
           Your member requests to leave from team and project
         </h3>
-        <select
-          defaultValue={router?.query?.sortCategory}
-          className={`w-40 text-center font-medium relative block px-5 py-2 border 
-                   placeholder-gray-500  rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-          onChange={(e) => handleChangeSortCategory(e.target.value)}
-          name="category"
-          id="category"
-        >
-          <option value="Project">Project</option>
-          <option value="Team">Team</option>
-        </select>
+        <div className="flex items-center gap-2 w-full">
+          <button
+            className={`${
+              sortCategory === "Project" && "bg-blue-600 text-white"
+            } py-1 lg:py-2 px-2 lg:px-4 rounded focus:outline-none border w-full lg:w-auto `}
+            onClick={() => handleChangeSortCategory("Project")}
+          >
+            Project
+          </button>
+          <button
+            className={`${
+              sortCategory === "Team" && "bg-blue-600 text-white"
+            } py-1 lg:py-2 px-2 lg:px-4 rounded focus:outline-none border w-full lg:w-auto`}
+            onClick={() => handleChangeSortCategory("Team")}
+          >
+            Team
+          </button>
+        </div>
       </div>
       <div>
         {sortCategory === "Project" ? (
