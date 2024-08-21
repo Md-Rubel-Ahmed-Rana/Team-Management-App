@@ -72,7 +72,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 </button>
               </li>
             </ul>
-            <div className="pb-4">
+            <div className="pb-6 lg:pb-0">
               <ul className="flex flex-col justify-between gap-3">
                 <li className="w-full">
                   <Link
