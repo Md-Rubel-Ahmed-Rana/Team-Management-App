@@ -3,28 +3,28 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { useForm } from "react-hook-form";
+import { useDeleteTeamMutation } from "@/features/team";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
-import { useDeleteProjectMutation } from "@/features/project";
 import SmallLoader from "@/components/shared/SmallLoader";
 
 type Props = {
-  projectId: string;
-  projectName: string;
-  isOpen: boolean;
-  setIsOpen: (value: boolean) => void;
+  teamId: string;
+  teamName: string;
+  modalOpen: boolean;
+  setModalOpen: (value: boolean) => void;
 };
 
 type FormValues = {
-  typedProjectName: string;
+  typedTeamName: string;
   typedConfirmation: string;
 };
 
-const ProjectDeleteModal = ({
-  projectId,
-  projectName,
-  isOpen,
-  setIsOpen,
+const TeamDeleteModal = ({
+  teamId,
+  teamName,
+  modalOpen,
+  setModalOpen,
 }: Props) => {
   const {
     register,
@@ -32,31 +32,32 @@ const ProjectDeleteModal = ({
     watch,
     formState: { errors },
   } = useForm<FormValues>();
-  const [deleteProject, { isLoading }] = useDeleteProjectMutation();
+  const [deleteTeam, { isLoading }] = useDeleteTeamMutation();
+  const router = useRouter();
 
   const closeModal = () => {
-    setIsOpen(false);
+    setModalOpen(false);
   };
 
   const handleDelete = async (data: FormValues) => {
-    const result: any = await deleteProject(projectId);
+    const result: any = await deleteTeam(teamId);
     if (result?.data?.statusCode === 200) {
-      toast.success(result?.data?.message || "Project deleted successfully");
-      setIsOpen(false);
+      toast.success(result?.data?.message || "Team deleted successfully");
+      setModalOpen(false);
+      router.reload();
     } else {
-      setIsOpen(false);
-      toast.error(result?.error?.message || "Project was not deleted");
+      setModalOpen(false);
+      toast.error(result?.error?.message || "Team was not deleted");
     }
   };
 
-  const typedProjectName = watch("typedProjectName");
+  const typedTeamName = watch("typedTeamName");
   const typedConfirmation = watch("typedConfirmation");
   const isFormValid =
-    typedProjectName === projectName &&
-    typedConfirmation === "Delete My Project";
+    typedTeamName === teamName && typedConfirmation === "Delete My Team";
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
+    <Transition appear show={modalOpen} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 z-50 overflow-y-auto"
@@ -84,20 +85,20 @@ const ProjectDeleteModal = ({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="lg:w-[400px] w-[300px] bg-white dark:bg-gray-400 dark:text-black rounded-xl lg:p-6 p-3 text-left shadow-xl transition-all relative">
+            <div className="lg:w-[400px] mx-auto bg-white dark:bg-gray-400 dark:text-black rounded-xl p-6 text-left shadow-xl transition-all relative">
               <div className="flex justify-between items-center mb-4">
-                <h1 className="text-xl font-bold">Delete {projectName}</h1>
+                <h1 className="text-xl font-bold">Delete {teamName}</h1>
                 <button
                   onClick={closeModal}
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  <RxCross2 />
+                  <RxCross2 className="text-3xl text-blue-500" />
                 </button>
               </div>
 
               <div className="mb-4 text-sm text-red-600">
-                Warning: Deleting this project will permanently remove all
-                related tasks. This action cannot be undone.
+                Warning: Deleting this team will permanently remove all related
+                projects and chats/messages. This action cannot be undone.
               </div>
 
               <form onSubmit={handleSubmit(handleDelete)}>
@@ -108,10 +109,10 @@ const ProjectDeleteModal = ({
                   <input
                     type="text"
                     className="w-full p-2 border border-gray-300 rounded"
-                    placeholder="Enter project name"
-                    {...register("typedProjectName", { required: true })}
+                    placeholder="Enter team name"
+                    {...register("typedTeamName", { required: true })}
                   />
-                  {errors.typedProjectName && (
+                  {errors.typedTeamName && (
                     <span className="text-red-500 text-xs">
                       This field is required
                     </span>
@@ -120,12 +121,12 @@ const ProjectDeleteModal = ({
 
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-2">
-                    Type "Delete My Project" to confirm:
+                    Type "Delete My Team" to confirm:
                   </label>
                   <input
                     type="text"
                     className="w-full p-2 border border-gray-300 rounded"
-                    placeholder="Delete My Project"
+                    placeholder="Delete My Team"
                     {...register("typedConfirmation", { required: true })}
                   />
                   {errors.typedConfirmation && (
@@ -145,7 +146,7 @@ const ProjectDeleteModal = ({
                         : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                   >
-                    {isLoading ? <SmallLoader /> : "Delete Project"}
+                    {isLoading ? <SmallLoader /> : "Delete Team"}
                   </button>
                 </div>
               </form>
@@ -157,4 +158,4 @@ const ProjectDeleteModal = ({
   );
 };
 
-export default ProjectDeleteModal;
+export default TeamDeleteModal;

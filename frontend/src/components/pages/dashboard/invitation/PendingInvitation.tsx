@@ -6,7 +6,6 @@ import {
   useRejectInvitationMutation,
 } from "@/features/invitation";
 import { useLoggedInUserQuery } from "@/features/user";
-import { INotification } from "@/interfaces/notification.interface";
 import { ITeam } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
 import React, { useContext } from "react";
