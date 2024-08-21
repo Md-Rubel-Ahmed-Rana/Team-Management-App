@@ -1,10 +1,8 @@
 import Link from "next/link";
-import React, { useState } from "react";
 import { GrProjects, GrResources } from "react-icons/gr";
 import { RiMessage2Line } from "react-icons/ri";
 import { TbBrandTeams, TbSpeakerphone } from "react-icons/tb";
 import { GoHome } from "react-icons/go";
-import { CgProfile } from "react-icons/cg";
 import { BiLogoMicrosoftTeams } from "react-icons/bi";
 import { RiWechatChannelsFill } from "react-icons/ri";
 import { MdDashboard } from "react-icons/md";
@@ -72,7 +70,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 </button>
               </li>
             </ul>
-            <div className="pb-6 lg:pb-0">
+            <div>
               <ul className="flex flex-col justify-between gap-3">
                 <li className="w-full">
                   <Link
