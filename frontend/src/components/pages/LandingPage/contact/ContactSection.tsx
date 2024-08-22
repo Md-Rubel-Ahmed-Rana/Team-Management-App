@@ -46,7 +46,7 @@ const ContactSection = () => {
       <p className="text-lg mb-8">
         Have questions or need assistance? Reach out to our team for support.
       </p>
-      <div className="max-w-md mx-auto bg-white">
+      <div className="max-w-md mx-auto bg-white p-5 rounded-md">
         <form onSubmit={handleSubmit(handleSendEmail)}>
           <div className="mb-4">
             <label htmlFor="name" className="block text-sm font-medium">
