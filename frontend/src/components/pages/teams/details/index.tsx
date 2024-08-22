@@ -62,7 +62,6 @@ const TeamDetails = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {team?.projects?.map((project) => (
                   <ProjectCardForTeamDetail
-                    admin={team.admin}
                     project={project}
                     key={project?.id}
                     team={team}

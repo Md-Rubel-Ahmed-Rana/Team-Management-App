@@ -54,9 +54,14 @@ const MessagesPage = () => {
               src={singleTeam?.data?.image}
               alt={`Team logo - ${query?.team_name}`}
             />
-            <h2 className="text-sm lg:text-xl font-bold text-gray-700">
-              {query?.team_name}
-            </h2>
+            <div>
+              <h2 className="text-sm lg:text-xl font-bold text-gray-700 -mb-2">
+                {singleTeam?.data?.team_name || query?.team_name}
+              </h2>
+              <small className="text-[10px]">
+                {singleTeam?.data?.category || query?.team_category}
+              </small>
+            </div>
           </div>
           <div
             ref={messagesContainerRef}

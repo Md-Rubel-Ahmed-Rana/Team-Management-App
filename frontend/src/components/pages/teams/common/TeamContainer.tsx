@@ -10,7 +10,7 @@ const TeamContainer = ({ teams }: Props) => {
   return (
     <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 py-10 gap-2">
       {teams?.map((team: ITeamCard) => (
-        <TeamCard team={team} />
+        <TeamCard team={team} key={team.id} />
       ))}
     </div>
   );

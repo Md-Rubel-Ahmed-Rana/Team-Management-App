@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import { useAddMemberMutation } from "@/features/project";
-import { useGetActiveMembersQuery } from "@/features/team";
+import { useGetActiveMembersQuery, useSingleTeamQuery } from "@/features/team";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
 import { SocketContext } from "@/context/SocketContext";
@@ -12,10 +12,15 @@ type Props = {
   isOpen: boolean;
   setIsOpen: (state: boolean) => void;
   projectId: string;
-  team: any;
+  teamId: string;
 };
 
-const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
+const AddMemberToProject = ({
+  isOpen,
+  setIsOpen,
+  projectId,
+  teamId,
+}: Props) => {
   const { socket }: any = useContext(SocketContext);
   const closeModal = () => {
     setIsOpen(false);
@@ -23,7 +28,9 @@ const AddMemberToProject = ({ isOpen, setIsOpen, projectId, team }: Props) => {
 
   const [addNewMember, { isLoading }] = useAddMemberMutation();
   const [newMember, setNewMember] = useState({ label: "", value: "" });
-  const { data: memberData } = useGetActiveMembersQuery(team?.id);
+  const { data: singleTeam } = useSingleTeamQuery(teamId);
+  const team = singleTeam?.data;
+  const { data: memberData } = useGetActiveMembersQuery(teamId);
   const members = memberData?.data?.map((member: IUser) => ({
     value: member?.id,
     label: member?.name,

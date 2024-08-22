@@ -81,13 +81,17 @@ const ChangePassword = () => {
     newPassword !== oldPassword;
 
   return (
-    <div className="flex items-center justify-center p-5">
-      <div className="dark:bg-gray-700 bg-gray-100 p-3 lg:p-8 rounded shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-2">Change Password</h1>
-        <p className="mb-2">Change your password carefully</p>
+    <div className="flex items-center justify-center  lg:p-5">
+      <div className=" bg-gray-100 p-3 lg:p-8 rounded shadow-md max-w-md w-full">
+        <h1 className="text-lg lg:text-2xl font-bold mb-2">Change Password</h1>
+        <p className="text-sm lg:text-md mb-2">
+          Change your password carefully
+        </p>
         <form onSubmit={handleSubmit(handleChangePassword)}>
           <div className="-mt-px relative mb-4">
-            <label htmlFor="oldPassword">Old Password</label>
+            <label className="text-sm lg:text-md" htmlFor="oldPassword">
+              Old Password
+            </label>
             <input
               autoFocus
               aria-label="Old Password"
@@ -95,9 +99,9 @@ const ChangePassword = () => {
               {...register("oldPassword", {
                 required: "Old Password is required",
               })}
-              className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
+              className={`appearance-none  rounded-md relative block w-full px-3 py-2 border ${
                 errors.oldPassword ? "border-red-500" : "border-gray-300"
-              } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+              } text-sm lg:text-md placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
               placeholder="Enter your old password"
             />
             {errors.oldPassword && (
@@ -114,7 +118,9 @@ const ChangePassword = () => {
             </button>
           </div>
           <div className="-mt-px relative mb-4">
-            <label htmlFor="newPassword">New Password</label>
+            <label className="text-sm lg:text-md" htmlFor="newPassword">
+              New Password
+            </label>
             <input
               id="newPassword"
               aria-label="New Password"
@@ -131,7 +137,7 @@ const ChangePassword = () => {
               })}
               className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
                 errors.newPassword ? "border-red-500" : "border-gray-300"
-              } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+              } text-sm lg:text-md placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
               placeholder="Enter a new password"
             />
             {errors.newPassword && (

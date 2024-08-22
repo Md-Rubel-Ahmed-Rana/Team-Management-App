@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import TaskMobileCard from "./TaskMobileCard";
 import TaskStatusNav from "./TaskStatusNav";
 import { useGetTasksByProjectQuery } from "@/features/task";
 import CreateTaskModal from "@/components/pages/tasks/modals/CreateTaskModal";
 import { useRouter } from "next/router";
 import { useGetSingleProjectQuery } from "@/features/project";
+import TaskCard from "../common/TaskCard";
 
 const TasksForMobileView = () => {
   const [activeStatus, setActiveStatus] = useState("Todo");
@@ -30,21 +30,27 @@ const TasksForMobileView = () => {
         {activeStatus === "Todo" && (
           <>
             {todoTasksArray?.map((task: any) => (
-              <TaskMobileCard task={task} key={Math.random()} />
+              <div className="flex flex-col gap-2 border rounded-md shadow-md p-4">
+                <TaskCard task={task} key={task?.id} />
+              </div>
             ))}
           </>
         )}
         {activeStatus === "Ongoing" && (
           <>
             {ongoingTasksArray?.map((task: any) => (
-              <TaskMobileCard task={task} key={Math.random()} />
+              <div className="flex flex-col gap-2 border rounded-md shadow-md p-4">
+                <TaskCard task={task} key={task?.id} />
+              </div>
             ))}
           </>
         )}
         {activeStatus === "Completed" && (
           <>
             {completedTasksArray?.map((task: any) => (
-              <TaskMobileCard task={task} key={Math.random()} />
+              <div className="flex flex-col gap-2 border rounded-md shadow-md p-4">
+                <TaskCard task={task} key={task?.id} />
+              </div>
             ))}
           </>
         )}

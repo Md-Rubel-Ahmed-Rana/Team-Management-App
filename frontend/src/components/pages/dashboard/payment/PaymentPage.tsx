@@ -11,31 +11,35 @@ const Payments = () => {
   const payments: IPayment[] = data?.data;
 
   return (
-    <div>
+    <div className="w-[76vw]">
       <h3 className="text-xl font-bold mb-4">Payment History</h3>
-      <div className="flex-grow h-screen overflow-y-auto bg-white pb-20">
+      <div className="flex-grow h-screen overflow-y-auto pb-20 w-full">
         {payments?.map((payment: IPayment) => (
-          <div key={payment?.id} className="shadow-md p-4 rounded-md mb-4">
-            <p>
-              <span className="font-bold">Plan:</span> {payment?.package?.plan}
-            </p>
-            <p>
-              <span className="font-bold">Price:</span> $
-              {payment?.package?.price}
-              /month
-            </p>
-            <p>
-              <span className="font-bold">Features:</span>{" "}
-              {payment?.package?.features?.join(", ")}
-            </p>
-            <p>
-              <span className="font-bold">Date:</span> {payment?.createdAt}
-            </p>
-            <p>
-              <span className="font-bold">Status: </span>
-              <span className="capitalize">{payment?.status}</span>
-            </p>
-          </div>
+          <>
+            <div key={payment?.id}>
+              <p>
+                <span className="font-bold">Plan:</span>{" "}
+                {payment?.package?.plan}
+              </p>
+              <p>
+                <span className="font-bold">Price:</span> $
+                {payment?.package?.price}
+                /month
+              </p>
+              <p>
+                <span className="font-bold">Features:</span>{" "}
+                {payment?.package?.features?.join(", ")}
+              </p>
+              <p>
+                <span className="font-bold">Date:</span> {payment?.createdAt}
+              </p>
+              <p>
+                <span className="font-bold">Status: </span>
+                <span className="capitalize">{payment?.status}</span>
+              </p>
+            </div>
+            <hr className="my-3 border-2" />
+          </>
         ))}
       </div>
     </div>

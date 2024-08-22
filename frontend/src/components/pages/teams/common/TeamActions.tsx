@@ -1,8 +1,6 @@
 import useHandlePropagation from "@/hooks/useHandlePropagation";
 import { useEffect, useRef } from "react";
-import { ITeam, ITeamCard } from "@/interfaces/team.interface";
 import Link from "next/link";
-import { IUser } from "@/interfaces/user.interface";
 import Swal from "sweetalert2";
 import { useLeaveTeamRequestMutation } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
