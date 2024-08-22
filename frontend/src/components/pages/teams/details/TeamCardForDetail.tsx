@@ -1,6 +1,4 @@
-import { useLoggedInUserQuery } from "@/features/user";
 import { ITeamDetails } from "@/interfaces/team.interface";
-import { IUser } from "@/interfaces/user.interface";
 import { useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import TeamActions from "../common/TeamActions";
@@ -16,8 +14,6 @@ type Props = {
 };
 
 const TeamCardForDetail = ({ team }: Props) => {
-  const { data: userData } = useLoggedInUserQuery({});
-  const user: IUser = userData?.data;
   const { data: singleTeam } = useSingleTeamQuery(team?.id);
   const [toggleAction, setToggleAction] = useState(false);
   const [isAddMember, setIsAddMember] = useState(false);
@@ -25,8 +21,8 @@ const TeamCardForDetail = ({ team }: Props) => {
   const [isDeleteTeam, setIsDeleteTeam] = useState(false);
   return (
     <>
-      <div className="flex items-center">
-        <div className="w-24 h-24 mr-6">
+      <div className="flex flex-col lg:flex-row justify-center lg:justify-start items-center">
+        <div className="w-24 h-24 lg:mr-6">
           <img
             src={team.image}
             alt={`${team.name} logo`}
@@ -34,20 +30,24 @@ const TeamCardForDetail = ({ team }: Props) => {
           />
         </div>
         <div>
-          <div className="inline-flex items-center gap-2 relative">
-            <h2 className="text-2xl font-bold">{team.name}</h2>
-            <button
-              title="Team actions"
-              onClick={() => setToggleAction(true)}
-              className="border px-2 py-1 rounded-sm"
-            >
-              <BsThreeDotsVertical className="text-xl" />
-            </button>
-            <Link
-              href={`/teams/messages/${team.id}?team_name=${team.name}&team_category=${team.category}&team_description=${team.description}`}
-            >
-              <FaFacebookMessenger className="text-3xl text-blue-500" />
-            </Link>
+          <div className="flex lg:inline-flex  flex-col-reverse lg:flex-row items-center gap-2 relative">
+            <h2 className="text-start  w-full mb-2 text-2xl font-bold">
+              {team.name}
+            </h2>
+            <div className="flex items-center gap-3">
+              <button
+                title="Team actions"
+                onClick={() => setToggleAction(true)}
+                className="border px-2 py-1 rounded-sm"
+              >
+                <BsThreeDotsVertical className="text-xl" />
+              </button>
+              <Link
+                href={`/teams/messages/${team.id}?team_name=${team.name}&team_category=${team.category}&team_description=${team.description}`}
+              >
+                <FaFacebookMessenger className="text-3xl text-blue-500" />
+              </Link>
+            </div>
 
             {toggleAction && (
               <TeamActions

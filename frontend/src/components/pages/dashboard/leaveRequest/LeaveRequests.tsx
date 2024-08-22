@@ -19,12 +19,12 @@ const LeaveRequests = () => {
   }, [router?.query?.sortCategory]);
 
   return (
-    <div>
-      <div className="flex lg:flex-row flex-col gap-4 justify-between items-center lg:px-0 px-4 lg:mt-0 mt-5">
+    <div className="w-[76vw]">
+      <div className="w-full flex lg:flex-row flex-col gap-4 justify-between items-center lg:px-0 px-4 lg:mt-0 mt-5">
         <h3 className="text-lg lg:text-2xl">
           Your member requests to leave from team and project
         </h3>
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center gap-2 w-full lg:w-auto">
           <button
             className={`${
               sortCategory === "Project" && "bg-blue-600 text-white"
@@ -43,7 +43,7 @@ const LeaveRequests = () => {
           </button>
         </div>
       </div>
-      <div>
+      <div className="mt-4">
         {sortCategory === "Project" ? (
           <ProjectLeaveRequest />
         ) : (

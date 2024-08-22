@@ -7,7 +7,6 @@ import { useContext, useEffect, useState } from "react";
 import { IUser } from "@/interfaces/user.interface";
 import { useLoggedInUserQuery, useLogoutUserMutation } from "@/features/user";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import { useGetNotificationQuery } from "@/features/notification";
 import { INotification } from "@/interfaces/notification.interface";
 import { SocketContext } from "@/context/SocketContext";
@@ -16,7 +15,6 @@ import SmallLoader from "./SmallLoader";
 
 const Navbar = () => {
   const { socket }: any = useContext(SocketContext);
-  const { theme, setTheme } = useTheme();
   const { data, isLoading: isUserLoading } = useLoggedInUserQuery({});
   const user: IUser = data?.data;
   const [logout] = useLogoutUserMutation({});
@@ -98,15 +96,6 @@ const Navbar = () => {
               </Link>
             </>
           )}
-
-          <button
-            onClick={() =>
-              theme == "dark" ? setTheme("light") : setTheme("dark")
-            }
-          >
-            {theme === "dark" ? <FaSun /> : <FaRegMoon />}
-          </button>
-
           {user?.email && (
             <>
               <button
@@ -159,13 +148,6 @@ const Navbar = () => {
           </button>
         ) : (
           <div className="flex gap-4">
-            <button
-              onClick={() =>
-                theme == "dark" ? setTheme("light") : setTheme("dark")
-              }
-            >
-              {theme === "dark" ? <FaSun /> : <FaRegMoon />}
-            </button>
             {!user?.email && (
               <>
                 <button onClick={() => setToggle(false)}>

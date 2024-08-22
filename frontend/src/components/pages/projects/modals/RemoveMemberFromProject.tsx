@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import { useRemoveMemberMutation } from "@/features/project";
-import { useGetActiveMembersQuery } from "@/features/team";
+import { useGetActiveMembersQuery, useSingleTeamQuery } from "@/features/team";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
 
@@ -11,14 +11,14 @@ type Props = {
   isRemove: boolean;
   setIsRemove: (state: boolean) => void;
   projectId: string;
-  team: any;
+  teamId: string;
 };
 
 const RemoveMemberFromProject = ({
   isRemove,
   setIsRemove,
   projectId,
-  team,
+  teamId,
 }: Props) => {
   const closeModal = () => {
     setIsRemove(false);
@@ -26,7 +26,9 @@ const RemoveMemberFromProject = ({
 
   const [removeMember, { isLoading }] = useRemoveMemberMutation();
   const [newMember, setNewMember] = useState({ label: "", value: "" });
-  const { data: memberData } = useGetActiveMembersQuery(team?.id);
+  const { data: singleTeam } = useSingleTeamQuery(teamId);
+  const team = singleTeam?.data;
+  const { data: memberData } = useGetActiveMembersQuery(teamId);
   const members = memberData?.data?.map((member: IUser) => ({
     value: member?.id,
     label: member?.name,

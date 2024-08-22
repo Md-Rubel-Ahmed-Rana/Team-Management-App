@@ -5,7 +5,6 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useRouter } from "next/router";
 import { IUser } from "@/interfaces/user.interface";
 import { useCreateUserMutation } from "@/features/user";
-import GoogleLogin from "@/components/shared/GoogleLogin";
 import SocialLogin from "@/components/socialLogin";
 
 const Signup = () => {
@@ -15,30 +14,41 @@ const Signup = () => {
     formState: { errors },
   } = useForm<IUser>({ mode: "onChange" });
   const router = useRouter();
-  const [createUser] = useCreateUserMutation();
+  const [createUser, { isLoading }] = useCreateUserMutation();
   const [togglePassword, setTogglePassword] = useState(false);
 
   const handleRegister: SubmitHandler<IUser> = async (data) => {
     const result: any = await createUser(data);
+    if (
+      !result?.error?.data?.success &&
+      result?.error?.data?.message === "This email already exist"
+    ) {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Failed to signup",
+        text: `${result?.error?.data?.message}. Please try with another email!`,
+        showConfirmButton: true,
+      });
+    }
     if (result?.data?.success) {
-      if (result?.data?.success) {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: result?.data?.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        router.push("/login");
-      } else {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: result?.data?.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: result?.data?.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      router.push("/login");
+    }
+    if (result?.error && result?.error?.status === "FETCH_ERROR") {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Connection failed",
+        text: "Please check your internet connection. Try again!",
+        showConfirmButton: true,
+      });
     }
   };
 
@@ -161,10 +171,15 @@ const Signup = () => {
           </div>
           <div className="mt-6">
             <button
+              disabled={isLoading}
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 dark:bg-gray-600 dark:hover:bg-gray-700 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-2"
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white ${
+                isLoading
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-2"
+              }  `}
             >
-              Sign up
+              {isLoading ? "Signing up..." : "Sign up"}
             </button>
           </div>
           <SocialLogin />
