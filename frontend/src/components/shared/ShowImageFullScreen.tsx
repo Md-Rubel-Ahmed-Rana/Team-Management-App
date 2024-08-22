@@ -1,39 +1,72 @@
 /* eslint-disable @next/next/no-img-element */
-import Image from "next/image";
-import React from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import React, { Fragment } from "react";
+import { RxCross2 } from "react-icons/rx";
 
 type Props = {
-  image: string;
+  selectedImage: string;
   setSelectedImage: any;
-  setImageModalOpen: any;
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
 };
 
 const ShowImageFullScreen = ({
-  image,
+  selectedImage,
   setSelectedImage,
-  setImageModalOpen,
+  isOpen,
+  setIsOpen,
 }: Props) => {
   const closeModal = () => {
     setSelectedImage("");
-    setImageModalOpen(false);
+    setIsOpen(false);
   };
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-75 flex items-center justify-center">
-      <div className="bg-white overflow-auto p-20">
-        <img
-          src={image}
-          alt="Selected Image"
-          className="w-9/12 h-9/12 rounded-md"
-        />
-        <button
-          className="absolute top-10 right-10 text-white bg-blue-600 px-4 py-2 rounded-md"
-          onClick={closeModal}
-        >
-          Close
-        </button>
-      </div>
-    </div>
+    <>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 flex items-center justify-center">
+            <div className="p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="h-[90vh]  w-[90vw] transform rounded-xl bg-orange-50 dark:bg-gray-600 dark:text-white overflow-hidden lg:p-6 p-3 text-left shadow-xl transition-all relative">
+                  <button
+                    onClick={closeModal}
+                    className="absolute top-1 right-1"
+                  >
+                    <RxCross2 className="text-2xl" />
+                  </button>
+                  <img
+                    src={selectedImage}
+                    alt="Selected Image"
+                    className="w-full h-full pr-2 rounded-md object-fill"
+                  />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
   );
 };
 
