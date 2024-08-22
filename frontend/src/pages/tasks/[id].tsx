@@ -15,13 +15,11 @@ const TasksPage = () => {
         keywords="team management, project collaboration, task tracking, project details"
       />
 
-      <div>
-        <div className="hidden md:block">
-          <TasksForDesktopView />
-        </div>
-        <div className="block  md:hidden">
-          <TasksForMobileView />
-        </div>
+      <div className="hidden md:block">
+        <TasksForDesktopView />
+      </div>
+      <div className="block  md:hidden">
+        <TasksForMobileView />
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ const ForgetPasswordPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({ mode: "onChange" });
-  const [forgetPassword] = useForgetPasswordMutation();
+  const [forgetPassword, { isLoading }] = useForgetPasswordMutation();
   const router = useRouter();
   const handleSubmitEmail: SubmitHandler<FormData> = async (data) => {
     const res: any = await forgetPassword(data);
@@ -30,7 +30,7 @@ const ForgetPasswordPage = () => {
       Swal.fire({
         position: "center",
         icon: "error",
-        title: "Something went wrong! Try again",
+        title: "Something went wrong!",
         text: res?.error?.data?.message,
         showConfirmButton: false,
         timer: 2500,
@@ -56,7 +56,7 @@ const ForgetPasswordPage = () => {
               })}
               className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
                 errors.email ? "border-red-500" : "border-gray-300"
-              } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+              } placeholder-gray-500 bg-white text-gray-800 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
               placeholder="Enter your email"
             />
             {errors.email && (
@@ -66,8 +66,13 @@ const ForgetPasswordPage = () => {
             )}
           </div>
           <button
+            disabled={isLoading}
             type="submit"
-            className={`w-full  text-white py-2 px-4 rounded  bg-blue-500 hover:bg-blue-600`}
+            className={`w-full  text-white py-2 px-4 rounded ${
+              isLoading
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-600"
+            } `}
           >
             Submit
           </button>

@@ -46,7 +46,7 @@ const ContactSection = () => {
       <p className="text-lg mb-8">
         Have questions or need assistance? Reach out to our team for support.
       </p>
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto bg-white">
         <form onSubmit={handleSubmit(handleSendEmail)}>
           <div className="mb-4">
             <label htmlFor="name" className="block text-sm font-medium">
@@ -58,7 +58,7 @@ const ContactSection = () => {
               type="text"
               id="name"
               name="name"
-              className="mt-1 p-2 w-full border rounded-md"
+              className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
             />
           </div>
           <div className="mb-4">
@@ -71,7 +71,7 @@ const ContactSection = () => {
               type="email"
               id="email"
               name="email"
-              className="mt-1 p-2 w-full border rounded-md"
+              className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
             />
           </div>
           <div className="mb-4">
@@ -84,7 +84,7 @@ const ContactSection = () => {
               id="message"
               name="message"
               rows={4}
-              className="mt-1 p-2 w-full border rounded-md"
+              className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
             ></textarea>
           </div>
           <button

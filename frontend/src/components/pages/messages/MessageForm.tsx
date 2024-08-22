@@ -204,7 +204,7 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
               });
             }
           }}
-          className={`border-2 p-2 rounded-md w-full focus:outline-none ${
+          className={`border-2 p-2 rounded-md w-full bg-white text-gray-800 focus:outline-none ${
             isLoading
               ? "bg-gray-200 cursor-not-allowed"
               : "border-white-300  focus:border-blue-500"
