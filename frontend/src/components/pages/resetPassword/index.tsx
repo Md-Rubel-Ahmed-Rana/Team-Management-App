@@ -14,7 +14,7 @@ type FormData = {
 
 const ResetPasswordPage = () => {
   const router = useRouter();
-  const [resetPassword] = useResetPasswordMutation();
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
   const [userId, setUserId] = useState<any>();
   const [tokenError, setTokenError] = useState<string | null>(null);
   const [togglePassword, setTogglePassword] = useState<{
@@ -130,7 +130,7 @@ const ResetPasswordPage = () => {
               })}
               className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
                 errors.password ? "border-red-500" : "border-gray-300"
-              } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+              } placeholder-gray-500 bg-white text-gray-800 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
               placeholder="Enter a new password"
             />
             {errors.password && (
@@ -162,7 +162,7 @@ const ResetPasswordPage = () => {
               })}
               className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
                 errors.confirmPassword ? "border-red-500" : "border-gray-300"
-              } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+              } placeholder-gray-500 bg-white text-gray-800 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
               placeholder="Enter a new password"
             />
             {errors.confirmPassword && (
@@ -179,8 +179,13 @@ const ResetPasswordPage = () => {
             </button>
           </div>
           <button
+            disabled={isLoading}
             type="submit"
-            className={`w-full text-white py-2 px-4 rounded bg-blue-500 hover:bg-blue-600`}
+            className={`w-full text-white py-2 px-4 rounded ${
+              isLoading
+                ? "bg-gray-800 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-600"
+            } `}
           >
             Reset Password
           </button>

@@ -4,9 +4,14 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 import { FaPlus } from "react-icons/fa";
 import CreateTaskModal from "../modals/CreateTaskModal";
 import TaskCard from "../common/TaskCard";
+import { useGetTasksByProjectQuery } from "@/features/task";
 
 const Column = ({ column, tasks, project }: any) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const { data } = useGetTasksByProjectQuery(project?.id);
+
+  console.log(data?.data?.length);
 
   return (
     <div className="flex flex-col w-1/3">
@@ -18,37 +23,48 @@ const Column = ({ column, tasks, project }: any) => {
           </button>
         </p>
       </div>
-      {column && (
-        <Droppable droppableId={column?.id}>
-          {(droppableProvided, droppableSnapshot) => (
-            <div
-              className="flex flex-col items-center px-2 mb-2"
-              ref={droppableProvided.innerRef}
-              {...droppableProvided.droppableProps}
-            >
-              {tasks?.map((task: any, index: number) => (
-                <Draggable
-                  key={task?.id}
-                  draggableId={`${task?.id}`}
-                  index={index}
+      {data?.data?.length > 0 ? (
+        <>
+          {column && (
+            <Droppable droppableId={column?.id}>
+              {(droppableProvided, droppableSnapshot) => (
+                <div
+                  className="flex flex-col items-center px-2 mb-2"
+                  ref={droppableProvided.innerRef}
+                  {...droppableProvided.droppableProps}
                 >
-                  {(draggableProvided, draggableSnapshot) => (
-                    <div
-                      className={`mb-4 flex flex-col gap-2 p-4 rounded-md shadow-md border w-full`}
-                      ref={draggableProvided.innerRef}
-                      {...draggableProvided.draggableProps}
-                      {...draggableProvided.dragHandleProps}
+                  {tasks?.map((task: any, index: number) => (
+                    <Draggable
+                      key={task?.id}
+                      draggableId={`${task?.id}`}
+                      index={index}
                     >
-                      <TaskCard task={task} />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {droppableProvided.placeholder}
-            </div>
+                      {(draggableProvided, draggableSnapshot) => (
+                        <div
+                          className={`mb-4 flex flex-col gap-2 p-4 rounded-md shadow-md border w-full`}
+                          ref={draggableProvided.innerRef}
+                          {...draggableProvided.draggableProps}
+                          {...draggableProvided.dragHandleProps}
+                        >
+                          <TaskCard task={task} />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {droppableProvided.placeholder}
+                </div>
+              )}
+            </Droppable>
           )}
-        </Droppable>
+        </>
+      ) : (
+        <div>
+          <h2 className="text-center text-xl font-semibold mt-3">
+            No task found!
+          </h2>
+        </div>
       )}
+
       {isOpen && (
         <CreateTaskModal
           isOpen={isOpen}

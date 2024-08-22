@@ -81,7 +81,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
                   onChange={handleChangeProfileImage}
                   type="file"
                   accept="image/*"
-                  className="mt-1 p-2 w-full border rounded-md bg-white"
+                  className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
                 />
               </>
             )}
@@ -104,7 +104,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           <input
             type="text"
             {...register("name")}
-            className="mt-1 p-2 w-full border rounded-md"
+            className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
           />
         </div>
         <div className="mb-4">
@@ -114,7 +114,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           <input
             type="email"
             {...register("email")}
-            className="mt-1 p-2 w-full border rounded-md"
+            className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
           />
         </div>
         <div className="mb-4">
@@ -124,7 +124,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           <input
             type="text"
             {...register("department")}
-            className="mt-1 p-2 w-full border rounded-md"
+            className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
           />
         </div>
         <div className="mb-4">
@@ -134,7 +134,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           <input
             type="text"
             {...register("designation")}
-            className="mt-1 p-2 w-full border rounded-md"
+            className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
           />
         </div>
         <div className="mb-4">
@@ -144,7 +144,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           <input
             type="text"
             {...register("phoneNumber")}
-            className="mt-1 p-2 w-full border rounded-md"
+            className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
           />
         </div>
         <div className="mb-4">
@@ -154,7 +154,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           <input
             type="text"
             {...register("presentAddress")}
-            className="mt-1 p-2 w-full border rounded-md"
+            className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
           />
         </div>
         <div className="mb-4">
@@ -164,7 +164,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           <input
             type="text"
             {...register("permanentAddress")}
-            className="mt-1 p-2 w-full border rounded-md"
+            className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
           />
         </div>
         <div className="mb-4">
@@ -174,7 +174,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           <input
             type="text"
             {...register("country")}
-            className="mt-1 p-2 w-full border rounded-md"
+            className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
           />
         </div>
         <div className="mt-4 flex items-center gap-4">
