@@ -26,9 +26,10 @@ const MessageImages = ({ images }: Props) => {
       {/* image showing full screen modal  */}
       {imageModalOpen && selectedImage && (
         <ShowImageFullScreen
-          image={selectedImage}
+          isOpen={imageModalOpen}
+          setIsOpen={setImageModalOpen}
+          selectedImage={selectedImage}
           setSelectedImage={setSelectedImage}
-          setImageModalOpen={setImageModalOpen}
         />
       )}
     </div>

@@ -50,7 +50,7 @@ const MessagesPage = () => {
         <main className="flex-grow flex flex-col h-full w-full">
           <div className="flex items-center gap-2 p-[6.5px] bg-gray-200 border-b border-s-2 border-gray-300">
             <img
-              className="h-12 w-12 rounded-full"
+              className="h-12 w-12 rounded-full ring-2"
               src={singleTeam?.data?.image}
               alt={`Team logo - ${query?.team_name}`}
             />
@@ -58,7 +58,7 @@ const MessagesPage = () => {
               <h2 className="text-sm lg:text-xl font-bold text-gray-700 -mb-2">
                 {singleTeam?.data?.team_name || query?.team_name}
               </h2>
-              <small className="text-[10px]">
+              <small className="text-[10px] lg:text-md">
                 {singleTeam?.data?.category || query?.team_category}
               </small>
             </div>

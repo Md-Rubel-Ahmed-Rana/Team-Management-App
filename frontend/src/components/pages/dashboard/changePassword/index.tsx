@@ -81,7 +81,7 @@ const ChangePassword = () => {
     newPassword !== oldPassword;
 
   return (
-    <div className="flex items-center justify-center  lg:p-5">
+    <div className="flex items-center w-[76vw] justify-center  lg:p-5">
       <div className=" bg-gray-100 p-3 lg:p-8 rounded shadow-md max-w-md w-full">
         <h1 className="text-lg lg:text-2xl font-bold mb-2">Change Password</h1>
         <p className="text-sm lg:text-md mb-2">
@@ -101,7 +101,7 @@ const ChangePassword = () => {
               })}
               className={`appearance-none  rounded-md relative block w-full px-3 py-2 border ${
                 errors.oldPassword ? "border-red-500" : "border-gray-300"
-              } text-sm lg:text-md placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+              } text-sm lg:text-md placeholder-gray-500 bg-white text-gray-800 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
               placeholder="Enter your old password"
             />
             {errors.oldPassword && (
@@ -137,7 +137,7 @@ const ChangePassword = () => {
               })}
               className={`appearance-none dark:text-white rounded-md relative block w-full px-3 py-2 border ${
                 errors.newPassword ? "border-red-500" : "border-gray-300"
-              } text-sm lg:text-md placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+              } text-sm lg:text-md placeholder-gray-500 bg-white text-gray-800 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
               placeholder="Enter a new password"
             />
             {errors.newPassword && (

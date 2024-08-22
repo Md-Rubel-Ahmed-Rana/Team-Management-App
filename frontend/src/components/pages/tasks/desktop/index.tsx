@@ -57,6 +57,8 @@ const TasksForDesktopView = () => {
     await handleTaskOnDragEnd(result, tasks, setTasks, updateStatus);
   };
 
+  console.log({ tasks: data?.data?.length });
+
   return (
     <div>
       {isLoading ? (
