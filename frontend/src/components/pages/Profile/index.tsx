@@ -62,7 +62,7 @@ const Profile = () => {
           <div className="mt-4">
             <button
               onClick={() => setIsEdit(true)}
-              className="border px-4 py-2 rounded-md"
+              className="border px-6 py-2 rounded-md bg-blue-600 text-white"
             >
               Edit Profile
             </button>

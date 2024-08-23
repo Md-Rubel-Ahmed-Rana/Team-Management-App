@@ -72,11 +72,11 @@ const RemoveMemberFromTeam = ({ isRemove, setIsRemove, team }: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 dark:text-white p-6 text-left  shadow-xl transition-all relative">
-                <div className="mt-3">
+              <Dialog.Panel className="w-[95vw] lg:w-[400px] h-auto mx-auto transform rounded-xl bg-orange-50  p-3 lg:p-6 text-left  shadow-xl transition-all relative">
+                <div>
                   <div>
-                    <div className="relative w-full py-2">
-                      <h3 className="text-2xl mb-2">
+                    <div className="relative w-full">
+                      <h3 className="text-md lg:text-xl mb-2">
                         Remove member from group.
                       </h3>
                       <Select
@@ -86,7 +86,7 @@ const RemoveMemberFromTeam = ({ isRemove, setIsRemove, team }: Props) => {
                         }))}
                         styles={customStyles}
                         onChange={(user: any) => setMember(user)}
-                        placeholder="Type a name to remove group member"
+                        placeholder="Type a member name"
                         className="mt-1 w-full"
                         classNamePrefix="select2-selection"
                         components={{
@@ -95,18 +95,18 @@ const RemoveMemberFromTeam = ({ isRemove, setIsRemove, team }: Props) => {
                         }}
                       />
                     </div>
-                    <div className="mt-5 lg:flex justify-between">
+                    <div className="mt-5 flex justify-between gap-2">
                       <button
                         onClick={closeModal}
                         type="button"
-                        className="border-2 mx-auto outline-none border-black hover:bg-gray-300 rounded-full px-10 py-2  text-sm flex items-center gap-2"
+                        className="border w-full  hover:bg-gray-300 rounded-full px-10 py-2  text-sm"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={handleRemoveMember}
                         type="button"
-                        className="border mt-4 lg:mt-0 mx-auto outline-none rounded-full px-10 py-2 bg-blue-600 hover:bg-blue-700 text-white text-md flex items-center gap-2"
+                        className="border w-full  rounded-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-md "
                       >
                         Remove
                       </button>

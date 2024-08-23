@@ -11,6 +11,7 @@ import {
 import { FcLeave } from "react-icons/fc";
 import Swal from "sweetalert2";
 import { IUser } from "@/interfaces/user.interface";
+import { GoHome } from "react-icons/go";
 
 const DashboardSidebar = () => {
   const { data } = useLoggedInUserQuery({});
@@ -33,6 +34,14 @@ const DashboardSidebar = () => {
 
   return (
     <ul className="flex flex-col gap-3">
+      <li className="w-full lg:hidden block">
+        <Link
+          className={`px-4 py-2 flex   items-center gap-2 text-xl   shadow-md w-full`}
+          href={"/"}
+        >
+          <GoHome />
+        </Link>
+      </li>
       <li className="w-full">
         <Link
           className={`px-4 py-2 flex   items-center gap-2 text-xl   shadow-md w-full`}
