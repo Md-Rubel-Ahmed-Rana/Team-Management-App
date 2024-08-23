@@ -13,7 +13,7 @@ const HowItWorksCard = ({ steps }: Props) => {
   return (
     <div
       data-aos="fade-up"
-      className="how-it-works-card p-6 rounded-lg shadow-md"
+      className="how-it-works-card p-2 lg:p-6 rounded-lg shadow-md"
     >
       <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500 text-white font-bold mb-4">
         {step}

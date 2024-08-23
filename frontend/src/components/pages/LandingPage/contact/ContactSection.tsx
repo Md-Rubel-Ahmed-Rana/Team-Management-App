@@ -41,12 +41,12 @@ const ContactSection = () => {
   };
 
   return (
-    <section className="py-16 px-5 text-center">
-      <h2 className="text-3xl font-bold mb-8">Contact Us</h2>
-      <p className="text-lg mb-8">
+    <section className="py-16 px-2 lg:px-5 text-center">
+      <h2 className="text-xl lg:text-3xl font-bold mb-2">Contact Us</h2>
+      <p className="text-sm lg:text-lg mb-8">
         Have questions or need assistance? Reach out to our team for support.
       </p>
-      <div className="max-w-md mx-auto bg-white p-5 rounded-md">
+      <div className="max-w-md mx-auto bg-white p-2 lg:p-5 rounded-md">
         <form onSubmit={handleSubmit(handleSendEmail)}>
           <div className="mb-4">
             <label htmlFor="name" className="block text-sm font-medium">
@@ -59,6 +59,7 @@ const ContactSection = () => {
               id="name"
               name="name"
               className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
+              placeholder="Enter your professional name"
             />
           </div>
           <div className="mb-4">
@@ -71,6 +72,7 @@ const ContactSection = () => {
               type="email"
               id="email"
               name="email"
+              placeholder="Enter your official email"
               className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
             />
           </div>
@@ -84,6 +86,7 @@ const ContactSection = () => {
               id="message"
               name="message"
               rows={4}
+              placeholder="Write your respective message here..."
               className="mt-1 p-2 w-full border rounded-md bg-white text-gray-800"
             ></textarea>
           </div>

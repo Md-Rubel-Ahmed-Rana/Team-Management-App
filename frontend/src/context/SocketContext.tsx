@@ -1,4 +1,4 @@
-import { baseApi } from "@/features/api";
+import { baseApi, cloudinaryApi } from "@/features/api";
 import { IContext } from "@/interfaces/context.interface";
 import { IMessage } from "@/interfaces/message.interface";
 import { ReactNode, createContext, useEffect, useState } from "react";
@@ -26,24 +26,23 @@ const SocketProvider = ({ children }: Props) => {
   const [refetchTask, setRefetchTask] = useState<any>(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch(`${baseApi}/auth`, {
-          method: "GET",
-          credentials: "include",
-        });
-        const data = await res.json();
-        setUser(data?.data);
-      } catch (error: any) {
-        toast.error(error.message);
-      }
-    };
-    fetchUser();
+    startServers(baseApi);
+    startServers(cloudinaryApi);
   }, []);
+
+  const startServers = async (url: string) => {
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      return data?.data;
+    } catch (error: any) {
+      toast.error(error?.message);
+    }
+  };
 
   useEffect(() => {
     if (user?.id) {
-      socket.emit("notification-room", user.id);
+      socket.emit("notification-room", user?.id);
     }
   }, [user]);
 

@@ -13,7 +13,7 @@ const TestimonialsSection = () => {
   // }, []);
 
   return (
-    <section ref={sectionRef} className="lg:p-16 p-4 text-center">
+    <section ref={sectionRef} className="lg:p-16 p-2 text-center">
       <h2 className="lg:text-3xl text-xl font-bold mb-8">
         See What Our Users Have to Say
       </h2>

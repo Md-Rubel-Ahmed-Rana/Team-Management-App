@@ -4,6 +4,7 @@ import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import TeamContainer from "../common/TeamContainer";
+import TeamSkeleton from "@/components/skeletons/TeamSkeleton";
 
 const MyTeams = () => {
   const { data: userData } = useLoggedInUserQuery({});
@@ -28,11 +29,7 @@ const MyTeams = () => {
         </div>
       </div>
       {isLoading ? (
-        <div className="text-center mt-10 h-screen">
-          <span className="text-lg lg:text-xl  bg-blue-500 px-5 py-3 text-white rounded-md font-semibold text-center">
-            Loading my teams...
-          </span>
-        </div>
+        <TeamSkeleton />
       ) : (
         <TeamContainer teams={teamData?.data || []} />
       )}
