@@ -14,7 +14,7 @@ const Payments = () => {
   return (
     <div className="w-[76vw]">
       <h3 className="text-xl font-bold mb-4">Payment History</h3>
-      {!isLoading ? (
+      {isLoading ? (
         <PaymentSkeleton />
       ) : (
         <>
