@@ -19,33 +19,30 @@ const InvitationSkeleton = () => {
       {loading && (
         <div className="grid grid-cols-1 w-full">
           {[1, 2, 3].map((invitation) => (
-            <>
-              <div
-                key={invitation}
-                className="border-gray-300 rounded-lg bg-white p-2 flex gap-4"
-              >
-                <Skeleton.Avatar active size={100} shape="circle" />
-                <div>
-                  <Skeleton
-                    active
-                    title={false}
-                    paragraph={{ rows: 2 }}
-                    className="w-[140px] lg:w-[500px]"
-                  />
-                  <Skeleton
-                    active
-                    title={false}
-                    paragraph={{ rows: 2 }}
-                    className="w-[140px] lg:w-[500px] mt-4"
-                  />
-                  <div className="flex justify-between mt-3 lg:gap-2">
-                    <Skeleton.Button active size="small" />
-                    <Skeleton.Button active size="small" />
-                  </div>
+            <div
+              key={invitation}
+              className="border-gray-300 border-b px-2 py-4  bg-white  flex gap-4"
+            >
+              <Skeleton.Avatar active size={100} shape="circle" />
+              <div>
+                <Skeleton
+                  active
+                  title={false}
+                  paragraph={{ rows: 2 }}
+                  className="w-[140px] lg:w-[500px]"
+                />
+                <Skeleton
+                  active
+                  title={false}
+                  paragraph={{ rows: 2 }}
+                  className="w-[140px] lg:w-[500px] mt-4"
+                />
+                <div className="flex justify-between mt-3 lg:gap-2">
+                  <Skeleton.Button active size="small" />
+                  <Skeleton.Button active size="small" />
                 </div>
               </div>
-              <hr className="my-4" />
-            </>
+            </div>
           ))}
         </div>
       )}

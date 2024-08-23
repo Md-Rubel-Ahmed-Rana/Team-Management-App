@@ -19,26 +19,23 @@ const PaymentSkeleton = () => {
       {loading && (
         <div className="grid grid-cols-1 w-full">
           {[1, 2, 3].map((invitation) => (
-            <>
-              <div
-                key={invitation}
-                className="border-gray-300 rounded-lg bg-white p-2"
-              >
-                <Skeleton
-                  active
-                  title={false}
-                  paragraph={{ rows: 3 }}
-                  className="w-[140px] lg:w-[500px]"
-                />
-                <Skeleton
-                  active
-                  title={false}
-                  paragraph={{ rows: 3 }}
-                  className="w-[140px] lg:w-[500px] mt-5"
-                />
-              </div>
-              <hr className="my-4" />
-            </>
+            <div
+              key={invitation}
+              className="border-gray-300 border-b px-2 py-3   bg-white  "
+            >
+              <Skeleton
+                active
+                title={false}
+                paragraph={{ rows: 3 }}
+                className="w-[140px] lg:w-[500px]"
+              />
+              <Skeleton
+                active
+                title={false}
+                paragraph={{ rows: 3 }}
+                className="w-[140px] lg:w-[500px] mt-5"
+              />
+            </div>
           ))}
         </div>
       )}

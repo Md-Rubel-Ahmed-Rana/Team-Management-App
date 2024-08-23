@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
+import validateFileSize from "@/utils/validateFileSize";
 
 const CreateTeamPage = () => {
   const { data }: any = useLoggedInUserQuery({});
@@ -61,6 +62,17 @@ const CreateTeamPage = () => {
     }
   };
 
+  const handleChangeTeamLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const isValidImageSize = validateFileSize(file);
+      if (isValidImageSize) {
+        setTeamLogo(file);
+        setValue("image", URL.createObjectURL(file));
+      }
+    }
+  };
+
   return (
     <div className="p-6 mx-auto max-w-2xl">
       <h3 className="text-xl font-bold mb-5">Create a new team</h3>
@@ -104,13 +116,7 @@ const CreateTeamPage = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setTeamLogo(file);
-                      setValue("image", URL.createObjectURL(file));
-                    }
-                  }}
+                  onChange={handleChangeTeamLogo}
                   className="w-full rounded-lg dark:text-white bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B] py-3 outline-none px-2 shadow-sm sm:text-sm"
                 />
                 {watch("image") && (

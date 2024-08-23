@@ -32,11 +32,11 @@ const SocketProvider = ({ children }: Props) => {
 
   const startServers = async (url: string) => {
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, { credentials: "include" });
       const data = await res.json();
       return data?.data;
     } catch (error: any) {
-      toast.error(error?.message);
+      console.error(error);
     }
   };
 
