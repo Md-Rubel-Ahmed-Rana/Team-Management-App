@@ -35,6 +35,12 @@ const MessagesPage = () => {
           height: 100%;
           margin: 0;
           overflow: hidden;
+          background-color: aliceblue;
+          color: rgba(0, 0, 0, 0.781);
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          width: 100%;
         }
       `}</style>
       <GetHead
