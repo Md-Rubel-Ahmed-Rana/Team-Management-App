@@ -98,7 +98,7 @@ const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
                         disabled={isLoading}
                         onClick={closeModal}
                         type="button"
-                        className={`w-full rounded-md lg:rounded-full py-1 lg:py-3 ${
+                        className={`w-full  rounded-full py-1 lg:py-3 ${
                           isLoading
                             ? "opacity-50 cursor-not-allowed bg-gray-400"
                             : ""
@@ -109,7 +109,7 @@ const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
                       <button
                         disabled={isLoading}
                         type="submit"
-                        className={`border w-full rounded-md lg:rounded-full py-1 lg:py-3 outline-none bg-blue-700 text-white text-md ${
+                        className={`border w-full  rounded-full py-1 lg:py-3 outline-none bg-blue-700 text-white text-md ${
                           isLoading
                             ? "opacity-50 cursor-not-allowed bg-gray-400"
                             : ""

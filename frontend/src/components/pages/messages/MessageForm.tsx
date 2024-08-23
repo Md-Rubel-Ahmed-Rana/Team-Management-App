@@ -13,6 +13,8 @@ import { useRouter } from "next/router";
 import MessageFilePreview from "./MessageFilePreview";
 import MessageImagesPreview from "./MessageImagesPreview";
 import SmallLoader from "@/components/shared/SmallLoader";
+import validateFileSize from "@/utils/validateFileSize";
+import addNewFileToState from "@/utils/addNewFileToState";
 
 type Inputs = {
   poster?: string;
@@ -94,22 +96,52 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    setImages(files);
-    if (files) {
-      const previewUrls = Array.from(files).map((file) =>
-        URL.createObjectURL(file)
-      );
-      setImagePreview((prev) => prev.concat(previewUrls));
+    const newImages = e.target.files;
+    if (newImages) {
+      let isFileValid = false;
+      Array.from(newImages).forEach((file) => {
+        const result = validateFileSize(file);
+        if (result) {
+          isFileValid = true;
+        } else {
+          isFileValid = false;
+        }
+      });
+      if (isFileValid) {
+        if (files) {
+          setImages((prev: any) => addNewFileToState(prev, newImages));
+        } else {
+          setImages(newImages);
+        }
+        const previewUrls = Array.from(newImages).map((file) =>
+          URL.createObjectURL(file)
+        );
+        setImagePreview((prev) => prev.concat(previewUrls));
+      }
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    setFiles(files);
-    if (files) {
-      const previewUrls = Array.from(files).map((file) => file.name);
-      setFilePreview((prev) => prev.concat(previewUrls));
+    const newFiles = e.target.files;
+    if (newFiles) {
+      let isFileValid = false;
+      Array.from(newFiles).forEach((file) => {
+        const result = validateFileSize(file);
+        if (result) {
+          isFileValid = true;
+        } else {
+          isFileValid = false;
+        }
+      });
+      if (isFileValid) {
+        if (files) {
+          setFiles((prev: any) => addNewFileToState(prev, newFiles));
+        } else {
+          setFiles(newFiles);
+        }
+        const previewUrls = Array.from(newFiles).map((file) => file.name);
+        setFilePreview((prev) => prev.concat(previewUrls));
+      }
     }
   };
 

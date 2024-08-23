@@ -79,7 +79,7 @@ const NotificationModal = ({
                 {notifications?.map((notification: INotification) => (
                   <>
                     <div
-                      key={Math.random()}
+                      key={notification.id.toString() + Math.random()}
                       className="flex flex-col gap-2 lg:shadow-lg lg:border p-2 lg:p-4 rounded-md"
                     >
                       <div className="flex justify-between items-center">
