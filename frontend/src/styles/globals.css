@@ -3,11 +3,12 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+html,
 body{
     font-family: 'Poppins', sans-serif;
     background-color: aliceblue;
     color: rgba(0, 0, 0, 0.781);
-    margin: 0px;
-    padding: 0x;
+    margin: 0%;
+    padding: 0%;
     box-sizing: border-box;
 }
