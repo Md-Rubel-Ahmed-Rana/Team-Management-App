@@ -8,10 +8,7 @@ import { useGetTasksByProjectQuery } from "@/features/task";
 
 const Column = ({ column, tasks, project }: any) => {
   const [isOpen, setIsOpen] = useState(false);
-
   const { data } = useGetTasksByProjectQuery(project?.id);
-
-  console.log(data?.data?.length);
 
   return (
     <div className="flex flex-col w-1/3">

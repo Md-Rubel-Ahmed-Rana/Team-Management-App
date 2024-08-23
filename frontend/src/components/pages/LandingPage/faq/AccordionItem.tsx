@@ -10,8 +10,10 @@ const AccordionItem = ({ data }: Props) => {
     <div>
       <div className="mb-4 collapse collapse-arrow">
         <input type="radio" name="my-accordion-2" />
-        <div className="collapse-title text-xl font-medium">{question}</div>
-        <div className="collapse-content">
+        <div className="collapse-title text-md lg:text-xl font-medium">
+          {question}
+        </div>
+        <div className="collapse-content text-sm">
           <p>{answer}</p>
         </div>
       </div>

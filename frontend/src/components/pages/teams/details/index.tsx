@@ -5,6 +5,7 @@ import TeamMembersContainer from "./TeamMembersContainer";
 import MemberCard from "./MemberCard";
 import TeamCardForDetail from "./TeamCardForDetail";
 import ProjectCardForTeamDetail from "./ProjectCardForTeamDetail";
+import TeamDetailsSkeleton from "@/components/skeletons/TeamDetailsSkeleton";
 
 const TeamDetails = () => {
   const { query } = useRouter();
@@ -14,11 +15,7 @@ const TeamDetails = () => {
   return (
     <div className="p-5">
       {isLoading ? (
-        <div className="text-center mt-10 h-screen">
-          <span className="text-lg lg:text-xl bg-blue-500 px-5 py-3 text-white rounded-md font-semibold">
-            Loading team details...
-          </span>
-        </div>
+        <TeamDetailsSkeleton />
       ) : (
         <div>
           {/* Team Info */}

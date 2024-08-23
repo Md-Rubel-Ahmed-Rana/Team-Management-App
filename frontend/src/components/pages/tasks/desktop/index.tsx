@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Column from "./Column";
 import { useGetSingleProjectQuery } from "@/features/project";
+import TaskSkeleton from "@/components/skeletons/TaskSkeleton";
 
 const TasksForDesktopView = () => {
   const { query } = useRouter();
@@ -57,16 +58,10 @@ const TasksForDesktopView = () => {
     await handleTaskOnDragEnd(result, tasks, setTasks, updateStatus);
   };
 
-  console.log({ tasks: data?.data?.length });
-
   return (
     <div>
       {isLoading ? (
-        <div className="text-center py-10">
-          <span className="text-lg lg:text-2xl text-white font-semibold bg-blue-600 px-5 py-2 rounded-md">
-            Tasks loading...
-          </span>
-        </div>
+        <TaskSkeleton />
       ) : (
         <div>
           <div className="px-2 mb-2">

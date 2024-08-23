@@ -8,16 +8,15 @@ import ProjectCard from "./ProjectCard";
 import { IProject } from "@/interfaces/project.interface";
 import { useState } from "react";
 import CreateProjectModal from "./modals/CreateProjectModal";
+import ProjectSkeleton from "@/components/skeletons/ProjectSkeleton";
 
 const ProjectsContainer = () => {
   const [isCreateNewProject, setIsCreateNewProject] = useState(false);
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const {
-    data: myProjects,
-    isLoading: myProjectLoading,
-    isSuccess,
-  } = useMyProjectsQuery(user?.id);
+  const { data: myProjects, isLoading: myProjectLoading } = useMyProjectsQuery(
+    user?.id
+  );
   const { data: assignedProjects, isLoading: assignedProjectLoading } =
     useAssignedProjectsQuery(user?.id);
   return (
@@ -33,11 +32,7 @@ const ProjectsContainer = () => {
           </button>
         </div>
         {myProjectLoading ? (
-          <div className="text-center py-10">
-            <span className="text-lg lg:text-2xl text-white font-semibold bg-blue-600 px-5 py-2 rounded-md">
-              Project loading...
-            </span>
-          </div>
+          <ProjectSkeleton />
         ) : (
           <>
             {myProjects?.data?.length > 0 ? (
@@ -66,11 +61,7 @@ const ProjectsContainer = () => {
           Assigned Projects
         </h1>
         {assignedProjectLoading ? (
-          <div className="text-center py-10">
-            <span className="text-lg lg:text-2xl text-white font-semibold bg-blue-600 px-5 py-2 rounded-md">
-              Project loading...
-            </span>
-          </div>
+          <ProjectSkeleton />
         ) : (
           <>
             {assignedProjects?.data?.length > 0 ? (

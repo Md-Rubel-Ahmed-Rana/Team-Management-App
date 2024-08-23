@@ -5,6 +5,7 @@ import { IMessage } from "@/interfaces/message.interface";
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import MessageCard from "./MessageCard";
+import MessageSkeleton from "@/components/skeletons/MessageSkeleton";
 
 interface Props {
   messageType: string;
@@ -46,7 +47,7 @@ const MessageContainer = ({ messageType }: Props) => {
   return (
     <>
       {isLoading ? (
-        <h2>Loading message</h2>
+        <MessageSkeleton />
       ) : (
         <>
           {realTimeMessages.length <= 0 ? (

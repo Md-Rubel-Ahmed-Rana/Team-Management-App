@@ -9,9 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.4.0",
     "@headlessui/react": "^1.7.15",
     "@reduxjs/toolkit": "^2.1.0",
     "@types/js-cookie": "^3.0.6",
+    "antd": "^5.20.2",
     "aos": "^2.3.4",
     "axios": "^1.4.0",
     "gsap": "^3.12.5",
