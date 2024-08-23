@@ -11,7 +11,9 @@ export default function Home() {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <HomePage />
+      <div className="w-12/212">
+        <HomePage />
+      </div>
     </main>
   );
 }

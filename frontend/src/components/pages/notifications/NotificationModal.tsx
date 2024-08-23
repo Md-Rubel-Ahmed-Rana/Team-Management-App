@@ -64,8 +64,8 @@ const NotificationModal = ({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="lg:w-[400px] mx-auto bg-white dark:bg-gray-400 dark:text-black rounded-xl p-6 text-left shadow-xl transition-all relative">
-              <div className="flex justify-between items-center mb-4">
+            <div className="w-[95%] lg:w-[400px] mx-auto bg-white dark:bg-gray-400 dark:text-black rounded-xl p-2 lg:p-6 text-left shadow-xl transition-all relative">
+              <div className="flex justify-between items-center mb-2 lg:mb-4">
                 <h1 className="text-xl font-bold">Notifications</h1>
                 <button
                   onClick={closeModal}
@@ -75,33 +75,39 @@ const NotificationModal = ({
                 </button>
               </div>
 
-              <div className="flex flex-col gap-4 w-full overflow-hidden hover:overflow-auto h-[450px] scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thumb-rounded-md scrollbar-track-slate-100 pr-1">
+              <div className="flex flex-col gap-2 lg:gap-4 w-full overflow-hidden hover:overflow-auto h-[450px] scrollbar scrollbar-w-[4px] scrollbar-thumb-blue-600 scrollbar-thumb-rounded-md scrollbar-track-slate-100 pr-1">
                 {notifications?.map((notification: INotification) => (
-                  <div
-                    key={Math.random()}
-                    className="flex flex-col gap-2 shadow-lg border p-4 rounded-md"
-                  >
-                    <div className="flex justify-between items-center">
-                      <h4 className="text-md font-semibold">
-                        {notification.content.title}
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        {moment(notification.createdAt).fromNow()}
-                      </p>
-                    </div>
+                  <>
+                    <div
+                      key={Math.random()}
+                      className="flex flex-col gap-2 lg:shadow-lg lg:border p-2 lg:p-4 rounded-md"
+                    >
+                      <div className="flex justify-between items-center">
+                        <h4 className="text-md font-semibold">
+                          {notification.content.title}
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          {moment(notification.createdAt).fromNow()}
+                        </p>
+                      </div>
 
-                    <p>{notification.content.message}</p>
-                    <p>Send by: {notification.content.data.sendBy}</p>
-                    <button onClick={closeModal} className="text-sm text-left">
-                      <Link
-                        href={notification.content.link}
-                        className="text-blue-600"
+                      <p>{notification.content.message}</p>
+                      <p>Send by: {notification.content.data.sendBy}</p>
+                      <button
+                        onClick={closeModal}
+                        className="text-sm text-left"
                       >
-                        View link
-                      </Link>
-                    </button>
-                    <p>{formattedDate(notification.createdAt)}</p>
-                  </div>
+                        <Link
+                          href={notification.content.link}
+                          className="text-blue-600"
+                        >
+                          View link
+                        </Link>
+                      </button>
+                      <p>{formattedDate(notification.createdAt)}</p>
+                    </div>
+                    <hr className="block lg:hidden" />
+                  </>
                 ))}
               </div>
 

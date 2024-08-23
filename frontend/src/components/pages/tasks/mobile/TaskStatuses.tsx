@@ -27,7 +27,7 @@ const TaskStatuses = ({ task }: Props) => {
       ? "Ongoing"
       : "Completed";
   return (
-    <div className="flex items-center gap-3 mt-2 bg-white">
+    <div className="flex items-center gap-3 mt-2">
       <p>Status: </p>
       <select
         onChange={(e) => handleChangeStatus(e.target.value)}

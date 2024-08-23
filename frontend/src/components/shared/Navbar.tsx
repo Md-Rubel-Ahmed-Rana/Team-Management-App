@@ -201,10 +201,10 @@ const Navbar = () => {
               <SmallLoader />
             </button>
           ) : (
-            <div className="w-[90%] flex lg:hidden rounded-md flex-col text-start gap-3 z-10 absolute top-20 p-3 shadow-lg bg-gray-100">
+            <div className="w-[95%] flex lg:hidden rounded-md flex-col text-start gap-3 p-2 z-10 absolute top-14 shadow-lg bg-gray-200">
               <Link
                 onClick={() => setToggle(false)}
-                className="text-start  w-full  bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                className="text-start  w-full  bg-gray-100 shadow-md rounded-sm px-2 py-1 text-md"
                 href="/"
               >
                 Home
@@ -212,14 +212,14 @@ const Navbar = () => {
               {!user?.email && (
                 <>
                   <Link
-                    className="text-start  w-full  bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    className="text-start  w-full  bg-gray-100 shadow-md rounded-sm px-2 py-1 text-md"
                     onClick={() => setToggle(false)}
                     href="/signup"
                   >
                     Signup
                   </Link>
                   <Link
-                    className="text-start  w-full  bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    className="text-start  w-full  bg-gray-100 shadow-md rounded-sm px-2 py-1 text-md"
                     onClick={() => setToggle(false)}
                     href="/login"
                   >
@@ -231,7 +231,7 @@ const Navbar = () => {
               {user?.email && (
                 <>
                   <Link
-                    className="text-start  w-full  bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    className="text-start  w-full  bg-gray-100 shadow-md rounded-sm px-2 py-1 text-md"
                     onClick={() => setToggle(false)}
                     href={`/my-teams?${queries}`}
                   >
@@ -239,20 +239,20 @@ const Navbar = () => {
                   </Link>
                   <Link
                     onClick={() => setToggle(false)}
-                    className="text-start  w-full  bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    className="text-start  w-full  bg-gray-100 shadow-md rounded-sm px-2 py-1 text-md"
                     href={`/joined-teams?${queries}`}
                   >
                     Joined Teams
                   </Link>
                   <Link
                     onClick={() => setToggle(false)}
-                    className="text-start  w-full  bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    className="text-start  w-full  bg-gray-100 shadow-md rounded-sm px-2 py-1 text-md"
                     href={`/projects?${queries}`}
                   >
                     Projects
                   </Link>
                   <button
-                    className="text-start  w-full  bg-gray-200 shadow-md rounded-md p-3 text-md font-semibold"
+                    className="text-start  w-full  bg-gray-100 shadow-md rounded-sm px-2 py-1 text-md"
                     onClick={handleLogOut}
                   >
                     Logout

@@ -12,7 +12,7 @@ type Props = {
 
 const FeaturesSection = ({ limit = 3, animation }: Props) => {
   return (
-    <section className="lg:py-16 p-4 text-center">
+    <section className="lg:py-16 p-2 text-center">
       <h2 className="lg:text-3xl text-xl font-bold mb-8">
         Powerful Features Tailored for Effective Team Management
       </h2>
