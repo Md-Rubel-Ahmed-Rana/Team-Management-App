@@ -108,16 +108,16 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="lg:w-[400px] mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 p-6 text-left  shadow-xl transition-all relative">
+              <Dialog.Panel className="w-[95vw] lg:w-[400px] h-auto mx-auto transform rounded-xl bg-orange-50 dark:bg-gray-600 p-2 lg:p-6 text-left  shadow-xl transition-all relative">
                 {/* modal content */}
                 <div className="mt-3">
                   {page === 1 && (
                     <>
                       <div>
-                        <h3 className="text-xl font-bold mb-8">
+                        <h3 className="text-md lg:text-xl font-bold mb-2">
                           Assign new member
                         </h3>
-                        <h5 className="text-lg font-semibold text-stone-400">
+                        <h5 className=" text-md lg:text-lg font-semibold text-stone-400">
                           Group member can
                         </h5>
                         <ul className="font-semibold mt-3">
@@ -127,18 +127,18 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
                           <li>4. Set clear goal.</li>
                         </ul>
                       </div>
-                      <div className="mt-5  lg:flex justify-between">
+                      <div className="mt-5 flex justify-between items-center gap-2 text-center">
                         <button
                           onClick={closeModal}
                           type="button"
-                          className="border-2 mx-auto outline-none border-black rounded-full px-10 py-2  text-sm flex items-center gap-2"
+                          className="border mx-auto outline-none rounded-full px-3 w-full    py-2  text-sm"
                         >
                           Cancel
                         </button>
                         <button
                           onClick={() => setPage((prev) => prev + 1)}
                           type="button"
-                          className="border mx-auto mt-4 lg:mt-0 outline-none rounded-full px-10 py-2 bg-blue-700 text-white text-md flex items-center gap-2"
+                          className="border mx-auto outline-none rounded-full px-3 w-full   py-2 bg-blue-700 text-white text-md"
                         >
                           {page === 1 ? "Continue" : "Add Member"}
                         </button>
@@ -147,11 +147,11 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
                   )}
                   {page === 2 && (
                     <div>
-                      <h3 className="text-lg font-bold mb-5">
+                      <h3 className="text-md lg:text-lg font-bold mb-5">
                         Who do you want to add new members
                       </h3>
                       <div className="relative w-full py-2">
-                        <p className="text-stone-500 dark:text-white mb-2">
+                        <p className="text-stone-500 mb-2">
                           Add new member to join group.
                         </p>
                         <Select
@@ -161,7 +161,7 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
                           }))}
                           styles={customStyles}
                           onChange={(user: any) => handleAddNewMember(user)}
-                          placeholder="Type a name to assign group member"
+                          placeholder="Type a member name"
                           className="mt-1 w-full"
                           classNamePrefix="select2-selection"
                           components={{
@@ -195,18 +195,18 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
                           </div>
                         )}
                       </div>
-                      <div className="mt-5 lg:flex justify-between">
+                      <div className="mt-5 flex justify-between gap-2">
                         <button
                           onClick={closeModal}
                           type="button"
-                          className="border-2 mx-auto outline-none border-black hover:bg-gray-300 rounded-full px-10 py-2  text-sm flex items-center gap-2"
+                          className="border-2  w-full  hover:bg-gray-300 rounded-full px-3 py-2  text-sm "
                         >
                           Cancel
                         </button>
                         <button
                           onClick={handleSendInvitation}
                           type="button"
-                          className="border mt-4 lg:mt-0 mx-auto outline-none rounded-full px-10 py-2 bg-blue-600 hover:bg-blue-700 text-white text-md flex items-center gap-2"
+                          className="border outline-none rounded-full px-3 w-full  py-2 bg-blue-600 hover:bg-blue-700 text-white text-md"
                         >
                           Invite
                         </button>

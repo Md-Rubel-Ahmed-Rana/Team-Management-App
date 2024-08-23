@@ -27,8 +27,8 @@ const ProjectCard = ({ project }: Props) => {
   return (
     <>
       <div className="border border-gray-500 p-2 lg:p-5 rounded-md flex flex-col justify-between gap-1">
-        <div className="font-semibold flex justify-between items-start relative">
-          <span>{name}</span>
+        <div className="flex justify-between items-start relative">
+          <span className="font-semibold">{name}</span>
           <BsThreeDotsVertical
             onClick={() => setShowActions((prev) => !prev)}
             title="Click to edit/delete project"
