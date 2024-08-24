@@ -2,6 +2,7 @@ import getCroppedImg from "@/utils/getCroppedImage";
 import { Dialog, Transition } from "@headlessui/react";
 import React, { useState, useCallback, Fragment } from "react";
 import Cropper from "react-easy-crop";
+import toast from "react-hot-toast";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { MdOutlineRotateLeft, MdOutlineRotateRight } from "react-icons/md";
 
@@ -23,6 +24,7 @@ const ImageCropperModal = ({
   const [rotation, setRotation] = useState(0);
   const [image, setImage] = useState<any>(null);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (uploadedImage && !image) {
     const reader = new FileReader();
@@ -48,6 +50,7 @@ const ImageCropperModal = ({
   };
 
   const saveCroppedImage = useCallback(async () => {
+    setIsLoading(true);
     try {
       const croppedImg: File = await getCroppedImg(
         image,
@@ -56,8 +59,14 @@ const ImageCropperModal = ({
       );
       setCroppedImage(croppedImg);
       setIsOpen(false);
-    } catch (e) {
-      console.error(e);
+      setIsLoading(false);
+    } catch (error: any) {
+      setIsLoading(false);
+      toast.error(`Image wasn't cropped: ${error?.message}`);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+      setIsOpen(false);
     }
   }, [image, croppedAreaPixels, rotation]);
 
@@ -176,16 +185,24 @@ const ImageCropperModal = ({
 
                   <div className="mt-4 flex justify-between gap-3">
                     <button
-                      className="w-full lg:w-auto px-2 lg:px-5 py-2 lg:py-3 rounded-lg  border bg-slate-500 hover:bg-slate-600 text-white"
+                      disabled={isLoading}
+                      className={`w-full lg:w-auto px-2 lg:px-5 py-2 lg:py-3 rounded-lg  border bg-slate-500 hover:bg-slate-600 ${
+                        isLoading ? "cursor-not-allowed" : ""
+                      } text-white`}
                       onClick={closeModal}
                     >
-                      Don't crop
+                      {isLoading ? "Loading..." : "Don't crop"}
                     </button>
                     <button
-                      className="w-full lg:w-auto px-2 lg:px-10 py-2 lg:py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                      disabled={isLoading}
+                      className={`w-full lg:w-auto px-2 lg:px-10 py-2 lg:py-3 rounded-lg ${
+                        isLoading
+                          ? "bg-gray-500 hover:bg-gray-600 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-700"
+                      } text-white`}
                       onClick={saveCroppedImage}
                     >
-                      Save
+                      {isLoading ? "Saving cropped..." : "Save"}
                     </button>
                   </div>
                 </div>

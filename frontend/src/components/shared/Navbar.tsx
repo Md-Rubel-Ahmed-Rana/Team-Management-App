@@ -17,8 +17,8 @@ const Navbar = () => {
   const { socket }: any = useContext(SocketContext);
   const { data, isLoading: isUserLoading } = useLoggedInUserQuery({});
   const user: IUser = data?.data;
-  const [logout] = useLogoutUserMutation({});
   const queries = `userId=${user?.id}&name=${user?.name}&email=${user?.email}`;
+  const [logout] = useLogoutUserMutation({});
   const [isOpen, setIsOpen] = useState(false);
   const [toggle, setToggle] = useState(false);
   const { data: notifiedData } = useGetNotificationQuery(user?.id);
@@ -56,7 +56,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="lg:flex justify-between items-center lg:px-5 py-5  relative">
+    <nav className="lg:flex justify-between items-center lg:px-5 py-3 lg:py-5 border-b relative">
       <div>
         <Link className="lg:flex hidden  items-center gap-3" href={"/"}>
           <img
@@ -201,7 +201,7 @@ const Navbar = () => {
               <SmallLoader />
             </button>
           ) : (
-            <div className="w-[95%] flex lg:hidden rounded-md flex-col text-start gap-3 p-2 z-10 absolute top-14 shadow-lg bg-gray-200">
+            <div className="w-auto flex lg:hidden rounded-md flex-col text-start gap-3 p-2 z-10 absolute top-12 left-0 shadow-lg bg-gray-200">
               <Link
                 onClick={() => setToggle(false)}
                 className="text-start  w-full  bg-gray-100 shadow-md rounded-sm px-2 py-1 text-md"

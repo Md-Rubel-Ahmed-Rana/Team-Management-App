@@ -87,7 +87,7 @@ const TeamDeleteModal = ({
           >
             <div className="w-[95vw] lg:w-[400px] mx-auto bg-white dark:bg-gray-400 dark:text-black rounded-xl p-6 text-left shadow-xl transition-all relative">
               <div className="flex justify-between items-center mb-4">
-                <h1 className="text-xl font-bold">Delete {teamName}</h1>
+                <h1 className="text-xl font-bold">Delete {`'${teamName}'`}</h1>
                 <button
                   onClick={closeModal}
                   className="text-gray-500 hover:text-gray-700"
