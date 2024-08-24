@@ -63,9 +63,12 @@ const ImageCropperModal = ({
       setIsLoading(false);
     } catch (error: any) {
       setIsLoading(false);
-      toast.error(`Image wasn't cropped: ${error?.message}`);
+      toast.error(`Image wasn't cropped: ${error?.message}`, {
+        duration: 5000,
+      });
       toast.error(
-        "Image too large. Your device may not has enough space to precess image cropping."
+        "Image too large. Your device may not has enough space to precess image cropping. Original image will be used.",
+        { duration: 10000 }
       );
       console.dir(error);
     } finally {
