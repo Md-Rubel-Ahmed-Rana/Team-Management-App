@@ -1,3 +1,4 @@
+import isAuthenticate from "@/components/HOC/isAuthenticate";
 import TeamEditPage from "@/components/pages/teams/editTeam";
 import RootLayout from "@/layout/RootLayout";
 import GetHead from "@/utils/Head";
@@ -14,13 +15,15 @@ const EditTeam: NextPageWithLayout = () => {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <TeamEditPage />
+      <div className="max-w-[1280px] w-full mx-auto">
+        <TeamEditPage />
+      </div>
     </>
   );
 };
 
-export default EditTeam;
-
 EditTeam.getLayout = function (page: ReactElement) {
   return <RootLayout>{page}</RootLayout>;
 };
+
+export default isAuthenticate(EditTeam);
