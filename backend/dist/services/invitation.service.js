@@ -66,6 +66,17 @@ class Service {
             }
         });
     }
+    cancelInvitation(teamId, memberId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield team_model_1.default.findByIdAndUpdate(teamId, {
+                $pull: { pendingMembers: memberId },
+            }, { new: true });
+            if (result && (result === null || result === void 0 ? void 0 : result.admin)) {
+                const notified = yield notification_service_1.NotificationService.sendNotification(result === null || result === void 0 ? void 0 : result.admin, memberId, "team_invitation", "Team Invitation", `Your team invitation has been cancelled for (${result === null || result === void 0 ? void 0 : result.name})`, `dashboard/invitations?uId=${result === null || result === void 0 ? void 0 : result._id}&activeView=my-teams`);
+                return notified;
+            }
+        });
+    }
     acceptInvitation(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield team_model_1.default.findByIdAndUpdate(teamId, {

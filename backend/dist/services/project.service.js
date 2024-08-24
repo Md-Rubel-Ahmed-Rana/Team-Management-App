@@ -28,6 +28,7 @@ const delete_1 = require("@/dto/project/delete");
 const team_service_1 = require("./team.service");
 const user_service_1 = require("./user.service");
 const task_service_1 = require("./task.service");
+const mongoose_1 = __importDefault(require("mongoose"));
 class Service {
     createProject(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -114,14 +115,53 @@ class Service {
     }
     deleteProject(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield project_model_1.Project.findByIdAndDelete(id);
-            const mappedData = mapper_1.mapper.map(result, project_entity_1.ProjectEntity, delete_1.DeleteProjectDTO);
-            return mappedData;
+            const session = yield mongoose_1.default.startSession();
+            session.startTransaction();
+            try {
+                const result = yield project_model_1.Project.findByIdAndDelete(id).session(session);
+                const mappedData = mapper_1.mapper.map(result, project_entity_1.ProjectEntity, delete_1.DeleteProjectDTO);
+                yield task_service_1.TaskService.deleteTasksByProjectId(id, session);
+                yield session.commitTransaction();
+                return mappedData;
+            }
+            catch (error) {
+                yield session.abortTransaction();
+                throw new apiError_1.default(http_status_1.default.BAD_REQUEST, "Team was't not deleted");
+            }
+            finally {
+                session.endSession();
+            }
+        });
+    }
+    deleteProjectsByTeamId(teamId, session) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deletableProjects = yield project_model_1.Project.find({ team: teamId }).session(session);
+            if (deletableProjects && deletableProjects.length > 0) {
+                for (const project of deletableProjects) {
+                    const projectId = project === null || project === void 0 ? void 0 : project._id;
+                    const deletedTask = yield task_service_1.TaskService.deleteTasksByProjectId(projectId, session);
+                    console.log({ deletedTask });
+                }
+                const deletedProjects = yield project_model_1.Project.deleteMany({
+                    team: teamId,
+                }).session(session);
+                console.log({ deletedProjects });
+                return deletedProjects;
+            }
+            else {
+                return false;
+            }
         });
     }
     getProjectByTeamId(teamId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield project_model_1.Project.find({ team: teamId });
+            return yield project_model_1.Project.find({ team: teamId }).populate([
+                {
+                    path: "members",
+                    model: "User",
+                    select: { name: 1 },
+                },
+            ]);
         });
     }
     getSingleProject(id) {

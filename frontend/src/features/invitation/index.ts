@@ -29,6 +29,13 @@ const invitationApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["team", "invitation"] as any,
     }),
+    cancelPendingInvitation: builder.mutation({
+      query: ({ teamId, memberId }) => ({
+        url: `/invitation/cancel/${teamId}/${memberId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["team"] as any,
+    }),
   }),
 });
 
@@ -37,4 +44,5 @@ export const {
   useAcceptInvitationMutation,
   useRejectInvitationMutation,
   usePendingInvitationsQuery,
+  useCancelPendingInvitationMutation,
 } = invitationApi;

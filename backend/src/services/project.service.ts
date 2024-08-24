@@ -16,6 +16,7 @@ import { DeleteProjectDTO } from "@/dto/project/delete";
 import { TeamService } from "./team.service";
 import { UserService } from "./user.service";
 import { TaskService } from "./task.service";
+import mongoose from "mongoose";
 
 class Service {
   async createProject(data: IProject): Promise<CreateProjectDTO> {
@@ -118,17 +119,62 @@ class Service {
   }
 
   async deleteProject(id: string): Promise<DeleteProjectDTO | null> {
-    const result = await Project.findByIdAndDelete(id);
-    const mappedData = mapper.map(
-      result,
-      ProjectEntity as ModelIdentifier,
-      DeleteProjectDTO
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const result = await Project.findByIdAndDelete(id).session(session);
+      const mappedData = mapper.map(
+        result,
+        ProjectEntity as ModelIdentifier,
+        DeleteProjectDTO
+      );
+      await TaskService.deleteTasksByProjectId(id, session);
+      await session.commitTransaction();
+      return mappedData;
+    } catch (error) {
+      await session.abortTransaction();
+      throw new ApiError(httpStatus.BAD_REQUEST, "Team was't not deleted");
+    } finally {
+      session.endSession();
+    }
+  }
+
+  async deleteProjectsByTeamId(
+    teamId: string,
+    session: mongoose.ClientSession
+  ): Promise<any> {
+    const deletableProjects = await Project.find({ team: teamId }).session(
+      session
     );
-    return mappedData;
+
+    if (deletableProjects && deletableProjects.length > 0) {
+      for (const project of deletableProjects) {
+        const projectId: any = project?._id;
+        const deletedTask = await TaskService.deleteTasksByProjectId(
+          projectId,
+          session
+        );
+        console.log({ deletedTask });
+      }
+
+      const deletedProjects = await Project.deleteMany({
+        team: teamId,
+      }).session(session);
+      console.log({ deletedProjects });
+      return deletedProjects;
+    } else {
+      return false;
+    }
   }
 
   async getProjectByTeamId(teamId: string): Promise<any> {
-    return await Project.find({ team: teamId });
+    return await Project.find({ team: teamId }).populate([
+      {
+        path: "members",
+        model: "User",
+        select: { name: 1 },
+      },
+    ]);
   }
 
   async getSingleProject(id: string): Promise<GetProjectDTO | null> {

@@ -99,14 +99,6 @@ const teamApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["team"] as any,
     }),
-    cancelPendingInvitation: builder.mutation({
-      query: (data) => ({
-        url: "/cancel-invitation",
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: ["team"] as any,
-    }),
 
     ignoreTeamLeaveRequest: builder.mutation({
       query: (requestId) => ({
@@ -148,5 +140,4 @@ export const {
   useGetMyTeamsCardQuery,
   useGetJoinedTeamsCardQuery,
   useGetTeamDetailsQuery,
-  useCancelPendingInvitationMutation,
 } = teamApi;

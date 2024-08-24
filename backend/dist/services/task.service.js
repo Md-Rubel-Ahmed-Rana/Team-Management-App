@@ -117,5 +117,11 @@ class Service {
             return mappedData;
         });
     }
+    deleteTasksByProjectId(projectId, session) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield task_model_1.Task.deleteMany({ project: projectId }).session(session);
+            return result;
+        });
+    }
 }
 exports.TaskService = new Service();

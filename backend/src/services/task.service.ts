@@ -9,6 +9,7 @@ import { CreateTaskDTO } from "@/dto/task/create";
 import { UpdateTaskDTO } from "@/dto/task/update";
 import { DeleteTaskDTO } from "@/dto/task/delete";
 import { INotification } from "@/interfaces/notification.interface";
+import mongoose from "mongoose";
 
 type ICreateTask = {
   notification: INotification | undefined;
@@ -155,6 +156,15 @@ class Service {
     );
 
     return mappedData;
+  }
+  async deleteTasksByProjectId(
+    projectId: string,
+    session: mongoose.ClientSession
+  ): Promise<any> {
+    const result = await Task.deleteMany({ project: projectId }).session(
+      session
+    );
+    return result;
   }
 }
 export const TaskService = new Service();

@@ -18,8 +18,10 @@ const PendingInvitation = () => {
   const { data: userData }: any = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const { data, isLoading } = usePendingInvitationsQuery(user?.id);
-  const [acceptInvitation] = useAcceptInvitationMutation();
-  const [rejectInvitation] = useRejectInvitationMutation();
+  const [acceptInvitation, { isLoading: isAccepting }] =
+    useAcceptInvitationMutation();
+  const [rejectInvitation, { isLoading: isRejecting }] =
+    useRejectInvitationMutation();
 
   const handleAcceptInvitation = async (teamId: string) => {
     const result: any = await acceptInvitation({
@@ -118,16 +120,26 @@ const PendingInvitation = () => {
                     </p>
                     <div className="flex  items-center gap-3">
                       <button
+                        disabled={isAccepting || isRejecting}
                         onClick={() => handleAcceptInvitation(id)}
-                        className="px-5 py-2 rounded-md border bg-blue-600 text-white w-full lg:w-auto"
+                        className={`px-5 py-2 rounded-md border ${
+                          isAccepting || isRejecting
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-blue-600"
+                        } text-white w-full lg:w-auto`}
                       >
-                        Accept
+                        {isAccepting ? "Accepting..." : "Accept"}
                       </button>
                       <button
+                        disabled={isAccepting || isRejecting}
                         onClick={() => handleRejectInvitation(id)}
-                        className="px-5 py-2 rounded-md border bg-blue-600 text-white w-full lg:w-auto"
+                        className={`px-5 py-2 rounded-md border ${
+                          isAccepting || isRejecting
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-blue-600"
+                        } text-white w-full lg:w-auto`}
                       >
-                        Reject
+                        {isRejecting ? "Rejecting..." : "Reject"}
                       </button>
                     </div>
                   </div>

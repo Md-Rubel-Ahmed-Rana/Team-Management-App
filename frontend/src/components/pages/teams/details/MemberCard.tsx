@@ -1,7 +1,5 @@
-import {
-  useCancelPendingInvitationMutation,
-  useRemoveTeamMemberMutation,
-} from "@/features/team";
+import { useCancelPendingInvitationMutation } from "@/features/invitation";
+import { useRemoveTeamMemberMutation } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import { ITeamDetailsMember } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";

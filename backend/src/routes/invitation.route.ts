@@ -11,4 +11,6 @@ router.post("/reject/:teamId/:memberId", InvitationController.rejectInvitation);
 
 router.post("/accept/:teamId/:memberId", InvitationController.acceptInvitation);
 
+router.post("/cancel/:teamId/:memberId", InvitationController.cancelInvitation);
+
 export const InvitationRoutes = router;

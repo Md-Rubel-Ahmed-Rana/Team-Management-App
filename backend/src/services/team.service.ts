@@ -14,7 +14,7 @@ import { UserEntity } from "@/entities/user.entity";
 import { GetUserDTO } from "@/dto/user/get";
 import { UpdateTeamDTO } from "@/dto/team/update";
 import { DeleteTeamDTO } from "@/dto/team/delete";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { ProjectService } from "./project.service";
 
 class Service {
@@ -307,19 +307,33 @@ class Service {
     return mappedData;
   }
 
-  async deleteTeam(id: string): Promise<DeleteTeamDTO | null> {
-    const result = await Team.findByIdAndDelete(id);
+  async deleteTeam(id: string): Promise<any> {
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    if (!result) {
-      throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
+    try {
+      const result = await Team.findByIdAndDelete(id).session(session);
+
+      if (!result) {
+        throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
+      }
+
+      await ProjectService.deleteProjectsByTeamId(id, session);
+
+      const mappedData = mapper.map(
+        result,
+        TeamEntity as ModelIdentifier,
+        DeleteTeamDTO
+      );
+
+      await session.commitTransaction();
+      return mappedData;
+    } catch (error) {
+      await session.abortTransaction();
+      throw new ApiError(httpStatus.BAD_REQUEST, "Team was't not deleted");
+    } finally {
+      session.endSession();
     }
-
-    const mappedData = mapper.map(
-      result,
-      TeamEntity as ModelIdentifier,
-      DeleteTeamDTO
-    );
-    return mappedData;
   }
 
   async removeMember(teamId: string, memberId: string): Promise<void> {

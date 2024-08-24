@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -27,7 +50,7 @@ const user_entity_1 = require("@/entities/user.entity");
 const get_2 = require("@/dto/user/get");
 const update_1 = require("@/dto/team/update");
 const delete_1 = require("@/dto/team/delete");
-const mongoose_1 = require("mongoose");
+const mongoose_1 = __importStar(require("mongoose"));
 const project_service_1 = require("./project.service");
 class Service {
     createTeam(data) {
@@ -293,12 +316,25 @@ class Service {
     }
     deleteTeam(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield team_model_1.default.findByIdAndDelete(id);
-            if (!result) {
-                throw new apiError_1.default(http_status_1.default.NOT_FOUND, "Team Not Found!");
+            const session = yield mongoose_1.default.startSession();
+            session.startTransaction();
+            try {
+                const result = yield team_model_1.default.findByIdAndDelete(id).session(session);
+                if (!result) {
+                    throw new apiError_1.default(http_status_1.default.NOT_FOUND, "Team Not Found!");
+                }
+                yield project_service_1.ProjectService.deleteProjectsByTeamId(id, session);
+                const mappedData = mapper_1.mapper.map(result, team_entity_1.TeamEntity, delete_1.DeleteTeamDTO);
+                yield session.commitTransaction();
+                return mappedData;
             }
-            const mappedData = mapper_1.mapper.map(result, team_entity_1.TeamEntity, delete_1.DeleteTeamDTO);
-            return mappedData;
+            catch (error) {
+                yield session.abortTransaction();
+                throw new apiError_1.default(http_status_1.default.BAD_REQUEST, "Team was't not deleted");
+            }
+            finally {
+                session.endSession();
+            }
         });
     }
     removeMember(teamId, memberId) {
