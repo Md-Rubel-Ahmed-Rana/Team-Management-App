@@ -39,6 +39,18 @@ class Controller extends RootController {
     });
   });
 
+  cancelInvitation = this.catchAsync(async (req: Request, res: Response) => {
+    const teamId = req.params.teamId;
+    const memberId = req.params.memberId;
+    const result = await InvitationService.cancelInvitation(teamId, memberId);
+    this.apiResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Invitation cancelled successfully!",
+      data: result,
+    });
+  });
+
   acceptInvitation = this.catchAsync(async (req: Request, res: Response) => {
     const teamId = req.params.teamId;
     const memberId = req.params.memberId;

@@ -88,7 +88,7 @@ const ProjectCard = ({ project }: Props) => {
           isOpen={isAddMember}
           setIsOpen={setIsAddMember}
           projectId={project.id}
-          teamId={project.team}
+          teamId={project?.team?.id}
         />
       )}
 
@@ -97,7 +97,7 @@ const ProjectCard = ({ project }: Props) => {
           isRemove={isRemoveMember}
           setIsRemove={setIsRemoveMember}
           projectId={project.id}
-          teamId={project.team}
+          teamId={project?.team?.id}
         />
       )}
     </>

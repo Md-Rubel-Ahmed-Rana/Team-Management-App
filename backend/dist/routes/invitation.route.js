@@ -8,4 +8,5 @@ router.post("/send/:teamId/:memberId", invitation_controller_1.InvitationControl
 router.get("/pending/:memberId", invitation_controller_1.InvitationController.pendingInvitation);
 router.post("/reject/:teamId/:memberId", invitation_controller_1.InvitationController.rejectInvitation);
 router.post("/accept/:teamId/:memberId", invitation_controller_1.InvitationController.acceptInvitation);
+router.post("/cancel/:teamId/:memberId", invitation_controller_1.InvitationController.cancelInvitation);
 exports.InvitationRoutes = router;

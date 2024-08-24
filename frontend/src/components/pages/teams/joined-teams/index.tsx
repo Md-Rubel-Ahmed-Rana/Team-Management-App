@@ -9,6 +9,7 @@ const JoinedTeams = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
   const { data: teamData, isLoading } = useGetJoinedTeamsCardQuery(user?.id);
+  console.log({ JoinedTeams: teamData });
   return (
     <section className="p-5">
       <div className="lg:flex justify-between">
