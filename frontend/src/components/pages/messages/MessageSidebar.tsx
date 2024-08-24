@@ -35,8 +35,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 <button
                   title="Discussion"
                   className={`${
-                    activeChannel === "discussion" &&
-                    "bg-gray-100 dark:bg-gray-600"
+                    activeChannel === "discussion" && "bg-blue-600 text-white"
                   }   px-4 py-2 lg:py-3 flex  items-center gap-2 text-xl text-gray-700 shadow-md w-full`}
                   onClick={() => setActiveChannel("discussion")}
                 >
@@ -49,8 +48,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                   title="Announcement"
                   onClick={() => setActiveChannel("announcement")}
                   className={`${
-                    activeChannel === "announcement" &&
-                    "bg-gray-100 dark:bg-gray-600"
+                    activeChannel === "announcement" && "bg-blue-600 text-white"
                   }   px-4  py-2 lg:py-3 flex items-center gap-2 text-xl text-gray-700 shadow-md w-full`}
                 >
                   <TbSpeakerphone />
@@ -61,8 +59,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 <button
                   title="Resources"
                   className={`${
-                    activeChannel === "resources" &&
-                    "bg-gray-100 dark:bg-gray-600"
+                    activeChannel === "resources" && "bg-blue-600 text-white"
                   }   px-4  py-2 lg:py-3 flex   items-center gap-2 text-xl text-gray-700 shadow-md w-full`}
                   onClick={() => setActiveChannel("resources")}
                 >
@@ -71,7 +68,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 </button>
               </li>
             </ul>
-            <div className="mb-4 lg:mb-0">
+            <div className="mb-16 lg:mb-0">
               <ul className="flex flex-col justify-between gap-3">
                 <li className="w-full">
                   <Link
