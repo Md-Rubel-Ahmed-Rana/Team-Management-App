@@ -1,3 +1,4 @@
+import isAuthenticate from "@/components/HOC/isAuthenticate";
 import CheckoutPage from "@/components/pages/checkout/Checkout";
 import RootLayout from "@/layout/RootLayout";
 import GetHead from "@/utils/Head";
@@ -17,8 +18,8 @@ const CheckoutRoute: NextPageWithLayout = () => {
   );
 };
 
-export default CheckoutRoute;
-
 CheckoutRoute.getLayout = function (page: ReactElement) {
   return <RootLayout>{page}</RootLayout>;
 };
+
+export default isAuthenticate(CheckoutRoute);

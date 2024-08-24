@@ -14,7 +14,7 @@ const DashboardLayout = ({ children }: Props) => {
         </div>
       }
     >
-      <div className="flex gap-2">
+      <div className="flex gap-2 max-w-[1280px] w-full mx-auto mt-5">
         <div className="w-1/5">
           <DashboardSidebar />
         </div>

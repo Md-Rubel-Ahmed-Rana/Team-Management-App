@@ -5,16 +5,16 @@ import { ReactElement } from "react";
 
 export default function Home() {
   return (
-    <main>
+    <>
       <GetHead
         title="Home: Team Manager"
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <div className="w-12/212">
+      <div className="max-w-[1280px] w-full mx-auto">
         <HomePage />
       </div>
-    </main>
+    </>
   );
 }
 

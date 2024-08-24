@@ -21,7 +21,7 @@ const JoinedTeams = () => {
         <div>
           <Link
             href={"/create-team"}
-            className="flex items-center mt-3 lg:mt-0 gap-2  border px-5 py-2 rounded-md"
+            className="flex items-center mt-3 lg:mt-0 gap-2 bg-blue-600 hover:bg-blue-700 text-white  border px-5 py-2 rounded-md"
           >
             <FaPlus /> <small>Create a team</small>
           </Link>

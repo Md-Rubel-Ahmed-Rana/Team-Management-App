@@ -1,3 +1,4 @@
+import isAuthenticate from "@/components/HOC/isAuthenticate";
 import Payments from "@/components/pages/dashboard/payment/PaymentPage";
 import DashboardLayout from "@/layout/DashboardLayout";
 import RootLayout from "@/layout/RootLayout";
@@ -17,8 +18,6 @@ const PaymentsPage = () => {
   );
 };
 
-export default PaymentsPage;
-
 PaymentsPage.getLayout = function (page: ReactElement) {
   return (
     <RootLayout>
@@ -26,3 +25,5 @@ PaymentsPage.getLayout = function (page: ReactElement) {
     </RootLayout>
   );
 };
+
+export default isAuthenticate(PaymentsPage);

@@ -19,10 +19,13 @@ const TeamLeaveRequest = () => {
         <LeaveRequestSkeleton />
       ) : (
         <>
-          {requests?.length > 0 &&
+          {requests?.length > 0 ? (
             requests?.map((request: any) => (
               <LeaveRequestCard key={request?.id} data={request} />
-            ))}
+            ))
+          ) : (
+            <p>No leave requests</p>
+          )}
         </>
       )}
     </div>
