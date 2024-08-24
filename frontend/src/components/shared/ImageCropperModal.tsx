@@ -1,4 +1,5 @@
 import getCroppedImg from "@/utils/getCroppedImage";
+import { resizeImage } from "@/utils/resizeImage";
 import { Dialog, Transition } from "@headlessui/react";
 import React, { useState, useCallback, Fragment } from "react";
 import Cropper from "react-easy-crop";
@@ -52,8 +53,9 @@ const ImageCropperModal = ({
   const saveCroppedImage = useCallback(async () => {
     setIsLoading(true);
     try {
+      const resizedImage = await resizeImage(image);
       const croppedImg: File = await getCroppedImg(
-        image,
+        resizedImage,
         croppedAreaPixels,
         rotation
       );
