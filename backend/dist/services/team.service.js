@@ -52,6 +52,8 @@ const update_1 = require("@/dto/team/update");
 const delete_1 = require("@/dto/team/delete");
 const mongoose_1 = __importStar(require("mongoose"));
 const project_service_1 = require("./project.service");
+const getCloudinaryFilePublicIdFromUrl_1 = __importDefault(require("@/utils/getCloudinaryFilePublicIdFromUrl"));
+const deletePreviousFileFromCloudinary_1 = require("@/utils/deletePreviousFileFromCloudinary");
 class Service {
     createTeam(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -319,6 +321,13 @@ class Service {
             const session = yield mongoose_1.default.startSession();
             session.startTransaction();
             try {
+                const getTeam = yield team_model_1.default.findById(id);
+                if (getTeam) {
+                    const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(getTeam === null || getTeam === void 0 ? void 0 : getTeam.image);
+                    if (public_id) {
+                        yield (0, deletePreviousFileFromCloudinary_1.deleteSingleFileFromCloudinary)(public_id);
+                    }
+                }
                 const result = yield team_model_1.default.findByIdAndDelete(id).session(session);
                 if (!result) {
                     throw new apiError_1.default(http_status_1.default.NOT_FOUND, "Team Not Found!");

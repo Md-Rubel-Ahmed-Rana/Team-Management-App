@@ -16,6 +16,8 @@ import { UpdateTeamDTO } from "@/dto/team/update";
 import { DeleteTeamDTO } from "@/dto/team/delete";
 import mongoose, { Types } from "mongoose";
 import { ProjectService } from "./project.service";
+import extractCloudinaryPublicId from "@/utils/getCloudinaryFilePublicIdFromUrl";
+import { deleteSingleFileFromCloudinary } from "@/utils/deletePreviousFileFromCloudinary";
 
 class Service {
   async createTeam(data: ITeam): Promise<CreateTeamDTO> {
@@ -312,6 +314,14 @@ class Service {
     session.startTransaction();
 
     try {
+      const getTeam = await Team.findById(id);
+      if (getTeam) {
+        const public_id = extractCloudinaryPublicId(getTeam?.image);
+        if (public_id) {
+          await deleteSingleFileFromCloudinary(public_id);
+        }
+      }
+
       const result = await Team.findByIdAndDelete(id).session(session);
 
       if (!result) {
