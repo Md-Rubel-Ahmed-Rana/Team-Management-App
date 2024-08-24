@@ -1,5 +1,4 @@
 import getCroppedImg from "@/utils/getCroppedImage";
-import { resizeImage } from "@/utils/resizeImage";
 import { Dialog, Transition } from "@headlessui/react";
 import React, { useState, useCallback, Fragment } from "react";
 import Cropper from "react-easy-crop";
@@ -53,19 +52,22 @@ const ImageCropperModal = ({
   const saveCroppedImage = useCallback(async () => {
     setIsLoading(true);
     try {
-      const resizedImage = await resizeImage(image);
       const croppedImg: File = await getCroppedImg(
-        resizedImage,
+        image,
         croppedAreaPixels,
         rotation
       );
+      console.log("After cropped", croppedImg);
       setCroppedImage(croppedImg);
       setIsOpen(false);
       setIsLoading(false);
     } catch (error: any) {
       setIsLoading(false);
       toast.error(`Image wasn't cropped: ${error?.message}`);
-      console.error(error);
+      toast.error(
+        "Image too large. Your device may not has enough space to precess image cropping."
+      );
+      console.dir(error);
     } finally {
       setIsLoading(false);
       setIsOpen(false);
