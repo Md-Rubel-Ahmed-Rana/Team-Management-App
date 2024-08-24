@@ -56,7 +56,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="lg:flex justify-between items-center lg:px-5 py-3 lg:py-5 border-b relative">
+    <nav className="lg:flex justify-between items-center lg:px-5 py-3 lg:py-5 border-b bg-[#f0f8ff] relative">
       <div>
         <Link className="lg:flex hidden  items-center gap-3" href={"/"}>
           <img
