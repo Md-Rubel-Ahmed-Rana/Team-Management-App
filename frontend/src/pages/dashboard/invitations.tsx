@@ -1,3 +1,4 @@
+import isAuthenticate from "@/components/HOC/isAuthenticate";
 import PendingInvitation from "@/components/pages/dashboard/invitation/PendingInvitation";
 import DashboardLayout from "@/layout/DashboardLayout";
 import RootLayout from "@/layout/RootLayout";
@@ -17,8 +18,6 @@ const InvitationsPage = () => {
   );
 };
 
-export default InvitationsPage;
-
 InvitationsPage.getLayout = function (page: ReactElement) {
   return (
     <RootLayout>
@@ -26,3 +25,5 @@ InvitationsPage.getLayout = function (page: ReactElement) {
     </RootLayout>
   );
 };
+
+export default isAuthenticate(InvitationsPage);

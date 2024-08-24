@@ -3,6 +3,7 @@ import { NextPageWithLayout } from "pages/_app";
 import React, { ReactElement } from "react";
 import GetHead from "@/utils/Head";
 import ProjectsContainer from "@/components/pages/projects";
+import isAuthenticate from "@/components/HOC/isAuthenticate";
 
 const ProjectPage: NextPageWithLayout = () => {
   return (
@@ -12,13 +13,15 @@ const ProjectPage: NextPageWithLayout = () => {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <ProjectsContainer />
+      <div className="max-w-[1280px] w-full mx-auto">
+        <ProjectsContainer />
+      </div>
     </div>
   );
 };
 
-export default ProjectPage;
-
 ProjectPage.getLayout = function (page: ReactElement) {
   return <RootLayout>{page}</RootLayout>;
 };
+
+export default isAuthenticate(ProjectPage);

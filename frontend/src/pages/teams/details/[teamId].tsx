@@ -1,3 +1,4 @@
+import isAuthenticate from "@/components/HOC/isAuthenticate";
 import TeamDetails from "@/components/pages/teams/details";
 import RootLayout from "@/layout/RootLayout";
 import GetHead from "@/utils/Head";
@@ -13,13 +14,15 @@ const TeamDetailsPage = () => {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <TeamDetails />
+      <div className="max-w-[1280px] w-full mx-auto">
+        <TeamDetails />
+      </div>
     </>
   );
 };
 
-export default TeamDetailsPage;
-
 TeamDetailsPage.getLayout = function (page: ReactElement) {
   return <RootLayout>{page}</RootLayout>;
 };
+
+export default isAuthenticate(TeamDetailsPage);

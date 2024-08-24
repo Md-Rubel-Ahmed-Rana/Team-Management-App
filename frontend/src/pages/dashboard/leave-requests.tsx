@@ -1,3 +1,4 @@
+import isAuthenticate from "@/components/HOC/isAuthenticate";
 import LeaveRequests from "@/components/pages/dashboard/leaveRequest/LeaveRequests";
 import DashboardLayout from "@/layout/DashboardLayout";
 import RootLayout from "@/layout/RootLayout";
@@ -17,8 +18,6 @@ const LeaveRequestsPage = () => {
   );
 };
 
-export default LeaveRequestsPage;
-
 LeaveRequestsPage.getLayout = function (page: ReactElement) {
   return (
     <RootLayout>
@@ -26,3 +25,5 @@ LeaveRequestsPage.getLayout = function (page: ReactElement) {
     </RootLayout>
   );
 };
+
+export default isAuthenticate(LeaveRequestsPage);
