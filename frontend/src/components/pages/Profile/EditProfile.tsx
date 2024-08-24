@@ -6,6 +6,7 @@ import { useLoggedInUserQuery, useUpdateUserMutation } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import ImageCropperModal from "@/components/shared/ImageCropperModal";
 import validateFileSize from "@/utils/validateFileSize";
+import toast from "react-hot-toast";
 
 const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
   const { data }: any = useLoggedInUserQuery({});
@@ -13,7 +14,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
   const [isCropImage, setIsCropImage] = useState(false);
   const [isChangeImage, setIsChangeImage] = useState(false);
   const [newFile, setNewFile] = useState<any>(null);
-  const [updateUser] = useUpdateUserMutation();
+  const [updateUser, { isLoading }] = useUpdateUserMutation();
   const { register, handleSubmit } = useForm<IUser>({
     defaultValues: user,
   });
@@ -40,6 +41,8 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
 
     if (updated?.data?.success) {
       setIsEdit(false);
+    } else {
+      toast.error("Profile wasn't updated");
     }
   };
 
@@ -189,16 +192,22 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
           </div>
           <div className="mt-4 flex items-center gap-4">
             <button
-              type="submit"
-              className="border bg-blue-600 text-white px-4 py-2 rounded-md"
-            >
-              Save Changes
-            </button>
-            <button
+              disabled={isLoading}
               onClick={() => setIsEdit(false)}
-              className="border bg-yellow-500 px-4 py-2 rounded-md"
+              className={`border ${
+                isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-yellow-500"
+              }  text-white px-4 py-2 rounded-md`}
             >
               Cancel
+            </button>
+            <button
+              disabled={isLoading}
+              type="submit"
+              className={`border ${
+                isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600"
+              }  text-white px-4 py-2 rounded-md`}
+            >
+              {isLoading ? "Saving..." : " Save Changes"}
             </button>
           </div>
         </form>

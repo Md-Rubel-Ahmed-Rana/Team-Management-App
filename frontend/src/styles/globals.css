@@ -6,10 +6,9 @@
 html,
 body{
     font-family: 'Poppins', sans-serif;
-    background-color: aliceblue;
+    background-color:aliceblue;
     color: rgba(0, 0, 0, 0.781);
     margin: 0%;
     padding: 0%;
     box-sizing: border-box;
-    width: 100%;
 }

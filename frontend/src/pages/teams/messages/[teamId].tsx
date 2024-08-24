@@ -29,20 +29,6 @@ const MessagesPage = () => {
 
   return (
     <>
-      <style jsx global>{`
-        html,
-        body {
-          height: 100%;
-          margin: 0;
-          overflow: hidden;
-          background-color: aliceblue;
-          color: rgba(0, 0, 0, 0.781);
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          width: 100%;
-        }
-      `}</style>
       <GetHead
         title={`Messages - ${query?.team_name || "Team"}: Team Manager `}
         description="team management, project collaboration, task tracking, project details"
