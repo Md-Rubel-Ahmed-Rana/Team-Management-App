@@ -109,23 +109,21 @@ const LeaveRequestCard = ({ data }: any) => {
   };
 
   return (
-    <div className="rounded-lg shadow-md p-4 mb-4 flex flex-col gap-4">
-      <h4 className="text-md lg:text-xl font-semibold">
+    <div className="p-5 border flex flex-col gap-3 w-full">
+      <h4 className="text-sm lg:text-md">
         Name: {project?.name || team?.name}
       </h4>
-      <h5 className="text-sm lg:text-lg font-semibold">
-        Member: {member?.name}
-      </h5>
+      <h5 className="text-sm">Member: {member?.name}</h5>
       <div className="flex space-x-4">
         <button
           onClick={handleIgnoreRequest}
-          className="py-1 lg:py-2 px-2 lg:px-4 rounded focus:outline-none border w-full lg:w-auto bg-blue-600 text-white"
+          className="text-xs py-1 px-2 lg:px-4 rounded focus:outline-none border w-full lg:w-auto bg-blue-500 text-white"
         >
           Ignore
         </button>
         <button
           onClick={handleAcceptRequest}
-          className="py-1 lg:py-2 px-2 lg:px-4 rounded focus:outline-none border w-full lg:w-auto bg-blue-600 text-white"
+          className="text-xs py-1 px-2 lg:px-4 rounded focus:outline-none border w-full lg:w-auto bg-blue-500 text-white"
         >
           Accept
         </button>

@@ -6,6 +6,7 @@ import MessageSidebar from "../../../components/pages/messages/MessageSidebar";
 import MessageContainer from "../../../components/pages/messages/MessageContainer";
 import { SocketContext } from "@/context/SocketContext";
 import { useSingleTeamQuery } from "@/features/team";
+import isAuthenticate from "@/components/HOC/isAuthenticate";
 
 const MessagesPage = () => {
   const { query } = useRouter();
@@ -68,4 +69,4 @@ const MessagesPage = () => {
   );
 };
 
-export default MessagesPage;
+export default isAuthenticate(MessagesPage);

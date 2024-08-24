@@ -147,7 +147,7 @@ const PendingInvitation = () => {
               );
             })}
           </div>
-          <div className="flex justify-center items-center h-screen">
+          <div className="h-[6vh] lg:h-[80vh]">
             {data?.data?.length <= 0 && (
               <h3 className="text-lg lg:text-3xl text-center font-semibold font-serif">
                 You don&apos; have any pending invitations

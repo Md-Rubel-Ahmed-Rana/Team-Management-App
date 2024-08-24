@@ -1,3 +1,4 @@
+import isAuthenticate from "@/components/HOC/isAuthenticate";
 import CreateTeamPage from "@/components/pages/teams/teamCreation/CreateTeam";
 import RootLayout from "@/layout/RootLayout";
 import GetHead from "@/utils/Head";
@@ -16,8 +17,8 @@ const TeamCreate = () => {
   );
 };
 
-export default TeamCreate;
-
 TeamCreate.getLayout = function (page: ReactElement) {
   return <RootLayout>{page}</RootLayout>;
 };
+
+export default isAuthenticate(TeamCreate);

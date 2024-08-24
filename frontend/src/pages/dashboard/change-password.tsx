@@ -1,3 +1,4 @@
+import isAuthenticate from "@/components/HOC/isAuthenticate";
 import ChangePassword from "@/components/pages/dashboard/changePassword";
 import DashboardLayout from "@/layout/DashboardLayout";
 import RootLayout from "@/layout/RootLayout";
@@ -17,8 +18,6 @@ const ChangePasswordPage = () => {
   );
 };
 
-export default ChangePasswordPage;
-
 ChangePasswordPage.getLayout = function (page: ReactElement) {
   return (
     <RootLayout>
@@ -26,3 +25,5 @@ ChangePasswordPage.getLayout = function (page: ReactElement) {
     </RootLayout>
   );
 };
+
+export default isAuthenticate(ChangePasswordPage);
