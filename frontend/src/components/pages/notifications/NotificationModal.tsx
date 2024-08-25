@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Fragment, SetStateAction, useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
