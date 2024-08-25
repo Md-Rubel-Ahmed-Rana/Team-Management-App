@@ -5,7 +5,7 @@ import { FaPlus } from "react-icons/fa";
 import TeamContainer from "../common/TeamContainer";
 import TeamSkeleton from "@/components/skeletons/TeamSkeleton";
 
-const JoinedTeams = () => {
+const JoinedTeamsContainer = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
   const { data: teamData, isLoading } = useGetJoinedTeamsCardQuery(user?.id);
@@ -16,6 +16,9 @@ const JoinedTeams = () => {
         <div>
           <h1 className="lg:text-3xl font-bold">
             Management Your Teams Professionally
+          </h1>
+          <h1 className="text-lg lg:text-2xl font-semibold mt-2">
+            Joined Teams
           </h1>
         </div>
         <div>
@@ -43,4 +46,4 @@ const JoinedTeams = () => {
   );
 };
 
-export default JoinedTeams;
+export default JoinedTeamsContainer;

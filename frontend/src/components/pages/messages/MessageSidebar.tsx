@@ -4,7 +4,7 @@ import { GrProjects, GrResources } from "react-icons/gr";
 import { RiMessage2Line } from "react-icons/ri";
 import { TbBrandTeams, TbSpeakerphone } from "react-icons/tb";
 import { GoHome } from "react-icons/go";
-import { BiLogoMicrosoftTeams } from "react-icons/bi";
+import { GiTeamIdea } from "react-icons/gi";
 import { RiWechatChannelsFill } from "react-icons/ri";
 import { MdDashboard } from "react-icons/md";
 import { useLoggedInUserQuery } from "@/features/user";
@@ -91,28 +91,19 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
                 <li className="w-full">
                   <Link
                     className={`px-4 py-2 flex   items-center gap-2 text-xl text-gray-700  shadow-md w-full`}
-                    href={`/my-teams?${queries}`}
+                    href={`/teams/my-teams?${queries}`}
                   >
-                    <TbBrandTeams />
+                    <GiTeamIdea />
                     <small className="hidden lg:block">My Teams</small>
                   </Link>
                 </li>
                 <li className="w-full">
                   <Link
-                    className={`px-4 py-2 flex   items-center gap-2 text-xl text-gray-700   shadow-md w-full`}
-                    href={`/joined-teams?${queries}`}
-                  >
-                    <BiLogoMicrosoftTeams />
-                    <small className="hidden lg:block">Joined Teams</small>
-                  </Link>
-                </li>
-                <li className="w-full">
-                  <Link
                     className={`px-4 py-2 flex   items-center gap-2 text-xl text-gray-700  shadow-md w-full`}
-                    href={`/projects?${queries}`}
+                    href={`/projects/my-projects?${queries}`}
                   >
                     <GrProjects />
-                    <small className="hidden lg:block">Projects</small>
+                    <small className="hidden lg:block">My Projects</small>
                   </Link>
                 </li>
               </ul>
