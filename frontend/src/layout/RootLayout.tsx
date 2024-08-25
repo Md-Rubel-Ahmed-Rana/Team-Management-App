@@ -15,7 +15,7 @@ const RootLayout = ({ children }: Props) => {
         </div>
       }
     >
-      <div>
+      <div className="bg-[#f0f8ff]">
         <Navbar />
         <main>{children}</main>
         <Footer />
