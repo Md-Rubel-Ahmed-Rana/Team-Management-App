@@ -17,7 +17,11 @@ const JoinedProjectsContainer = () => {
   const { data: assignedProjects, isLoading: assignedProjectLoading } =
     useAssignedProjectsQuery(user?.id);
   return (
-    <section className="flex flex-col gap-5 p-2">
+    <section
+      className={`flex flex-col gap-5 p-2 ${
+        assignedProjects?.data?.length <= 4 ? "h-auto lg:h-screen" : "h-auto"
+      }`}
+    >
       <div>
         <h1 className="text-lg lg:text-2xl font-semibold mb-2">
           Joined Projects

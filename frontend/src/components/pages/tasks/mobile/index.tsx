@@ -32,32 +32,50 @@ const TasksForMobileView = () => {
       {isLoading ? (
         <TaskSkeleton />
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className={`flex flex-col gap-2`}>
           {activeStatus === "Todo" && (
             <>
-              {todoTasksArray?.map((task: any) => (
-                <div className="flex flex-col gap-2 border rounded-md shadow-md p-4">
-                  <TaskCard task={task} key={task?.id} />
-                </div>
-              ))}
+              {todoTasksArray.length > 0 ? (
+                todoTasksArray?.map((task: any) => (
+                  <div className="flex flex-col gap-2 border rounded-md shadow-md p-4">
+                    <TaskCard task={task} key={task?.id} />
+                  </div>
+                ))
+              ) : (
+                <p className="h-screen flex justify-center items-center">
+                  <strong>No task assigned</strong>
+                </p>
+              )}
             </>
           )}
           {activeStatus === "Ongoing" && (
             <>
-              {ongoingTasksArray?.map((task: any) => (
-                <div className="flex flex-col gap-2 border rounded-md shadow-md p-4">
-                  <TaskCard task={task} key={task?.id} />
-                </div>
-              ))}
+              {ongoingTasksArray.length > 0 ? (
+                ongoingTasksArray?.map((task: any) => (
+                  <div className="flex flex-col gap-2 border rounded-md shadow-md p-4">
+                    <TaskCard task={task} key={task?.id} />
+                  </div>
+                ))
+              ) : (
+                <p className="h-screen flex justify-center items-center">
+                  <strong>No task assigned</strong>
+                </p>
+              )}
             </>
           )}
           {activeStatus === "Completed" && (
             <>
-              {completedTasksArray?.map((task: any) => (
-                <div className="flex flex-col gap-2 border rounded-md shadow-md p-4">
-                  <TaskCard task={task} key={task?.id} />
-                </div>
-              ))}
+              {completedTasksArray.length > 0 ? (
+                completedTasksArray?.map((task: any) => (
+                  <div className="flex flex-col gap-2 border rounded-md shadow-md p-4">
+                    <TaskCard task={task} key={task?.id} />
+                  </div>
+                ))
+              ) : (
+                <p className="h-screen flex justify-center items-center">
+                  <strong>No task assigned</strong>
+                </p>
+              )}
             </>
           )}
         </div>
