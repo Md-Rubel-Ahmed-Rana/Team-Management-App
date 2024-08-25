@@ -5,12 +5,16 @@ import TestimonialsSection from "./testimonials/TestimonialsSection";
 import PricingSection from "./pricing/PricingSection";
 import FAQSection from "./faq/FAQSection";
 import Roadmap from "./timeline";
+import PopularTeam from "./popularTeam";
+import PopularProjects from "./popularProject";
 
 const HomePage = () => {
   return (
     <div className="flex flex-col gap-20">
       <FeaturesSection animation={true} />
       <Roadmap />
+      <PopularTeam />
+      <PopularProjects />
       <TestimonialsSection />
       <PricingSection />
       <FAQSection />

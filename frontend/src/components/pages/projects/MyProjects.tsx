@@ -16,7 +16,11 @@ const MyProjectsContainer = () => {
   );
 
   return (
-    <section className="flex flex-col gap-5 p-2">
+    <section
+      className={`flex flex-col gap-5 p-2 ${
+        myProjects?.data?.length <= 4 ? "h-auto lg:h-screen" : "h-auto"
+      }`}
+    >
       <div>
         <div className="flex justify-between mb-2">
           <h1 className="text-lg lg:text-2xl font-semibold">My Projects</h1>
