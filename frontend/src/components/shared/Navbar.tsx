@@ -10,9 +10,11 @@ import AnotherModal from "../pages/notifications/AnotherModal";
 
 const Dropdown: any = dynamic(() => import("antd/lib/dropdown"), {
   ssr: false,
+  loading: () => <FaBars className="text-2xl" />,
 });
 const Button: any = dynamic(() => import("antd/lib/button"), {
   ssr: false,
+  loading: () => <FaBars className="text-2xl" />,
 });
 
 const Navbar = () => {
@@ -168,81 +170,71 @@ const Navbar = () => {
         {/* nav items for large devices  */}
 
         {/* nav items for small devices  */}
-        <div className="flex lg:hidden items-center justify-between">
-          <Dropdown
-            menu={{ items: navItemsForMobile.reverse() }}
-            placement="bottom"
-            arrow
-            className="p-0"
-          >
-            <Button type="text">
-              <FaBars className="text-2xl" />
-            </Button>
-          </Dropdown>
-
-          {isUserLoading ? (
-            <button className="px-3 lg:hidden block rounded-lg bg-blue-600 text-white">
-              <SmallLoader />
-            </button>
-          ) : (
-            <div className="flex gap-3">
-              {!user?.email && (
-                <>
-                  <Link href="/login">Login</Link>
-                  <Link href="/signup">Signup</Link>
-                </>
-              )}
-
-              {user?.email && (
-                <button
-                  onClick={() => setShowNotification(true)}
-                  className="relative  p-2 border-2 rounded-full"
-                >
-                  <FaRegBell />
-                  <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-                    {0}
-                  </small>
-                </button>
-              )}
-
-              <div>
-                {user?.email && (
-                  <Link
-                    href={`/dashboard/profile?${queries}`}
-                    className={`${
-                      !user?.profile_picture && "border  rounded-full"
-                    }`}
-                  >
-                    {user?.profile_picture ? (
-                      <img
-                        className="w-10 h-10 rounded-full"
-                        src={user?.profile_picture}
-                        alt=""
-                      />
-                    ) : (
-                      <FaUser />
-                    )}
-                  </Link>
-                )}
+        <div className="lg:hidden block">
+          <div className="flex items-center justify-between">
+            <Dropdown
+              menu={{ items: navItemsForMobile.reverse() }}
+              placement="bottom"
+              arrow
+              className="p-0"
+            >
+              <Button type="text">
+                <FaBars className="text-2xl" />
+              </Button>
+            </Dropdown>
+            {isUserLoading ? (
+              <div className="px-3 py-2 lg:hidden block rounded-lg bg-blue-600 text-white">
+                <SmallLoader />
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="flex gap-3">
+                {!user?.email && (
+                  <>
+                    <Link href="/login">Login</Link>
+                    <Link href="/signup">Signup</Link>
+                  </>
+                )}
+
+                {user?.email && (
+                  <button
+                    onClick={() => setShowNotification(true)}
+                    className="relative  p-2 border-2 rounded-full"
+                  >
+                    <FaRegBell />
+                    <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
+                      {0}
+                    </small>
+                  </button>
+                )}
+
+                <div>
+                  {user?.email && (
+                    <Link
+                      href={`/dashboard/profile?${queries}`}
+                      className={`${
+                        !user?.profile_picture && "border  rounded-full"
+                      }`}
+                    >
+                      {user?.profile_picture ? (
+                        <img
+                          className="w-10 h-10 rounded-full"
+                          src={user?.profile_picture}
+                          alt=""
+                        />
+                      ) : (
+                        <FaUser />
+                      )}
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-        {/* {isOpen && (
-        <NotificationModal
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          notifications={notifications}
-          unreadNotifications={unreadNotifications}
-        />
-      )} */}
 
         {showNotification && (
           <AnotherModal open={showNotification} setOpen={setShowNotification} />
         )}
-        {/* {showNotification && (
-          <NewModal open={showNotification} setOpen={setShowNotification} />
-        )} */}
       </nav>
     </div>
   );

@@ -15,7 +15,7 @@ const TasksPage = () => {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <div className="max-w-[1280px] w-full mx-auto py-5 max-h-screen h-full">
+      <div className="max-w-[1280px] w-full mx-auto py-5">
         <div className="hidden md:block">
           <TasksForDesktopView />
         </div>
