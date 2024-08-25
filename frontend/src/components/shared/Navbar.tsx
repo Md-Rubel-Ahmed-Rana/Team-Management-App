@@ -72,6 +72,12 @@ const Navbar = () => {
         </button>
       ) : (
         <div className="lg:flex hidden  items-center gap-4">
+          <Link className="m-2" href="/signup">
+            Guides
+          </Link>
+          <Link className="m-2" href="/signup">
+            APIs
+          </Link>
           {!user?.email && (
             <>
               <Link className="m-2" href="/signup">
@@ -150,9 +156,8 @@ const Navbar = () => {
           <div className="flex gap-4">
             {!user?.email && (
               <>
-                <button onClick={() => setToggle(false)}>
-                  <Link href="/login">Login</Link>
-                </button>
+                <Link href="/login">Login</Link>
+                <Link href="/signup">Signup</Link>
               </>
             )}
 
