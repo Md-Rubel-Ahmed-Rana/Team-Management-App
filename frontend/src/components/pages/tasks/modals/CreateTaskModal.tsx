@@ -2,7 +2,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useContext, useState } from "react";
 import Select from "react-select";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Swal from "sweetalert2";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { useGetSingleProjectQuery } from "@/features/project";
@@ -10,6 +9,7 @@ import { INewTask } from "@/interfaces/task.interface";
 import { useCreateTaskMutation } from "@/features/task";
 import customStyles from "@/utils/reactSelectCustomStyle";
 import { SocketContext } from "@/context/SocketContext";
+import toast from "react-hot-toast";
 
 const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
   const { socket }: any = useContext(SocketContext);
@@ -21,7 +21,11 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
   const { data: projectData }: any = useGetSingleProjectQuery(project?.id);
   const members = projectData?.data?.members;
   const [selectedMember, setSelectedMember] = useState<any>();
-  const { register, handleSubmit } = useForm<INewTask>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<INewTask>();
   const [createTask, { isLoading }] = useCreateTaskMutation();
 
   const handleCreateNewTask: SubmitHandler<INewTask> = async (data) => {
@@ -31,24 +35,15 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
     data.project = project.id;
     const result: any = await createTask(data);
     if (result?.data?.success) {
-      window.location.reload();
       socket.emit("task", result?.data?.data?.data);
       socket.emit("notification", result?.data?.data?.notification);
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        text: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      toast.success(result?.data?.message);
       closeModal();
+      window.location.reload();
     } else {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        text: result?.data?.message || "Something went wrong to create task",
-        showConfirmButton: true,
-      });
+      toast.error(
+        result?.data?.message || "Something went wrong to create task"
+      );
       closeModal();
     }
   };
@@ -118,26 +113,39 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
                         Task name
                       </p>
                       <input
-                        {...register("name", { required: "Name is required" })}
+                        {...register("name", {
+                          required: "Task name is required",
+                        })}
                         required
                         type="text"
                         id="taskName"
                         placeholder="Enter your task name (e.g: Develop API)"
                         className="w-full rounded-sm bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  lg:py-3 py-2 outline-none px-2 shadow-sm sm:text-sm"
                       />
+                      {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.name.message}
+                        </p>
+                      )}
                     </div>
                     <div className="relative w-full py-2">
                       <p className="text-stone-500 dark:text-white">
                         Task deadline
                       </p>
                       <input
-                        {...register("deadline")}
-                        required
+                        {...register("deadline", {
+                          required: "Task deadline is required",
+                        })}
                         type="text"
                         id="deadline"
                         placeholder="Enter deadline (e.g: 3 hours/2 days/4 weeks)"
                         className="w-full rounded-sm bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  lg:py-3 py-2 outline-none px-2 shadow-sm sm:text-sm"
                       />
+                      {errors.deadline && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.deadline.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="mt-5 flex justify-between gap-2">

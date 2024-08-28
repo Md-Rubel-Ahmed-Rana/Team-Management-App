@@ -2,7 +2,7 @@
 import { SocketContext } from "@/context/SocketContext";
 import { useGetMessagesByTypeQuery } from "@/features/message";
 import { IMessage } from "@/interfaces/message.interface";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import MessageCard from "./MessageCard";
 import MessageSkeleton from "@/components/skeletons/MessageSkeleton";
@@ -12,21 +12,22 @@ interface Props {
 }
 
 const MessageContainer = ({ messageType }: Props) => {
+  const { socket, realTimeMessages, setRealTimeMessages }: any =
+    useContext(SocketContext);
   const { query } = useRouter();
-
   // Fetch messages based on messageType and conversationId
   const { data: messageData, isLoading } = useGetMessagesByTypeQuery({
     type: messageType,
     conversationId: query.teamId,
   });
 
-  const { socket, realTimeMessages, setRealTimeMessages }: any =
-    useContext(SocketContext);
-
   useEffect(() => {
-    const handleMessage = (data: IMessage) => {
-      setRealTimeMessages((prev: IMessage[]) => [...prev, data]);
+    const handleMessage = (data: any) => {
+      if (data?.type === messageType) {
+        setRealTimeMessages((prev: IMessage[]) => [...prev, data]);
+      }
     };
+    socket?.on("message", handleMessage);
     return () => {
       socket?.off("message", handleMessage);
     };
@@ -38,11 +39,6 @@ const MessageContainer = ({ messageType }: Props) => {
       setRealTimeMessages(messageData?.data || []);
     }
   }, [isLoading, messageData, messageType, setRealTimeMessages]);
-
-  // connect to socket team room
-  useEffect(() => {
-    socket?.emit("join-room", query?.teamId);
-  }, [socket, query?.teamId]);
 
   return (
     <>

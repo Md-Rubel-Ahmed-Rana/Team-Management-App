@@ -70,19 +70,9 @@ class Controller extends rootController_1.default {
                 data: result,
             });
         }));
-        this.myTeams = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getMyTeamListForDropdown = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const id = req.params.adminId;
-            const result = yield team_service_1.TeamService.myTeams(id);
-            this.apiResponse(res, {
-                statusCode: http_status_1.default.OK,
-                success: true,
-                message: "Teams found",
-                data: result,
-            });
-        }));
-        this.joinedTeams = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const id = req.params.memberId;
-            const result = yield team_service_1.TeamService.joinedTeams(id);
+            const result = yield team_service_1.TeamService.getMyTeamListForDropdown(id);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,

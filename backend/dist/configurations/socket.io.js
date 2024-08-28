@@ -14,11 +14,13 @@ const initiateSocketIo = (io) => {
     io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
         console.log("A user connected");
         // messaging room for a team
-        socket.on("join-room", (roomId) => {
+        socket.on("team-join-room", (roomId) => {
+            console.log(`New team member joined to:'${roomId}' room`);
             socket.join(roomId);
         });
         socket.on("message", (data) => {
-            socket.to(data.conversationId).emit("message", data);
+            console.log("New message", data);
+            socket.broadcast.to(data.conversationId).emit("message", data);
         });
         // notification room for each user
         socket.on("notification-room", (userId) => {
@@ -27,7 +29,7 @@ const initiateSocketIo = (io) => {
         });
         socket.on("notification", (data) => {
             console.log("New notification", data);
-            socket.to(data.recipient.userId).emit("notification", data);
+            socket.broadcast.to(data.recipient.userId).emit("notification", data);
         });
         // tasks room
         socket.on("task-room", (projectId) => {
@@ -36,7 +38,7 @@ const initiateSocketIo = (io) => {
         });
         socket.on("task", (data) => {
             console.log("New task", data);
-            socket.to(data.project).emit("task", data);
+            socket.broadcast.to(data.project).emit("task", data);
         });
         socket.on("disconnect", () => __awaiter(void 0, void 0, void 0, function* () {
             console.log("User disconnected");

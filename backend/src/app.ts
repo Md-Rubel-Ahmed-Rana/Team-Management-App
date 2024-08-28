@@ -3,7 +3,6 @@ import { Server } from "socket.io";
 import http from "http";
 import { RootRoutes } from "./routes/root.route";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
-import initializeDTOMapper from "./configurations/dtoMapper";
 import "./configurations/passport";
 import { initiateSocketIo } from "./configurations/socket.io";
 import { initiatePassportSession } from "./configurations/passport.session";
@@ -29,9 +28,6 @@ appMiddlewares(app);
 
 // initialize passport session
 initiatePassportSession(app);
-
-// Mappers initiate
-initializeDTOMapper();
 
 app.post(
   "/new-post",

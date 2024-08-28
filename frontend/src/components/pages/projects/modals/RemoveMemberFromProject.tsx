@@ -29,7 +29,7 @@ const RemoveMemberFromProject = ({
   const { data: singleTeam } = useSingleTeamQuery(teamId);
   const team = singleTeam?.data;
   const { data: memberData } = useGetActiveMembersQuery(teamId);
-  const members = memberData?.data?.map((member: IUser) => ({
+  const members = memberData?.data?.activeMembers?.map((member: IUser) => ({
     value: member?.id,
     label: member?.name,
   }));

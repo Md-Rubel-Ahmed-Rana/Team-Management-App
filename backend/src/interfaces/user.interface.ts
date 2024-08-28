@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 export type IUser = {
-  _id?: Types.ObjectId;
+  _id?: Types.ObjectId; // or  id?: Types.ObjectId
   name: string;
   email: string;
   profile_picture: string;
@@ -12,6 +12,6 @@ export type IUser = {
   permanentAddress?: string;
   presentAddress?: string;
   country?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date; // after created
+  updatedAt?: Date; // after created
 };

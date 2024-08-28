@@ -42,18 +42,11 @@ const teamLeaveRequest_model_1 = require("@/models/teamLeaveRequest.model");
 const apiError_1 = __importDefault(require("@/shared/apiError"));
 const http_status_1 = __importDefault(require("http-status"));
 const notification_service_1 = require("./notification.service");
-const mapper_1 = require("../mapper");
-const team_entity_1 = require("@/entities/team.entity");
-const create_1 = require("@/dto/team/create");
-const get_1 = require("@/dto/team/get");
-const user_entity_1 = require("@/entities/user.entity");
-const get_2 = require("@/dto/user/get");
-const update_1 = require("@/dto/team/update");
-const delete_1 = require("@/dto/team/delete");
 const mongoose_1 = __importStar(require("mongoose"));
 const project_service_1 = require("./project.service");
 const getCloudinaryFilePublicIdFromUrl_1 = __importDefault(require("@/utils/getCloudinaryFilePublicIdFromUrl"));
 const deletePreviousFileFromCloudinary_1 = require("@/utils/deletePreviousFileFromCloudinary");
+const propertySelections_1 = require("propertySelections");
 class Service {
     createTeam(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -63,66 +56,45 @@ class Service {
             }
             else {
                 const result = yield team_model_1.default.create(data);
-                const mappedData = mapper_1.mapper.map(result, team_entity_1.TeamEntity, create_1.CreateTeamDTO);
-                return mappedData;
+                const populatedResult = yield result.populate([
+                    {
+                        path: "activeMembers",
+                        model: "User",
+                        select: propertySelections_1.UserSelect,
+                    },
+                    {
+                        path: "pendingMembers",
+                        model: "User",
+                        select: propertySelections_1.UserSelect,
+                    },
+                    {
+                        path: "admin",
+                        model: "User",
+                        select: propertySelections_1.UserSelect,
+                    },
+                ]);
+                return populatedResult;
             }
         });
     }
-    myTeams(adminId) {
+    getMyTeamListForDropdown(adminId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield team_model_1.default.find({ admin: adminId }).populate([
-                {
-                    path: "activeMembers",
-                    model: "User",
-                },
-                {
-                    path: "pendingMembers",
-                    model: "User",
-                },
-                {
-                    path: "admin",
-                    model: "User",
-                },
-            ]);
-            const mappedData = mapper_1.mapper.mapArray(result, team_entity_1.TeamEntity, get_1.GetTeamDTO);
-            return mappedData;
-        });
-    }
-    joinedTeams(memberId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield team_model_1.default.find({ activeMembers: memberId }).populate([
-                {
-                    path: "activeMembers",
-                    model: "User",
-                },
-                {
-                    path: "pendingMembers",
-                    model: "User",
-                },
-                {
-                    path: "admin",
-                    model: "User",
-                },
-            ]);
-            const mappedData = mapper_1.mapper.mapArray(result, team_entity_1.TeamEntity, get_1.GetTeamDTO);
-            return mappedData;
+            const result = yield team_model_1.default.find({ admin: adminId }).select({ name: 1 });
+            return result;
         });
     }
     getActiveMembers(teamId) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield team_model_1.default.findById(teamId)
-                .select({ activeMembers: 1 })
+                .select({ activeMembers: 1, name: 1 })
                 .populate([
                 {
                     path: "activeMembers",
                     model: "User",
+                    select: propertySelections_1.UserSelect,
                 },
             ]);
-            const members = result === null || result === void 0 ? void 0 : result.activeMembers;
-            if (members && (members === null || members === void 0 ? void 0 : members.length) > 0) {
-                const mappedData = mapper_1.mapper.mapArray(members, user_entity_1.UserEntity, get_2.GetUserDTO);
-                return mappedData;
-            }
+            return result;
         });
     }
     getMyTeamsForCard(adminId) {
@@ -223,30 +195,25 @@ class Service {
     }
     getSingleTeamWithDetails(teamId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userProjection = {
-                name: 1,
-                profile_picture: 1,
-                email: 1,
-            };
             const team = yield team_model_1.default.findById(teamId).populate([
                 {
                     path: "activeMembers",
                     model: "User",
-                    select: userProjection,
+                    select: propertySelections_1.UserSelect,
                 },
                 {
                     path: "pendingMembers",
                     model: "User",
-                    select: userProjection,
+                    select: propertySelections_1.UserSelect,
                 },
                 {
                     path: "admin",
                     model: "User",
-                    select: userProjection,
+                    select: propertySelections_1.UserSelect,
                 },
             ]);
             const projects = yield project_service_1.ProjectService.getProjectByTeamId(team === null || team === void 0 ? void 0 : team.id);
-            return {
+            const teamDetails = {
                 id: team === null || team === void 0 ? void 0 : team.id,
                 name: team === null || team === void 0 ? void 0 : team.name,
                 category: team === null || team === void 0 ? void 0 : team.category,
@@ -257,14 +224,28 @@ class Service {
                 pendingMembers: team === null || team === void 0 ? void 0 : team.pendingMembers,
                 projects: projects,
             };
+            return teamDetails;
         });
     }
     getTeamById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield team_model_1.default.findById(id);
-            if (!result) {
-                throw new apiError_1.default(404, "Team not found!");
-            }
+            const result = yield team_model_1.default.findById(id).populate([
+                {
+                    path: "activeMembers",
+                    model: "User",
+                    select: propertySelections_1.UserSelect,
+                },
+                {
+                    path: "pendingMembers",
+                    model: "User",
+                    select: propertySelections_1.UserSelect,
+                },
+                {
+                    path: "admin",
+                    model: "User",
+                    select: propertySelections_1.UserSelect,
+                },
+            ]);
             return result;
         });
     }
@@ -274,26 +255,24 @@ class Service {
                 {
                     path: "activeMembers",
                     model: "User",
+                    select: propertySelections_1.UserSelect,
                 },
                 {
                     path: "pendingMembers",
                     model: "User",
+                    select: propertySelections_1.UserSelect,
                 },
                 {
                     path: "admin",
                     model: "User",
+                    select: propertySelections_1.UserSelect,
                 },
             ]);
-            if (!result) {
-                throw new apiError_1.default(404, "Team not found!");
-            }
-            const mappedData = mapper_1.mapper.map(result, team_entity_1.TeamEntity, get_1.GetTeamDTO);
-            return mappedData;
+            return result;
         });
     }
     updateTeam(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(id, data);
             const isExistTeam = yield team_model_1.default.findById(id);
             if (!isExistTeam) {
                 throw new apiError_1.default(http_status_1.default.NOT_FOUND, "Team Not Found!");
@@ -302,18 +281,20 @@ class Service {
                 {
                     path: "activeMembers",
                     model: "User",
+                    select: propertySelections_1.UserSelect,
                 },
                 {
                     path: "pendingMembers",
                     model: "User",
+                    select: propertySelections_1.UserSelect,
                 },
                 {
                     path: "admin",
                     model: "User",
+                    select: propertySelections_1.UserSelect,
                 },
             ]);
-            const mappedData = mapper_1.mapper.map(result, team_entity_1.TeamEntity, update_1.UpdateTeamDTO);
-            return mappedData;
+            return result;
         });
     }
     deleteTeam(id) {
@@ -333,9 +314,8 @@ class Service {
                     throw new apiError_1.default(http_status_1.default.NOT_FOUND, "Team Not Found!");
                 }
                 yield project_service_1.ProjectService.deleteProjectsByTeamId(id, session);
-                const mappedData = mapper_1.mapper.map(result, team_entity_1.TeamEntity, delete_1.DeleteTeamDTO);
                 yield session.commitTransaction();
-                return mappedData;
+                return result;
             }
             catch (error) {
                 yield session.abortTransaction();

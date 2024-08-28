@@ -80,7 +80,6 @@ const MessageEdit = ({ isOpen, setIsOpen, messageId, messageText }: Props) => {
                         {...register("message", {
                           required: "Message cannot be empty",
                         })}
-                        required
                         id="message"
                         defaultValue={messageText}
                         className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  p-2 outline-none   shadow-sm sm:text-sm"

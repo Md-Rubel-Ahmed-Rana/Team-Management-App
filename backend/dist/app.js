@@ -8,7 +8,6 @@ const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
 const root_route_1 = require("./routes/root.route");
 const globalErrorHandler_1 = __importDefault(require("./middlewares/globalErrorHandler"));
-const dtoMapper_1 = __importDefault(require("./configurations/dtoMapper"));
 require("./configurations/passport");
 const socket_io_2 = require("./configurations/socket.io");
 const passport_session_1 = require("./configurations/passport.session");
@@ -26,8 +25,6 @@ const io = new socket_io_1.Server(server, {
 (0, appMiddlewares_1.default)(app);
 // initialize passport session
 (0, passport_session_1.initiatePassportSession)(app);
-// Mappers initiate
-(0, dtoMapper_1.default)();
 app.post("/new-post", cloudinary_1.upload.single("file"), (0, cloudinary_1.uploadSingleFile)("profile"), (req, res) => {
     const data = Object.assign(Object.assign({}, req.body), { url: req.link || "" });
     res.status(200).json({

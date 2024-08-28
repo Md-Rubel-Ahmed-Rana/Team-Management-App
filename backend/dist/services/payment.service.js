@@ -17,9 +17,6 @@ const stripe_1 = __importDefault(require("stripe"));
 const dotenv_1 = require("dotenv");
 const plan_model_1 = require("@/models/plan.model");
 const payment_model_1 = require("@/models/payment.model");
-const mapper_1 = require("../mapper");
-const payment_entity_1 = require("@/entities/payment.entity");
-const get_1 = require("@/dto/payment/get");
 (0, dotenv_1.config)();
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY);
 class Service {
@@ -78,8 +75,7 @@ class Service {
                 path: "package",
                 model: "Plan",
             });
-            const mappedData = mapper_1.mapper.mapArray(payments, payment_entity_1.PaymentEntity, get_1.GetPaymentDTO);
-            return mappedData;
+            return payments;
         });
     }
 }

@@ -5,28 +5,29 @@ import ApiError from "@/shared/apiError";
 import httpStatus from "http-status";
 import { NotificationService } from "./notification.service";
 import { ProjectLeaveRequest } from "@/models/projectLeaveRequest.model";
-import { mapper } from "../mapper";
-import { ProjectEntity } from "@/entities/project.entity";
-import { ModelIdentifier } from "@automapper/core";
-import { CreateProjectDTO } from "@/dto/project/create";
-import { GetOnlyProjectDTO } from "@/dto/project/getOnlyProject";
-import { GetProjectDTO } from "@/dto/project/get";
-import { UpdateProjectDTO } from "@/dto/project/update";
-import { DeleteProjectDTO } from "@/dto/project/delete";
 import { TeamService } from "./team.service";
 import { UserService } from "./user.service";
 import { TaskService } from "./task.service";
 import mongoose from "mongoose";
+import { TeamSelect, UserSelect } from "propertySelections";
 
 class Service {
-  async createProject(data: IProject): Promise<CreateProjectDTO> {
+  async createProject(data: IProject): Promise<any> {
     const result = await Project.create(data);
-    const mappedData = mapper.map(
-      result,
-      ProjectEntity as ModelIdentifier,
-      CreateProjectDTO
-    );
-    return mappedData;
+    const populatedResult = await result.populate([
+      {
+        path: "user",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "team",
+        model: "Team",
+        select: TeamSelect,
+      },
+    ]);
+
+    return populatedResult;
   }
 
   async myProjects(userId: string): Promise<any> {
@@ -99,38 +100,36 @@ class Service {
     return mappedResult;
   }
 
-  async updateProject(
-    id: string,
-    data: Partial<IProject>
-  ): Promise<GetOnlyProjectDTO | null> {
+  async updateProject(id: string, data: Partial<IProject>): Promise<any> {
     const { name, category } = data;
     const result = await Project.findOneAndUpdate(
       { _id: id },
       { $set: { name, category } },
       { new: true }
-    );
+    ).populate([
+      {
+        path: "user",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "team",
+        model: "Team",
+        select: TeamSelect,
+      },
+    ]);
 
-    const mappedData = mapper.map(
-      result,
-      ProjectEntity as ModelIdentifier,
-      GetOnlyProjectDTO
-    );
-    return mappedData;
+    return result;
   }
 
-  async deleteProject(id: string): Promise<DeleteProjectDTO | null> {
+  async deleteProject(id: string): Promise<any> {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
       const result = await Project.findByIdAndDelete(id).session(session);
-      const mappedData = mapper.map(
-        result,
-        ProjectEntity as ModelIdentifier,
-        DeleteProjectDTO
-      );
       await TaskService.deleteTasksByProjectId(id, session);
       await session.commitTransaction();
-      return mappedData;
+      return result;
     } catch (error) {
       await session.abortTransaction();
       throw new ApiError(httpStatus.BAD_REQUEST, "Team was't not deleted");
@@ -168,25 +167,32 @@ class Service {
   }
 
   async getProjectByTeamId(teamId: string): Promise<any> {
-    return await Project.find({ team: teamId }).populate([
+    const data = await Project.find({ team: teamId }).populate([
       {
         path: "members",
         model: "User",
-        select: { name: 1 },
+        select: UserSelect,
       },
     ]);
+
+    return data;
   }
 
-  async getSingleProject(id: string): Promise<GetProjectDTO | null> {
-    const result = await Project.findById(id)
-      .populate("members")
-      .populate("team", "name");
-    const mappedData = mapper.map(
-      result,
-      ProjectEntity as ModelIdentifier,
-      GetProjectDTO
-    );
-    return mappedData;
+  async getSingleProject(id: string): Promise<any> {
+    const result = await Project.findById(id).populate([
+      {
+        path: "members",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "team",
+        model: "Team",
+        select: TeamSelect,
+      },
+    ]);
+
+    return result;
   }
 
   async addMember(
@@ -232,10 +238,7 @@ class Service {
     }
   }
 
-  async removeMember(
-    projectId: string,
-    memberId: string
-  ): Promise<UpdateProjectDTO | null> {
+  async removeMember(projectId: string, memberId: string): Promise<any> {
     const project = await Project.findById(projectId);
 
     if (!project) {
@@ -267,12 +270,7 @@ class Service {
       );
     }
 
-    const mappedData = mapper.map(
-      result,
-      ProjectEntity as ModelIdentifier,
-      UpdateProjectDTO
-    );
-    return mappedData;
+    return result;
   }
 }
 

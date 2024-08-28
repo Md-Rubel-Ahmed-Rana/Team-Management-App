@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InvitationService = void 0;
 const team_model_1 = __importDefault(require("@/models/team.model"));
 const notification_service_1 = require("./notification.service");
+const propertySelections_1 = require("propertySelections");
 class Service {
     sendInvitation(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,23 +34,17 @@ class Service {
                 {
                     path: "activeMembers",
                     model: "User",
+                    select: propertySelections_1.UserSelect,
                 },
                 {
                     path: "pendingMembers",
                     model: "User",
+                    select: propertySelections_1.UserSelect,
                 },
                 {
                     path: "admin",
                     model: "User",
-                    select: [
-                        "name",
-                        "profile_picture",
-                        "email",
-                        "department",
-                        "designation",
-                        "createdAt",
-                        "updatedAt",
-                    ],
+                    select: propertySelections_1.UserSelect,
                 },
             ]);
             return result;

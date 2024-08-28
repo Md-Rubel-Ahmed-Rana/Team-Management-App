@@ -14,6 +14,7 @@ const TaskActions = ({ setIsEditTask, setShowActions, taskId }: Props) => {
     if (result?.data?.success) {
       toast.success(result?.data?.message);
       setShowActions(false);
+      window.location.reload();
     }
   };
 
