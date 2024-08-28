@@ -1,10 +1,16 @@
 import Team from "@/models/team.model";
 import { NotificationService } from "./notification.service";
 import { UserSelect } from "propertySelections";
+import { INotification } from "@/interfaces/notification.interface";
+import { NotificationEnums } from "enums";
+import { TeamService } from "./team.service";
+import { config } from "@/configurations/envConfig";
+import { UserService } from "./user.service";
 
 class Service {
-  async sendInvitation(teamId: string, memberId: string) {
-    const result = await Team.findByIdAndUpdate(
+  async sendInvitation(teamId: string, memberId: string): Promise<void> {
+    const team = await TeamService.getTeamById(teamId);
+    await Team.findByIdAndUpdate(
       teamId,
       {
         $addToSet: { pendingMembers: memberId },
@@ -12,18 +18,83 @@ class Service {
       { new: true }
     );
 
-    if (result && result?.admin) {
-      const notification = await NotificationService.sendNotification(
-        result?.admin,
-        memberId,
-        "team_invitation",
-        "Team Invitation",
-        `You've been invited to join Team (${result?.name})`,
-        `dashboard?uId=${memberId}activeView=invitations`
-      );
+    const member = await UserService.findUserById(memberId);
+    const notifyObject: INotification = {
+      title: "You have been invited to join a team",
+      type: NotificationEnums.TEAM_INVITATION,
+      content: `Exciting news! You've been invited to join the team "${team?.name}" in the "${team?.category}" category. We believe your skills and passion will be a perfect fit. Let’s achieve great things together!`,
+      receiver: memberId,
+      sender: team?.admin,
+      link: `${config.app.frontendDomain}/dashboard/invitations?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
+    };
+    await NotificationService.createNotification(notifyObject);
+  }
 
-      return notification;
-    }
+  async rejectInvitation(teamId: string, memberId: string): Promise<void> {
+    const team = await TeamService.getTeamById(teamId);
+    await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $pull: { pendingMembers: memberId },
+      },
+      { new: true }
+    );
+
+    const member = await UserService.findUserById(memberId);
+    const notifyObject: INotification = {
+      title: "Team invitation rejected",
+      type: NotificationEnums.TEAM_INVITATION_REJECTED,
+      content: `${member?.name} has declined the invitation to join your team "${team?.name}" in the "${team?.category}" category. You may want to reach out or invite someone else to fill the position.`,
+      receiver: team?.admin,
+      sender: memberId,
+      link: `${config.app.frontendDomain}/teams/details/${teamId}?team_name=${team?.name}&team_category=${team?.category}&team_description=${team.description}`,
+    };
+    await NotificationService.createNotification(notifyObject);
+  }
+
+  async cancelInvitation(teamId: string, memberId: string): Promise<void> {
+    const team = await TeamService.getTeamById(teamId);
+    await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $pull: { pendingMembers: memberId },
+      },
+      { new: true }
+    );
+
+    const member = await UserService.findUserById(memberId);
+    const notifyObject: INotification = {
+      title: "Team invitation cancelled",
+      type: NotificationEnums.TEAM_INVITATION_CANCELED,
+      content: `The invitation to join the team "${team?.name}" in the "${team?.category}" category has been canceled. We hope to collaborate in the future.`,
+      receiver: memberId,
+      sender: team?.admin,
+      link: `${config.app.frontendDomain}/dashboard/invitations?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
+    };
+    await NotificationService.createNotification(notifyObject);
+  }
+
+  async acceptInvitation(teamId: string, memberId: string): Promise<void> {
+    const team = await TeamService.getTeamById(teamId);
+    await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $addToSet: { activeMembers: memberId },
+        $pull: { pendingMembers: memberId },
+      },
+      { new: true }
+    );
+
+    const member = await UserService.findUserById(memberId);
+    const notifyObject: INotification = {
+      title: "Team invitation accepted",
+      type: NotificationEnums.TEAM_INVITATION_ACCEPTED,
+      content: `Great news! ${member?.name} has accepted the invitation to join your team "${team?.name}" in the "${team?.category}" category. Get ready to collaborate and achieve great things together!`,
+      receiver: team?.admin,
+      sender: memberId,
+      link: `${config.app.frontendDomain}/teams/details/${teamId}?team_name=${team?.name}&team_category=${team?.category}&team_description=${team.description}`,
+    };
+    await NotificationService.createNotification(notifyObject);
   }
 
   async pendingInvitation(memberId: string) {
@@ -45,72 +116,6 @@ class Service {
       },
     ]);
     return result;
-  }
-
-  async rejectInvitation(teamId: string, memberId: string) {
-    const result = await Team.findByIdAndUpdate(
-      teamId,
-      {
-        $pull: { pendingMembers: memberId },
-      },
-      { new: true }
-    );
-
-    if (result && result?.admin) {
-      const notified = await NotificationService.sendNotification(
-        memberId,
-        result?.admin,
-        "team_invitation",
-        "Team Invitation",
-        `Your team invitation has been rejected for (${result?.name})`,
-        `dashboard?uId=${result?._id}&activeView=my-teams`
-      );
-      return notified;
-    }
-  }
-  async cancelInvitation(teamId: string, memberId: string) {
-    const result = await Team.findByIdAndUpdate(
-      teamId,
-      {
-        $pull: { pendingMembers: memberId },
-      },
-      { new: true }
-    );
-
-    if (result && result?.admin) {
-      const notified = await NotificationService.sendNotification(
-        result?.admin,
-        memberId,
-        "team_invitation",
-        "Team Invitation",
-        `Your team invitation has been cancelled for (${result?.name})`,
-        `dashboard/invitations?uId=${result?._id}&activeView=my-teams`
-      );
-      return notified;
-    }
-  }
-
-  async acceptInvitation(teamId: string, memberId: string) {
-    const result = await Team.findByIdAndUpdate(
-      teamId,
-      {
-        $addToSet: { activeMembers: memberId },
-        $pull: { pendingMembers: memberId },
-      },
-      { new: true }
-    );
-
-    if (result && result?.admin) {
-      const notified = await NotificationService.sendNotification(
-        memberId,
-        result?.admin,
-        "team_invitation",
-        "Team Invitation",
-        `Your team invitation has been accepted for (${result?.name})`,
-        `dashboard?uId=${result?._id}&activeView=my-teams`
-      );
-      return notified;
-    }
   }
 }
 

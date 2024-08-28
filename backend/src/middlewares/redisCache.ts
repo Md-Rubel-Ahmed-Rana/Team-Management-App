@@ -43,9 +43,7 @@ class RedisCache {
       try {
         const key = req.params.userId;
         let data = await this.getCachedData(key);
-        data = data.sort(
-          (a: INotification, b: INotification) => b?.sortBy - a?.sortBy
-        );
+        data = data.sort((a: any, b: any) => b?.sortBy - a?.sortBy);
         res.status(httpStatus.OK).json({
           statusCode: httpStatus.OK,
           success: true,
@@ -64,11 +62,9 @@ class RedisCache {
         const key = req.params.userId;
         const ids = req.body;
         let data = await this.getCachedData(key);
-        const unchanged = data?.filter(
-          (not: INotification) => !ids.includes(not?.id)
-        );
+        const unchanged = data?.filter((not: any) => !ids.includes(not?.id));
 
-        data = data?.map((notification: INotification) => {
+        data = data?.map((notification: any) => {
           if (ids.includes(notification.id)) {
             notification.read = true;
           }

@@ -1,62 +1,15 @@
-import { v4 as uuidv4 } from "uuid";
-import { Types } from "mongoose";
-import User from "@/models/user.model";
-import {
-  INewNotification,
-  INotification,
-} from "@/interfaces/notification.interface";
-import { RedisCacheService } from "@/middlewares/redisCache";
-import { cacheExpireDates } from "@/constants/redisCacheExpireDate";
-import { config } from "@/configurations/envConfig";
+import { INotification } from "@/interfaces/notification.interface";
 import { Notification } from "@/models/notification.model";
+import mongoose from "mongoose";
 import { UserSelect } from "propertySelections";
 
 class Service {
-  async sendNotification(
-    senderId: string | Types.ObjectId,
-    receiverId: string | Types.ObjectId,
-    type: string,
-    title: string,
-    message: string,
-    linkSuffix: string
+  async createNotification(
+    data: INotification,
+    session?: mongoose.ClientSession
   ) {
-    // send notification to add  new  member to project
-    const receiver = await User.findById(receiverId).select({ name: 1 });
-    const sender = await User.findById(senderId).select({ name: 1 });
-
-    if (sender && receiver) {
-      const notification: INotification = {
-        id: uuidv4(),
-        sortBy: Date.now(),
-        type,
-        createdAt: new Date(),
-        read: false,
-        content: {
-          title,
-          message,
-          link: `${config.app.frontendDomain}/${linkSuffix}`,
-          data: {
-            sendBy: sender?.name,
-          },
-        },
-        recipient: {
-          userId: receiver?._id,
-          name: receiver?.name,
-        },
-      };
-
-      await RedisCacheService.insertOne(
-        String(receiver?._id),
-        notification,
-        cacheExpireDates.months[1]
-      );
-
-      return notification;
-    }
-  }
-  async send(data: INewNotification) {
-    const result = await Notification.create(data);
-    const populatedResult = await result.populate([
+    const result = await Notification.create([data], { session });
+    const populatedResult = await result[0].populate([
       {
         path: "sender",
         model: "User",
@@ -68,6 +21,9 @@ class Service {
         select: UserSelect,
       },
     ]);
+
+    console.log("New notification", populatedResult);
+
     return populatedResult;
   }
 

@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 
 class Controller extends RootController {
   send = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await NotificationService.send(req.body);
+    const result = await NotificationService.createNotification(req.body);
     this.apiResponse(res, {
       statusCode: httpStatus.CREATED,
       success: true,

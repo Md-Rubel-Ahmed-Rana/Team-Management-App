@@ -1,8 +1,8 @@
-import { INewNotification } from "@/interfaces/notification.interface";
+import { INotification } from "@/interfaces/notification.interface";
 import { NotificationEnums, NotificationStatusEnum } from "enums";
 import { model, Schema } from "mongoose";
 
-const notificationSchema = new Schema<INewNotification>(
+const notificationSchema = new Schema<INotification>(
   {
     title: {
       type: String,

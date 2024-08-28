@@ -23,6 +23,8 @@ const user_service_1 = require("./user.service");
 const task_service_1 = require("./task.service");
 const mongoose_1 = __importDefault(require("mongoose"));
 const propertySelections_1 = require("propertySelections");
+const enums_1 = require("enums");
+const envConfig_1 = require("@/configurations/envConfig");
 class Service {
     createProject(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -213,8 +215,16 @@ class Service {
                 $push: { members: memberId },
             }, { new: true });
             if (project === null || project === void 0 ? void 0 : project.user) {
-                const result = yield notification_service_1.NotificationService.sendNotification(project === null || project === void 0 ? void 0 : project.user, memberId, "project_invitation", "Assigned to project", `You've been added to a project (${project === null || project === void 0 ? void 0 : project.name})`, `projects?team=${project === null || project === void 0 ? void 0 : project.team}&id=${project._id}&name=${project === null || project === void 0 ? void 0 : project.name}`);
-                return result;
+                const member = yield user_service_1.UserService.findUserById(memberId);
+                const notifyObject = {
+                    title: "You have been added to a project",
+                    type: enums_1.NotificationEnums.PROJECT_MEMBER_ADDED,
+                    content: `Congratulations! You've been added to the project "${project.name}" in the "${project.category}" category. Your skills and contributions are highly valued, and we’re excited to have you on board!`,
+                    link: `${envConfig_1.config.app.frontendDomain}/projects/joined-projects?userId=${memberId}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
+                    sender: project === null || project === void 0 ? void 0 : project.user,
+                    receiver: memberId,
+                };
+                yield notification_service_1.NotificationService.createNotification(notifyObject);
             }
         });
     }
@@ -224,15 +234,23 @@ class Service {
             if (!project) {
                 throw new apiError_1.default(http_status_1.default.NOT_FOUND, "Project not found");
             }
-            const result = yield project_model_1.Project.findByIdAndUpdate(projectId, {
+            yield project_model_1.Project.findByIdAndUpdate(projectId, {
                 $pull: { members: memberId },
             }, { new: true });
-            // update leave request for project
+            // Update the most recent leave request for the project
             yield projectLeaveRequest_model_1.ProjectLeaveRequest.findOneAndUpdate({ project: projectId }, { $set: { status: "accepted" } }).sort({ createdAt: -1 });
             if (project === null || project === void 0 ? void 0 : project.user) {
-                yield notification_service_1.NotificationService.sendNotification(project === null || project === void 0 ? void 0 : project.user, memberId, "project_invitation", "Assigned to project", `You've been removed from a project (${project === null || project === void 0 ? void 0 : project.name})`, "projects");
+                const member = yield user_service_1.UserService.findUserById(memberId);
+                const notifyObject = {
+                    title: "You have been removed from a project",
+                    type: enums_1.NotificationEnums.PROJECT_MEMBER_REMOVED,
+                    content: `You have been removed from the project "${project.name}" in the "${project.category}" category. We appreciate your contributions, and we wish you success in your future endeavors.`,
+                    link: `${envConfig_1.config.app.frontendDomain}/projects/joined-projects?userId=${memberId}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
+                    sender: project === null || project === void 0 ? void 0 : project.user,
+                    receiver: memberId,
+                };
+                yield notification_service_1.NotificationService.createNotification(notifyObject);
             }
-            return result;
         });
     }
 }
