@@ -12,12 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskService = void 0;
 const task_model_1 = require("@/models/task.model");
 const notification_service_1 = require("./notification.service");
-const mapper_1 = require("../mapper");
-const task_entity_1 = require("@/entities/task.entity");
-const get_1 = require("@/dto/task/get");
-const create_1 = require("@/dto/task/create");
-const update_1 = require("@/dto/task/update");
-const delete_1 = require("@/dto/task/delete");
 class Service {
     createTask(taskData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -35,8 +29,7 @@ class Service {
                         model: "User",
                     },
                 ]);
-                const data = mapper_1.mapper.map(result, task_entity_1.TaskEntity, create_1.CreateTaskDTO);
-                return { notification, data };
+                return { notification, data: result };
             }
         });
     }
@@ -59,8 +52,7 @@ class Service {
                     select: { name: 1, category: 1 },
                 },
             ]);
-            const mappedData = mapper_1.mapper.mapArray(result, task_entity_1.TaskEntity, get_1.GetTaskDTO);
-            return mappedData;
+            return result;
         });
     }
     updateTaskStatus(taskId, status) {
@@ -82,8 +74,7 @@ class Service {
                     select: userProjection,
                 },
             ]);
-            const mappedData = mapper_1.mapper.map(result, task_entity_1.TaskEntity, update_1.UpdateTaskDTO);
-            return mappedData;
+            return result;
         });
     }
     updateTask(taskId, name) {
@@ -105,16 +96,13 @@ class Service {
                     select: userProjection,
                 },
             ]);
-            console.log(result);
-            const mappedData = mapper_1.mapper.map(result, task_entity_1.TaskEntity, update_1.UpdateTaskDTO);
-            return mappedData;
+            return result;
         });
     }
     deleteTask(taskId) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield task_model_1.Task.findByIdAndDelete(taskId).exec();
-            const mappedData = mapper_1.mapper.map(result, task_entity_1.TaskEntity, delete_1.DeleteTaskDTO);
-            return mappedData;
+            return result;
         });
     }
     deleteTasksByProjectId(projectId, session) {

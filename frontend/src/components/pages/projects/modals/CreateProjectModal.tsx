@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import { useMyTeamsQuery } from "@/features/team";
+import { useGetMyTeamsForDropdownQuery } from "@/features/team";
 import { INewProject } from "@/interfaces/project.interface";
 import { useCreateProjectMutation } from "@/features/project";
 import customStyles from "@/utils/reactSelectCustomStyle";
@@ -16,7 +16,7 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
   };
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: teamData } = useMyTeamsQuery(user?.id);
+  const { data: teamData } = useGetMyTeamsForDropdownQuery(user?.id);
   const [selectedTeam, setSelectedTeam] = useState<{
     label: string;
     value: string;

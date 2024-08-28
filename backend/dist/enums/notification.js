@@ -1,0 +1,31 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NotificationStatusEnum = exports.NotificationEnums = void 0;
+var NotificationEnums;
+(function (NotificationEnums) {
+    NotificationEnums["TASK_ASSIGNED"] = "task_assigned";
+    NotificationEnums["TASK_COMPLETED"] = "task_completed";
+    NotificationEnums["TASK_OVERDUE"] = "task_overdue";
+    NotificationEnums["PROJECT_CREATED"] = "project_created";
+    NotificationEnums["PROJECT_UPDATED"] = "project_updated";
+    NotificationEnums["PROJECT_DELETED"] = "project_deleted";
+    NotificationEnums["TEAM_INVITATION"] = "team_invitation";
+    NotificationEnums["TEAM_JOINED"] = "team_joined";
+    NotificationEnums["TEAM_LEFT"] = "team_left";
+    NotificationEnums["COMMENT_MENTION"] = "comment_mention";
+    NotificationEnums["FILE_UPLOADED"] = "file_uploaded";
+    NotificationEnums["DEADLINE_APPROACHING"] = "deadline_approaching";
+    NotificationEnums["MESSAGE_RECEIVED"] = "message_received";
+    NotificationEnums["USER_MENTIONED"] = "user_mentioned";
+    NotificationEnums["USER_PROFILE_UPDATED"] = "user_profile_updated";
+    NotificationEnums["PERMISSION_CHANGED"] = "permission_changed";
+    NotificationEnums["SYSTEM_ALERT"] = "system_alert";
+    NotificationEnums["NEW_FEATURE"] = "new_feature";
+    NotificationEnums["REMINDER"] = "reminder";
+    NotificationEnums["ANNOUNCEMENT"] = "announcement";
+})(NotificationEnums || (exports.NotificationEnums = NotificationEnums = {}));
+var NotificationStatusEnum;
+(function (NotificationStatusEnum) {
+    NotificationStatusEnum["read"] = "read";
+    NotificationStatusEnum["unread"] = "unread";
+})(NotificationStatusEnum || (exports.NotificationStatusEnum = NotificationStatusEnum = {}));

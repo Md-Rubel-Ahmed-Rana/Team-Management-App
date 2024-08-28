@@ -11,18 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessageService = void 0;
 const message_model_1 = require("@/models/message.model");
-const mapper_1 = require("../mapper");
-const message_entity_1 = require("@/entities/message.entity");
-const create_1 = require("@/dto/message/create");
-const get_1 = require("@/dto/message/get");
-const update_1 = require("@/dto/message/update");
-const delete_1 = require("@/dto/message/delete");
+const propertySelections_1 = require("propertySelections");
 class Service {
     createMessage(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield message_model_1.Message.create(data);
-            const mappedData = mapper_1.mapper.map(result, message_entity_1.MessageEntity, create_1.CreateMessageDTO);
-            return mappedData;
+            const populatedResult = yield result.populate({
+                path: "poster",
+                model: "User",
+                select: propertySelections_1.UserSelect,
+            });
+            return populatedResult;
         });
     }
     getMessagesByType(messageType, conversationId) {
@@ -33,10 +32,9 @@ class Service {
             }).populate({
                 path: "poster",
                 model: "User",
-                select: ["name", "profile_picture"],
+                select: propertySelections_1.UserSelect,
             });
-            const mappedData = mapper_1.mapper.mapArray(result, message_entity_1.MessageEntity, get_1.GetMessageDTO);
-            return mappedData;
+            return result;
         });
     }
     getMessage(messageId) {
@@ -44,28 +42,34 @@ class Service {
             const result = yield message_model_1.Message.findById(messageId).populate({
                 path: "poster",
                 model: "User",
+                select: propertySelections_1.UserSelect,
             });
-            const mappedData = mapper_1.mapper.map(result, message_entity_1.MessageEntity, get_1.GetMessageDTO);
-            return mappedData;
+            return result;
         });
     }
     getMessageById(messageId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield message_model_1.Message.findById(messageId);
+            return yield message_model_1.Message.findById(messageId).populate({
+                path: "poster",
+                model: "User",
+                select: propertySelections_1.UserSelect,
+            });
         });
     }
     updateMessage(messageId, text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield message_model_1.Message.findByIdAndUpdate(messageId, { $set: { text } }, { new: true });
-            const mappedData = mapper_1.mapper.map(result, message_entity_1.MessageEntity, update_1.UpdateMessageDTO);
-            return mappedData;
+            const result = yield message_model_1.Message.findByIdAndUpdate(messageId, { $set: { text } }, { new: true }).populate({
+                path: "poster",
+                model: "User",
+                select: propertySelections_1.UserSelect,
+            });
+            return result;
         });
     }
     deleteMessage(messageId) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield message_model_1.Message.findByIdAndDelete(messageId);
-            const mappedData = mapper_1.mapper.map(result, message_entity_1.MessageEntity, delete_1.DeleteMessageDTO);
-            return mappedData;
+            return result;
         });
     }
 }

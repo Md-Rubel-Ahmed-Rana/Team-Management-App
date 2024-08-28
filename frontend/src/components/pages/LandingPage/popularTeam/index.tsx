@@ -31,7 +31,6 @@ const PopularTeam = () => {
       },
     ],
   };
-
   return (
     <div className="container mx-auto my-8">
       <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-4">
@@ -51,7 +50,7 @@ const PopularTeam = () => {
                 <img
                   src={team.image}
                   alt={team.name}
-                  className="h-48  ring-1 rounded-md m-2 object-cover"
+                  className="h-48 w-full  ring-1 rounded-md m-2 object-cover"
                 />
               </div>
               <div className="p-4">
@@ -77,10 +76,10 @@ const PopularTeam = () => {
 const NextArrow = ({ onClick }: any) => {
   return (
     <div
-      className="absolute top-1/2 transform -translate-y-1/2 right-2 z-10 cursor-pointer"
+      className="absolute top-1/2 transform -translate-y-1/2 right-2 bg-blue-600 p-2 rounded-full z-10 cursor-pointer"
       onClick={onClick}
     >
-      <FaChevronRight className="text-gray-800 hover:text-gray-500 text-3xl mb-4" />
+      <FaChevronRight className="text-white text-2xl" />
     </div>
   );
 };
@@ -88,10 +87,10 @@ const NextArrow = ({ onClick }: any) => {
 const PrevArrow = ({ onClick }: any) => {
   return (
     <div
-      className="absolute top-1/2 transform -translate-y-1/2 left-2 z-10 cursor-pointer"
+      className="absolute top-1/2 transform -translate-y-1/2 left-2 bg-blue-600 p-2 rounded-full z-10 cursor-pointer"
       onClick={onClick}
     >
-      <FaChevronLeft className="text-gray-800 hover:text-gray-500 text-3xl mb-4" />
+      <FaChevronLeft className="text-white text-2xl" />
     </div>
   );
 };

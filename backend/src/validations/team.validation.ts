@@ -30,8 +30,6 @@ const createTeamValidation = z.object({
         })
         .min(1)
         .max(255),
-      activeMembers: z.array(z.string().optional()).optional(),
-      pendingMembers: z.array(z.string().optional()).optional(),
     })
     .strict(),
 });

@@ -6,7 +6,11 @@ import { useUpdateProjectMutation } from "@/features/project";
 import { IProject } from "@/interfaces/project.interface";
 
 const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
-  const { register, handleSubmit } = useForm<Partial<IProject>>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Partial<IProject>>({
     mode: "onChange",
   });
   const closeModal = () => {
@@ -73,24 +77,36 @@ const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
                     <div className="relative w-full py-2">
                       <p className="text-stone-500 dark:text-white">Name</p>
                       <input
-                        {...register("name", { required: true })}
-                        required
+                        {...register("name", {
+                          required: "Project name is required",
+                        })}
                         type="text"
                         id="name"
                         defaultValue={project?.name}
                         className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  p-2 outline-none   shadow-sm sm:text-sm"
                       />
+                      {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.name.message}
+                        </p>
+                      )}
                     </div>
                     <div className="relative w-full py-2">
                       <p className="text-stone-500 dark:text-white">Category</p>
                       <input
-                        {...register("category", { required: true })}
-                        required
+                        {...register("category", {
+                          required: "Project category is required",
+                        })}
                         type="text"
                         id="category"
                         defaultValue={project?.category}
                         className="w-full rounded-lg bg-transparent border border-[#BCBCBC] placeholder:text-sm placeholder:lg:text-base text-sm placeholder:text-[#7B7B7B]  p-2 outline-none   shadow-sm sm:text-sm"
                       />
+                      {errors.category && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.category.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="mt-5 flex justify-between gap-2">

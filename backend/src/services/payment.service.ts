@@ -2,10 +2,6 @@ import Stripe from "stripe";
 import { config } from "dotenv";
 import { Plan } from "@/models/plan.model";
 import { Payment } from "@/models/payment.model";
-import { mapper } from "../mapper";
-import { PaymentEntity } from "@/entities/payment.entity";
-import { ModelIdentifier } from "@automapper/core";
-import { GetPaymentDTO } from "@/dto/payment/get";
 config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
@@ -66,12 +62,8 @@ class Service {
       path: "package",
       model: "Plan",
     });
-    const mappedData = mapper.mapArray(
-      payments,
-      PaymentEntity as ModelIdentifier,
-      GetPaymentDTO
-    );
-    return mappedData;
+
+    return payments;
   }
 }
 export const PaymentService = new Service();

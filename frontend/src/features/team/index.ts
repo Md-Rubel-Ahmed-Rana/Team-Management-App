@@ -27,10 +27,9 @@ const teamApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["team"] as any,
     }),
-
-    myTeams: builder.query({
-      query: (id) => ({
-        url: `/team/my-teams/${id}`,
+    getMyTeamsForDropdown: builder.query({
+      query: (adminId) => ({
+        url: `/team/my-teams/dropdown/${adminId}`,
       }),
       providesTags: ["team"] as any,
     }),
@@ -125,8 +124,8 @@ const teamApi = apiSlice.injectEndpoints({
 
 export const {
   useCreateTeamMutation,
+  useGetMyTeamsForDropdownQuery,
   useGetTeamsQuery,
-  useMyTeamsQuery,
   useSingleTeamQuery,
   useJoinedTeamsQuery,
   useGetActiveMembersQuery,

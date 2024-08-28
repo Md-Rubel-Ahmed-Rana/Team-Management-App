@@ -33,6 +33,9 @@ const EditTaskModal = ({ isOpen, setIsOpen, task }: Props) => {
     const result: any = await updateTask({ ...data, id: task.id });
     if (result?.data?.success) {
       toast.success(result?.data?.message);
+      window.location.reload();
+    } else {
+      toast.error("Something went wrong to update task");
     }
   };
 

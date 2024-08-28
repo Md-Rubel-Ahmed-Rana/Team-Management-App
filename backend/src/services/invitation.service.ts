@@ -1,5 +1,6 @@
 import Team from "@/models/team.model";
 import { NotificationService } from "./notification.service";
+import { UserSelect } from "propertySelections";
 
 class Service {
   async sendInvitation(teamId: string, memberId: string) {
@@ -30,23 +31,17 @@ class Service {
       {
         path: "activeMembers",
         model: "User",
+        select: UserSelect,
       },
       {
         path: "pendingMembers",
         model: "User",
+        select: UserSelect,
       },
       {
         path: "admin",
         model: "User",
-        select: [
-          "name",
-          "profile_picture",
-          "email",
-          "department",
-          "designation",
-          "createdAt",
-          "updatedAt",
-        ],
+        select: UserSelect,
       },
     ]);
     return result;

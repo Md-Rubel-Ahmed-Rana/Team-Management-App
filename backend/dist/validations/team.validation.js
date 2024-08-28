@@ -32,8 +32,6 @@ const createTeamValidation = zod_1.z.object({
         })
             .min(1)
             .max(255),
-        activeMembers: zod_1.z.array(zod_1.z.string().optional()).optional(),
-        pendingMembers: zod_1.z.array(zod_1.z.string().optional()).optional(),
     })
         .strict(),
 });

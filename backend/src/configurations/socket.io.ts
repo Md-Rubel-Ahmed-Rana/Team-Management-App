@@ -3,14 +3,15 @@ import { Server } from "socket.io";
 export const initiateSocketIo = (io: Server) => {
   io.on("connection", async (socket) => {
     console.log("A user connected");
-
     // messaging room for a team
-    socket.on("join-room", (roomId: string) => {
+    socket.on("team-join-room", (roomId: string) => {
+      console.log(`New team member joined to:'${roomId}' room`);
       socket.join(roomId);
     });
 
     socket.on("message", (data: any) => {
-      socket.to(data.conversationId).emit("message", data);
+      console.log("New message", data);
+      socket.broadcast.to(data.conversationId).emit("message", data);
     });
 
     // notification room for each user
@@ -21,7 +22,7 @@ export const initiateSocketIo = (io: Server) => {
 
     socket.on("notification", (data: any) => {
       console.log("New notification", data);
-      socket.to(data.recipient.userId).emit("notification", data);
+      socket.broadcast.to(data.recipient.userId).emit("notification", data);
     });
 
     // tasks room
@@ -32,7 +33,7 @@ export const initiateSocketIo = (io: Server) => {
 
     socket.on("task", (data: any) => {
       console.log("New task", data);
-      socket.to(data.project).emit("task", data);
+      socket.broadcast.to(data.project).emit("task", data);
     });
 
     socket.on("disconnect", async () => {

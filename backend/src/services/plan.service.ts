@@ -1,40 +1,22 @@
 import { IPlan } from "@/interfaces/plan.interface";
 import { Plan } from "@/models/plan.model";
-import { mapper } from "../mapper";
-import { PlanEntity } from "@/entities/plan.entity";
-import { ModelIdentifier } from "@automapper/core";
-import { GetPlanDTO } from "@/dto/plan/get";
-import { CreatePlanDTO } from "@/dto/plan/create";
 
 class Service {
-  async getPlans(): Promise<GetPlanDTO[]> {
+  async getPlans(): Promise<any> {
     const result = await Plan.find({});
-    const mappedData = mapper.mapArray(
-      result,
-      PlanEntity as ModelIdentifier,
-      GetPlanDTO
-    );
-    return mappedData;
+
+    return result;
   }
 
-  async createPlan(data: IPlan | IPlan[]): Promise<CreatePlanDTO> {
+  async createPlan(data: IPlan | IPlan[]): Promise<any> {
     const result = await Plan.create(data);
-    const mappedData = mapper.map(
-      result,
-      PlanEntity as ModelIdentifier,
-      CreatePlanDTO
-    );
-    return mappedData;
+
+    return result;
   }
 
-  async getSinglePlan(id: string): Promise<GetPlanDTO> {
+  async getSinglePlan(id: string): Promise<any> {
     const result = await Plan.findById(id);
-    const mappedData = mapper.map(
-      result,
-      PlanEntity as ModelIdentifier,
-      GetPlanDTO
-    );
-    return mappedData;
+    return result;
   }
 }
 
