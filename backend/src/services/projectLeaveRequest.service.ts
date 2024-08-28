@@ -1,24 +1,25 @@
 import { ProjectLeaveRequest } from "@/models/projectLeaveRequest.model";
-import { mapper } from "../mapper";
-import { CreateProjectLeaveDTO } from "@/dto/projectLeave/create";
-import { ModelIdentifier } from "@automapper/core";
-import { ProjectLeaveEntity } from "@/entities/projectLeave.entity";
-import { GetProjectLeaveDTO } from "@/dto/projectLeave/get";
-import { UpdateProjectLeaveDTO } from "@/dto/projectLeave/update";
+import ApiError from "@/shared/apiError";
+import httpStatus from "http-status";
 
 class Service {
   async requestToLeave(data: {
     project: string;
     member: string;
     admin: string;
-  }): Promise<CreateProjectLeaveDTO> {
+  }): Promise<any> {
+    const isExist = await ProjectLeaveRequest.findOne({
+      project: data.project,
+      member: data.member,
+    });
+    if (isExist) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "You already have requested to leave"
+      );
+    }
     const result = await ProjectLeaveRequest.create(data);
-    const mappedData = mapper.map(
-      result,
-      ProjectLeaveEntity as ModelIdentifier,
-      CreateProjectLeaveDTO
-    );
-    return mappedData;
+    return result;
   }
 
   async getLeaveRequestByAdmin(admin: string) {
@@ -33,15 +34,10 @@ class Service {
         model: "User",
         select: "name",
       });
-    const mappedData = mapper.mapArray(
-      result,
-      ProjectLeaveEntity as ModelIdentifier,
-      GetProjectLeaveDTO
-    );
-    return mappedData;
+    return result;
   }
 
-  async ignoreRequest(requestId: string): Promise<UpdateProjectLeaveDTO> {
+  async ignoreRequest(requestId: string): Promise<any> {
     const result = await ProjectLeaveRequest.findByIdAndUpdate(
       requestId,
       { $set: { status: "ignored" } },
@@ -57,15 +53,11 @@ class Service {
         model: "User",
         select: "name",
       });
-    const mappedData = mapper.map(
-      result,
-      ProjectLeaveEntity as ModelIdentifier,
-      UpdateProjectLeaveDTO
-    );
-    return mappedData;
+
+    return result;
   }
 
-  async getMemberRequest(memberId: string): Promise<GetProjectLeaveDTO> {
+  async getMemberRequest(memberId: string): Promise<any> {
     const result = await ProjectLeaveRequest.findOne({
       member: memberId,
       status: "pending",
@@ -80,12 +72,7 @@ class Service {
         model: "User",
         select: "name",
       });
-    const mappedData = mapper.map(
-      result,
-      ProjectLeaveEntity as ModelIdentifier,
-      GetProjectLeaveDTO
-    );
-    return mappedData;
+    return result;
   }
 }
 

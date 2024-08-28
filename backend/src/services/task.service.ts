@@ -1,19 +1,12 @@
 import { ITask } from "@/interfaces/task.interface";
 import { Task } from "@/models/task.model";
 import { NotificationService } from "./notification.service";
-import { mapper } from "../mapper";
-import { TaskEntity } from "@/entities/task.entity";
-import { ModelIdentifier } from "@automapper/core";
-import { GetTaskDTO } from "@/dto/task/get";
-import { CreateTaskDTO } from "@/dto/task/create";
-import { UpdateTaskDTO } from "@/dto/task/update";
-import { DeleteTaskDTO } from "@/dto/task/delete";
 import { INotification } from "@/interfaces/notification.interface";
 import mongoose from "mongoose";
 
 type ICreateTask = {
   notification: INotification | undefined;
-  data: GetTaskDTO | undefined;
+  data: any;
 };
 
 class Service {
@@ -41,17 +34,11 @@ class Service {
         },
       ]);
 
-      const data = mapper.map(
-        result,
-        TaskEntity as ModelIdentifier,
-        CreateTaskDTO
-      );
-
-      return { notification, data };
+      return { notification, data: result };
     }
   }
 
-  async getTasksByProjectId(projectId: string): Promise<GetTaskDTO[]> {
+  async getTasksByProjectId(projectId: string): Promise<any> {
     const result = await Task.find({ project: projectId }).populate([
       {
         path: "assignedTo",
@@ -70,19 +57,10 @@ class Service {
       },
     ]);
 
-    const mappedData = mapper.mapArray(
-      result,
-      TaskEntity as ModelIdentifier,
-      GetTaskDTO
-    );
-
-    return mappedData;
+    return result;
   }
 
-  async updateTaskStatus(
-    taskId: string,
-    status: string
-  ): Promise<UpdateTaskDTO> {
+  async updateTaskStatus(taskId: string, status: string): Promise<any> {
     const userProjection = {
       name: 1,
       profile_picture: 1,
@@ -105,16 +83,10 @@ class Service {
       },
     ]);
 
-    const mappedData = mapper.map(
-      result,
-      TaskEntity as ModelIdentifier,
-      UpdateTaskDTO
-    );
-
-    return mappedData;
+    return result;
   }
 
-  async updateTask(taskId: string, name: string): Promise<UpdateTaskDTO> {
+  async updateTask(taskId: string, name: string): Promise<any> {
     const userProjection = {
       name: 1,
       profile_picture: 1,
@@ -136,26 +108,13 @@ class Service {
         select: userProjection,
       },
     ]);
-    console.log(result);
 
-    const mappedData = mapper.map(
-      result,
-      TaskEntity as ModelIdentifier,
-      UpdateTaskDTO
-    );
-
-    return mappedData;
+    return result;
   }
 
-  async deleteTask(taskId: string): Promise<DeleteTaskDTO> {
+  async deleteTask(taskId: string): Promise<any> {
     const result = await Task.findByIdAndDelete(taskId).exec();
-    const mappedData = mapper.map(
-      result,
-      TaskEntity as ModelIdentifier,
-      DeleteTaskDTO
-    );
-
-    return mappedData;
+    return result;
   }
   async deleteTasksByProjectId(
     projectId: string,

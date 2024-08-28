@@ -19,3 +19,13 @@ export type INotification = {
     name: string;
   };
 };
+
+export type INewNotification = {
+  title: string;
+  content: string;
+  type: string;
+  status: string;
+  link?: string;
+  sender: string | Types.ObjectId;
+  receiver: string | Types.ObjectId;
+};

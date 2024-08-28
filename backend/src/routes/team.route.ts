@@ -13,7 +13,10 @@ router.post(
   TeamController.createTeam
 );
 
-router.get("/my-teams/:adminId", TeamController.myTeams);
+router.get(
+  "/my-teams/dropdown/:adminId",
+  TeamController.getMyTeamListForDropdown
+);
 
 router.get("/cards/my-teams/:adminId", TeamController.getMyTeamsForCard);
 
@@ -22,7 +25,7 @@ router.get(
   TeamController.getJoinedTeamsForCard
 );
 
-router.get("/joined-teams/:memberId", TeamController.joinedTeams);
+// router.get("/joined-teams/:memberId", TeamController.joinedTeams);
 
 router.get("/active-members/:teamId", TeamController.getActiveMembers);
 

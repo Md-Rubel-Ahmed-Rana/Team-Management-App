@@ -6,8 +6,8 @@ import Link from "next/link";
 import SmallLoader from "./SmallLoader";
 import type { MenuProps } from "antd";
 import dynamic from "next/dynamic";
-import AnotherModal from "../pages/notifications/AnotherModal";
-
+import NotificationModal from "../pages/notifications";
+import { useGetUnreadNotificationsCountQuery } from "@/features/notification";
 const Dropdown: any = dynamic(() => import("antd/lib/dropdown"), {
   ssr: false,
   loading: () => <FaBars className="text-2xl" />,
@@ -22,6 +22,7 @@ const Navbar = () => {
   const user: IUser = data?.data;
   const queries = `userId=${user?.id}&name=${user?.name}&email=${user?.email}`;
   const [showNotification, setShowNotification] = useState(false);
+  const { data: unreadNotData } = useGetUnreadNotificationsCountQuery(user?.id);
 
   const universalItems: MenuProps["items"] = [
     {
@@ -144,7 +145,7 @@ const Navbar = () => {
                 >
                   <FaRegBell />
                   <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-                    {0}
+                    {unreadNotData?.data || 0}
                   </small>
                 </button>
                 <Link
@@ -233,7 +234,10 @@ const Navbar = () => {
         </div>
 
         {showNotification && (
-          <AnotherModal open={showNotification} setOpen={setShowNotification} />
+          <NotificationModal
+            open={showNotification}
+            setOpen={setShowNotification}
+          />
         )}
       </nav>
     </div>
