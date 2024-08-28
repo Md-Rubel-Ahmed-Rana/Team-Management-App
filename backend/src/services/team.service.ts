@@ -10,6 +10,10 @@ import { ProjectService } from "./project.service";
 import extractCloudinaryPublicId from "@/utils/getCloudinaryFilePublicIdFromUrl";
 import { deleteSingleFileFromCloudinary } from "@/utils/deletePreviousFileFromCloudinary";
 import { UserSelect } from "propertySelections";
+import { INotification } from "@/interfaces/notification.interface";
+import { NotificationEnums } from "enums";
+import { config } from "@/configurations/envConfig";
+import { UserService } from "./user.service";
 
 class Service {
   async createTeam(data: ITeam): Promise<any> {
@@ -298,35 +302,37 @@ class Service {
   }
 
   async removeMember(teamId: string, memberId: string): Promise<void> {
-    // remove from team
+    // Remove member from team
     await Team.updateOne(
       { _id: teamId },
       { $pull: { activeMembers: memberId } }
     );
 
-    const result = await Team.findById(teamId).select({ name: 1, admin: 1 });
+    const team = await Team.findById(teamId);
 
-    // remove this member from projects by member id //
+    // Remove this member from projects by member ID
     await Project.updateMany(
       { team: teamId },
       { $pull: { members: { memberId: memberId } } }
     );
 
-    // update leave request for team
+    // Update leave request for team
     await TeamLeaveRequest.findOneAndUpdate(
-      { team: teamId },
+      { team: teamId, member: memberId },
       { $set: { status: "accepted" } }
-    ).sort({ createdAt: -1 });
+    );
 
-    if (result && result?.admin) {
-      await NotificationService.sendNotification(
-        result?.admin,
-        memberId,
-        "team_invitation",
-        "Team Removal",
-        `You've been removed from Team (${result?.name})`,
-        `dashboard?uId=${memberId}activeView=joined-teams`
-      );
+    if (team && team?.admin) {
+      const member = await UserService.findUserById(memberId);
+      const notifyObject: INotification = {
+        title: "You Have Been Removed from a Team",
+        type: NotificationEnums.TEAM_MEMBER_REMOVED,
+        content: `Thank you for the time and effort you dedicated to the team "${team?.name}" in the "${team?.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
+        receiver: memberId,
+        sender: team?.admin,
+        link: `${config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
+      };
+      await NotificationService.createNotification(notifyObject);
     }
   }
 }

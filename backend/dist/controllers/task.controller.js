@@ -41,7 +41,7 @@ class Controller extends rootController_1.default {
         this.updateTaskStatus = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const taskId = req.params.taskId;
             const status = req.body.status;
-            const result = yield task_service_1.TaskService.updateTaskStatus(taskId, status);
+            const result = yield task_service_1.TaskService.updateTaskStatus(taskId, status, req === null || req === void 0 ? void 0 : req.id);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,
@@ -52,7 +52,7 @@ class Controller extends rootController_1.default {
         this.updateTask = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             const { name } = req.body;
-            const result = yield task_service_1.TaskService.updateTask(id, name);
+            const result = yield task_service_1.TaskService.updateTask(id, name, req === null || req === void 0 ? void 0 : req.id);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,
@@ -62,7 +62,7 @@ class Controller extends rootController_1.default {
         }));
         this.deleteTask = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const taskId = req.params.taskId;
-            const result = yield task_service_1.TaskService.deleteTask(taskId);
+            const result = yield task_service_1.TaskService.deleteTask(taskId, req === null || req === void 0 ? void 0 : req.id);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,

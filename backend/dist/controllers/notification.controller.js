@@ -20,7 +20,7 @@ class Controller extends rootController_1.default {
     constructor() {
         super(...arguments);
         this.send = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const result = yield notification_service_1.NotificationService.send(req.body);
+            const result = yield notification_service_1.NotificationService.createNotification(req.body);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.CREATED,
                 success: true,

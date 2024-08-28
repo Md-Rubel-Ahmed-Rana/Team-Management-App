@@ -10,6 +10,8 @@ import { UserService } from "./user.service";
 import { TaskService } from "./task.service";
 import mongoose from "mongoose";
 import { TeamSelect, UserSelect } from "propertySelections";
+import { NotificationEnums } from "enums";
+import { config } from "@/configurations/envConfig";
 
 class Service {
   async createProject(data: IProject): Promise<any> {
@@ -195,10 +197,7 @@ class Service {
     return result;
   }
 
-  async addMember(
-    projectId: string,
-    memberId: string
-  ): Promise<INotification | undefined> {
+  async addMember(projectId: string, memberId: string): Promise<void> {
     const project = await Project.findById(projectId);
 
     if (!project) {
@@ -226,26 +225,27 @@ class Service {
     );
 
     if (project?.user) {
-      const result = await NotificationService.sendNotification(
-        project?.user,
-        memberId,
-        "project_invitation",
-        "Assigned to project",
-        `You've been added to a project (${project?.name})`,
-        `projects?team=${project?.team}&id=${project._id}&name=${project?.name}`
-      );
-      return result;
+      const member = await UserService.findUserById(memberId);
+      const notifyObject: INotification = {
+        title: "You have been added to a project",
+        type: NotificationEnums.PROJECT_MEMBER_ADDED,
+        content: `Congratulations! You've been added to the project "${project.name}" in the "${project.category}" category. Your skills and contributions are highly valued, and we’re excited to have you on board!`,
+        link: `${config.app.frontendDomain}/projects/joined-projects?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
+        sender: project?.user,
+        receiver: memberId,
+      };
+      await NotificationService.createNotification(notifyObject);
     }
   }
 
-  async removeMember(projectId: string, memberId: string): Promise<any> {
+  async removeMember(projectId: string, memberId: string): Promise<void> {
     const project = await Project.findById(projectId);
 
     if (!project) {
       throw new ApiError(httpStatus.NOT_FOUND, "Project not found");
     }
 
-    const result = await Project.findByIdAndUpdate(
+    await Project.findByIdAndUpdate(
       projectId,
       {
         $pull: { members: memberId },
@@ -253,24 +253,24 @@ class Service {
       { new: true }
     );
 
-    // update leave request for project
+    // Update the most recent leave request for the project
     await ProjectLeaveRequest.findOneAndUpdate(
       { project: projectId },
       { $set: { status: "accepted" } }
     ).sort({ createdAt: -1 });
 
     if (project?.user) {
-      await NotificationService.sendNotification(
-        project?.user,
-        memberId,
-        "project_invitation",
-        "Assigned to project",
-        `You've been removed from a project (${project?.name})`,
-        "projects"
-      );
+      const member = await UserService.findUserById(memberId);
+      const notifyObject: INotification = {
+        title: "You have been removed from a project",
+        type: NotificationEnums.PROJECT_MEMBER_REMOVED,
+        content: `You have been removed from the project "${project.name}" in the "${project.category}" category. We appreciate your contributions, and we wish you success in your future endeavors.`,
+        link: `${config.app.frontendDomain}/projects/joined-projects?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
+        sender: project?.user,
+        receiver: memberId,
+      };
+      await NotificationService.createNotification(notifyObject);
     }
-
-    return result;
   }
 }
 

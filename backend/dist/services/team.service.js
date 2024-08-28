@@ -47,6 +47,9 @@ const project_service_1 = require("./project.service");
 const getCloudinaryFilePublicIdFromUrl_1 = __importDefault(require("@/utils/getCloudinaryFilePublicIdFromUrl"));
 const deletePreviousFileFromCloudinary_1 = require("@/utils/deletePreviousFileFromCloudinary");
 const propertySelections_1 = require("propertySelections");
+const enums_1 = require("enums");
+const envConfig_1 = require("@/configurations/envConfig");
+const user_service_1 = require("./user.service");
 class Service {
     createTeam(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -328,15 +331,24 @@ class Service {
     }
     removeMember(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            // remove from team
+            // Remove member from team
             yield team_model_1.default.updateOne({ _id: teamId }, { $pull: { activeMembers: memberId } });
-            const result = yield team_model_1.default.findById(teamId).select({ name: 1, admin: 1 });
-            // remove this member from projects by member id //
+            const team = yield team_model_1.default.findById(teamId);
+            // Remove this member from projects by member ID
             yield project_model_1.Project.updateMany({ team: teamId }, { $pull: { members: { memberId: memberId } } });
-            // update leave request for team
-            yield teamLeaveRequest_model_1.TeamLeaveRequest.findOneAndUpdate({ team: teamId }, { $set: { status: "accepted" } }).sort({ createdAt: -1 });
-            if (result && (result === null || result === void 0 ? void 0 : result.admin)) {
-                yield notification_service_1.NotificationService.sendNotification(result === null || result === void 0 ? void 0 : result.admin, memberId, "team_invitation", "Team Removal", `You've been removed from Team (${result === null || result === void 0 ? void 0 : result.name})`, `dashboard?uId=${memberId}activeView=joined-teams`);
+            // Update leave request for team
+            yield teamLeaveRequest_model_1.TeamLeaveRequest.findOneAndUpdate({ team: teamId, member: memberId }, { $set: { status: "accepted" } });
+            if (team && (team === null || team === void 0 ? void 0 : team.admin)) {
+                const member = yield user_service_1.UserService.findUserById(memberId);
+                const notifyObject = {
+                    title: "You Have Been Removed from a Team",
+                    type: enums_1.NotificationEnums.TEAM_MEMBER_REMOVED,
+                    content: `Thank you for the time and effort you dedicated to the team "${team === null || team === void 0 ? void 0 : team.name}" in the "${team === null || team === void 0 ? void 0 : team.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
+                    receiver: memberId,
+                    sender: team === null || team === void 0 ? void 0 : team.admin,
+                    link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
+                };
+                yield notification_service_1.NotificationService.createNotification(notifyObject);
             }
         });
     }

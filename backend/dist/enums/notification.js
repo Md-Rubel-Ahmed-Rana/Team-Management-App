@@ -3,26 +3,51 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationStatusEnum = exports.NotificationEnums = void 0;
 var NotificationEnums;
 (function (NotificationEnums) {
-    NotificationEnums["TASK_ASSIGNED"] = "task_assigned";
-    NotificationEnums["TASK_COMPLETED"] = "task_completed";
-    NotificationEnums["TASK_OVERDUE"] = "task_overdue";
-    NotificationEnums["PROJECT_CREATED"] = "project_created";
-    NotificationEnums["PROJECT_UPDATED"] = "project_updated";
-    NotificationEnums["PROJECT_DELETED"] = "project_deleted";
-    NotificationEnums["TEAM_INVITATION"] = "team_invitation";
-    NotificationEnums["TEAM_JOINED"] = "team_joined";
-    NotificationEnums["TEAM_LEFT"] = "team_left";
-    NotificationEnums["COMMENT_MENTION"] = "comment_mention";
-    NotificationEnums["FILE_UPLOADED"] = "file_uploaded";
-    NotificationEnums["DEADLINE_APPROACHING"] = "deadline_approaching";
-    NotificationEnums["MESSAGE_RECEIVED"] = "message_received";
-    NotificationEnums["USER_MENTIONED"] = "user_mentioned";
-    NotificationEnums["USER_PROFILE_UPDATED"] = "user_profile_updated";
-    NotificationEnums["PERMISSION_CHANGED"] = "permission_changed";
-    NotificationEnums["SYSTEM_ALERT"] = "system_alert";
-    NotificationEnums["NEW_FEATURE"] = "new_feature";
-    NotificationEnums["REMINDER"] = "reminder";
-    NotificationEnums["ANNOUNCEMENT"] = "announcement";
+    // Task-related notifications
+    NotificationEnums["TASK_ASSIGNED"] = "Task assigned";
+    NotificationEnums["TASK_COMPLETED"] = "Task completed";
+    NotificationEnums["TASK_OVERDUE"] = "Task overdue";
+    NotificationEnums["TASK_UPDATED"] = "Task updated";
+    NotificationEnums["TASK_COMMENTED"] = "Comment added to task";
+    NotificationEnums["TASK_REASSIGNED"] = "Task reassigned";
+    NotificationEnums["TASK_DELETED"] = "Task deleted";
+    // Project-related notifications
+    NotificationEnums["PROJECT_CREATED"] = "Project created";
+    NotificationEnums["PROJECT_UPDATED"] = "Project updated";
+    NotificationEnums["PROJECT_DELETED"] = "Project deleted";
+    NotificationEnums["PROJECT_COMPLETED"] = "Project completed";
+    NotificationEnums["PROJECT_OVERDUE"] = "Project overdue";
+    NotificationEnums["PROJECT_MEMBER_ADDED"] = "Member added to project";
+    NotificationEnums["PROJECT_MEMBER_REMOVED"] = "Member removed from project";
+    // Team-related notifications
+    NotificationEnums["TEAM_INVITATION"] = "Team invitation received";
+    NotificationEnums["TEAM_JOINED"] = "Joined team";
+    NotificationEnums["TEAM_LEFT"] = "Left team";
+    NotificationEnums["TEAM_UPDATED"] = "Team updated";
+    NotificationEnums["TEAM_MEMBER_ADDED"] = "Member added to team";
+    NotificationEnums["TEAM_MEMBER_REMOVED"] = "Member removed from team";
+    NotificationEnums["TEAM_INVITATION_REJECTED"] = "Team invitation rejected";
+    NotificationEnums["TEAM_INVITATION_CANCELED"] = "Team invitation cancelled";
+    NotificationEnums["TEAM_INVITATION_ACCEPTED"] = "Team invitation accepted";
+    // Comment and mention notifications
+    NotificationEnums["COMMENT_MENTION"] = "Mentioned in a comment";
+    NotificationEnums["USER_MENTIONED"] = "User mentioned";
+    NotificationEnums["COMMENT_ADDED"] = "Comment added";
+    // File-related notifications
+    NotificationEnums["FILE_UPLOADED"] = "File uploaded";
+    NotificationEnums["FILE_DELETED"] = "File deleted";
+    // Deadline and reminder notifications
+    NotificationEnums["DEADLINE_APPROACHING"] = "Deadline approaching";
+    NotificationEnums["REMINDER"] = "Reminder";
+    // Message and communication notifications
+    NotificationEnums["MESSAGE_RECEIVED"] = "Message received";
+    NotificationEnums["ANNOUNCEMENT"] = "Announcement";
+    // Profile and permission notifications
+    NotificationEnums["USER_PROFILE_UPDATED"] = "User profile updated";
+    NotificationEnums["PERMISSION_CHANGED"] = "Permission changed";
+    // System notifications
+    NotificationEnums["SYSTEM_ALERT"] = "System alert";
+    NotificationEnums["NEW_FEATURE"] = "New feature available";
 })(NotificationEnums || (exports.NotificationEnums = NotificationEnums = {}));
 var NotificationStatusEnum;
 (function (NotificationStatusEnum) {
