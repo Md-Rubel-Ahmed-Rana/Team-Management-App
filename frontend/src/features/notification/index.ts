@@ -2,22 +2,38 @@ import apiSlice from "../api/apiSlice";
 
 const notificationApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getNotification: builder.query({
-      query: (userId) => ({
-        url: `/notification/single/${userId}`,
+    getMyNotifications: builder.query({
+      query: ({ userId, limit }) => ({
+        url: `/notification/my-notifications/${userId}?limit=${limit}`,
       }),
       providesTags: ["notification"] as any,
     }),
-    updateNotification: builder.mutation({
-      query: ({ userId, ids }) => ({
+    getUnreadNotificationsCount: builder.query({
+      query: (userId) => ({
+        url: `/notification/unread/count/${userId}`,
+      }),
+      providesTags: ["notification"] as any,
+    }),
+    readNotification: builder.mutation({
+      query: (messageId) => ({
         method: "PATCH",
-        url: `/notification/update/${userId}`,
-        body: ids,
+        url: `/notification/status/read/${messageId}`,
+      }),
+      invalidatesTags: ["notification"] as any,
+    }),
+    markAllNotificationsAsRead: builder.mutation({
+      query: (userId) => ({
+        method: "PATCH",
+        url: `/notification/mark-all-as-read/${userId}`,
       }),
       invalidatesTags: ["notification"] as any,
     }),
   }),
 });
 
-export const { useGetNotificationQuery, useUpdateNotificationMutation } =
-  notificationApi;
+export const {
+  useGetMyNotificationsQuery,
+  useReadNotificationMutation,
+  useGetUnreadNotificationsCountQuery,
+  useMarkAllNotificationsAsReadMutation,
+} = notificationApi;

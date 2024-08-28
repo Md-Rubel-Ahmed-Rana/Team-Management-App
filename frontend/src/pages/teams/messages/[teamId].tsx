@@ -28,6 +28,11 @@ const MessagesPage = () => {
     scrollToBottom();
   }, [realTimeMessages, scrollToBottom, socket, setRealTimeMessages]);
 
+  // connect to socket team room
+  useEffect(() => {
+    socket?.emit("team-join-room", query?.teamId);
+  }, [socket, query?.teamId]);
+
   return (
     <>
       <GetHead

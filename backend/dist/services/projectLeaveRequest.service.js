@@ -8,20 +8,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectLeaveRequestService = void 0;
 const projectLeaveRequest_model_1 = require("@/models/projectLeaveRequest.model");
-const mapper_1 = require("../mapper");
-const create_1 = require("@/dto/projectLeave/create");
-const projectLeave_entity_1 = require("@/entities/projectLeave.entity");
-const get_1 = require("@/dto/projectLeave/get");
-const update_1 = require("@/dto/projectLeave/update");
+const apiError_1 = __importDefault(require("@/shared/apiError"));
+const http_status_1 = __importDefault(require("http-status"));
 class Service {
     requestToLeave(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            const isExist = yield projectLeaveRequest_model_1.ProjectLeaveRequest.findOne({
+                project: data.project,
+                member: data.member,
+            });
+            if (isExist) {
+                throw new apiError_1.default(http_status_1.default.BAD_REQUEST, "You already have requested to leave");
+            }
             const result = yield projectLeaveRequest_model_1.ProjectLeaveRequest.create(data);
-            const mappedData = mapper_1.mapper.map(result, projectLeave_entity_1.ProjectLeaveEntity, create_1.CreateProjectLeaveDTO);
-            return mappedData;
+            return result;
         });
     }
     getLeaveRequestByAdmin(admin) {
@@ -37,8 +43,7 @@ class Service {
                 model: "User",
                 select: "name",
             });
-            const mappedData = mapper_1.mapper.mapArray(result, projectLeave_entity_1.ProjectLeaveEntity, get_1.GetProjectLeaveDTO);
-            return mappedData;
+            return result;
         });
     }
     ignoreRequest(requestId) {
@@ -54,8 +59,7 @@ class Service {
                 model: "User",
                 select: "name",
             });
-            const mappedData = mapper_1.mapper.map(result, projectLeave_entity_1.ProjectLeaveEntity, update_1.UpdateProjectLeaveDTO);
-            return mappedData;
+            return result;
         });
     }
     getMemberRequest(memberId) {
@@ -74,8 +78,7 @@ class Service {
                 model: "User",
                 select: "name",
             });
-            const mappedData = mapper_1.mapper.map(result, projectLeave_entity_1.ProjectLeaveEntity, get_1.GetProjectLeaveDTO);
-            return mappedData;
+            return result;
         });
     }
 }

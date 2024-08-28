@@ -18,7 +18,6 @@ const teamSchema = new Schema<ITeam>(
     },
     image: {
       type: String,
-      required: true,
     },
     admin: {
       type: Schema.Types.ObjectId,

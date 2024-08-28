@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useContext, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { FaImage, FaFile } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import { useSendMessageMutation } from "@/features/message";
 import { useLoggedInUserQuery } from "@/features/user";
@@ -15,6 +14,22 @@ import MessageImagesPreview from "./MessageImagesPreview";
 import SmallLoader from "@/components/shared/SmallLoader";
 import validateFileSize from "@/utils/validateFileSize";
 import addNewFileToState from "@/utils/addNewFileToState";
+import dynamic from "next/dynamic";
+const Dropdown: any = dynamic(() => import("antd/lib/dropdown"), {
+  ssr: false,
+});
+const Button: any = dynamic(() => import("antd/lib/button"), {
+  ssr: false,
+});
+import {
+  FaMicrophone,
+  FaImage,
+  FaVideo,
+  FaMusic,
+  FaFile,
+  FaPlusCircle,
+} from "react-icons/fa";
+import AudioRecorder from "@/components/shared/AudioRecorder";
 
 type Inputs = {
   poster?: string;
@@ -39,6 +54,7 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
   const [files, setFiles] = useState<FileList | undefined | null>(null);
   const [sendMessage, { isLoading }] = useSendMessageMutation();
   const [isMessage, setIsMessage] = useState<any>({ status: false, value: "" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSendMessage: SubmitHandler<Inputs> = async (data) => {
     const formData = new FormData();
@@ -145,6 +161,140 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
     }
   };
 
+  const items = [
+    {
+      key: "1",
+      label: (
+        <label
+          htmlFor="images"
+          className={`cursor-pointer w-full ${
+            isLoading ? "cursor-not-allowed opacity-50" : ""
+          }`}
+        >
+          <span className="flex items-center gap-2 w-full">
+            <FaImage
+              className={`text-blue-500 text-lg lg:text-2xl ${
+                isLoading ? "cursor-not-allowed" : ""
+              }`}
+            />
+            <small className="font-sans text-lg">Image</small>
+          </span>
+          <input
+            type="file"
+            id="images"
+            {...register("images")}
+            className="hidden"
+            accept="image/*"
+            multiple
+            onChange={(e) => {
+              if (!isLoading) handleImageChange(e);
+            }}
+            disabled={isLoading}
+          />
+        </label>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <label
+          htmlFor="video"
+          className={`cursor-pointer w-full ${
+            isLoading ? "cursor-not-allowed opacity-50" : ""
+          }`}
+        >
+          <span className="flex items-center gap-2 w-full  ">
+            <FaVideo
+              title="File size must be 10MB or less"
+              className={`text-blue-500 text-lg lg:text-2xl ${
+                isLoading ? "cursor-not-allowed" : ""
+              }`}
+            />
+            <small className="font-sans text-lg">Video</small>
+          </span>
+          <input
+            type="file"
+            id="video"
+            {...register("files")}
+            className="hidden"
+            accept={"video/*"}
+            onChange={(e) => {
+              if (!isLoading) handleFileChange(e);
+            }}
+            disabled={isLoading}
+            multiple
+          />
+        </label>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <label
+          htmlFor="audio"
+          className={`cursor-pointer w-full ${
+            isLoading ? "cursor-not-allowed opacity-50" : ""
+          }`}
+        >
+          <span className="flex items-center gap-2 w-full ">
+            <FaMusic
+              title="File size must be 10MB or less"
+              className={`text-blue-500 text-lg lg:text-2xl ${
+                isLoading ? "cursor-not-allowed" : ""
+              }`}
+            />
+            <small className="font-sans text-lg">Audio</small>
+          </span>
+          <input
+            type="file"
+            id="audio"
+            {...register("files")}
+            className="hidden"
+            accept="audio/*"
+            onChange={(e) => {
+              if (!isLoading) handleFileChange(e);
+            }}
+            disabled={isLoading}
+            multiple
+          />
+        </label>
+      ),
+    },
+    {
+      key: "4",
+      label: (
+        <label
+          htmlFor="document"
+          className={`cursor-pointer w-full ${
+            isLoading ? "cursor-not-allowed opacity-50" : ""
+          }`}
+        >
+          <span className="flex items-center gap-2 w-full ">
+            <FaFile
+              title="File size must be 10MB or less"
+              className={`text-blue-500 text-lg lg:text-2xl ${
+                isLoading ? "cursor-not-allowed" : ""
+              }`}
+            />
+            <small className="font-sans text-lg">Document</small>
+          </span>
+          <input
+            type="file"
+            id="document"
+            {...register("files")}
+            className="hidden"
+            accept={acceptableFiles}
+            onChange={(e) => {
+              if (!isLoading) handleFileChange(e);
+            }}
+            disabled={isLoading}
+            multiple
+          />
+        </label>
+      ),
+    },
+  ];
+
   return (
     <div className="p-1 lg:p-4 mb-14 lg:mb-0 bg-gray-100 border-t border-gray-300 flex  justify-between items-center relative">
       {/* Image Preview Section */}
@@ -169,57 +319,16 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
         onSubmit={handleSubmit(handleSendMessage)}
         className="flex relative gap-1 lg:gap-2 justify-between items-center w-full"
       >
-        <div className="w-2/12 lg:w-1/12 flex">
-          <label
-            htmlFor="images"
-            className={`cursor-pointer w-[60px] ${
-              isLoading ? "cursor-not-allowed opacity-50" : ""
-            }`}
+        <div className="w-2/12 lg:w-1/12 flex items-center gap-2">
+          <Dropdown
+            menu={{ items }}
+            placement="topLeft"
+            arrow={{ pointAtCenter: true }}
+            className="cursor-pointer "
           >
-            <FaImage
-              className={`text-blue-500 w-full text-lg lg:text-2xl hover:underline ${
-                isLoading ? "cursor-not-allowed" : ""
-              }`}
-            />
-            <input
-              type="file"
-              id="images"
-              {...register("images")}
-              className="hidden"
-              accept="image/*"
-              multiple
-              onChange={(e) => {
-                if (!isLoading) handleImageChange(e);
-              }}
-              disabled={isLoading}
-            />
-          </label>
-
-          <label
-            htmlFor="files"
-            className={`cursor-pointer w-[60px] ${
-              isLoading ? "cursor-not-allowed opacity-50" : ""
-            }`}
-          >
-            <FaFile
-              title="File size must be 10MB or less"
-              className={`text-blue-500 w-full text-lg lg:text-2xl  hover:underline ${
-                isLoading ? "cursor-not-allowed" : ""
-              }`}
-            />
-            <input
-              type="file"
-              id="files"
-              {...register("files")}
-              className="hidden"
-              accept={acceptableFiles}
-              onChange={(e) => {
-                if (!isLoading) handleFileChange(e);
-              }}
-              disabled={isLoading}
-              multiple
-            />
-          </label>
+            <FaPlusCircle className="text-3xl text-blue-600" />
+          </Dropdown>
+          <AudioRecorder setFiles={setFiles} setFilePreview={setFilePreview} />
         </div>
 
         <input

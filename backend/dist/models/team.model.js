@@ -17,7 +17,6 @@ const teamSchema = new mongoose_1.Schema({
     },
     image: {
         type: String,
-        required: true,
     },
     admin: {
         type: mongoose_1.Schema.Types.ObjectId,

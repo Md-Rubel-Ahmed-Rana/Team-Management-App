@@ -46,10 +46,13 @@ const ContactSection = () => {
       <p className="text-sm lg:text-lg mb-8">
         Have questions or need assistance? Reach out to our team for support.
       </p>
-      <div className="max-w-md mx-auto bg-white p-2 lg:p-5 rounded-md">
+      <div className="max-w-md mx-auto bg-white p-2 lg:p-5 rounded-md ">
         <form onSubmit={handleSubmit(handleSendEmail)}>
           <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-start"
+            >
               Your Name
             </label>
             <input
@@ -63,7 +66,10 @@ const ContactSection = () => {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-start"
+            >
               Your Email
             </label>
             <input
@@ -77,7 +83,10 @@ const ContactSection = () => {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="message" className="block text-sm font-medium">
+            <label
+              htmlFor="message"
+              className="block text-sm font-medium text-start"
+            >
               Your Message
             </label>
             <textarea

@@ -1,27 +1,28 @@
 import { TeamLeaveRequest } from "@/models/teamLeaveRequest.model";
-import { mapper } from "../mapper";
-import { TeamLeaveEntity } from "@/entities/teamLeave.entity";
-import { ModelIdentifier } from "@automapper/core";
-import { CreateTeamLeaveDTO } from "@/dto/teamLeave/create";
-import { GetTeamLeaveDTO } from "@/dto/teamLeave/get";
-import { UpdateTeamLeaveDTO } from "@/dto/teamLeave/update";
+import ApiError from "@/shared/apiError";
+import httpStatus from "http-status";
 
 class Service {
   async requestToLeave(data: {
     team: string;
     member: string;
     admin: string;
-  }): Promise<CreateTeamLeaveDTO> {
+  }): Promise<any> {
+    const isExist = await TeamLeaveRequest.findOne({
+      team: data.team,
+      member: data.member,
+    });
+    if (isExist) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "You already have requested to leave"
+      );
+    }
     const result = await TeamLeaveRequest.create(data);
-    const mappedData = mapper.map(
-      result,
-      TeamLeaveEntity as ModelIdentifier,
-      CreateTeamLeaveDTO
-    );
-    return mappedData;
+    return result;
   }
 
-  async getLeaveRequestByAdmin(admin: string): Promise<GetTeamLeaveDTO[]> {
+  async getLeaveRequestByAdmin(admin: string): Promise<any> {
     const result = await TeamLeaveRequest.find({ admin, status: "pending" })
       .populate({
         path: "team",
@@ -34,29 +35,20 @@ class Service {
         select: "name",
       });
 
-    const mappedData = mapper.mapArray(
-      result,
-      TeamLeaveEntity as ModelIdentifier,
-      GetTeamLeaveDTO
-    );
-    return mappedData;
+    return result;
   }
 
-  async ignoreRequest(requestId: string): Promise<UpdateTeamLeaveDTO> {
+  async ignoreRequest(requestId: string): Promise<any> {
     const result = await TeamLeaveRequest.findByIdAndUpdate(
       requestId,
       { $set: { status: "ignored" } },
       { new: true }
     );
-    const mappedData = mapper.map(
-      result,
-      TeamLeaveEntity as ModelIdentifier,
-      UpdateTeamLeaveDTO
-    );
-    return mappedData;
+
+    return result;
   }
 
-  async getMemberRequest(memberId: string): Promise<GetTeamLeaveDTO[]> {
+  async getMemberRequest(memberId: string): Promise<any> {
     const result = await TeamLeaveRequest.find({
       member: memberId,
       status: "pending",
@@ -71,12 +63,8 @@ class Service {
         model: "User",
         select: "name",
       });
-    const mappedData = mapper.mapArray(
-      result,
-      TeamLeaveEntity as ModelIdentifier,
-      GetTeamLeaveDTO
-    );
-    return mappedData;
+
+    return result;
   }
 }
 

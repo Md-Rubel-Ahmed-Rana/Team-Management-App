@@ -8,20 +8,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TeamLeaveRequestService = void 0;
 const teamLeaveRequest_model_1 = require("@/models/teamLeaveRequest.model");
-const mapper_1 = require("../mapper");
-const teamLeave_entity_1 = require("@/entities/teamLeave.entity");
-const create_1 = require("@/dto/teamLeave/create");
-const get_1 = require("@/dto/teamLeave/get");
-const update_1 = require("@/dto/teamLeave/update");
+const apiError_1 = __importDefault(require("@/shared/apiError"));
+const http_status_1 = __importDefault(require("http-status"));
 class Service {
     requestToLeave(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            const isExist = yield teamLeaveRequest_model_1.TeamLeaveRequest.findOne({
+                team: data.team,
+                member: data.member,
+            });
+            if (isExist) {
+                throw new apiError_1.default(http_status_1.default.BAD_REQUEST, "You already have requested to leave");
+            }
             const result = yield teamLeaveRequest_model_1.TeamLeaveRequest.create(data);
-            const mappedData = mapper_1.mapper.map(result, teamLeave_entity_1.TeamLeaveEntity, create_1.CreateTeamLeaveDTO);
-            return mappedData;
+            return result;
         });
     }
     getLeaveRequestByAdmin(admin) {
@@ -37,15 +43,13 @@ class Service {
                 model: "User",
                 select: "name",
             });
-            const mappedData = mapper_1.mapper.mapArray(result, teamLeave_entity_1.TeamLeaveEntity, get_1.GetTeamLeaveDTO);
-            return mappedData;
+            return result;
         });
     }
     ignoreRequest(requestId) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield teamLeaveRequest_model_1.TeamLeaveRequest.findByIdAndUpdate(requestId, { $set: { status: "ignored" } }, { new: true });
-            const mappedData = mapper_1.mapper.map(result, teamLeave_entity_1.TeamLeaveEntity, update_1.UpdateTeamLeaveDTO);
-            return mappedData;
+            return result;
         });
     }
     getMemberRequest(memberId) {
@@ -64,8 +68,7 @@ class Service {
                 model: "User",
                 select: "name",
             });
-            const mappedData = mapper_1.mapper.mapArray(result, teamLeave_entity_1.TeamLeaveEntity, get_1.GetTeamLeaveDTO);
-            return mappedData;
+            return result;
         });
     }
 }

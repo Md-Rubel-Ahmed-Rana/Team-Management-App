@@ -18,23 +18,28 @@ const apiError_1 = __importDefault(require("@/shared/apiError"));
 const http_status_1 = __importDefault(require("http-status"));
 const notification_service_1 = require("./notification.service");
 const projectLeaveRequest_model_1 = require("@/models/projectLeaveRequest.model");
-const mapper_1 = require("../mapper");
-const project_entity_1 = require("@/entities/project.entity");
-const create_1 = require("@/dto/project/create");
-const getOnlyProject_1 = require("@/dto/project/getOnlyProject");
-const get_1 = require("@/dto/project/get");
-const update_1 = require("@/dto/project/update");
-const delete_1 = require("@/dto/project/delete");
 const team_service_1 = require("./team.service");
 const user_service_1 = require("./user.service");
 const task_service_1 = require("./task.service");
 const mongoose_1 = __importDefault(require("mongoose"));
+const propertySelections_1 = require("propertySelections");
 class Service {
     createProject(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield project_model_1.Project.create(data);
-            const mappedData = mapper_1.mapper.map(result, project_entity_1.ProjectEntity, create_1.CreateProjectDTO);
-            return mappedData;
+            const populatedResult = yield result.populate([
+                {
+                    path: "user",
+                    model: "User",
+                    select: propertySelections_1.UserSelect,
+                },
+                {
+                    path: "team",
+                    model: "Team",
+                    select: propertySelections_1.TeamSelect,
+                },
+            ]);
+            return populatedResult;
         });
     }
     myProjects(userId) {
@@ -108,9 +113,19 @@ class Service {
     updateProject(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, category } = data;
-            const result = yield project_model_1.Project.findOneAndUpdate({ _id: id }, { $set: { name, category } }, { new: true });
-            const mappedData = mapper_1.mapper.map(result, project_entity_1.ProjectEntity, getOnlyProject_1.GetOnlyProjectDTO);
-            return mappedData;
+            const result = yield project_model_1.Project.findOneAndUpdate({ _id: id }, { $set: { name, category } }, { new: true }).populate([
+                {
+                    path: "user",
+                    model: "User",
+                    select: propertySelections_1.UserSelect,
+                },
+                {
+                    path: "team",
+                    model: "Team",
+                    select: propertySelections_1.TeamSelect,
+                },
+            ]);
+            return result;
         });
     }
     deleteProject(id) {
@@ -119,10 +134,9 @@ class Service {
             session.startTransaction();
             try {
                 const result = yield project_model_1.Project.findByIdAndDelete(id).session(session);
-                const mappedData = mapper_1.mapper.map(result, project_entity_1.ProjectEntity, delete_1.DeleteProjectDTO);
                 yield task_service_1.TaskService.deleteTasksByProjectId(id, session);
                 yield session.commitTransaction();
-                return mappedData;
+                return result;
             }
             catch (error) {
                 yield session.abortTransaction();
@@ -155,22 +169,31 @@ class Service {
     }
     getProjectByTeamId(teamId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield project_model_1.Project.find({ team: teamId }).populate([
+            const data = yield project_model_1.Project.find({ team: teamId }).populate([
                 {
                     path: "members",
                     model: "User",
-                    select: { name: 1 },
+                    select: propertySelections_1.UserSelect,
                 },
             ]);
+            return data;
         });
     }
     getSingleProject(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield project_model_1.Project.findById(id)
-                .populate("members")
-                .populate("team", "name");
-            const mappedData = mapper_1.mapper.map(result, project_entity_1.ProjectEntity, get_1.GetProjectDTO);
-            return mappedData;
+            const result = yield project_model_1.Project.findById(id).populate([
+                {
+                    path: "members",
+                    model: "User",
+                    select: propertySelections_1.UserSelect,
+                },
+                {
+                    path: "team",
+                    model: "Team",
+                    select: propertySelections_1.TeamSelect,
+                },
+            ]);
+            return result;
         });
     }
     addMember(projectId, memberId) {
@@ -209,8 +232,7 @@ class Service {
             if (project === null || project === void 0 ? void 0 : project.user) {
                 yield notification_service_1.NotificationService.sendNotification(project === null || project === void 0 ? void 0 : project.user, memberId, "project_invitation", "Assigned to project", `You've been removed from a project (${project === null || project === void 0 ? void 0 : project.name})`, "projects");
             }
-            const mappedData = mapper_1.mapper.map(result, project_entity_1.ProjectEntity, update_1.UpdateProjectDTO);
-            return mappedData;
+            return result;
         });
     }
 }

@@ -16,20 +16,16 @@ exports.UserService = void 0;
 const user_model_1 = __importDefault(require("@/models/user.model"));
 const apiError_1 = __importDefault(require("@/shared/apiError"));
 const envConfig_1 = require("@/configurations/envConfig");
-const mapper_1 = require("../mapper");
-const user_entity_1 = require("@/entities/user.entity");
-const get_1 = require("@/dto/user/get");
-const update_1 = require("@/dto/user/update");
 const mail_util_1 = require("@/utils/mail.util");
 const bcrypt_1 = require("lib/bcrypt");
 const jwt_1 = require("lib/jwt");
 const httpStatus_1 = require("lib/httpStatus");
+const propertySelections_1 = require("propertySelections");
 class Service {
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield user_model_1.default.find({});
-            const mappedData = mapper_1.mapper.mapArray(result, user_entity_1.UserEntity, get_1.GetUserDTO);
-            return mappedData;
+            const result = yield user_model_1.default.find({}).select(propertySelections_1.UserSelect);
+            return result;
         });
     }
     register(user) {
@@ -47,34 +43,31 @@ class Service {
     }
     findUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield user_model_1.default.findById(id);
+            const user = yield user_model_1.default.findById(id).select(propertySelections_1.UserSelect);
             if (!user) {
                 throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found");
             }
-            const mappedUser = mapper_1.mapper.map(user, user_entity_1.UserEntity, get_1.GetUserDTO);
-            return mappedUser;
+            return user;
         });
     }
     findUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield user_model_1.default.findOne({ email: email });
+            const user = yield user_model_1.default.findOne({ email: email }).select(propertySelections_1.UserSelect);
             if (!user) {
                 throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found");
             }
-            const mappedUser = mapper_1.mapper.map(user, user_entity_1.UserEntity, get_1.GetUserDTO);
-            return mappedUser;
+            return user;
         });
     }
     updateUser(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield user_model_1.default.findByIdAndUpdate(id, { $set: Object.assign({}, data) }, { new: true });
-            const mappedUser = mapper_1.mapper.map(result, user_entity_1.UserEntity, update_1.UpdateUserDTO);
-            return mappedUser;
+            const result = yield user_model_1.default.findByIdAndUpdate(id, { $set: Object.assign({}, data) }, { new: true }).select(propertySelections_1.UserSelect);
+            return result;
         });
     }
     forgetPassword(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isUserExist = yield user_model_1.default.findOne({ email: email });
+            const isUserExist = yield user_model_1.default.findOne({ email: email }).select(propertySelections_1.UserSelect);
             if (!isUserExist) {
                 return false;
             }
@@ -102,7 +95,7 @@ class Service {
     }
     changePassword(userId, oldPassword, newPassword) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield user_model_1.default.findById(userId);
+            const user = yield user_model_1.default.findById(userId).select(propertySelections_1.UserSelect);
             const isPassMatch = yield bcrypt_1.BcryptInstance.compare(oldPassword, user === null || user === void 0 ? void 0 : user.password);
             if (!isPassMatch) {
                 return false;
@@ -111,7 +104,7 @@ class Service {
                 const hashedPassword = yield bcrypt_1.BcryptInstance.hash(newPassword);
                 yield user_model_1.default.findByIdAndUpdate(userId, {
                     $set: { password: hashedPassword },
-                });
+                }).select(propertySelections_1.UserSelect);
                 return true;
             }
         });
