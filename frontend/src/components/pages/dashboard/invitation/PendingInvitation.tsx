@@ -149,9 +149,11 @@ const PendingInvitation = () => {
           </div>
           <div className="h-[6vh] lg:h-[80vh]">
             {data?.data?.length <= 0 && (
-              <h3 className="text-lg lg:text-3xl text-center font-semibold font-serif">
-                You don&apos; have any pending invitations
-              </h3>
+              <div className="h-[60vh] flex justify-center items-center">
+                <h3 className="text-lg lg:text-2xl text-center font-semibold font-serif">
+                  You don&apos; have any pending invitations
+                </h3>
+              </div>
             )}
           </div>
         </>

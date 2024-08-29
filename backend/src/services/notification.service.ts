@@ -5,10 +5,10 @@ import { UserSelect } from "propertySelections";
 
 class Service {
   async createNotification(
-    data: INotification,
+    notificationObject: INotification,
     session?: mongoose.ClientSession
   ) {
-    const result = await Notification.create([data], { session });
+    const result = await Notification.create([notificationObject], { session });
     const populatedResult = await result[0].populate([
       {
         path: "sender",

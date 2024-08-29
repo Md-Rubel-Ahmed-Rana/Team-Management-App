@@ -62,7 +62,7 @@ const projectApi = apiSlice.injectEndpoints({
     }),
     leaveProjectRequest: builder.mutation({
       query: (data) => ({
-        url: "/leave-project/sent-request",
+        url: "/leave-project/send-request",
         method: "POST",
         body: data,
       }),
@@ -71,6 +71,13 @@ const projectApi = apiSlice.injectEndpoints({
     ignoreProjectLeaveRequest: builder.mutation({
       query: (requestId) => ({
         url: `/leave-project/ignore/${requestId}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["project"] as any,
+    }),
+    acceptProjectLeaveRequest: builder.mutation({
+      query: ({ projectId, memberId }) => ({
+        url: `/leave-project/accept/${projectId}/${memberId}`,
         method: "PATCH",
       }),
       invalidatesTags: ["project"] as any,
@@ -103,4 +110,5 @@ export const {
   useIgnoreProjectLeaveRequestMutation,
   useGetMemberLeaveProjectRequestQuery,
   useDeleteProjectMutation,
+  useAcceptProjectLeaveRequestMutation,
 } = projectApi;

@@ -20,12 +20,12 @@ class Controller extends rootController_1.default {
     constructor() {
         super(...arguments);
         this.requestToLeave = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const result = yield projectLeaveRequest_service_1.ProjectLeaveRequestService.requestToLeave(req.body);
+            yield projectLeaveRequest_service_1.ProjectLeaveRequestService.requestToLeave(req.body);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.CREATED,
                 success: true,
                 message: "Your leave request has been sent to admin",
-                data: result,
+                data: null,
             });
         }));
         this.getLeaveRequestByAdmin = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -39,12 +39,23 @@ class Controller extends rootController_1.default {
         }));
         this.ignoreRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const requestId = req.params.requestId;
-            const result = yield projectLeaveRequest_service_1.ProjectLeaveRequestService.ignoreRequest(requestId);
+            yield projectLeaveRequest_service_1.ProjectLeaveRequestService.ignoreRequest(requestId);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,
                 message: "Leave request ignored",
-                data: result,
+                data: null,
+            });
+        }));
+        this.acceptLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const projectId = req.params.projectId;
+            const memberId = req.params.memberId;
+            yield projectLeaveRequest_service_1.ProjectLeaveRequestService.acceptLeaveRequest(projectId, memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Leave request accepted",
+                data: null,
             });
         }));
         this.getMemberRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {

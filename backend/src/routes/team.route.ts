@@ -25,8 +25,6 @@ router.get(
   TeamController.getJoinedTeamsForCard
 );
 
-// router.get("/joined-teams/:memberId", TeamController.joinedTeams);
-
 router.get("/active-members/:teamId", TeamController.getActiveMembers);
 
 router.get("/details/:teamId", TeamController.getSingleTeamWithDetails);

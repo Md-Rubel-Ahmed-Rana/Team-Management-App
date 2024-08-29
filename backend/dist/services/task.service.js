@@ -255,8 +255,40 @@ class Service {
     }
     deleteTasksByProjectId(projectId, session) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield task_model_1.Task.deleteMany({ project: projectId }).session(session);
-            return result;
+            var _a, _b;
+            const userProjection = {
+                name: 1,
+                profile_picture: 1,
+                email: 1,
+            };
+            // Find the tasks that belong to the project and populate assignedTo and assignedBy fields
+            const tasks = yield task_model_1.Task.find({ project: projectId }).populate([
+                {
+                    path: "assignedTo",
+                    model: "User",
+                    select: userProjection,
+                },
+                {
+                    path: "assignedBy",
+                    model: "User",
+                    select: userProjection,
+                },
+            ]);
+            // Delete the tasks
+            yield task_model_1.Task.deleteMany({ project: projectId }).session(session);
+            // Loop through the tasks and send notifications to the assigned members
+            for (const task of tasks) {
+                const notifyObject = {
+                    title: "Task deleted",
+                    type: enums_1.NotificationEnums.TASK_DELETED,
+                    content: `The task "${task === null || task === void 0 ? void 0 : task.name}" has been deleted. Please take note of the change.`,
+                    receiver: (_a = task === null || task === void 0 ? void 0 : task.assignedTo) === null || _a === void 0 ? void 0 : _a._id,
+                    sender: (_b = task === null || task === void 0 ? void 0 : task.assignedBy) === null || _b === void 0 ? void 0 : _b._id,
+                    link: "",
+                };
+                // Create the notification for the assignedTo member
+                yield notification_service_1.NotificationService.createNotification(notifyObject, session);
+            }
         });
     }
 }

@@ -14,22 +14,8 @@ import { NotificationEnums } from "enums";
 import { config } from "@/configurations/envConfig";
 
 class Service {
-  async createProject(data: IProject): Promise<any> {
-    const result = await Project.create(data);
-    const populatedResult = await result.populate([
-      {
-        path: "user",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "team",
-        model: "Team",
-        select: TeamSelect,
-      },
-    ]);
-
-    return populatedResult;
+  async createProject(data: IProject): Promise<void> {
+    await Project.create(data);
   }
 
   async myProjects(userId: string): Promise<any> {
@@ -102,39 +88,99 @@ class Service {
     return mappedResult;
   }
 
-  async updateProject(id: string, data: Partial<IProject>): Promise<any> {
+  async updateProject(id: string, data: Partial<IProject>): Promise<void> {
     const { name, category } = data;
-    const result = await Project.findOneAndUpdate(
-      { _id: id },
-      { $set: { name, category } },
-      { new: true }
-    ).populate([
-      {
-        path: "user",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "team",
-        model: "Team",
-        select: TeamSelect,
-      },
-    ]);
-
-    return result;
-  }
-
-  async deleteProject(id: string): Promise<any> {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-      const result = await Project.findByIdAndDelete(id).session(session);
+      const project: any = await Project.findById(id);
+      const updatedProject: any = await Project.findOneAndUpdate(
+        { _id: id },
+        { $set: { name, category } },
+        { new: true }
+      )
+        .populate([
+          {
+            path: "user",
+            model: "User",
+            select: UserSelect,
+          },
+          {
+            path: "team",
+            model: "Team",
+            select: TeamSelect,
+          },
+          {
+            path: "members",
+            model: "User",
+            select: UserSelect,
+          },
+        ])
+        .session(session);
+
+      if (updatedProject?.members && updatedProject?.members?.length > 0) {
+        const changeDetails = [];
+        if (name) changeDetails.push(`"${project?.name}" to "${name}"`);
+        if (category) changeDetails.push(`category to "${category}"`);
+        const changes = changeDetails.join(" and ");
+
+        // Send notifications to all members about the updates
+        await Promise.all(
+          updatedProject?.members.map(async (member: any) => {
+            const notifyObject: INotification = {
+              title: "Project Updated",
+              type: NotificationEnums.PROJECT_UPDATED,
+              receiver: member._id, // member
+              sender: updatedProject.user, // admin
+              content: `Dear ${member.name}, the project "${project?.name}" has been updated. The ${changes} have been changed. Thank you for staying up to date with these changes!`,
+              link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member._id}&name=${member.name}&email=${member.email}`,
+            };
+            await NotificationService.createNotification(notifyObject, session);
+          })
+        );
+      }
+
+      // Commit the transaction
+      await session.commitTransaction();
+    } catch (error) {
+      // Abort the transaction in case of an error
+      await session.abortTransaction();
+      throw new ApiError(httpStatus.BAD_REQUEST, "Project wasn't updated");
+    } finally {
+      // End the session
+      session.endSession();
+    }
+  }
+
+  async deleteProject(id: string): Promise<void> {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const project = await this.getSingleProject(id);
+      console.log("Single project to delete", project);
+      if (project?.members && project?.members.length > 0) {
+        const projectDetails = `project "${project?.name}" in the ${project?.category} category`;
+        await Promise.all(
+          project?.members?.map(async (member: any) => {
+            const notifyObject: INotification = {
+              title: "Project Deleted",
+              type: NotificationEnums.PROJECT_DELETED,
+              receiver: member?._id,
+              sender: project?.user,
+              content: `Dear ${member?.name}, the ${projectDetails} has been successfully completed and removed from the system. We truly appreciate your hard work and dedication throughout this project. We look forward to collaborating with you on future projects!`,
+              link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?._id}&name=${member?.name}&email=${member?.email}`,
+            };
+            await NotificationService.createNotification(notifyObject, session);
+          })
+        );
+      }
+
+      await Project.findByIdAndDelete(id).session(session);
       await TaskService.deleteTasksByProjectId(id, session);
       await session.commitTransaction();
-      return result;
     } catch (error) {
       await session.abortTransaction();
-      throw new ApiError(httpStatus.BAD_REQUEST, "Team was't not deleted");
+      throw new ApiError(httpStatus.BAD_REQUEST, "Project wasn't deleted");
     } finally {
       session.endSession();
     }
@@ -143,28 +189,41 @@ class Service {
   async deleteProjectsByTeamId(
     teamId: string,
     session: mongoose.ClientSession
-  ): Promise<any> {
-    const deletableProjects = await Project.find({ team: teamId }).session(
+  ): Promise<void> {
+    const deletableProjects: any = await Project.find({ team: teamId }).session(
       session
     );
 
-    if (deletableProjects && deletableProjects.length > 0) {
+    if (deletableProjects && deletableProjects?.length > 0) {
       for (const project of deletableProjects) {
         const projectId: any = project?._id;
-        const deletedTask = await TaskService.deleteTasksByProjectId(
-          projectId,
-          session
-        );
-        console.log({ deletedTask });
+        // Notify all members about the project deletion
+        if (project?.members && project?.members?.length > 0) {
+          const projectDetails = `project "${project?.name}" in the ${project?.category} category`;
+          await Promise.all(
+            project?.members?.map(async (member: any) => {
+              const notifyObject: INotification = {
+                title: "Project Deleted",
+                type: NotificationEnums.PROJECT_DELETED,
+                receiver: member?._id,
+                sender: project?.user,
+                content: `Dear ${member?.name}, the ${projectDetails} has been successfully completed and removed from the system. We truly appreciate your hard work and dedication throughout this project. We look forward to collaborating with you on future projects!`,
+                link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?._id}&name=${member?.name}&email=${member?.email}`,
+              };
+              await NotificationService.createNotification(
+                notifyObject,
+                session
+              );
+            })
+          );
+        }
+
+        await TaskService.deleteTasksByProjectId(projectId, session);
       }
 
-      const deletedProjects = await Project.deleteMany({
+      await Project.deleteMany({
         team: teamId,
       }).session(session);
-      console.log({ deletedProjects });
-      return deletedProjects;
-    } else {
-      return false;
     }
   }
 
@@ -255,16 +314,16 @@ class Service {
 
     // Update the most recent leave request for the project
     await ProjectLeaveRequest.findOneAndUpdate(
-      { project: projectId },
+      { project: projectId, member: memberId },
       { $set: { status: "accepted" } }
-    ).sort({ createdAt: -1 });
+    );
 
     if (project?.user) {
       const member = await UserService.findUserById(memberId);
       const notifyObject: INotification = {
         title: "You have been removed from a project",
         type: NotificationEnums.PROJECT_MEMBER_REMOVED,
-        content: `You have been removed from the project "${project.name}" in the "${project.category}" category. We appreciate your contributions, and we wish you success in your future endeavors.`,
+        content: `You have been removed from the project "${project?.name}" in the "${project?.category}" category. We appreciate your contributions, and we wish you success in your future endeavors.`,
         link: `${config.app.frontendDomain}/projects/joined-projects?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
         sender: project?.user,
         receiver: memberId,

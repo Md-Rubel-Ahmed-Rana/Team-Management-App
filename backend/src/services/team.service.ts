@@ -239,13 +239,14 @@ class Service {
     return result;
   }
 
-  async updateTeam(id: string, data: ITeam): Promise<any> {
-    const isExistTeam = await Team.findById(id);
+  async updateTeam(id: string, data: ITeam): Promise<void> {
+    const isExistTeam: any = await Team.findById(id);
     if (!isExistTeam) {
       throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
     }
 
-    const result = await Team.findByIdAndUpdate(
+    // Update the team data
+    const team: any = await Team.findByIdAndUpdate(
       id,
       { $set: { ...data } },
       { new: true }
@@ -267,35 +268,75 @@ class Service {
       },
     ]);
 
-    return result;
+    if (isExistTeam?.name !== data?.name) {
+      // Notify all members about the name change
+      const allMembers = [
+        ...(team?.activeMembers || []),
+        ...(team?.pendingMembers || []),
+      ];
+
+      await Promise.all(
+        allMembers.map(async (member: any) => {
+          const notifyObject: INotification = {
+            title: "Team Name Updated",
+            type: NotificationEnums.TEAM_UPDATED,
+            receiver: member?._id,
+            sender: team?.admin,
+            content: `Dear ${member?.name}, the team name has been updated. The team "${isExistTeam?.name}" is now named "${data?.name}". Thank you for staying up to date with these changes!`,
+            link: `${config.app.frontendDomain}/teams/joined-teams?userId=${member?._id}&name=${member?.name}&email=${member?.email}`,
+          };
+          await NotificationService.createNotification(notifyObject);
+        })
+      );
+    }
   }
 
-  async deleteTeam(id: string): Promise<any> {
+  async deleteTeam(id: string): Promise<void> {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-      const getTeam = await Team.findById(id);
-      if (getTeam) {
-        const public_id = extractCloudinaryPublicId(getTeam?.image);
-        if (public_id) {
-          await deleteSingleFileFromCloudinary(public_id);
-        }
-      }
-
-      const result = await Team.findByIdAndDelete(id).session(session);
-
-      if (!result) {
+      const getTeam: any = await Team.findById(id);
+      if (!getTeam) {
         throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
       }
 
+      // Handle Cloudinary file deletion
+      const public_id = extractCloudinaryPublicId(getTeam?.image);
+      if (public_id) {
+        await deleteSingleFileFromCloudinary(public_id);
+      }
+
+      // Delete the team
+      await Team.findByIdAndDelete(id).session(session);
+
+      // Delete related projects
       await ProjectService.deleteProjectsByTeamId(id, session);
 
+      // Create notifications for all members
+      const members = [
+        ...(getTeam?.activeMembers || []),
+        ...(getTeam?.pendingMembers || []),
+      ];
+
+      await Promise.all(
+        members.map(async (member: any) => {
+          const notifyObject: INotification = {
+            title: "Team Deleted",
+            type: NotificationEnums.TEAM_DELETED,
+            receiver: member?._id,
+            sender: getTeam?.admin,
+            content: `We're deeply grateful for your time and contributions to the team. As we say goodbye, we want to express our heartfelt thanks and admiration. Wishing you all the best in your future endeavors!`,
+            link: `${config.app.frontendDomain}/teams/joined-teams?userId=${member?._id}&name=${member?.name}&email=${member?.email}`,
+          };
+          await NotificationService.createNotification(notifyObject, session);
+        })
+      );
+
       await session.commitTransaction();
-      return result;
     } catch (error) {
       await session.abortTransaction();
-      throw new ApiError(httpStatus.BAD_REQUEST, "Team was't not deleted");
+      throw new ApiError(httpStatus.BAD_REQUEST, "Team was not deleted");
     } finally {
       session.endSession();
     }
