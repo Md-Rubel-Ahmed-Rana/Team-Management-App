@@ -280,7 +280,8 @@ class Service {
             if (!isExistTeam) {
                 throw new apiError_1.default(http_status_1.default.NOT_FOUND, "Team Not Found!");
             }
-            const result = yield team_model_1.default.findByIdAndUpdate(id, { $set: Object.assign({}, data) }, { new: true }).populate([
+            // Update the team data
+            const team = yield team_model_1.default.findByIdAndUpdate(id, { $set: Object.assign({}, data) }, { new: true }).populate([
                 {
                     path: "activeMembers",
                     model: "User",
@@ -297,7 +298,24 @@ class Service {
                     select: propertySelections_1.UserSelect,
                 },
             ]);
-            return result;
+            if ((isExistTeam === null || isExistTeam === void 0 ? void 0 : isExistTeam.name) !== (data === null || data === void 0 ? void 0 : data.name)) {
+                // Notify all members about the name change
+                const allMembers = [
+                    ...((team === null || team === void 0 ? void 0 : team.activeMembers) || []),
+                    ...((team === null || team === void 0 ? void 0 : team.pendingMembers) || []),
+                ];
+                yield Promise.all(allMembers.map((member) => __awaiter(this, void 0, void 0, function* () {
+                    const notifyObject = {
+                        title: "Team Name Updated",
+                        type: enums_1.NotificationEnums.TEAM_UPDATED,
+                        receiver: member === null || member === void 0 ? void 0 : member._id,
+                        sender: team === null || team === void 0 ? void 0 : team.admin,
+                        content: `Dear ${member === null || member === void 0 ? void 0 : member.name}, the team name has been updated. The team "${isExistTeam === null || isExistTeam === void 0 ? void 0 : isExistTeam.name}" is now named "${data === null || data === void 0 ? void 0 : data.name}". Thank you for staying up to date with these changes!`,
+                        link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${member === null || member === void 0 ? void 0 : member._id}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
+                    };
+                    yield notification_service_1.NotificationService.createNotification(notifyObject);
+                })));
+            }
         });
     }
     deleteTeam(id) {
@@ -306,23 +324,39 @@ class Service {
             session.startTransaction();
             try {
                 const getTeam = yield team_model_1.default.findById(id);
-                if (getTeam) {
-                    const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(getTeam === null || getTeam === void 0 ? void 0 : getTeam.image);
-                    if (public_id) {
-                        yield (0, deletePreviousFileFromCloudinary_1.deleteSingleFileFromCloudinary)(public_id);
-                    }
-                }
-                const result = yield team_model_1.default.findByIdAndDelete(id).session(session);
-                if (!result) {
+                if (!getTeam) {
                     throw new apiError_1.default(http_status_1.default.NOT_FOUND, "Team Not Found!");
                 }
+                // Handle Cloudinary file deletion
+                const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(getTeam === null || getTeam === void 0 ? void 0 : getTeam.image);
+                if (public_id) {
+                    yield (0, deletePreviousFileFromCloudinary_1.deleteSingleFileFromCloudinary)(public_id);
+                }
+                // Delete the team
+                yield team_model_1.default.findByIdAndDelete(id).session(session);
+                // Delete related projects
                 yield project_service_1.ProjectService.deleteProjectsByTeamId(id, session);
+                // Create notifications for all members
+                const members = [
+                    ...((getTeam === null || getTeam === void 0 ? void 0 : getTeam.activeMembers) || []),
+                    ...((getTeam === null || getTeam === void 0 ? void 0 : getTeam.pendingMembers) || []),
+                ];
+                yield Promise.all(members.map((member) => __awaiter(this, void 0, void 0, function* () {
+                    const notifyObject = {
+                        title: "Team Deleted",
+                        type: enums_1.NotificationEnums.TEAM_DELETED,
+                        receiver: member === null || member === void 0 ? void 0 : member._id,
+                        sender: getTeam === null || getTeam === void 0 ? void 0 : getTeam.admin,
+                        content: `We're deeply grateful for your time and contributions to the team. As we say goodbye, we want to express our heartfelt thanks and admiration. Wishing you all the best in your future endeavors!`,
+                        link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${member === null || member === void 0 ? void 0 : member._id}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
+                    };
+                    yield notification_service_1.NotificationService.createNotification(notifyObject, session);
+                })));
                 yield session.commitTransaction();
-                return result;
             }
             catch (error) {
                 yield session.abortTransaction();
-                throw new apiError_1.default(http_status_1.default.BAD_REQUEST, "Team was't not deleted");
+                throw new apiError_1.default(http_status_1.default.BAD_REQUEST, "Team was not deleted");
             }
             finally {
                 session.endSession();

@@ -13,9 +13,9 @@ exports.NotificationService = void 0;
 const notification_model_1 = require("@/models/notification.model");
 const propertySelections_1 = require("propertySelections");
 class Service {
-    createNotification(data, session) {
+    createNotification(notificationObject, session) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield notification_model_1.Notification.create([data], { session });
+            const result = yield notification_model_1.Notification.create([notificationObject], { session });
             const populatedResult = yield result[0].populate([
                 {
                     path: "sender",

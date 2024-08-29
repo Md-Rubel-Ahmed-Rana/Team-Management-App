@@ -20,7 +20,7 @@ const initiateSocketIo = (io) => {
         });
         socket.on("message", (data) => {
             console.log("New message", data);
-            socket.broadcast.to(data.conversationId).emit("message", data);
+            socket.broadcast.to(data === null || data === void 0 ? void 0 : data.conversationId).emit("message", data);
         });
         // notification room for each user
         socket.on("notification-room", (userId) => {
@@ -28,8 +28,9 @@ const initiateSocketIo = (io) => {
             socket.join(userId);
         });
         socket.on("notification", (data) => {
+            var _a;
             console.log("New notification", data);
-            socket.broadcast.to(data.recipient.userId).emit("notification", data);
+            socket.broadcast.to((_a = data === null || data === void 0 ? void 0 : data.recipient) === null || _a === void 0 ? void 0 : _a.userId).emit("notification", data);
         });
         // tasks room
         socket.on("task-room", (projectId) => {
@@ -38,7 +39,7 @@ const initiateSocketIo = (io) => {
         });
         socket.on("task", (data) => {
             console.log("New task", data);
-            socket.broadcast.to(data.project).emit("task", data);
+            socket.broadcast.to(data === null || data === void 0 ? void 0 : data.project).emit("task", data);
         });
         socket.on("disconnect", () => __awaiter(void 0, void 0, void 0, function* () {
             console.log("User disconnected");

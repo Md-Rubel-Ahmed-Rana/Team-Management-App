@@ -257,11 +257,44 @@ class Service {
   async deleteTasksByProjectId(
     projectId: string,
     session: mongoose.ClientSession
-  ): Promise<any> {
-    const result = await Task.deleteMany({ project: projectId }).session(
-      session
-    );
-    return result;
+  ): Promise<void> {
+    const userProjection = {
+      name: 1,
+      profile_picture: 1,
+      email: 1,
+    };
+
+    // Find the tasks that belong to the project and populate assignedTo and assignedBy fields
+    const tasks: any = await Task.find({ project: projectId }).populate([
+      {
+        path: "assignedTo",
+        model: "User",
+        select: userProjection,
+      },
+      {
+        path: "assignedBy",
+        model: "User",
+        select: userProjection,
+      },
+    ]);
+
+    // Delete the tasks
+    await Task.deleteMany({ project: projectId }).session(session);
+
+    // Loop through the tasks and send notifications to the assigned members
+    for (const task of tasks) {
+      const notifyObject: INotification = {
+        title: "Task deleted",
+        type: NotificationEnums.TASK_DELETED,
+        content: `The task "${task?.name}" has been deleted. Please take note of the change.`,
+        receiver: task?.assignedTo?._id,
+        sender: task?.assignedBy?._id,
+        link: "",
+      };
+
+      // Create the notification for the assignedTo member
+      await NotificationService.createNotification(notifyObject, session);
+    }
   }
 }
 export const TaskService = new Service();

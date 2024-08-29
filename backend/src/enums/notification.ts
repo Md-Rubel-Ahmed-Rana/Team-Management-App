@@ -16,11 +16,13 @@ export enum NotificationEnums {
   PROJECT_OVERDUE = "Project overdue",
   PROJECT_MEMBER_ADDED = "Member added to project",
   PROJECT_MEMBER_REMOVED = "Member removed from project",
+  PROJECT_LEAVE_REQUEST = "Project leave request",
 
   // Team-related notifications
   TEAM_INVITATION = "Team invitation received",
   TEAM_JOINED = "Joined team",
   TEAM_LEFT = "Left team",
+  TEAM_DELETED = "Team deleted",
   TEAM_UPDATED = "Team updated",
   TEAM_MEMBER_ADDED = "Member added to team",
   TEAM_MEMBER_REMOVED = "Member removed from team",

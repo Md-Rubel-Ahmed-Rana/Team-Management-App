@@ -14,7 +14,6 @@ router.post("/create", cloudinary_1.upload.single("file"), (0, cloudinary_1.uplo
 router.get("/my-teams/dropdown/:adminId", team_controller_1.TeamController.getMyTeamListForDropdown);
 router.get("/cards/my-teams/:adminId", team_controller_1.TeamController.getMyTeamsForCard);
 router.get("/cards/joined-teams/:memberId", team_controller_1.TeamController.getJoinedTeamsForCard);
-// router.get("/joined-teams/:memberId", TeamController.joinedTeams);
 router.get("/active-members/:teamId", team_controller_1.TeamController.getActiveMembers);
 router.get("/details/:teamId", team_controller_1.TeamController.getSingleTeamWithDetails);
 router.get("/single/:id", team_controller_1.TeamController.getTeam);
