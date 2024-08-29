@@ -28,20 +28,7 @@ const envConfig_1 = require("@/configurations/envConfig");
 class Service {
     createProject(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield project_model_1.Project.create(data);
-            const populatedResult = yield result.populate([
-                {
-                    path: "user",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "team",
-                    model: "Team",
-                    select: propertySelections_1.TeamSelect,
-                },
-            ]);
-            return populatedResult;
+            yield project_model_1.Project.create(data);
         });
     }
     myProjects(userId) {
@@ -114,35 +101,94 @@ class Service {
     }
     updateProject(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const { name, category } = data;
-            const result = yield project_model_1.Project.findOneAndUpdate({ _id: id }, { $set: { name, category } }, { new: true }).populate([
-                {
-                    path: "user",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "team",
-                    model: "Team",
-                    select: propertySelections_1.TeamSelect,
-                },
-            ]);
-            return result;
+            const session = yield mongoose_1.default.startSession();
+            session.startTransaction();
+            try {
+                const project = yield project_model_1.Project.findById(id);
+                const updatedProject = yield project_model_1.Project.findOneAndUpdate({ _id: id }, { $set: { name, category } }, { new: true })
+                    .populate([
+                    {
+                        path: "user",
+                        model: "User",
+                        select: propertySelections_1.UserSelect,
+                    },
+                    {
+                        path: "team",
+                        model: "Team",
+                        select: propertySelections_1.TeamSelect,
+                    },
+                    {
+                        path: "members",
+                        model: "User",
+                        select: propertySelections_1.UserSelect,
+                    },
+                ])
+                    .session(session);
+                if ((updatedProject === null || updatedProject === void 0 ? void 0 : updatedProject.members) && ((_a = updatedProject === null || updatedProject === void 0 ? void 0 : updatedProject.members) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+                    const changeDetails = [];
+                    if (name)
+                        changeDetails.push(`"${project === null || project === void 0 ? void 0 : project.name}" to "${name}"`);
+                    if (category)
+                        changeDetails.push(`category to "${category}"`);
+                    const changes = changeDetails.join(" and ");
+                    // Send notifications to all members about the updates
+                    yield Promise.all(updatedProject === null || updatedProject === void 0 ? void 0 : updatedProject.members.map((member) => __awaiter(this, void 0, void 0, function* () {
+                        const notifyObject = {
+                            title: "Project Updated",
+                            type: enums_1.NotificationEnums.PROJECT_UPDATED,
+                            receiver: member._id, // member
+                            sender: updatedProject.user, // admin
+                            content: `Dear ${member.name}, the project "${project === null || project === void 0 ? void 0 : project.name}" has been updated. The ${changes} have been changed. Thank you for staying up to date with these changes!`,
+                            link: `${envConfig_1.config.app.frontendDomain}/projects/joined-projects?userId=${member._id}&name=${member.name}&email=${member.email}`,
+                        };
+                        yield notification_service_1.NotificationService.createNotification(notifyObject, session);
+                    })));
+                }
+                // Commit the transaction
+                yield session.commitTransaction();
+            }
+            catch (error) {
+                // Abort the transaction in case of an error
+                yield session.abortTransaction();
+                throw new apiError_1.default(http_status_1.default.BAD_REQUEST, "Project wasn't updated");
+            }
+            finally {
+                // End the session
+                session.endSession();
+            }
         });
     }
     deleteProject(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const session = yield mongoose_1.default.startSession();
             session.startTransaction();
             try {
-                const result = yield project_model_1.Project.findByIdAndDelete(id).session(session);
+                const project = yield this.getSingleProject(id);
+                console.log("Single project to delete", project);
+                if ((project === null || project === void 0 ? void 0 : project.members) && (project === null || project === void 0 ? void 0 : project.members.length) > 0) {
+                    const projectDetails = `project "${project === null || project === void 0 ? void 0 : project.name}" in the ${project === null || project === void 0 ? void 0 : project.category} category`;
+                    yield Promise.all((_a = project === null || project === void 0 ? void 0 : project.members) === null || _a === void 0 ? void 0 : _a.map((member) => __awaiter(this, void 0, void 0, function* () {
+                        const notifyObject = {
+                            title: "Project Deleted",
+                            type: enums_1.NotificationEnums.PROJECT_DELETED,
+                            receiver: member === null || member === void 0 ? void 0 : member._id,
+                            sender: project === null || project === void 0 ? void 0 : project.user,
+                            content: `Dear ${member === null || member === void 0 ? void 0 : member.name}, the ${projectDetails} has been successfully completed and removed from the system. We truly appreciate your hard work and dedication throughout this project. We look forward to collaborating with you on future projects!`,
+                            link: `${envConfig_1.config.app.frontendDomain}/projects/joined-projects?userId=${member === null || member === void 0 ? void 0 : member._id}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
+                        };
+                        yield notification_service_1.NotificationService.createNotification(notifyObject, session);
+                    })));
+                }
+                yield project_model_1.Project.findByIdAndDelete(id).session(session);
                 yield task_service_1.TaskService.deleteTasksByProjectId(id, session);
                 yield session.commitTransaction();
-                return result;
             }
             catch (error) {
                 yield session.abortTransaction();
-                throw new apiError_1.default(http_status_1.default.BAD_REQUEST, "Team was't not deleted");
+                throw new apiError_1.default(http_status_1.default.BAD_REQUEST, "Project wasn't deleted");
             }
             finally {
                 session.endSession();
@@ -151,21 +197,31 @@ class Service {
     }
     deleteProjectsByTeamId(teamId, session) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const deletableProjects = yield project_model_1.Project.find({ team: teamId }).session(session);
-            if (deletableProjects && deletableProjects.length > 0) {
+            if (deletableProjects && (deletableProjects === null || deletableProjects === void 0 ? void 0 : deletableProjects.length) > 0) {
                 for (const project of deletableProjects) {
                     const projectId = project === null || project === void 0 ? void 0 : project._id;
-                    const deletedTask = yield task_service_1.TaskService.deleteTasksByProjectId(projectId, session);
-                    console.log({ deletedTask });
+                    // Notify all members about the project deletion
+                    if ((project === null || project === void 0 ? void 0 : project.members) && ((_a = project === null || project === void 0 ? void 0 : project.members) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+                        const projectDetails = `project "${project === null || project === void 0 ? void 0 : project.name}" in the ${project === null || project === void 0 ? void 0 : project.category} category`;
+                        yield Promise.all((_b = project === null || project === void 0 ? void 0 : project.members) === null || _b === void 0 ? void 0 : _b.map((member) => __awaiter(this, void 0, void 0, function* () {
+                            const notifyObject = {
+                                title: "Project Deleted",
+                                type: enums_1.NotificationEnums.PROJECT_DELETED,
+                                receiver: member === null || member === void 0 ? void 0 : member._id,
+                                sender: project === null || project === void 0 ? void 0 : project.user,
+                                content: `Dear ${member === null || member === void 0 ? void 0 : member.name}, the ${projectDetails} has been successfully completed and removed from the system. We truly appreciate your hard work and dedication throughout this project. We look forward to collaborating with you on future projects!`,
+                                link: `${envConfig_1.config.app.frontendDomain}/projects/joined-projects?userId=${member === null || member === void 0 ? void 0 : member._id}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
+                            };
+                            yield notification_service_1.NotificationService.createNotification(notifyObject, session);
+                        })));
+                    }
+                    yield task_service_1.TaskService.deleteTasksByProjectId(projectId, session);
                 }
-                const deletedProjects = yield project_model_1.Project.deleteMany({
+                yield project_model_1.Project.deleteMany({
                     team: teamId,
                 }).session(session);
-                console.log({ deletedProjects });
-                return deletedProjects;
-            }
-            else {
-                return false;
             }
         });
     }
@@ -238,13 +294,13 @@ class Service {
                 $pull: { members: memberId },
             }, { new: true });
             // Update the most recent leave request for the project
-            yield projectLeaveRequest_model_1.ProjectLeaveRequest.findOneAndUpdate({ project: projectId }, { $set: { status: "accepted" } }).sort({ createdAt: -1 });
+            yield projectLeaveRequest_model_1.ProjectLeaveRequest.findOneAndUpdate({ project: projectId, member: memberId }, { $set: { status: "accepted" } });
             if (project === null || project === void 0 ? void 0 : project.user) {
                 const member = yield user_service_1.UserService.findUserById(memberId);
                 const notifyObject = {
                     title: "You have been removed from a project",
                     type: enums_1.NotificationEnums.PROJECT_MEMBER_REMOVED,
-                    content: `You have been removed from the project "${project.name}" in the "${project.category}" category. We appreciate your contributions, and we wish you success in your future endeavors.`,
+                    content: `You have been removed from the project "${project === null || project === void 0 ? void 0 : project.name}" in the "${project === null || project === void 0 ? void 0 : project.category}" category. We appreciate your contributions, and we wish you success in your future endeavors.`,
                     link: `${envConfig_1.config.app.frontendDomain}/projects/joined-projects?userId=${memberId}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
                     sender: project === null || project === void 0 ? void 0 : project.user,
                     receiver: memberId,

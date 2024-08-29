@@ -39,6 +39,18 @@ class Controller extends RootController {
     });
   });
 
+  acceptLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
+    const teamId = req.params.teamId;
+    const memberId = req.params.memberId;
+    await TeamLeaveRequestService.acceptLeaveRequest(teamId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Leave request accepted",
+      data: null,
+    });
+  });
+
   getMemberRequest = this.catchAsync(async (req: Request, res: Response) => {
     const memberId = req.params.memberId;
     const result = await TeamLeaveRequestService.getMemberRequest(memberId);

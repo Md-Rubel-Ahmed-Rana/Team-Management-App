@@ -47,6 +47,17 @@ class Controller extends rootController_1.default {
                 data: result,
             });
         }));
+        this.acceptLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const teamId = req.params.teamId;
+            const memberId = req.params.memberId;
+            yield teamLeaveRequest_service_1.TeamLeaveRequestService.acceptLeaveRequest(teamId, memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Leave request accepted",
+                data: null,
+            });
+        }));
         this.getMemberRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const memberId = req.params.memberId;
             const result = yield teamLeaveRequest_service_1.TeamLeaveRequestService.getMemberRequest(memberId);

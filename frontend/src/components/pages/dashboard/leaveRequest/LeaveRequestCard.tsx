@@ -1,18 +1,18 @@
 import {
+  useAcceptProjectLeaveRequestMutation,
   useIgnoreProjectLeaveRequestMutation,
-  useRemoveMemberMutation,
 } from "@/features/project";
 import {
+  useAcceptTeamLeaveRequestMutation,
   useIgnoreTeamLeaveRequestMutation,
-  useRemoveTeamMemberMutation,
 } from "@/features/team";
 import React from "react";
 import Swal from "sweetalert2";
 
 const LeaveRequestCard = ({ data }: any) => {
   const { member, project, team } = data;
-  const [removeProjectMember] = useRemoveMemberMutation();
-  const [removeTeamMember] = useRemoveTeamMemberMutation();
+  const [acceptProjectLeaveRequest] = useAcceptProjectLeaveRequestMutation();
+  const [acceptTeamLeaveRequest] = useAcceptTeamLeaveRequestMutation();
   const [ignoreProjectLeaveRequest] = useIgnoreProjectLeaveRequestMutation();
   const [ignoreTeamLeaveRequest] = useIgnoreTeamLeaveRequestMutation();
 
@@ -22,7 +22,7 @@ const LeaveRequestCard = ({ data }: any) => {
         projectId: project?.id,
         memberId: member?.id,
       };
-      const result: any = await removeProjectMember(memberData);
+      const result: any = await acceptProjectLeaveRequest(memberData);
       if (result?.data?.success) {
         Swal.fire({
           position: "center",
@@ -45,7 +45,7 @@ const LeaveRequestCard = ({ data }: any) => {
         teamId: team?.id,
         memberId: member?.id,
       };
-      const result: any = await removeTeamMember(memberData);
+      const result: any = await acceptTeamLeaveRequest(memberData);
       if (result?.data?.success) {
         Swal.fire({
           position: "center",

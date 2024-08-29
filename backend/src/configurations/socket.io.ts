@@ -11,7 +11,7 @@ export const initiateSocketIo = (io: Server) => {
 
     socket.on("message", (data: any) => {
       console.log("New message", data);
-      socket.broadcast.to(data.conversationId).emit("message", data);
+      socket.broadcast.to(data?.conversationId).emit("message", data);
     });
 
     // notification room for each user
@@ -22,7 +22,7 @@ export const initiateSocketIo = (io: Server) => {
 
     socket.on("notification", (data: any) => {
       console.log("New notification", data);
-      socket.broadcast.to(data.recipient.userId).emit("notification", data);
+      socket.broadcast.to(data?.recipient?.userId).emit("notification", data);
     });
 
     // tasks room
@@ -33,7 +33,7 @@ export const initiateSocketIo = (io: Server) => {
 
     socket.on("task", (data: any) => {
       console.log("New task", data);
-      socket.broadcast.to(data.project).emit("task", data);
+      socket.broadcast.to(data?.project).emit("task", data);
     });
 
     socket.on("disconnect", async () => {

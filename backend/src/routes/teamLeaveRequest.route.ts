@@ -3,9 +3,14 @@ import { Router } from "express";
 
 const router = Router();
 
-router.post("/sent-request", TeamLeaveRequestController.requestToLeave);
+router.post("/send-request", TeamLeaveRequestController.requestToLeave);
 
 router.patch("/ignore/:requestId", TeamLeaveRequestController.ignoreRequest);
+
+router.patch(
+  "/accept/:teamId/:memberId",
+  TeamLeaveRequestController.acceptLeaveRequest
+);
 
 router.get("/all/:adminId", TeamLeaveRequestController.getLeaveRequestByAdmin);
 

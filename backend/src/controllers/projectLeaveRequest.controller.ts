@@ -5,12 +5,12 @@ import httpStatus from "http-status";
 
 class Controller extends RootController {
   requestToLeave = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await ProjectLeaveRequestService.requestToLeave(req.body);
+    await ProjectLeaveRequestService.requestToLeave(req.body);
     this.apiResponse(res, {
       statusCode: httpStatus.CREATED,
       success: true,
       message: "Your leave request has been sent to admin",
-      data: result,
+      data: null,
     });
   });
 
@@ -30,12 +30,24 @@ class Controller extends RootController {
 
   ignoreRequest = this.catchAsync(async (req: Request, res: Response) => {
     const requestId = req.params.requestId;
-    const result = await ProjectLeaveRequestService.ignoreRequest(requestId);
+    await ProjectLeaveRequestService.ignoreRequest(requestId);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: "Leave request ignored",
-      data: result,
+      data: null,
+    });
+  });
+
+  acceptLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
+    const projectId = req.params.projectId;
+    const memberId = req.params.memberId;
+    await ProjectLeaveRequestService.acceptLeaveRequest(projectId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Leave request accepted",
+      data: null,
     });
   });
 

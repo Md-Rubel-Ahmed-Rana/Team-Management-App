@@ -92,7 +92,7 @@ const teamApi = apiSlice.injectEndpoints({
 
     leaveTeamRequest: builder.mutation({
       query: (data) => ({
-        url: "/leave-team/sent-request",
+        url: "/leave-team/send-request",
         method: "POST",
         body: data,
       }),
@@ -102,6 +102,13 @@ const teamApi = apiSlice.injectEndpoints({
     ignoreTeamLeaveRequest: builder.mutation({
       query: (requestId) => ({
         url: `/leave-team/ignore/${requestId}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["team"] as any,
+    }),
+    acceptTeamLeaveRequest: builder.mutation({
+      query: ({ teamId, memberId }) => ({
+        url: `/leave-team/accept/${teamId}/${memberId}`,
         method: "PATCH",
       }),
       invalidatesTags: ["team"] as any,
@@ -139,4 +146,5 @@ export const {
   useGetMyTeamsCardQuery,
   useGetJoinedTeamsCardQuery,
   useGetTeamDetailsQuery,
+  useAcceptTeamLeaveRequestMutation,
 } = teamApi;

@@ -19,10 +19,12 @@ var NotificationEnums;
     NotificationEnums["PROJECT_OVERDUE"] = "Project overdue";
     NotificationEnums["PROJECT_MEMBER_ADDED"] = "Member added to project";
     NotificationEnums["PROJECT_MEMBER_REMOVED"] = "Member removed from project";
+    NotificationEnums["PROJECT_LEAVE_REQUEST"] = "Project leave request";
     // Team-related notifications
     NotificationEnums["TEAM_INVITATION"] = "Team invitation received";
     NotificationEnums["TEAM_JOINED"] = "Joined team";
     NotificationEnums["TEAM_LEFT"] = "Left team";
+    NotificationEnums["TEAM_DELETED"] = "Team deleted";
     NotificationEnums["TEAM_UPDATED"] = "Team updated";
     NotificationEnums["TEAM_MEMBER_ADDED"] = "Member added to team";
     NotificationEnums["TEAM_MEMBER_REMOVED"] = "Member removed from team";
