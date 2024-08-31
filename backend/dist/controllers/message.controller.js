@@ -21,12 +21,12 @@ class Controller extends rootController_1.default {
     constructor() {
         super(...arguments);
         this.createMessage = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const result = yield message_service_1.MessageService.createMessage(req.body);
+            const message = yield message_service_1.MessageService.createMessage(req.body);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.CREATED,
                 success: true,
                 message: "Message created successfully",
-                data: result,
+                data: message,
             });
         }));
         this.getMessagesByType = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {

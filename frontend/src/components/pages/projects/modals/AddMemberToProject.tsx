@@ -1,12 +1,12 @@
 import React, { Fragment, useContext, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Select from "react-select";
-import Swal from "sweetalert2";
 import { useAddMemberMutation } from "@/features/project";
 import { useGetActiveMembersQuery, useSingleTeamQuery } from "@/features/team";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
 import { SocketContext } from "@/context/SocketContext";
+import toast from "react-hot-toast";
 
 type Props = {
   isOpen: boolean;
@@ -31,7 +31,6 @@ const AddMemberToProject = ({
   const { data: singleTeam } = useSingleTeamQuery(teamId);
   const team = singleTeam?.data;
   const { data: memberData } = useGetActiveMembersQuery(teamId);
-  console.log({ projectId, teamId, singleTeam, memberData });
   const members = memberData?.data?.activeMembers?.map((member: IUser) => ({
     value: member?.id,
     label: member?.name,
@@ -39,32 +38,23 @@ const AddMemberToProject = ({
 
   const handleAddNewMember = async (e: any) => {
     e.preventDefault();
-
     const memberData = {
       projectId,
       memberId: newMember.value,
     };
-
     const result: any = await addNewMember(memberData);
-
     if (result?.data?.success) {
-      socket.emit("notification", result?.data?.data);
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      socket.emit("notification", newMember?.value);
+      toast.success(
+        result?.data?.message || "New project member added successfully!"
+      );
       closeModal();
-    }
-    if (result?.error) {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        text: result?.error?.data?.message,
-        showConfirmButton: true,
-      });
+    } else {
+      toast.error(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "New project member added successfully!"
+      );
       closeModal();
     }
   };

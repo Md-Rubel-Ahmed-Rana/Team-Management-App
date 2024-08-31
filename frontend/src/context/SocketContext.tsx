@@ -1,6 +1,8 @@
 import { baseApi, cloudinaryApi } from "@/features/api";
+import { useLoggedInUserQuery } from "@/features/user";
 import { IContext } from "@/interfaces/context.interface";
 import { IMessage } from "@/interfaces/message.interface";
+import { IUser } from "@/interfaces/user.interface";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
@@ -22,8 +24,9 @@ type Props = {
 const SocketProvider = ({ children }: Props) => {
   const socket: any = io(baseApi);
   const [realTimeMessages, setRealTimeMessages] = useState<IMessage[]>([]);
-  const [user, setUser] = useState<any>({});
   const [refetchTask, setRefetchTask] = useState<any>(false);
+  const { data } = useLoggedInUserQuery({});
+  const user: IUser = data?.data;
 
   useEffect(() => {
     startServers(baseApi);
@@ -44,7 +47,7 @@ const SocketProvider = ({ children }: Props) => {
     if (user?.id) {
       socket.emit("notification-room", user?.id);
     }
-  }, [user]);
+  }, [user, socket]);
 
   const values: IContext = {
     realTimeMessages,

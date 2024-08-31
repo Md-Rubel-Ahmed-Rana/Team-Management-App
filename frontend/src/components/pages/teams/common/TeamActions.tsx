@@ -1,9 +1,11 @@
 import useHandlePropagation from "@/hooks/useHandlePropagation";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import { useLeaveTeamRequestMutation } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
+import { SocketContext } from "@/context/SocketContext";
+import toast from "react-hot-toast";
 
 type Props = {
   setToggleAction: (value: boolean) => void;
@@ -20,6 +22,7 @@ const TeamActions = ({
   setIsRemoveMember,
   team,
 }: Props) => {
+  const { socket }: any = useContext(SocketContext);
   const closeModal = useHandlePropagation();
   const modalRef = useRef(null);
   const [leaveTeam] = useLeaveTeamRequestMutation();
@@ -35,23 +38,33 @@ const TeamActions = ({
       confirmButtonText: "Yes",
     }).then((result) => {
       if (result.isConfirmed) {
-        const leaveData = {
+        leaveHandler({
           admin: team?.admin,
           team: team.id,
           member: user?.id,
-        };
-        const leaveHandler = async () => {
-          const result: any = await leaveTeam(leaveData);
-          if (result?.data?.success) {
-            Swal.fire("Done!", `${result?.data?.message}`, "success");
-          }
-          if (result?.error) {
-            Swal.fire("Done!", `${result?.error?.data?.message}`, "error");
-          }
-        };
-        leaveHandler();
+        });
       }
     });
+  };
+
+  const leaveHandler = async (leaveData: {
+    admin: string;
+    team: string;
+    member: string;
+  }) => {
+    const result: any = await leaveTeam(leaveData);
+    if (result?.data?.success) {
+      toast.success(
+        result?.data?.message || "Your leave request has been sent to admin"
+      );
+      socket.emit("notification", team?.admin);
+    } else {
+      toast.success(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Failed to send leave request!"
+      );
+    }
   };
 
   // handle close modal

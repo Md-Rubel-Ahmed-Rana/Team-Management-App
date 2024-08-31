@@ -1,15 +1,17 @@
+import { SocketContext } from "@/context/SocketContext";
 import { useUpdateTeamMutation, useSingleTeamQuery } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import { INewTeam } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 const TeamEditPage = () => {
+  const { socket }: any = useContext(SocketContext);
   const router = useRouter();
-  const { id } = router.query; // Extract team ID from query parameters
+  const { id } = router.query;
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const [teamLogo, setTeamLogo] = useState<File | null>(null);
@@ -52,24 +54,21 @@ const TeamEditPage = () => {
 
     const result: any = await updateTeam({ id, data: formData });
     setLoading(false);
-
     if (result?.data?.success) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
+      toast.success(result?.data?.message || "Team updated successfully!");
+      result?.data?.data?.forEach((memberId: string) => {
+        if (memberId) {
+          // send notification to all members to notify that team name updated
+          socket.emit("notification", memberId);
+        }
       });
       router.back();
-    } else if (result?.error) {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: result?.error.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+    } else {
+      toast.success(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Team wasn't updated!"
+      );
     }
   };
 

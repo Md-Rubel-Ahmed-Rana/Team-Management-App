@@ -70,6 +70,25 @@ class Controller extends rootController_1.default {
                 data: result,
             });
         }));
+        this.deleteSingleNotification = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const id = req.params.id;
+            const result = yield notification_service_1.NotificationService.deleteSingleNotification(id);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Notification deleted successfully",
+                data: result,
+            });
+        }));
+        this.deleteManyNotifications = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield notification_service_1.NotificationService.deleteManyNotifications(req.body);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Notifications deleted successfully",
+                data: result,
+            });
+        }));
     }
 }
 exports.NotificationController = new Controller();

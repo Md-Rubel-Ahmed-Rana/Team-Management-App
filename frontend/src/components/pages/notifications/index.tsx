@@ -3,6 +3,8 @@ import moment from "moment";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import {
+  useDeleteManyNotificationMutation,
+  useDeleteSingleNotificationMutation,
   useGetMyNotificationsQuery,
   useGetUnreadNotificationsCountQuery,
   useMarkAllNotificationsAsReadMutation,
@@ -12,6 +14,8 @@ import { IUser } from "@/interfaces/user.interface";
 import { useLoggedInUserQuery } from "@/features/user";
 import { formattedDate } from "@/utils/formattedDate";
 import toast from "react-hot-toast";
+import { IoCheckmarkCircle } from "react-icons/io5";
+import { IoIosRadioButtonOff } from "react-icons/io";
 
 const Button: any = dynamic(() => import("antd/lib/button"), {
   ssr: false,
@@ -29,6 +33,8 @@ type Props = {
 const NotificationModal = ({ open, setOpen }: Props) => {
   const { data: userData } = useLoggedInUserQuery({});
   const [limit, setLimit] = useState(10);
+  const [isSelect, setIsSelect] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const user: IUser = userData?.data;
   const { data: unreadNotData, refetch: RefetchUnreadCount } =
     useGetUnreadNotificationsCountQuery(user?.id);
@@ -41,6 +47,9 @@ const NotificationModal = ({ open, setOpen }: Props) => {
   const [markAsRead] = useReadNotificationMutation();
   const [markAllAsRead, { isLoading: isMarkingAsRead }] =
     useMarkAllNotificationsAsReadMutation();
+  const [deleteSingle] = useDeleteSingleNotificationMutation();
+  const [deleteMany, { isLoading: isManyDeleting }] =
+    useDeleteManyNotificationMutation();
 
   const notifications = data?.data?.payload;
   const total = data?.data?.total;
@@ -75,7 +84,37 @@ const NotificationModal = ({ open, setOpen }: Props) => {
     } else {
       toast.error("Failed to mark as read");
     }
-    console.log(result);
+  };
+
+  const handleDeleteSingle = async (id: string) => {
+    const result: any = await deleteSingle(id);
+    if (result?.data?.success) {
+      toast.success("Notification delete successfully!");
+    } else {
+      toast.error("Failed delete notification!");
+    }
+  };
+
+  const handleDeleteMany = async () => {
+    const result: any = await deleteMany(selectedIds);
+    if (result?.data?.success) {
+      toast.success("Notification delete successfully!");
+      setIsSelect(false);
+      setSelectedIds([]);
+    } else {
+      toast.error("Failed delete notification!");
+      setIsSelect(false);
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectNotification = (id: string) => {
+    if (selectedIds.includes(id)) {
+      const remainingIds = selectedIds.filter((not) => not !== id);
+      setSelectedIds(remainingIds);
+    } else {
+      setSelectedIds((prev: string[]) => [...prev, id]);
+    }
   };
 
   return (
@@ -84,6 +123,15 @@ const NotificationModal = ({ open, setOpen }: Props) => {
         title={
           <div className="flex items-center justify-between">
             <p>Notifications</p>
+            <Button
+              onClick={() => {
+                setSelectedIds([]);
+                setIsSelect((prev) => !prev);
+              }}
+              type="default"
+            >
+              {isSelect ? "Unselect" : "Select"}
+            </Button>
             <Button
               onClick={handleMarkAllAsRead}
               type="text"
@@ -95,10 +143,10 @@ const NotificationModal = ({ open, setOpen }: Props) => {
               }`}
             >
               {isMarkingAsRead
-                ? " Marking..."
+                ? "Marking..."
                 : unreadCount === 0
                 ? "No unread"
-                : "Mark as read"}
+                : "Mark all as read"}
             </Button>
           </div>
         }
@@ -112,6 +160,16 @@ const NotificationModal = ({ open, setOpen }: Props) => {
             >
               See more
             </Button>
+            {selectedIds.length > 0 && (
+              <Button
+                disabled={isManyDeleting}
+                onClick={handleDeleteMany}
+                type="default"
+                className="bg-red-600 text-white"
+              >
+                {isManyDeleting ? "Deleting..." : " Delete all"}
+              </Button>
+            )}
             <Button
               type="default"
               className="bg-blue-600 text-white"
@@ -128,11 +186,8 @@ const NotificationModal = ({ open, setOpen }: Props) => {
         <div className="flex flex-col gap-2 lg:gap-4 overflow-y-auto h-[300px]">
           {notifications?.map((notification: any) => (
             <div
-              onClick={() =>
-                handleMarkAsRead(notification?.id, notification?.title)
-              }
               key={notification?.id}
-              className={`border-b flex flex-col gap-0 mr-2 p-2 rounded-md cursor-pointer ${
+              className={`border-b flex flex-col gap-0 mr-2 p-2 rounded-md ${
                 notification?.status === "unread" ? "bg-gray-200" : ""
               }`}
             >
@@ -155,7 +210,51 @@ const NotificationModal = ({ open, setOpen }: Props) => {
                   View link
                 </Link>
               </button>
-              <p>{formattedDate(notification?.createdAt)}</p>
+              <p className="flex justify-between items-center">
+                <span>{formattedDate(notification?.createdAt)}</span>
+                {isSelect ? (
+                  <>
+                    {selectedIds.includes(notification?.id) ? (
+                      <IoCheckmarkCircle
+                        className="text-green-600 text-xl"
+                        onClick={() =>
+                          handleSelectNotification(notification?.id)
+                        }
+                      />
+                    ) : (
+                      <IoIosRadioButtonOff
+                        className="text-lg"
+                        onClick={() =>
+                          handleSelectNotification(notification?.id)
+                        }
+                      />
+                    )}
+                  </>
+                ) : (
+                  <div className="flex gap-1 items-center">
+                    {notification?.status === "unread" && (
+                      <button
+                        onClick={() =>
+                          handleMarkAsRead(
+                            notification?.id,
+                            notification?.title
+                          )
+                        }
+                        className="bg-sky-400 hover:bg-sky-600 text-white px-2  rounded-md"
+                      >
+                        Mark as read
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => handleDeleteSingle(notification?.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-2  rounded-md"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </p>
             </div>
           ))}
           {notifications?.length === 0 && (

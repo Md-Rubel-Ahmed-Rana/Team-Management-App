@@ -1,7 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { SocketContext } from "@/context/SocketContext";
 import { useGetMessagesByTypeQuery } from "@/features/message";
-import { IMessage } from "@/interfaces/message.interface";
+import {
+  IMessage,
+  IMessagePayloadForSocket,
+} from "@/interfaces/message.interface";
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import MessageCard from "./MessageCard";
@@ -22,14 +25,17 @@ const MessageContainer = ({ messageType }: Props) => {
   });
 
   useEffect(() => {
-    const handleMessage = (data: any) => {
+    const handleMessage = (data: IMessagePayloadForSocket) => {
       if (data?.type === messageType) {
-        setRealTimeMessages((prev: IMessage[]) => [...prev, data]);
+        setRealTimeMessages((prev: IMessagePayloadForSocket[]) => [
+          ...prev,
+          data,
+        ]);
       }
     };
-    socket?.on("message", handleMessage);
+    socket?.on("team-message", handleMessage);
     return () => {
-      socket?.off("message", handleMessage);
+      socket?.off("team-message", handleMessage);
     };
   }, [setRealTimeMessages, socket]);
 

@@ -11,5 +11,7 @@ router.post("/send", notification_controller_1.NotificationController.send);
 router.get("/my-notifications/:receiverId", notification_controller_1.NotificationController.getNotificationsByReceiverId);
 router.patch("/status/read/:id", notification_controller_1.NotificationController.updateStatusToRead);
 router.patch("/mark-all-as-read/:userId", notification_controller_1.NotificationController.markAllAsRead);
+router.delete("/delete/single/:id", notification_controller_1.NotificationController.deleteSingleNotification);
+router.post("/delete/many", notification_controller_1.NotificationController.deleteManyNotifications);
 router.patch("/update/:userId", redisCache_1.RedisCacheService.updateNotification());
 exports.NotificationRoutes = router;

@@ -1,7 +1,10 @@
+import { SocketContext } from "@/context/SocketContext";
 import { useLeaveProjectRequestMutation } from "@/features/project";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IProject } from "@/interfaces/project.interface";
 import { IUser } from "@/interfaces/user.interface";
+import { useContext } from "react";
+import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 
 type Props = {
@@ -21,6 +24,7 @@ const ProjectActions = ({
   setIsRemoveMember,
   project,
 }: Props) => {
+  const { socket }: any = useContext(SocketContext);
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const [leaveRequest] = useLeaveProjectRequestMutation();
@@ -42,10 +46,17 @@ const ProjectActions = ({
         const leaveHandler = async () => {
           const result: any = await leaveRequest(leaveData);
           if (result?.data?.success) {
-            Swal.fire("Done!", `${result?.data?.message}`, "success");
-          }
-          if (result?.error) {
-            Swal.fire("Done!", `${result?.error?.data?.message}`, "error");
+            toast.success(
+              result?.data?.message ||
+                "Your leave request has been sent to admin"
+            );
+            socket.emit("notification", project?.user?.id);
+          } else {
+            toast.success(
+              result?.data?.message ||
+                result?.error?.data?.message ||
+                "Failed to send leave request!"
+            );
           }
         };
         leaveHandler();

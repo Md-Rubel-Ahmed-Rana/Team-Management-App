@@ -10,6 +10,16 @@ export interface IMessage {
   text: string;
   images: string[];
   files: string[];
-  links: string[];
   createdAt: Date;
 }
+
+export type IMessagePayloadForSocket = {
+  id: string;
+  poster: IMessagePoster;
+  conversationId: string;
+  text: string;
+  type: string;
+  images: string[];
+  files: string[];
+  createdAt: Date;
+};

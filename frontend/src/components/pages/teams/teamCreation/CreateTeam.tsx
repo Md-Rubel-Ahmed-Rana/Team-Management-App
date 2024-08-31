@@ -8,6 +8,7 @@ import { useState } from "react";
 import validateFileSize from "@/utils/validateFileSize";
 import ImageCropperModal from "@/components/shared/ImageCropperModal";
 import { IUser } from "@/interfaces/user.interface";
+import toast from "react-hot-toast";
 
 const CreateTeamPage = () => {
   const { data } = useLoggedInUserQuery({});
@@ -40,26 +41,16 @@ const CreateTeamPage = () => {
     if (teamLogo) {
       formData.append("file", teamLogo);
     }
-
     const result: any = await createTeam(formData);
-
     if (result?.data?.success) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      router.push(`/my-teams?${queries}`);
-    } else if (result?.error) {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: result?.error?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      toast.success(result?.data?.message || "Team created successfully!");
+      router.push(`/teams/my-teams?${queries}`);
+    } else {
+      toast.error(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Team wasn't created!"
+      );
     }
   };
 

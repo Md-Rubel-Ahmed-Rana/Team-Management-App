@@ -111,5 +111,16 @@ class Service {
             return result;
         });
     }
+    deleteSingleNotification(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield notification_model_1.Notification.findByIdAndDelete(id);
+        });
+    }
+    deleteManyNotifications(ids) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log({ ids });
+            yield notification_model_1.Notification.deleteMany({ _id: { $in: ids } });
+        });
+    }
 }
 exports.NotificationService = new Service();

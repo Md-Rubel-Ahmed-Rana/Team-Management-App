@@ -1,5 +1,5 @@
 import { FaUser, FaRegBell, FaBars } from "react-icons/fa";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IUser } from "@/interfaces/user.interface";
 import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import type { MenuProps } from "antd";
 import dynamic from "next/dynamic";
 import NotificationModal from "../pages/notifications";
 import { useGetUnreadNotificationsCountQuery } from "@/features/notification";
+import { SocketContext } from "@/context/SocketContext";
 const Dropdown: any = dynamic(() => import("antd/lib/dropdown"), {
   ssr: false,
   loading: () => <FaBars className="text-2xl" />,
@@ -18,11 +19,14 @@ const Button: any = dynamic(() => import("antd/lib/button"), {
 });
 
 const Navbar = () => {
+  const { socket }: any = useContext(SocketContext);
   const { data, isLoading: isUserLoading } = useLoggedInUserQuery({});
   const user: IUser = data?.data;
   const queries = `userId=${user?.id}&name=${user?.name}&email=${user?.email}`;
   const [showNotification, setShowNotification] = useState(false);
-  const { data: unreadNotData } = useGetUnreadNotificationsCountQuery(user?.id);
+  const { data: unreadNotData, isLoading } =
+    useGetUnreadNotificationsCountQuery(user?.id);
+  const [notificationCount, setNotificationCount] = useState(0);
 
   const universalItems: MenuProps["items"] = [
     {
@@ -81,6 +85,22 @@ const Navbar = () => {
     user && projectItems.reverse(),
     user && teamItems.reverse()
   );
+
+  useEffect(() => {
+    setNotificationCount(unreadNotData?.data || 0);
+  }, [isLoading]);
+
+  useEffect(() => {
+    console.log("Receive new notification");
+    const handleMessage = (newNotificationCount: number) => {
+      console.log("New notification count:", newNotificationCount);
+      setNotificationCount(newNotificationCount);
+    };
+    socket?.on("notification", handleMessage);
+    return () => {
+      socket?.off("notification", handleMessage);
+    };
+  }, [socket]);
 
   return (
     <div className="sticky top-0 bg-[#f0f8ff] z-50 border-b shadow-md">
@@ -145,7 +165,7 @@ const Navbar = () => {
                 >
                   <FaRegBell />
                   <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-                    {unreadNotData?.data || 0}
+                    {notificationCount}
                   </small>
                 </button>
                 <Link
@@ -203,7 +223,7 @@ const Navbar = () => {
                   >
                     <FaRegBell />
                     <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-                      {0}
+                      {notificationCount}
                     </small>
                   </button>
                 )}

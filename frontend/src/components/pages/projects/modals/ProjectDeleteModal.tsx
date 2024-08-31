@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
 import { useDeleteProjectMutation } from "@/features/project";
 import SmallLoader from "@/components/shared/SmallLoader";
+import { SocketContext } from "@/context/SocketContext";
 
 type Props = {
   projectId: string;
@@ -26,6 +26,7 @@ const ProjectDeleteModal = ({
   isOpen,
   setIsOpen,
 }: Props) => {
+  const { socket }: any = useContext(SocketContext);
   const {
     register,
     handleSubmit,
@@ -41,6 +42,11 @@ const ProjectDeleteModal = ({
   const handleDelete = async (data: FormValues) => {
     const result: any = await deleteProject(projectId);
     if (result?.data?.statusCode === 200) {
+      result?.data?.data?.forEach((memberId: string) => {
+        if (memberId) {
+          socket.emit("notification", memberId);
+        }
+      });
       toast.success(result?.data?.message || "Project deleted successfully");
       setIsOpen(false);
     } else {
@@ -109,7 +115,7 @@ const ProjectDeleteModal = ({
                   </label>
                   <input
                     type="text"
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-blue-500 bg-white text-gray-700"
                     placeholder="Enter project name"
                     {...register("typedProjectName", { required: true })}
                   />
@@ -126,7 +132,7 @@ const ProjectDeleteModal = ({
                   </label>
                   <input
                     type="text"
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-blue-500 bg-white text-gray-700"
                     placeholder="Delete My Project"
                     {...register("typedConfirmation", { required: true })}
                   />

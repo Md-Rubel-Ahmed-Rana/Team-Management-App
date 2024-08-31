@@ -138,16 +138,17 @@ class Service {
                         const notifyObject = {
                             title: "Project Updated",
                             type: enums_1.NotificationEnums.PROJECT_UPDATED,
-                            receiver: member._id, // member
-                            sender: updatedProject.user, // admin
-                            content: `Dear ${member.name}, the project "${project === null || project === void 0 ? void 0 : project.name}" has been updated. The ${changes} have been changed. Thank you for staying up to date with these changes!`,
-                            link: `${envConfig_1.config.app.frontendDomain}/projects/joined-projects?userId=${member._id}&name=${member.name}&email=${member.email}`,
+                            receiver: member === null || member === void 0 ? void 0 : member._id, // member
+                            sender: updatedProject === null || updatedProject === void 0 ? void 0 : updatedProject.user, // admin
+                            content: `Dear ${member === null || member === void 0 ? void 0 : member.name}, the project "${project === null || project === void 0 ? void 0 : project.name}" has been updated. The ${changes} have been changed. Thank you for staying up to date with these changes!`,
+                            link: `${envConfig_1.config.app.frontendDomain}/projects/joined-projects?userId=${member === null || member === void 0 ? void 0 : member._id}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
                         };
                         yield notification_service_1.NotificationService.createNotification(notifyObject, session);
                     })));
                 }
                 // Commit the transaction
                 yield session.commitTransaction();
+                return project === null || project === void 0 ? void 0 : project.members;
             }
             catch (error) {
                 // Abort the transaction in case of an error
@@ -167,7 +168,6 @@ class Service {
             session.startTransaction();
             try {
                 const project = yield this.getSingleProject(id);
-                console.log("Single project to delete", project);
                 if ((project === null || project === void 0 ? void 0 : project.members) && (project === null || project === void 0 ? void 0 : project.members.length) > 0) {
                     const projectDetails = `project "${project === null || project === void 0 ? void 0 : project.name}" in the ${project === null || project === void 0 ? void 0 : project.category} category`;
                     yield Promise.all((_a = project === null || project === void 0 ? void 0 : project.members) === null || _a === void 0 ? void 0 : _a.map((member) => __awaiter(this, void 0, void 0, function* () {
@@ -185,6 +185,7 @@ class Service {
                 yield project_model_1.Project.findByIdAndDelete(id).session(session);
                 yield task_service_1.TaskService.deleteTasksByProjectId(id, session);
                 yield session.commitTransaction();
+                return project === null || project === void 0 ? void 0 : project.members.map((member) => member === null || member === void 0 ? void 0 : member.id);
             }
             catch (error) {
                 yield session.abortTransaction();

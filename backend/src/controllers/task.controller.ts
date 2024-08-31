@@ -44,7 +44,7 @@ class Controller extends RootController {
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Task status updated successfully",
+      message: "Task updated successfully",
       data: result,
     });
   });

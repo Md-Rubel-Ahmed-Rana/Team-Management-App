@@ -1,4 +1,6 @@
+import { SocketContext } from "@/context/SocketContext";
 import { useDeleteTaskMutation } from "@/features/task";
+import { useContext } from "react";
 import toast from "react-hot-toast";
 
 type Props = {
@@ -8,11 +10,13 @@ type Props = {
 };
 
 const TaskActions = ({ setIsEditTask, setShowActions, taskId }: Props) => {
+  const { socket }: any = useContext(SocketContext);
   const [deleteTask, { isLoading }] = useDeleteTaskMutation();
   const handleDeleteTask = async () => {
     const result: any = await deleteTask(taskId);
     if (result?.data?.success) {
       toast.success(result?.data?.message);
+      socket.emit("notification", result?.data?.data?.receiverId);
       setShowActions(false);
       window.location.reload();
     }
