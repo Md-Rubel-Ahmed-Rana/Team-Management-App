@@ -33,13 +33,13 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <div>
-      <SocketProvider>
-        <Provider store={store}>
+      <Provider store={store}>
+        <SocketProvider>
           <NextNProgress color="#3267b1" options={{ showSpinner: false }} />
           {getLayout(<Component {...pageProps} />)}
           <Toaster />
-        </Provider>
-      </SocketProvider>
+        </SocketProvider>
+      </Provider>
     </div>
   );
 }

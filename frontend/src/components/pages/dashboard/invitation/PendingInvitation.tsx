@@ -10,8 +10,7 @@ import { useLoggedInUserQuery } from "@/features/user";
 import { ITeam } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
 import React, { useContext } from "react";
-
-import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 const PendingInvitation = () => {
   const { socket }: any = useContext(SocketContext);
@@ -23,39 +22,30 @@ const PendingInvitation = () => {
   const [rejectInvitation, { isLoading: isRejecting }] =
     useRejectInvitationMutation();
 
-  const handleAcceptInvitation = async (teamId: string) => {
+  const handleAcceptInvitation = async (teamId: string, adminId: string) => {
     const result: any = await acceptInvitation({
       teamId,
       memberId: user?.id,
     });
     if (result?.data?.success) {
-      socket.emit("notification", result?.data?.data);
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      socket.emit("notification", adminId);
+      toast.success("Invitation has been accepted successfully!");
+    } else {
+      toast.error("Failed accept invitation!");
     }
   };
 
-  const handleRejectInvitation = async (teamId: string) => {
+  const handleRejectInvitation = async (teamId: string, adminId: string) => {
     const result: any = await rejectInvitation({
       teamId,
       memberId: user.id,
     });
     if (result?.data?.success) {
       // send notification viw socket
-      socket.emit("notification", result?.data?.data);
-
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      socket.emit("notification", adminId);
+      toast.success("Invitation has been accepted successfully!");
+    } else {
+      toast.error("Failed accept invitation!");
     }
   };
 
@@ -121,7 +111,7 @@ const PendingInvitation = () => {
                     <div className="flex  items-center gap-3">
                       <button
                         disabled={isAccepting || isRejecting}
-                        onClick={() => handleAcceptInvitation(id)}
+                        onClick={() => handleAcceptInvitation(id, admin?.id)}
                         className={`px-5 py-2 rounded-md border ${
                           isAccepting || isRejecting
                             ? "bg-gray-500 cursor-not-allowed"
@@ -132,7 +122,7 @@ const PendingInvitation = () => {
                       </button>
                       <button
                         disabled={isAccepting || isRejecting}
-                        onClick={() => handleRejectInvitation(id)}
+                        onClick={() => handleRejectInvitation(id, admin?.id)}
                         className={`px-5 py-2 rounded-md border ${
                           isAccepting || isRejecting
                             ? "bg-gray-500 cursor-not-allowed"

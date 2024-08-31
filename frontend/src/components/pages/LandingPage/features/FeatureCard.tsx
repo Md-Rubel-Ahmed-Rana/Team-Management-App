@@ -9,7 +9,7 @@ const FeatureCard = ({ feature, animation }: Props) => {
   const { title, description, image, animation: animate } = feature;
   return (
     <div
-      data-aos={animate}
+      data-aos="fade-up"
       className="features-card p-3 lg:p-6 rounded-lg shadow-md lg:flex flex-col gap-4"
     >
       <img

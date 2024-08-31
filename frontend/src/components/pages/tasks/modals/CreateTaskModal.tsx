@@ -10,9 +10,11 @@ import { useCreateTaskMutation } from "@/features/task";
 import customStyles from "@/utils/reactSelectCustomStyle";
 import { SocketContext } from "@/context/SocketContext";
 import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
   const { socket }: any = useContext(SocketContext);
+  const router = useRouter();
   const closeModal = () => {
     setIsOpen(false);
   };
@@ -35,11 +37,11 @@ const CreateTaskModal = ({ isOpen, setIsOpen, project, status }: any) => {
     data.project = project.id;
     const result: any = await createTask(data);
     if (result?.data?.success) {
-      socket.emit("task", result?.data?.data?.data);
-      socket.emit("notification", result?.data?.data?.notification);
+      socket.emit("task", result?.data?.data);
+      socket.emit("notification", selectedMember?.value);
       toast.success(result?.data?.message);
       closeModal();
-      window.location.reload();
+      router.reload();
     } else {
       toast.error(
         result?.data?.message || "Something went wrong to create task"

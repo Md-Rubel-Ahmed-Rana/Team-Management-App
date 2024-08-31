@@ -12,6 +12,7 @@ import { IUser } from "@/interfaces/user.interface";
 import { SocketContext } from "@/context/SocketContext";
 import { GoDotFill } from "react-icons/go";
 import dynamic from "next/dynamic";
+import { IMessagePayloadForSocket } from "@/interfaces/message.interface";
 
 const Tooltip: any = dynamic(() => import("antd/lib/tooltip"), {
   ssr: false,
@@ -30,7 +31,7 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
   const [upcomingMessageType, setUpcomingMessageType] = useState<string[]>([]);
 
   useEffect(() => {
-    const handleMessage = (data: any) => {
+    const handleMessage = (data: IMessagePayloadForSocket) => {
       if (
         data?.type !== activeChannel &&
         !upcomingMessageType?.includes(data?.type)
@@ -38,9 +39,9 @@ const MessageSidebar = ({ activeChannel, setActiveChannel }: Props) => {
         setUpcomingMessageType((prev) => [...prev, data?.type]);
       }
     };
-    socket?.on("message", handleMessage);
+    socket?.on("team-message", handleMessage);
     return () => {
-      socket?.off("message", handleMessage);
+      socket?.off("team-message", handleMessage);
     };
   }, [socket]);
 

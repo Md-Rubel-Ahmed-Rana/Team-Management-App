@@ -6,7 +6,10 @@ import { useSendMessageMutation } from "@/features/message";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { SocketContext } from "@/context/SocketContext";
-import { IMessage } from "@/interfaces/message.interface";
+import {
+  IMessage,
+  IMessagePayloadForSocket,
+} from "@/interfaces/message.interface";
 import { acceptableFiles } from "@/constants/acceptableFiles";
 import { useRouter } from "next/router";
 import MessageFilePreview from "./MessageFilePreview";
@@ -54,7 +57,6 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
   const [files, setFiles] = useState<FileList | undefined | null>(null);
   const [sendMessage, { isLoading }] = useSendMessageMutation();
   const [isMessage, setIsMessage] = useState<any>({ status: false, value: "" });
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSendMessage: SubmitHandler<Inputs> = async (data) => {
     const formData = new FormData();
@@ -91,16 +93,12 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
     const result: any = await sendMessage(formData);
 
     if (result?.data?.success) {
-      const message = result?.data?.data;
-      const poster = {
-        _id: user.id,
-        name: user.name,
-        profile_picture: user.profile_picture,
-      };
-
-      const emitData: IMessage = { ...message, poster };
-      socket.emit("message", emitData);
-      setRealTimeMessages((prev: IMessage[]) => [...prev, emitData]);
+      const message: IMessagePayloadForSocket = result?.data?.data;
+      socket.emit("team-message", message);
+      setRealTimeMessages((prev: IMessagePayloadForSocket[]) => [
+        ...prev,
+        message,
+      ]);
 
       setImagePreview([]);
       setFilePreview([]);

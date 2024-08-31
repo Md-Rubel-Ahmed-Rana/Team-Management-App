@@ -1,12 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { useForm } from "react-hook-form";
 import { useDeleteTeamMutation } from "@/features/team";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import SmallLoader from "@/components/shared/SmallLoader";
+import { SocketContext } from "@/context/SocketContext";
 
 type Props = {
   teamId: string;
@@ -26,6 +27,7 @@ const TeamDeleteModal = ({
   modalOpen,
   setModalOpen,
 }: Props) => {
+  const { socket }: any = useContext(SocketContext);
   const {
     register,
     handleSubmit,
@@ -42,19 +44,34 @@ const TeamDeleteModal = ({
   const handleDelete = async (data: FormValues) => {
     const result: any = await deleteTeam(teamId);
     if (result?.data?.statusCode === 200) {
+      console.log("1", result);
+      console.log("2", result?.data);
+      console.log("3", result?.data?.data);
       toast.success(result?.data?.message || "Team deleted successfully");
+      result?.data?.data?.forEach((memberId: string) => {
+        if (memberId) {
+          socket.emit("notification", memberId);
+        }
+      });
       setModalOpen(false);
       router.reload();
     } else {
       setModalOpen(false);
-      toast.error(result?.error?.message || "Team was not deleted");
+      toast.error(
+        result?.error?.message ||
+          result?.data?.message ||
+          result?.error?.data?.message ||
+          "Team was not deleted"
+      );
     }
   };
 
+  const normalize = (str: string) => str?.replace(/\s+/g, " ").trim();
   const typedTeamName = watch("typedTeamName");
   const typedConfirmation = watch("typedConfirmation");
   const isFormValid =
-    typedTeamName === teamName && typedConfirmation === "Delete My Team";
+    normalize(typedTeamName) === normalize(teamName) &&
+    normalize(typedConfirmation) === "Delete My Team";
 
   return (
     <Transition appear show={modalOpen} as={Fragment}>
@@ -87,7 +104,7 @@ const TeamDeleteModal = ({
           >
             <div className="w-[95vw] lg:w-[400px] mx-auto bg-white dark:bg-gray-400 dark:text-black rounded-xl p-6 text-left shadow-xl transition-all relative">
               <div className="flex justify-between items-center mb-4">
-                <h1 className="text-xl font-bold">Delete {`'${teamName}'`}</h1>
+                <h1 className="text-xl font-bold">Team Deletion</h1>
                 <button
                   onClick={closeModal}
                   className="text-gray-500 hover:text-gray-700"
@@ -95,7 +112,7 @@ const TeamDeleteModal = ({
                   <RxCross2 className="text-3xl text-blue-500" />
                 </button>
               </div>
-
+              <h3 className="text-lg font-semibold">{teamName}</h3>
               <div className="mb-4 text-sm text-red-600">
                 Warning: Deleting this team will permanently remove all related
                 projects and chats/messages. This action cannot be undone.
@@ -108,7 +125,7 @@ const TeamDeleteModal = ({
                   </label>
                   <input
                     type="text"
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-blue-500 bg-white text-gray-700"
                     placeholder="Enter team name"
                     {...register("typedTeamName", { required: true })}
                   />
@@ -125,7 +142,7 @@ const TeamDeleteModal = ({
                   </label>
                   <input
                     type="text"
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-blue-500 bg-white text-gray-700"
                     placeholder="Delete My Team"
                     {...register("typedConfirmation", { required: true })}
                   />
@@ -146,7 +163,14 @@ const TeamDeleteModal = ({
                         : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                   >
-                    {isLoading ? <SmallLoader /> : "Delete Team"}
+                    {isLoading ? (
+                      <span className="flex items-center gap-1">
+                        <small>Deleting...</small>
+                        <SmallLoader />
+                      </span>
+                    ) : (
+                      "Delete Team"
+                    )}
                   </button>
                 </div>
               </form>

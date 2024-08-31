@@ -280,6 +280,10 @@ class Service {
             if (!isExistTeam) {
                 throw new apiError_1.default(http_status_1.default.NOT_FOUND, "Team Not Found!");
             }
+            const members = [
+                ...((isExistTeam === null || isExistTeam === void 0 ? void 0 : isExistTeam.activeMembers) || []),
+                ...((isExistTeam === null || isExistTeam === void 0 ? void 0 : isExistTeam.pendingMembers) || []),
+            ];
             // Update the team data
             const team = yield team_model_1.default.findByIdAndUpdate(id, { $set: Object.assign({}, data) }, { new: true }).populate([
                 {
@@ -315,6 +319,7 @@ class Service {
                     };
                     yield notification_service_1.NotificationService.createNotification(notifyObject);
                 })));
+                return members;
             }
         });
     }
@@ -323,12 +328,16 @@ class Service {
             const session = yield mongoose_1.default.startSession();
             session.startTransaction();
             try {
-                const getTeam = yield team_model_1.default.findById(id);
-                if (!getTeam) {
+                const team = yield this.getTeamById(id);
+                if (!team) {
                     throw new apiError_1.default(http_status_1.default.NOT_FOUND, "Team Not Found!");
                 }
-                // Handle Cloudinary file deletion
-                const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(getTeam === null || getTeam === void 0 ? void 0 : getTeam.image);
+                const members = [
+                    ...((team === null || team === void 0 ? void 0 : team.activeMembers) || []),
+                    ...((team === null || team === void 0 ? void 0 : team.pendingMembers) || []),
+                ];
+                // // Handle Cloudinary file deletion
+                const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(team === null || team === void 0 ? void 0 : team.image);
                 if (public_id) {
                     yield (0, deletePreviousFileFromCloudinary_1.deleteSingleFileFromCloudinary)(public_id);
                 }
@@ -336,23 +345,19 @@ class Service {
                 yield team_model_1.default.findByIdAndDelete(id).session(session);
                 // Delete related projects
                 yield project_service_1.ProjectService.deleteProjectsByTeamId(id, session);
-                // Create notifications for all members
-                const members = [
-                    ...((getTeam === null || getTeam === void 0 ? void 0 : getTeam.activeMembers) || []),
-                    ...((getTeam === null || getTeam === void 0 ? void 0 : getTeam.pendingMembers) || []),
-                ];
                 yield Promise.all(members.map((member) => __awaiter(this, void 0, void 0, function* () {
                     const notifyObject = {
                         title: "Team Deleted",
                         type: enums_1.NotificationEnums.TEAM_DELETED,
                         receiver: member === null || member === void 0 ? void 0 : member._id,
-                        sender: getTeam === null || getTeam === void 0 ? void 0 : getTeam.admin,
+                        sender: team === null || team === void 0 ? void 0 : team.admin,
                         content: `We're deeply grateful for your time and contributions to the team. As we say goodbye, we want to express our heartfelt thanks and admiration. Wishing you all the best in your future endeavors!`,
                         link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${member === null || member === void 0 ? void 0 : member._id}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
                     };
                     yield notification_service_1.NotificationService.createNotification(notifyObject, session);
                 })));
                 yield session.commitTransaction();
+                return members === null || members === void 0 ? void 0 : members.map((member) => member === null || member === void 0 ? void 0 : member.id);
             }
             catch (error) {
                 yield session.abortTransaction();

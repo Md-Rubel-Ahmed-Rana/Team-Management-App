@@ -8,7 +8,7 @@ import { ProjectLeaveRequest } from "@/models/projectLeaveRequest.model";
 import { TeamService } from "./team.service";
 import { UserService } from "./user.service";
 import { TaskService } from "./task.service";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { TeamSelect, UserSelect } from "propertySelections";
 import { NotificationEnums } from "enums";
 import { config } from "@/configurations/envConfig";
@@ -88,7 +88,10 @@ class Service {
     return mappedResult;
   }
 
-  async updateProject(id: string, data: Partial<IProject>): Promise<void> {
+  async updateProject(
+    id: string,
+    data: Partial<IProject>
+  ): Promise<Types.ObjectId[]> {
     const { name, category } = data;
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -130,18 +133,18 @@ class Service {
             const notifyObject: INotification = {
               title: "Project Updated",
               type: NotificationEnums.PROJECT_UPDATED,
-              receiver: member._id, // member
-              sender: updatedProject.user, // admin
-              content: `Dear ${member.name}, the project "${project?.name}" has been updated. The ${changes} have been changed. Thank you for staying up to date with these changes!`,
-              link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member._id}&name=${member.name}&email=${member.email}`,
+              receiver: member?._id, // member
+              sender: updatedProject?.user, // admin
+              content: `Dear ${member?.name}, the project "${project?.name}" has been updated. The ${changes} have been changed. Thank you for staying up to date with these changes!`,
+              link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?._id}&name=${member?.name}&email=${member?.email}`,
             };
             await NotificationService.createNotification(notifyObject, session);
           })
         );
       }
-
       // Commit the transaction
       await session.commitTransaction();
+      return project?.members;
     } catch (error) {
       // Abort the transaction in case of an error
       await session.abortTransaction();
@@ -152,12 +155,11 @@ class Service {
     }
   }
 
-  async deleteProject(id: string): Promise<void> {
+  async deleteProject(id: string): Promise<Types.ObjectId[]> {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
       const project = await this.getSingleProject(id);
-      console.log("Single project to delete", project);
       if (project?.members && project?.members.length > 0) {
         const projectDetails = `project "${project?.name}" in the ${project?.category} category`;
         await Promise.all(
@@ -178,6 +180,7 @@ class Service {
       await Project.findByIdAndDelete(id).session(session);
       await TaskService.deleteTasksByProjectId(id, session);
       await session.commitTransaction();
+      return project?.members.map((member: any) => member?.id);
     } catch (error) {
       await session.abortTransaction();
       throw new ApiError(httpStatus.BAD_REQUEST, "Project wasn't deleted");

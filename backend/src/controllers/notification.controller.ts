@@ -63,6 +63,31 @@ class Controller extends RootController {
       data: result,
     });
   });
+  deleteSingleNotification = this.catchAsync(
+    async (req: Request, res: Response) => {
+      const id = req.params.id;
+      const result = await NotificationService.deleteSingleNotification(id);
+      this.apiResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Notification deleted successfully",
+        data: result,
+      });
+    }
+  );
+  deleteManyNotifications = this.catchAsync(
+    async (req: Request, res: Response) => {
+      const result = await NotificationService.deleteManyNotifications(
+        req.body
+      );
+      this.apiResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Notifications deleted successfully",
+        data: result,
+      });
+    }
+  );
 }
 
 export const NotificationController = new Controller();

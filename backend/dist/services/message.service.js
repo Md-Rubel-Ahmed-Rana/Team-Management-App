@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MessageService = void 0;
+exports.MessageService = exports.Service = void 0;
 const message_model_1 = require("@/models/message.model");
 const propertySelections_1 = require("propertySelections");
 class Service {
@@ -21,7 +21,23 @@ class Service {
                 model: "User",
                 select: propertySelections_1.UserSelect,
             });
-            return populatedResult;
+            const { _id: msId, conversationId, text, type, images, files, createdAt, poster: { _id: userId, name, profile_picture }, } = populatedResult;
+            const emitData = {
+                id: msId,
+                conversationId: conversationId,
+                text: text,
+                type: type,
+                poster: {
+                    id: userId,
+                    name: name,
+                    profile_picture: profile_picture,
+                },
+                files: files,
+                images: images,
+                createdAt: createdAt,
+            };
+            console.log(emitData);
+            return emitData;
         });
     }
     getMessagesByType(messageType, conversationId) {
@@ -73,4 +89,5 @@ class Service {
         });
     }
 }
+exports.Service = Service;
 exports.MessageService = new Service();

@@ -6,12 +6,12 @@ import httpStatus from "http-status";
 
 class Controller extends RootController {
   createMessage = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await MessageService.createMessage(req.body);
+    const message = await MessageService.createMessage(req.body);
     this.apiResponse(res, {
       statusCode: httpStatus.CREATED,
       success: true,
       message: "Message created successfully",
-      data: result,
+      data: message,
     });
   });
 

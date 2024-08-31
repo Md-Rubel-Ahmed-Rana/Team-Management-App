@@ -1,8 +1,9 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useUpdateTaskMutation } from "@/features/task";
 import toast from "react-hot-toast";
+import { SocketContext } from "@/context/SocketContext";
 
 type IEditableTask = {
   id: string;
@@ -22,6 +23,7 @@ type Props = {
 };
 
 const EditTaskModal = ({ isOpen, setIsOpen, task }: Props) => {
+  const { socket }: any = useContext(SocketContext);
   const closeModal = () => {
     setIsOpen(false);
   };
@@ -33,6 +35,12 @@ const EditTaskModal = ({ isOpen, setIsOpen, task }: Props) => {
     const result: any = await updateTask({ ...data, id: task.id });
     if (result?.data?.success) {
       toast.success(result?.data?.message);
+      socket.emit("notification", result?.data?.data?.receiverId);
+      socket.emit("task", {
+        ...task,
+        name: data.name,
+        deadline: data.deadline,
+      });
       window.location.reload();
     } else {
       toast.error("Something went wrong to update task");

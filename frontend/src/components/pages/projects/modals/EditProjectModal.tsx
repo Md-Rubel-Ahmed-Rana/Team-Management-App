@@ -1,11 +1,13 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useContext } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import Swal from "sweetalert2";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useUpdateProjectMutation } from "@/features/project";
 import { IProject } from "@/interfaces/project.interface";
+import toast from "react-hot-toast";
+import { SocketContext } from "@/context/SocketContext";
 
 const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
+  const { socket }: any = useContext(SocketContext);
   const {
     register,
     handleSubmit,
@@ -24,21 +26,20 @@ const EditProjectModal = ({ isEdit, setIsEdit, project }: any) => {
       data,
     });
     if (result?.data?.success) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
+      result?.data?.data?.forEach((memberId: string) => {
+        if (memberId) {
+          socket.emit("notification", memberId);
+        }
       });
+      toast.success(
+        result?.data?.message || "Your project updated successfully!"
+      );
       closeModal();
     } else {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        text: result?.data?.message,
-        showConfirmButton: true,
-      });
+      toast.error(
+        result?.error?.data?.message ||
+          "Your project wasn't updated successfully!"
+      );
       closeModal();
     }
   };

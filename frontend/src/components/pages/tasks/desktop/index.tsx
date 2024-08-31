@@ -4,13 +4,15 @@ import {
 } from "@/features/task";
 import { handleTaskOnDragEnd } from "@/utils/handleTaskOnDragEnd";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Column from "./Column";
 import { useGetSingleProjectQuery } from "@/features/project";
 import TaskSkeleton from "@/components/skeletons/TaskSkeleton";
+import { SocketContext } from "@/context/SocketContext";
 
 const TasksForDesktopView = () => {
+  const { socket }: any = useContext(SocketContext);
   const { query } = useRouter();
   const [tasks, setTasks] = useState<any>({
     tasks: {},
@@ -55,8 +57,57 @@ const TasksForDesktopView = () => {
   }, [isLoading]);
 
   const onDragEnd = async (result: any) => {
-    await handleTaskOnDragEnd(result, tasks, setTasks, updateStatus);
+    await handleTaskOnDragEnd(result, tasks, setTasks, updateStatus, socket);
   };
+
+  // connect to task room with project id
+  useEffect(() => {
+    if (query?.id) {
+      socket.emit("join-task-room", query?.id);
+    }
+  }, [query?.id, socket]);
+
+  // receive task from socket
+  useEffect(() => {
+    socket.on("task", (newTask: any) => {
+      setTasks((prevTasks: any) => {
+        // Create a copy of the previous tasks state
+        const updatedTasks = { ...prevTasks };
+
+        // Check if the task already exists
+        if (updatedTasks.tasks[newTask.id]) {
+          const oldTask = updatedTasks.tasks[newTask.id];
+          const oldColumn = updatedTasks.columns[oldTask.status];
+
+          // Remove the task ID from its old column
+          oldColumn.taskIds = oldColumn.taskIds.filter(
+            (taskId: any) => taskId !== newTask.id
+          );
+        }
+
+        // Add the new task to the tasks list
+        updatedTasks.tasks[newTask.id] = newTask;
+
+        // Ensure the column for the new task's status exists
+        if (!updatedTasks.columns[newTask.status]) {
+          updatedTasks.columns[newTask.status] = {
+            id: newTask.status,
+            title: newTask.status,
+            taskIds: [],
+          };
+        }
+
+        // Add the task ID to the appropriate column
+        updatedTasks.columns[newTask.status].taskIds.push(newTask.id);
+
+        return updatedTasks;
+      });
+    });
+
+    return () => {
+      socket.off("task");
+    };
+  }, [socket]);
 
   return (
     <div>

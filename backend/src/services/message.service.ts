@@ -1,17 +1,44 @@
-import { IMessage } from "@/interfaces/message.interface";
+import {
+  IMessage,
+  IMessagePayloadForSocket,
+} from "@/interfaces/message.interface";
 import { Message } from "@/models/message.model";
 import { UserSelect } from "propertySelections";
 
-class Service {
-  async createMessage(data: IMessage): Promise<any> {
+export class Service {
+  async createMessage(data: IMessage): Promise<IMessagePayloadForSocket> {
     const result = await Message.create(data);
-    const populatedResult = await result.populate({
+    const populatedResult: any = await result.populate({
       path: "poster",
       model: "User",
       select: UserSelect,
     });
-
-    return populatedResult;
+    const {
+      _id: msId,
+      conversationId,
+      text,
+      type,
+      images,
+      files,
+      createdAt,
+      poster: { _id: userId, name, profile_picture },
+    } = populatedResult;
+    const emitData: IMessagePayloadForSocket = {
+      id: msId,
+      conversationId: conversationId,
+      text: text,
+      type: type,
+      poster: {
+        id: userId,
+        name: name,
+        profile_picture: profile_picture,
+      },
+      files: files,
+      images: images,
+      createdAt: createdAt,
+    };
+    console.log(emitData);
+    return emitData;
   }
 
   async getMessagesByType(

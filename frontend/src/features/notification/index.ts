@@ -15,9 +15,24 @@ const notificationApi = apiSlice.injectEndpoints({
       providesTags: ["notification"] as any,
     }),
     readNotification: builder.mutation({
-      query: (messageId) => ({
+      query: (id) => ({
         method: "PATCH",
-        url: `/notification/status/read/${messageId}`,
+        url: `/notification/status/read/${id}`,
+      }),
+      invalidatesTags: ["notification"] as any,
+    }),
+    deleteSingleNotification: builder.mutation({
+      query: (id) => ({
+        method: "DELETE",
+        url: `/notification/delete/single/${id}`,
+      }),
+      invalidatesTags: ["notification"] as any,
+    }),
+    deleteManyNotification: builder.mutation({
+      query: (ids) => ({
+        method: "POST",
+        url: `/notification/delete/many`,
+        body: ids,
       }),
       invalidatesTags: ["notification"] as any,
     }),
@@ -36,4 +51,6 @@ export const {
   useReadNotificationMutation,
   useGetUnreadNotificationsCountQuery,
   useMarkAllNotificationsAsReadMutation,
+  useDeleteSingleNotificationMutation,
+  useDeleteManyNotificationMutation,
 } = notificationApi;

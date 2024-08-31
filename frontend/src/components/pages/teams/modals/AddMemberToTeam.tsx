@@ -2,13 +2,13 @@
 import { useState, Fragment, useContext } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Select from "react-select";
-import Swal from "sweetalert2";
 import { useGetUsersQuery } from "@/features/user";
 import { useSendInvitationMutation } from "@/features/invitation";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
 import { SocketContext } from "@/context/SocketContext";
 import { ITeam } from "@/interfaces/team.interface";
+import toast from "react-hot-toast";
 
 type ISelectType = { label: string; value: string };
 
@@ -40,8 +40,6 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
     return !isInActive && !isInPending && !isAdmin;
   });
 
-  console.log(remainingUsers);
-
   const closeModal = () => {
     setIsOpen(false);
   };
@@ -56,29 +54,16 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
 
   const handleSendInvitation = async () => {
     const result: any = await sendInvitation({
-      teamId: team.id,
-      memberId: selectedMember.id,
+      teamId: team?.id,
+      memberId: selectedMember?.id,
     });
     if (result?.data?.success) {
       closeModal();
+      toast.success(result?.data?.message || "Team invitation has been sent!");
       // send invitation notification
-      socket.emit("notification", result?.data?.data);
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    }
-    if (!result?.data?.success) {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      socket.emit("notification", selectedMember?.id);
+    } else {
+      toast.error(result?.data?.message || "Failed send team invitation");
     }
   };
 

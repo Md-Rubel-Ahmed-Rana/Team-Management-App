@@ -1,3 +1,4 @@
+import { SocketContext } from "@/context/SocketContext";
 import {
   useAcceptProjectLeaveRequestMutation,
   useIgnoreProjectLeaveRequestMutation,
@@ -6,10 +7,11 @@ import {
   useAcceptTeamLeaveRequestMutation,
   useIgnoreTeamLeaveRequestMutation,
 } from "@/features/team";
-import React from "react";
-import Swal from "sweetalert2";
+import React, { useContext } from "react";
+import toast from "react-hot-toast";
 
 const LeaveRequestCard = ({ data }: any) => {
+  const { socket }: any = useContext(SocketContext);
   const { member, project, team } = data;
   const [acceptProjectLeaveRequest] = useAcceptProjectLeaveRequestMutation();
   const [acceptTeamLeaveRequest] = useAcceptTeamLeaveRequestMutation();
@@ -18,93 +20,86 @@ const LeaveRequestCard = ({ data }: any) => {
 
   const handleAcceptRequest = async () => {
     if (project) {
-      const memberData = {
+      handleAcceptProjectRequest({
         projectId: project?.id,
         memberId: member?.id,
-      };
-      const result: any = await acceptProjectLeaveRequest(memberData);
-      if (result?.data?.success) {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: result?.data?.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
-      if (result?.error) {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          text: result?.error?.data?.message,
-          showConfirmButton: true,
-        });
-      }
+      });
     } else {
-      const memberData = {
-        teamId: team?.id,
-        memberId: member?.id,
-      };
-      const result: any = await acceptTeamLeaveRequest(memberData);
-      if (result?.data?.success) {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: result?.data?.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
-      if (result?.error) {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          text: result?.error?.data?.message,
-          showConfirmButton: true,
-        });
-      }
+      handleAcceptTeamRequest({ teamId: team?.id, memberId: member?.id });
+    }
+  };
+
+  const handleAcceptProjectRequest = async (data: {
+    projectId: string;
+    memberId: string;
+  }) => {
+    const result: any = await acceptProjectLeaveRequest(data);
+    if (result?.data?.success) {
+      toast.success(
+        result?.data?.message || "Leave request has been accepted!"
+      );
+      socket.emit("notification", data?.memberId);
+    } else {
+      toast.error(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Failed to accept request!"
+      );
+    }
+  };
+
+  const handleAcceptTeamRequest = async (data: {
+    teamId: string;
+    memberId: string;
+  }) => {
+    const result: any = await acceptTeamLeaveRequest(data);
+    if (result?.data?.success) {
+      toast.success(
+        result?.data?.message || "Leave request has been accepted!"
+      );
+      socket.emit("notification", data?.memberId);
+    } else {
+      toast.error(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Failed to accept request!"
+      );
     }
   };
 
   const handleIgnoreRequest = async () => {
     if (project) {
-      const result: any = await ignoreProjectLeaveRequest(data?.id);
-      if (result?.data?.success) {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: result?.data?.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
-      if (result?.error) {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          text: result?.error?.data?.message,
-          showConfirmButton: true,
-        });
-      }
+      handleIgnoreProjectRequest();
     } else {
-      const result: any = await ignoreTeamLeaveRequest(data?.id);
-      if (result?.data?.success) {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: result?.data?.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
-      if (result?.error) {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          text: result?.error?.data?.message,
-          showConfirmButton: true,
-        });
-      }
+      handleIgnoreTeamRequest();
+    }
+  };
+
+  const handleIgnoreProjectRequest = async () => {
+    const result: any = await ignoreProjectLeaveRequest(data?.id);
+    if (result?.data?.success) {
+      toast.success(result?.data?.message || "Request ignored");
+      socket.emit("notification", member?.id);
+    } else {
+      toast.success(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Failed to ignore request"
+      );
+    }
+  };
+
+  const handleIgnoreTeamRequest = async () => {
+    const result: any = await ignoreTeamLeaveRequest(data?.id);
+    if (result?.data?.success) {
+      toast.success(result?.data?.message || "Request ignored");
+      socket.emit("notification", member?.id);
+    } else {
+      toast.success(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Failed to ignore request"
+      );
     }
   };
 

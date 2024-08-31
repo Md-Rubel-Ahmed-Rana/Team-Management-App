@@ -30,7 +30,7 @@ const MessagesPage = () => {
 
   // connect to socket team room
   useEffect(() => {
-    socket?.emit("team-join-room", query?.teamId);
+    socket?.emit("join-team-room", query?.teamId);
   }, [socket, query?.teamId]);
 
   return (
