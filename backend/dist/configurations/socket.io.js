@@ -10,36 +10,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initiateSocketIo = void 0;
+const notification_service_1 = require("@/services/notification.service");
 const initiateSocketIo = (io) => {
     io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
         console.log("A user connected");
         // messaging room for a team
-        socket.on("team-join-room", (roomId) => {
+        socket.on("join-team-room", (roomId) => {
             console.log(`New team member joined to:'${roomId}' room`);
             socket.join(roomId);
         });
-        socket.on("message", (data) => {
-            console.log("New message", data);
-            socket.broadcast.to(data === null || data === void 0 ? void 0 : data.conversationId).emit("message", data);
+        // broadcast team message
+        socket.on("team-message", (message) => {
+            console.log("New team message", message);
+            socket.broadcast
+                .to(message === null || message === void 0 ? void 0 : message.conversationId)
+                .emit("team-message", message);
         });
         // notification room for each user
         socket.on("notification-room", (userId) => {
-            console.log("notification room", userId);
+            console.log(`New user connected to notification room: ${userId}`);
             socket.join(userId);
         });
-        socket.on("notification", (data) => {
-            var _a;
-            console.log("New notification", data);
-            socket.broadcast.to((_a = data === null || data === void 0 ? void 0 : data.recipient) === null || _a === void 0 ? void 0 : _a.userId).emit("notification", data);
-        });
+        socket.on("notification", (receiverId) => __awaiter(void 0, void 0, void 0, function* () {
+            console.log("New notification receiverId", receiverId);
+            const newNotification = yield notification_service_1.NotificationService.getUnreadNotificationCount(receiverId);
+            console.log("New notification count:", newNotification);
+            socket.broadcast.to(receiverId).emit("notification", newNotification);
+        }));
         // tasks room
-        socket.on("task-room", (projectId) => {
-            console.log("task room", projectId);
+        socket.on("join-task-room", (projectId) => {
+            console.log(`New user connected to task room: ${projectId}`);
             socket.join(projectId);
         });
-        socket.on("task", (data) => {
-            console.log("New task", data);
-            socket.broadcast.to(data === null || data === void 0 ? void 0 : data.project).emit("task", data);
+        socket.on("task", (task) => {
+            var _a;
+            console.log("New task", task);
+            socket.broadcast.to((_a = task === null || task === void 0 ? void 0 : task.project) === null || _a === void 0 ? void 0 : _a.id).emit("task", task);
         });
         socket.on("disconnect", () => __awaiter(void 0, void 0, void 0, function* () {
             console.log("User disconnected");

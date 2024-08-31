@@ -21,9 +21,7 @@ class Service {
         select: UserSelect,
       },
     ]);
-
     console.log("New notification", populatedResult);
-
     return populatedResult;
   }
 
@@ -113,6 +111,15 @@ class Service {
       },
     ]);
     return result;
+  }
+
+  async deleteSingleNotification(id: string): Promise<void> {
+    await Notification.findByIdAndDelete(id);
+  }
+
+  async deleteManyNotifications(ids: string[]): Promise<void> {
+    console.log({ ids });
+    await Notification.deleteMany({ _id: { $in: ids } });
   }
 }
 

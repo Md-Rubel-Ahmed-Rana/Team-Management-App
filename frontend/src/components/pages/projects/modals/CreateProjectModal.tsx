@@ -2,13 +2,13 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import Select from "react-select";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Swal from "sweetalert2";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { useGetMyTeamsForDropdownQuery } from "@/features/team";
 import { INewProject } from "@/interfaces/project.interface";
 import { useCreateProjectMutation } from "@/features/project";
 import customStyles from "@/utils/reactSelectCustomStyle";
+import toast from "react-hot-toast";
 
 const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
   const closeModal = () => {
@@ -35,22 +35,14 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
     data.team = selectedTeam.value;
     const result: any = await createProject(data);
     if (result?.data?.success) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: result?.data?.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      toast.success(result?.data?.message || "Project created successfully!");
       closeModal();
     } else {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: "Something went wrong to create project",
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      toast.error(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Project wasn't created!"
+      );
       closeModal();
     }
   };

@@ -10,11 +10,6 @@ import handle404NotFoundError from "./errors/notFoundError";
 import appMiddlewares from "./middlewares/appMiddlewares";
 import { corsConfig } from "./configurations/cors";
 import healthCheck from "./utils/healthCheck";
-import {
-  upload,
-  uploadMultipleFiles,
-  uploadSingleFile,
-} from "./middlewares/cloudinary";
 
 const app = express();
 
@@ -29,33 +24,6 @@ appMiddlewares(app);
 // initialize passport session
 initiatePassportSession(app);
 
-app.post(
-  "/new-post",
-  upload.single("file"),
-  uploadSingleFile("profile"),
-  (req, res) => {
-    const data = { ...req.body, url: req.link || "" };
-    res.status(200).json({
-      success: true,
-      message: "Post created successfully",
-      data: data,
-    });
-  }
-);
-
-app.post(
-  "/multiple",
-  upload.array("files"),
-  uploadMultipleFiles("projects"),
-  (req, res) => {
-    res.status(200).json({
-      success: true,
-      message: "Post created successfully",
-      data: req.links || [],
-    });
-  }
-);
-
 // app health check
 healthCheck(app);
 
@@ -68,7 +36,7 @@ app.use(globalErrorHandler.globalErrorHandler);
 // handle 404 not found error
 handle404NotFoundError(app);
 
-// Connecting to Socket.IO
+// Initialize Socket.IO
 initiateSocketIo(io);
 
 export default server;

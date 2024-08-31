@@ -1,14 +1,14 @@
-import { ITask } from "@/interfaces/task.interface";
+import { INewTaskForSocket, ITask } from "@/interfaces/task.interface";
 import { Task } from "@/models/task.model";
 import { NotificationService } from "./notification.service";
 import { INotification } from "@/interfaces/notification.interface";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { config } from "@/configurations/envConfig";
 import { NotificationEnums } from "enums";
 import ApiError from "@/shared/apiError";
 
 class Service {
-  async createTask(taskData: ITask): Promise<void> {
+  async createTask(taskData: ITask): Promise<INewTaskForSocket> {
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -19,6 +19,14 @@ class Service {
           path: "project",
           model: "Project",
           select: { name: 1, category: 1 },
+        },
+        {
+          path: "assignedTo",
+          model: "User",
+        },
+        {
+          path: "assignedBy",
+          model: "User",
         },
       ]);
 
@@ -35,6 +43,49 @@ class Service {
       }
       await session.commitTransaction();
       session.endSession();
+      const {
+        _id,
+        name,
+        deadline,
+        status,
+        createdAt,
+        updatedAt,
+        assignedBy: {
+          _id: creatorId,
+          name: creatorName,
+          profile_picture: creatorProfile,
+        },
+        assignedTo: {
+          _id: getterId,
+          name: getterName,
+          profile_picture: getterProfile,
+        },
+        project: { _id: projectId, name: projectName, category },
+      } = populatedResult;
+      const newTaskPayload: INewTaskForSocket = {
+        id: _id,
+        name: name,
+        deadline,
+        status,
+        createdAt,
+        updatedAt,
+        assignedBy: {
+          id: creatorId,
+          name: creatorName,
+          profile_picture: creatorProfile,
+        },
+        assignedTo: {
+          id: getterId,
+          name: getterName,
+          profile_picture: getterProfile,
+        },
+        project: {
+          id: projectId,
+          name: projectName,
+          category,
+        },
+      };
+      return newTaskPayload;
     } catch (error) {
       await session.abortTransaction();
       session.endSession();
@@ -68,7 +119,7 @@ class Service {
     taskId: string,
     status: string,
     updaterId: string
-  ): Promise<any> {
+  ): Promise<{ receiverId: string | Types.ObjectId }> {
     const userProjection = {
       name: 1,
       profile_picture: 1,
@@ -136,7 +187,7 @@ class Service {
       await NotificationService.createNotification(notifyObject, session);
 
       await session.commitTransaction();
-      return result;
+      return { receiverId: notifyObject.receiver };
     } catch (error) {
       await session.abortTransaction();
       throw new ApiError(500, "Something went wrong to update task status");
@@ -149,7 +200,7 @@ class Service {
     taskId: string,
     name: string,
     updaterId: string
-  ): Promise<any> {
+  ): Promise<{ receiverId: string | Types.ObjectId }> {
     const userProjection = {
       name: 1,
       profile_picture: 1,
@@ -193,7 +244,7 @@ class Service {
       }
       await NotificationService.createNotification(notifyObject, session);
       await session.commitTransaction();
-      return result;
+      return { receiverId: notifyObject.receiver };
     } catch (error) {
       await session.abortTransaction();
       throw new ApiError(500, "Something went wrong updating the task");
@@ -239,13 +290,10 @@ class Service {
         } else {
           notifyObject.receiver = isTaskExist?.assignedTo?.id;
         }
-        console.log({ notifyObject });
-
-        await NotificationService.createNotification(notifyObject, session);
+        await NotificationService.createNotification(notifyObject);
+        return { receiverId: notifyObject.receiver };
       }
-
       await session.commitTransaction();
-      return isTaskExist;
     } catch (error) {
       await session.abortTransaction();
       throw new ApiError(500, "Something went wrong deleting the task");

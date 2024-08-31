@@ -239,12 +239,19 @@ class Service {
     return result;
   }
 
-  async updateTeam(id: string, data: ITeam): Promise<void> {
+  async updateTeam(
+    id: string,
+    data: ITeam
+  ): Promise<Types.ObjectId[] | undefined> {
     const isExistTeam: any = await Team.findById(id);
     if (!isExistTeam) {
       throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
     }
 
+    const members = [
+      ...(isExistTeam?.activeMembers || []),
+      ...(isExistTeam?.pendingMembers || []),
+    ];
     // Update the team data
     const team: any = await Team.findByIdAndUpdate(
       id,
@@ -288,21 +295,26 @@ class Service {
           await NotificationService.createNotification(notifyObject);
         })
       );
+      return members;
     }
   }
 
-  async deleteTeam(id: string): Promise<void> {
+  async deleteTeam(id: string): Promise<Types.ObjectId[]> {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-      const getTeam: any = await Team.findById(id);
-      if (!getTeam) {
+      const team: any = await this.getTeamById(id);
+      if (!team) {
         throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
       }
+      const members = [
+        ...(team?.activeMembers || []),
+        ...(team?.pendingMembers || []),
+      ];
 
-      // Handle Cloudinary file deletion
-      const public_id = extractCloudinaryPublicId(getTeam?.image);
+      // // Handle Cloudinary file deletion
+      const public_id = extractCloudinaryPublicId(team?.image);
       if (public_id) {
         await deleteSingleFileFromCloudinary(public_id);
       }
@@ -313,19 +325,13 @@ class Service {
       // Delete related projects
       await ProjectService.deleteProjectsByTeamId(id, session);
 
-      // Create notifications for all members
-      const members = [
-        ...(getTeam?.activeMembers || []),
-        ...(getTeam?.pendingMembers || []),
-      ];
-
       await Promise.all(
         members.map(async (member: any) => {
           const notifyObject: INotification = {
             title: "Team Deleted",
             type: NotificationEnums.TEAM_DELETED,
             receiver: member?._id,
-            sender: getTeam?.admin,
+            sender: team?.admin,
             content: `We're deeply grateful for your time and contributions to the team. As we say goodbye, we want to express our heartfelt thanks and admiration. Wishing you all the best in your future endeavors!`,
             link: `${config.app.frontendDomain}/teams/joined-teams?userId=${member?._id}&name=${member?.name}&email=${member?.email}`,
           };
@@ -334,6 +340,7 @@ class Service {
       );
 
       await session.commitTransaction();
+      return members?.map((member: any) => member?.id);
     } catch (error) {
       await session.abortTransaction();
       throw new ApiError(httpStatus.BAD_REQUEST, "Team was not deleted");

@@ -1,8 +1,11 @@
+import { SocketContext } from "@/context/SocketContext";
 import { useCancelPendingInvitationMutation } from "@/features/invitation";
 import { useRemoveTeamMemberMutation } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import { ITeamDetailsMember } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
+import { useContext } from "react";
+import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 
@@ -13,6 +16,7 @@ type IProps = {
 };
 
 const MemberCard = ({ member, memberType, teamId }: IProps) => {
+  const { socket }: any = useContext(SocketContext);
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const [removeMember] = useRemoveTeamMemberMutation();
@@ -42,10 +46,17 @@ const MemberCard = ({ member, memberType, teamId }: IProps) => {
             memberId: member?.id,
           });
           if (result?.data?.success) {
-            Swal.fire("Done!", `${result?.data?.message}`, "success");
+            toast.success(
+              result?.data?.message || "Team member has been removed!"
+            );
+            socket.emit("notification", member?.id);
           }
           if (result?.error) {
-            Swal.fire("Done!", `${result?.error?.data?.message}`, "error");
+            toast.error(
+              result?.data?.message ||
+                result?.error.data?.message ||
+                "Failed to remove team member!"
+            );
           }
         };
         removeHandler();
@@ -68,13 +79,15 @@ const MemberCard = ({ member, memberType, teamId }: IProps) => {
             memberId: member?.id,
           });
           if (result?.data?.success) {
-            Swal.fire("Done!", `${result?.data?.message}`, "success");
-          }
-          if (result?.error) {
-            Swal.fire(
-              "Something went wrong",
-              `${result?.error?.data?.message}`,
-              "error"
+            toast.success(
+              result?.data?.message || "Pending member has been removed!"
+            );
+            socket.emit("notification", member?.id);
+          } else {
+            toast.error(
+              result?.data?.message ||
+                result?.error.data?.message ||
+                "Failed to remove team member!"
             );
           }
         };

@@ -22,6 +22,13 @@ router.patch("/status/read/:id", NotificationController.updateStatusToRead);
 
 router.patch("/mark-all-as-read/:userId", NotificationController.markAllAsRead);
 
+router.delete(
+  "/delete/single/:id",
+  NotificationController.deleteSingleNotification
+);
+
+router.post("/delete/many", NotificationController.deleteManyNotifications);
+
 router.patch("/update/:userId", RedisCacheService.updateNotification());
 
 export const NotificationRoutes = router;

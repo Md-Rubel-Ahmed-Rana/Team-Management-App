@@ -11,3 +11,20 @@ export type IMessage = {
   images?: string[];
   files?: string[];
 };
+
+export type IMessagePoster = {
+  id: string;
+  name: string;
+  profile_picture: string;
+};
+
+export type IMessagePayloadForSocket = {
+  id: string;
+  poster: IMessagePoster;
+  conversationId: string;
+  text: string;
+  type: string;
+  images: string[];
+  files: string[];
+  createdAt: Date;
+};

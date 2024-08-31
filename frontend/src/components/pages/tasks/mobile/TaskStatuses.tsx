@@ -1,4 +1,6 @@
+import { SocketContext } from "@/context/SocketContext";
 import { useUpdateStatusMutation } from "@/features/task";
+import { useContext } from "react";
 import toast from "react-hot-toast";
 
 type Props = {
@@ -6,6 +8,7 @@ type Props = {
 };
 
 const TaskStatuses = ({ task }: Props) => {
+  const { socket }: any = useContext(SocketContext);
   const [updateStatus] = useUpdateStatusMutation();
   const handleChangeStatus = async (status: string) => {
     if (status === task?.status) {
@@ -18,6 +21,9 @@ const TaskStatuses = ({ task }: Props) => {
     });
     if (res?.data?.success) {
       toast.success("Task status changed");
+      socket.emit("notification", res?.data?.data?.receiverId);
+      console.log({ updatedTask: { ...task, status } });
+      socket.emit("task", { ...task, status });
     }
   };
   const defaultValue =
@@ -31,7 +37,7 @@ const TaskStatuses = ({ task }: Props) => {
       <p>Status: </p>
       <select
         onChange={(e) => handleChangeStatus(e.target.value)}
-        className="border px-4 py-1 rounded-md bg-white"
+        className="border px-4 py-1 focus:outline-none focus:border-0 rounded-md bg-white"
         name="status"
         id="status"
         defaultValue={defaultValue}
