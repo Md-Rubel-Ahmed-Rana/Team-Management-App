@@ -23,8 +23,8 @@ const MessageSidebar = () => {
         </div>
         <div className="flex-grow overflow-y-auto">
           <div className="flex flex-col justify-between h-full">
+            <SearchUser />
             <div className="h-[90vh] overflow-y-auto">
-              <SearchUser />
               <FriendList />
             </div>
             <div className="mb-16 lg:mb-0">

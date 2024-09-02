@@ -50,11 +50,17 @@ const SearchUser = () => {
           key={user.id}
           className="flex items-center gap-2 p-[6.5px] bg-gray-500 cursor-pointer text-white border-b border-s-2 border-gray-300 hover:bg-gray-600"
         >
-          <img
-            className="h-10 w-10 rounded-full ring-2"
-            src={user?.profile_picture as string}
-            alt="profile"
-          />
+          {user?.profile_picture ? (
+            <img
+              className="h-10 w-10 rounded-full ring-2"
+              src={user?.profile_picture as string}
+              alt="profile"
+            />
+          ) : (
+            <h3 className="h-10 w-10 text-black text-3xl rounded-full ring-2 flex justify-center items-center">
+              {user?.name?.slice(0, 1).toUpperCase()}
+            </h3>
+          )}
           <div>
             <h2 className="text-sm lg:text-md font-bold -mb-2">{user?.name}</h2>
             <small className="text-[10px] lg:text-md">
