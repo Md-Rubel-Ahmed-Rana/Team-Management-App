@@ -9,29 +9,56 @@ import MessageContainer from "@/components/pages/messages/one-to-one-message/Mes
 import { useGetSingleUserQuery, useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { FaArrowLeft } from "react-icons/fa";
+import Link from "next/link";
 
 const MessagesPage = () => {
   const router = useRouter();
   const query = router.query;
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const participantId = query?.participantId as string;
+  const messagesContainerRefDesktop = useRef<HTMLDivElement | null>(null);
+  const messagesContainerRefMobile = useRef<HTMLDivElement | null>(null);
   const { socket, realTimeMessages, setRealTimeMessages }: any =
     useContext(SocketContext);
-  const { data: singleUser } = useGetSingleUserQuery(query?.participant);
+  const { data: singleUser } = useGetSingleUserQuery(participantId);
   const participant = singleUser?.data;
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
+  const [onTypingFriends, setOnTypingFriends] = useState<string[]>([]);
 
-  // Scroll to the bottom when new messages arrive
-  const scrollToBottom = useCallback(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop =
-        messagesContainerRef.current.scrollHeight;
-    }
-  }, [messagesContainerRef]);
-
+  // receive events from socket
   useEffect(() => {
-    scrollToBottom();
-  }, [realTimeMessages, scrollToBottom, socket, setRealTimeMessages]);
+    const handleTyping = (senderId: string) => {
+      console.log(`This sender '${senderId}' is typing`);
+      if (!onTypingFriends.includes(senderId)) {
+        setOnTypingFriends((prev) => [...prev, senderId]);
+      }
+    };
+
+    const handleStopTyping = (senderId: string) => {
+      console.log(`This sender '${senderId}' has stopped typing.`);
+      setOnTypingFriends((prev) => prev.filter((id) => id !== senderId));
+    };
+
+    socket?.on("typing-message", handleTyping);
+    socket?.on("stop-typing-message", handleStopTyping);
+
+    return () => {
+      socket?.off("typing-message", handleTyping);
+      socket?.off("stop-typing-message", handleStopTyping);
+    };
+  }, [socket, onTypingFriends]);
+
+  // keep user visibility at bottom always
+  useEffect(() => {
+    const scrollToBottom = (ref: React.RefObject<HTMLDivElement>) => {
+      if (ref.current) {
+        ref.current.scrollTop = ref.current.scrollHeight;
+      }
+    };
+
+    scrollToBottom(messagesContainerRefDesktop);
+    scrollToBottom(messagesContainerRefMobile);
+  }, [realTimeMessages, socket, setRealTimeMessages]);
 
   return (
     <>
@@ -59,10 +86,10 @@ const MessagesPage = () => {
               <div>
                 <h2 className="text-sm lg:text-xl font-bold text-gray-700 -mb-2">
                   {`${query?.name || participant?.name} ${
-                    query?.participantId === user.id ? "(You)" : ""
+                    participantId === user.id ? "(You)" : ""
                   }`}
                 </h2>
-                {query?.participantId === user?.id ? (
+                {participantId === user?.id ? (
                   <small className="text-[10px] lg:text-md">
                     Message yourself
                   </small>
@@ -70,7 +97,9 @@ const MessagesPage = () => {
                   <>
                     {participant?.designation && (
                       <small className="text-[10px] lg:text-md">
-                        {participant?.designation}
+                        {onTypingFriends.includes(participantId)
+                          ? "Typing..."
+                          : participant?.designation}
                       </small>
                     )}
                   </>
@@ -78,7 +107,7 @@ const MessagesPage = () => {
               </div>
             </div>
             <div
-              ref={messagesContainerRef}
+              ref={messagesContainerRefDesktop}
               className="flex-grow p-4 overflow-y-auto bg-white"
             >
               <MessageContainer />
@@ -91,9 +120,9 @@ const MessagesPage = () => {
         <div className="flex justify-center items-center h-screen w-full bg-gray-100">
           <main className="flex-grow flex flex-col h-full w-full">
             <div className="flex items-center gap-2 p-[6.5px] bg-gray-200 border-b border-s-2 border-gray-300">
-              <button onClick={() => router.back()}>
+              <Link href={"/messages/chats"}>
                 <FaArrowLeft />
-              </button>
+              </Link>
               <img
                 className="h-12 w-12 rounded-full ring-2"
                 src={
@@ -107,10 +136,10 @@ const MessagesPage = () => {
               <div>
                 <h2 className="text-sm lg:text-xl font-bold text-gray-700 -mb-2">
                   {`${query?.name || participant?.name} ${
-                    query?.participantId === user.id ? "(You)" : ""
+                    participantId === user.id ? "(You)" : ""
                   }`}
                 </h2>
-                {query?.participantId === user?.id ? (
+                {participantId === user?.id ? (
                   <small className="text-[10px] lg:text-md">
                     Message yourself
                   </small>
@@ -118,7 +147,9 @@ const MessagesPage = () => {
                   <>
                     {participant?.designation && (
                       <small className="text-[10px] lg:text-md">
-                        {participant?.designation}
+                        {onTypingFriends.includes(participantId)
+                          ? "Typing..."
+                          : participant?.designation}
                       </small>
                     )}
                   </>
@@ -126,7 +157,7 @@ const MessagesPage = () => {
               </div>
             </div>
             <div
-              ref={messagesContainerRef}
+              ref={messagesContainerRefMobile}
               className="flex-grow p-4 overflow-y-auto bg-white"
             >
               <MessageContainer />

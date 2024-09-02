@@ -157,7 +157,7 @@ const Navbar = () => {
                   </Button>
                 </Dropdown>
                 <Link href={"/messages/chats"} className="">
-                  <SiMessenger className="text-xl" />
+                  <SiMessenger className="text-xl text-blue-600" />
                 </Link>
                 <button
                   onClick={() => setShowNotification(true)}
@@ -209,28 +209,27 @@ const Navbar = () => {
                 <SmallLoader />
               </div>
             ) : (
-              <div className="flex gap-3">
+              <div className="flex items-center gap-3">
                 {!user?.email && (
                   <>
                     <Link href="/login">Login</Link>
                     <Link href="/signup">Signup</Link>
                   </>
                 )}
-
                 {user?.email && (
-                  <button
-                    onClick={() => setShowNotification(true)}
-                    className="relative  p-2 border-2 rounded-full"
-                  >
-                    <FaRegBell />
-                    <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
-                      {notificationCount}
-                    </small>
-                  </button>
-                )}
-
-                <div>
-                  {user?.email && (
+                  <>
+                    <Link href={"/messages/chats"} className="">
+                      <SiMessenger className="text-2xl text-blue-600" />
+                    </Link>
+                    <button
+                      onClick={() => setShowNotification(true)}
+                      className="relative  p-2 border-2 rounded-full"
+                    >
+                      <FaRegBell />
+                      <small className="absolute -top-1 -right-1 text-sm text-white bg-blue-500 px-1 rounded-full">
+                        {notificationCount}
+                      </small>
+                    </button>
                     <Link
                       href={`/dashboard/profile?${queries}`}
                       className={`${
@@ -247,8 +246,8 @@ const Navbar = () => {
                         <FaUser />
                       )}
                     </Link>
-                  )}
-                </div>
+                  </>
+                )}
               </div>
             )}
           </div>
