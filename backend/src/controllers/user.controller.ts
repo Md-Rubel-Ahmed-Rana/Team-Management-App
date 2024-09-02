@@ -16,6 +16,27 @@ class Controller extends RootController {
     });
   });
 
+  getSingleUserById = this.catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const result = await UserService.findUserById(id);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User fetched  successfully",
+      data: result,
+    });
+  });
+  myChatFriends = this.catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const result = await UserService.myChatFriends(id);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "My friends fetched  successfully",
+      data: result,
+    });
+  });
+
   register = this.catchAsync(async (req: Request, res: Response) => {
     await UserService.register(req.body);
     this.apiResponse(res, {

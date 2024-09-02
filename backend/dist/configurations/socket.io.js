@@ -26,6 +26,31 @@ const initiateSocketIo = (io) => {
                 .to(message === null || message === void 0 ? void 0 : message.conversationId)
                 .emit("team-message", message);
         });
+        // broadcast one-to-one message
+        socket.on("one-to-one-message", ({ receiverId, message }) => {
+            console.log("New one-to-one message", message);
+            socket.broadcast.to(receiverId).emit("one-to-one-message", message);
+        });
+        // broadcast edited/updated message
+        socket.on("updated-message", ({ receiverId, message }) => {
+            console.log("Updated message", message);
+            socket.broadcast.to(receiverId).emit("updated-message", message);
+        });
+        // broadcast edited/updated message
+        socket.on("deleted-message", ({ receiverId, messageId, }) => {
+            console.log("Deleted message id", messageId);
+            socket.broadcast.to(receiverId).emit("deleted-message", messageId);
+        });
+        // broadcast message typing event
+        socket.on("typing-message", ({ receiverId, senderId }) => {
+            console.log("typing-message receiverId", receiverId);
+            socket.broadcast.to(receiverId).emit("typing-message", senderId);
+        });
+        // broadcast stop message typing event
+        socket.on("stop-typing-message", ({ receiverId, senderId }) => {
+            console.log("stop-typing-message receiverId", receiverId);
+            socket.broadcast.to(receiverId).emit("stop-typing-message", senderId);
+        });
         // notification room for each user
         socket.on("notification-room", (userId) => {
             console.log(`New user connected to notification room: ${userId}`);

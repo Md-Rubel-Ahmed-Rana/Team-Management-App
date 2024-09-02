@@ -10,6 +10,11 @@ router.get(
   MessageController.getMessagesByType
 );
 
+router.get(
+  "/one-to-one-messages/:conversationId",
+  MessageController.getOneToOneMessagesWithType
+);
+
 router.get("/by-id/:id", MessageController.getMessage);
 
 router.get("/single/:id", MessageController.getMessageById);

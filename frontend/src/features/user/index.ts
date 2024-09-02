@@ -24,6 +24,17 @@ const userApi = apiSlice.injectEndpoints({
         url: "/user",
       }),
     }),
+    getSingleUser: builder.query({
+      query: (userId) => ({
+        url: `/user/single/${userId}`,
+      }),
+    }),
+    getMyChatFriends: builder.query({
+      query: (userId) => ({
+        url: `/user/my-chat-friends/${userId}`,
+      }),
+      providesTags: ["message", "user"] as any,
+    }),
     loggedInUser: builder.query({
       query: () => ({
         url: "/auth",
@@ -87,4 +98,6 @@ export const {
   useForgetPasswordMutation,
   useResetPasswordMutation,
   useChangePasswordMutation,
+  useGetSingleUserQuery,
+  useGetMyChatFriendsQuery,
 } = userApi;

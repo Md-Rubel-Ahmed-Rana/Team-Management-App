@@ -1,9 +1,9 @@
 import GetHead from "@/utils/Head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState, useCallback } from "react";
-import MessageForm from "../../../components/pages/messages/MessageForm";
-import MessageSidebar from "../../../components/pages/messages/MessageSidebar";
-import MessageContainer from "../../../components/pages/messages/MessageContainer";
+import MessageForm from "../../../components/pages/messages/common/MessageForm";
+import MessageSidebar from "../../../components/pages/messages/team-message/MessageSidebar";
+import MessageContainer from "../../../components/pages/messages/team-message/MessageContainer";
 import { SocketContext } from "@/context/SocketContext";
 import { useSingleTeamQuery } from "@/features/team";
 import isAuthenticate from "@/components/HOC/isAuthenticate";

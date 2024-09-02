@@ -14,6 +14,10 @@ router.post(
 
 router.get("/", UserController.getAllUsers);
 
+router.get("/my-chat-friends/:id", UserController.myChatFriends);
+
+router.get("/single/:id", UserController.getSingleUserById);
+
 router.patch(
   "/update/:id",
   upload.single("file"),

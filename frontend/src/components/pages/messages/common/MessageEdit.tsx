@@ -1,8 +1,10 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useContext } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEditMessageMutation } from "@/features/message";
 import toast from "react-hot-toast";
+import { SocketContext } from "@/context/SocketContext";
+import { useRouter } from "next/router";
 
 type Inputs = {
   message: string;
@@ -16,6 +18,8 @@ type Props = {
 };
 
 const MessageEdit = ({ isOpen, setIsOpen, messageId, messageText }: Props) => {
+  const { socket }: any = useContext(SocketContext);
+  const { query } = useRouter();
   const {
     register,
     handleSubmit,
@@ -37,6 +41,10 @@ const MessageEdit = ({ isOpen, setIsOpen, messageId, messageText }: Props) => {
     });
     if (result?.data?.success) {
       toast.success("Message updated");
+      socket.emit("updated-message", {
+        receiverId: query?.participant || query?.teamId,
+        message: result?.data?.data,
+      });
       setIsOpen(false);
     }
     if (result?.error) {

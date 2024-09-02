@@ -7,6 +7,7 @@ const express_1 = require("express");
 const router = (0, express_1.Router)();
 router.delete("/delete/:id", message_controller_1.MessageController.deleteMessage);
 router.get("/by-type/:type/:conversationId", message_controller_1.MessageController.getMessagesByType);
+router.get("/one-to-one-messages/:conversationId", message_controller_1.MessageController.getOneToOneMessagesWithType);
 router.get("/by-id/:id", message_controller_1.MessageController.getMessage);
 router.get("/single/:id", message_controller_1.MessageController.getMessageById);
 router.post("/send", cloudinary_1.upload.fields([{ name: "files" }, { name: "images" }]), (0, cloudinary_1.uploadMessageImageAndFiles)("messages"), message_controller_1.MessageController.createMessage);

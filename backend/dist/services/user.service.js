@@ -21,11 +21,149 @@ const bcrypt_1 = require("lib/bcrypt");
 const jwt_1 = require("lib/jwt");
 const httpStatus_1 = require("lib/httpStatus");
 const propertySelections_1 = require("propertySelections");
+const message_model_1 = require("@/models/message.model");
+const mongoose_1 = require("mongoose");
 class Service {
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield user_model_1.default.find({}).select(propertySelections_1.UserSelect);
             return result;
+        });
+    }
+    myChatFriends(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            try {
+                const objectId = mongoose_1.Types.ObjectId.isValid(userId)
+                    ? new mongoose_1.Types.ObjectId(userId)
+                    : null;
+                if (!objectId) {
+                    throw new Error("Invalid userId format");
+                }
+                const distinctUserIds = yield message_model_1.Message.aggregate([
+                    {
+                        $match: {
+                            $or: [
+                                { poster: objectId },
+                                {
+                                    conversationId: {
+                                        $regex: new RegExp(`^(${userId}&|${userId}$)`),
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        $group: {
+                            _id: null,
+                            uniqueUsers: {
+                                $addToSet: {
+                                    $cond: [
+                                        { $eq: ["$poster", objectId] },
+                                        {
+                                            $cond: [
+                                                {
+                                                    $eq: [
+                                                        {
+                                                            $arrayElemAt: [
+                                                                { $split: ["$conversationId", "&"] },
+                                                                0,
+                                                            ],
+                                                        },
+                                                        userId,
+                                                    ],
+                                                },
+                                                {
+                                                    $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 1],
+                                                },
+                                                {
+                                                    $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 0],
+                                                },
+                                            ],
+                                        },
+                                        "$poster",
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                    {
+                        $unwind: "$uniqueUsers",
+                    },
+                    {
+                        $project: {
+                            userId: "$uniqueUsers",
+                        },
+                    },
+                ]);
+                if (!(distinctUserIds === null || distinctUserIds === void 0 ? void 0 : distinctUserIds.length)) {
+                    return [];
+                }
+                const userIds = (_a = distinctUserIds === null || distinctUserIds === void 0 ? void 0 : distinctUserIds.map((entry) => {
+                    return mongoose_1.Types.ObjectId.isValid(entry === null || entry === void 0 ? void 0 : entry.userId)
+                        ? new mongoose_1.Types.ObjectId(entry === null || entry === void 0 ? void 0 : entry.userId)
+                        : null;
+                })) === null || _a === void 0 ? void 0 : _a.filter((id) => id !== null);
+                // Fetch users corresponding to these user IDs
+                const users = yield user_model_1.default.find({ _id: { $in: userIds } }).select({
+                    name: 1,
+                    profile_picture: 1,
+                    email: 1,
+                });
+                // Fetch the latest message and include it in the response
+                const userDetailsWithLastMessage = yield Promise.all(users.map((user) => __awaiter(this, void 0, void 0, function* () {
+                    const lastMessageDoc = yield message_model_1.Message.findOne({
+                        $or: [
+                            {
+                                $and: [
+                                    { poster: objectId },
+                                    {
+                                        conversationId: {
+                                            $regex: `^${user === null || user === void 0 ? void 0 : user._id.toString()}&${userId}|${userId}&${user === null || user === void 0 ? void 0 : user._id.toString()}$`,
+                                        },
+                                    },
+                                ],
+                            },
+                            {
+                                $and: [
+                                    { poster: user === null || user === void 0 ? void 0 : user._id },
+                                    {
+                                        conversationId: {
+                                            $regex: `^${userId}&${user === null || user === void 0 ? void 0 : user._id.toString()}|${user === null || user === void 0 ? void 0 : user._id.toString()}&${userId}$`,
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                    }).sort({ createdAt: -1 });
+                    const lastMessage = {
+                        text: lastMessageDoc === null || lastMessageDoc === void 0 ? void 0 : lastMessageDoc.text,
+                        files: lastMessageDoc === null || lastMessageDoc === void 0 ? void 0 : lastMessageDoc.files,
+                        images: lastMessageDoc === null || lastMessageDoc === void 0 ? void 0 : lastMessageDoc.images,
+                        createdAt: lastMessageDoc === null || lastMessageDoc === void 0 ? void 0 : lastMessageDoc.createdAt,
+                    };
+                    const friend = {
+                        id: user === null || user === void 0 ? void 0 : user._id.toString(),
+                        name: user === null || user === void 0 ? void 0 : user.name,
+                        email: user === null || user === void 0 ? void 0 : user.email,
+                        profile_picture: user === null || user === void 0 ? void 0 : user.profile_picture,
+                        lastMessage,
+                    };
+                    return friend;
+                })));
+                // Sort users based on the creation date of the most recent message
+                userDetailsWithLastMessage.sort((a, b) => {
+                    var _a, _b;
+                    const dateA = ((_a = a.lastMessage) === null || _a === void 0 ? void 0 : _a.createdAt) || new Date(0);
+                    const dateB = ((_b = b.lastMessage) === null || _b === void 0 ? void 0 : _b.createdAt) || new Date(0);
+                    return dateB.getTime() - dateA.getTime();
+                });
+                return userDetailsWithLastMessage.filter((user) => user.id !== userId);
+            }
+            catch (error) {
+                console.error("Error fetching chat friends:", error);
+                throw new Error("Failed to fetch chat friends.");
+            }
         });
     }
     register(user) {

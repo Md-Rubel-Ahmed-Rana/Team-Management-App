@@ -36,7 +36,6 @@ class Service {
                 images: images,
                 createdAt: createdAt,
             };
-            console.log(emitData);
             return emitData;
         });
     }
@@ -45,6 +44,22 @@ class Service {
             const result = yield message_model_1.Message.find({
                 type: messageType,
                 conversationId,
+            }).populate({
+                path: "poster",
+                model: "User",
+                select: propertySelections_1.UserSelect,
+            });
+            return result;
+        });
+    }
+    getOneToOneMessagesWithType(conversationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ids = conversationId.split("&");
+            const result = yield message_model_1.Message.find({
+                $or: [
+                    { conversationId: `${ids[0]}&${ids[1]}` },
+                    { conversationId: `${ids[1]}&${ids[0]}` },
+                ],
             }).populate({
                 path: "poster",
                 model: "User",
@@ -74,12 +89,27 @@ class Service {
     }
     updateMessage(messageId, text) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
             const result = yield message_model_1.Message.findByIdAndUpdate(messageId, { $set: { text } }, { new: true }).populate({
                 path: "poster",
                 model: "User",
                 select: propertySelections_1.UserSelect,
             });
-            return result;
+            const updatedMessage = {
+                id: result === null || result === void 0 ? void 0 : result.id,
+                conversationId: result === null || result === void 0 ? void 0 : result.conversationId,
+                type: result === null || result === void 0 ? void 0 : result.type,
+                text: result === null || result === void 0 ? void 0 : result.text,
+                files: result === null || result === void 0 ? void 0 : result.files,
+                images: result.images,
+                createdAt: result === null || result === void 0 ? void 0 : result.createdAt,
+                poster: {
+                    id: (_a = result === null || result === void 0 ? void 0 : result.poster) === null || _a === void 0 ? void 0 : _a.id,
+                    name: (_b = result === null || result === void 0 ? void 0 : result.poster) === null || _b === void 0 ? void 0 : _b.name,
+                    profile_picture: (_c = result === null || result === void 0 ? void 0 : result.poster) === null || _c === void 0 ? void 0 : _c.profile_picture,
+                },
+            };
+            return updatedMessage;
         });
     }
     deleteMessage(messageId) {

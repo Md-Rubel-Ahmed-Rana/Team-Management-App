@@ -4,13 +4,14 @@ exports.Project = void 0;
 const mongoose_1 = require("mongoose");
 const projectSchema = new mongoose_1.Schema({
     team: {
-        type: String,
+        type: mongoose_1.Schema.Types.ObjectId,
         required: true,
         ref: "Team",
     },
     user: {
-        type: String,
+        type: mongoose_1.Schema.Types.ObjectId,
         required: true,
+        ref: "User",
     },
     name: {
         type: String,

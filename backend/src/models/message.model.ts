@@ -9,13 +9,12 @@ const messageSchema = new Schema<IMessage>(
       required: true,
     },
     conversationId: {
-      type: Schema.Types.ObjectId,
-      ref: "Team",
+      type: String,
       required: true,
     },
     type: {
       type: String,
-      enum: ["announcement", "resources", "discussion"],
+      enum: ["announcement", "resources", "discussion", "one-to-one"],
     },
     text: {
       type: String,

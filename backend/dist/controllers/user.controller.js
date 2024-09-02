@@ -30,6 +30,26 @@ class Controller extends rootController_1.default {
                 data: result,
             });
         }));
+        this.getSingleUserById = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const id = req.params.id;
+            const result = yield user_service_1.UserService.findUserById(id);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "User fetched  successfully",
+                data: result,
+            });
+        }));
+        this.myChatFriends = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const id = req.params.id;
+            const result = yield user_service_1.UserService.myChatFriends(id);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "My friends fetched  successfully",
+                data: result,
+            });
+        }));
         this.register = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             yield user_service_1.UserService.register(req.body);
             this.apiResponse(res, {

@@ -12,6 +12,8 @@ const express_1 = require("express");
 const router = (0, express_1.Router)();
 router.post("/register", (0, validateRequest_1.default)(user_validation_1.UserValidationSchema.registerZodSchema), user_controller_1.UserController.register);
 router.get("/", user_controller_1.UserController.getAllUsers);
+router.get("/my-chat-friends/:id", user_controller_1.UserController.myChatFriends);
+router.get("/single/:id", user_controller_1.UserController.getSingleUserById);
 router.patch("/update/:id", cloudinary_1.upload.single("file"), (0, cloudinary_1.uploadSingleFile)("profiles"), (0, validateRequest_1.default)(user_validation_1.UserValidationSchema.updateZodSchema), user_controller_1.UserController.updateUser);
 router.post("/forget-password", user_controller_1.UserController.forgetPassword);
 router.post("/reset-password", user_controller_1.UserController.resetPassword);
