@@ -31,7 +31,13 @@ const messageApi = apiSlice.injectEndpoints({
 
     getMessagesByType: builder.query({
       query: ({ type, conversationId }) => ({
-        url: `/message//by-type/${type}/${conversationId}`,
+        url: `/message/by-type/${type}/${conversationId}`,
+      }),
+      providesTags: ["message"] as any,
+    }),
+    getOneToOneMessages: builder.query({
+      query: (conversationId) => ({
+        url: `/message/one-to-one-messages/${conversationId}`,
       }),
       providesTags: ["message"] as any,
     }),
@@ -43,4 +49,5 @@ export const {
   useGetMessagesByTypeQuery,
   useDeleteMessageMutation,
   useEditMessageMutation,
+  useGetOneToOneMessagesQuery,
 } = messageApi;

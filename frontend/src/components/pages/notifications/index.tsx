@@ -121,14 +121,15 @@ const NotificationModal = ({ open, setOpen }: Props) => {
     <>
       <Modal
         title={
-          <div className="flex items-center justify-between">
-            <p>Notifications</p>
+          <div className="flex items-center gap-2 lg:justify-between mt-2">
+            <p className="text-sm lg:text-lg pt-3">Notifications</p>
             <Button
               onClick={() => {
                 setSelectedIds([]);
                 setIsSelect((prev) => !prev);
               }}
               type="default"
+              size="small"
             >
               {isSelect ? "Unselect" : "Select"}
             </Button>
@@ -136,7 +137,7 @@ const NotificationModal = ({ open, setOpen }: Props) => {
               onClick={handleMarkAllAsRead}
               type="text"
               disabled={isMarkingAsRead || unreadCount === 0}
-              className={`mr-4  ${
+              className={`lg:mr-4  ${
                 isMarkingAsRead
                   ? "bg-blue-600 text-white cursor-not-allowed"
                   : "text-blue-500"
@@ -182,6 +183,7 @@ const NotificationModal = ({ open, setOpen }: Props) => {
         loading={isLoading || isFetching}
         open={open}
         onCancel={() => setOpen(false)}
+        style={{ padding: "0px" }}
       >
         <div className="flex flex-col gap-2 lg:gap-4 overflow-y-auto h-[300px]">
           {notifications?.map((notification: any) => (
@@ -210,10 +212,10 @@ const NotificationModal = ({ open, setOpen }: Props) => {
                   View link
                 </Link>
               </button>
-              <p className="flex justify-between items-center">
+              <p className="flex flex-col lg:flex-row justify-between lg:items-center">
                 <span>{formattedDate(notification?.createdAt)}</span>
                 {isSelect ? (
-                  <>
+                  <div className="flex justify-end">
                     {selectedIds.includes(notification?.id) ? (
                       <IoCheckmarkCircle
                         className="text-green-600 text-xl"
@@ -229,9 +231,9 @@ const NotificationModal = ({ open, setOpen }: Props) => {
                         }
                       />
                     )}
-                  </>
+                  </div>
                 ) : (
-                  <div className="flex gap-1 items-center">
+                  <div className="flex gap-1 justify-end items-center mt-2 lg:mt-0">
                     {notification?.status === "unread" && (
                       <button
                         onClick={() =>

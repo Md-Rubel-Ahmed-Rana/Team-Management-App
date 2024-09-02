@@ -1,11 +1,10 @@
 import { Types } from "mongoose";
 import { IUser } from "./user.interface";
-import { ITeam } from "./team.interface";
 
 export type IMessage = {
   _id?: Types.ObjectId | string;
   poster: Types.ObjectId | IUser;
-  conversationId: Types.ObjectId | ITeam;
+  conversationId: string;
   type: string;
   text?: string;
   images?: string[];
@@ -27,4 +26,24 @@ export type IMessagePayloadForSocket = {
   images: string[];
   files: string[];
   createdAt: Date;
+};
+
+export type IOneToOneMessage = {
+  receiverId: string;
+  message: IMessagePayloadForSocket;
+};
+
+export type ILastMessage = {
+  text: string;
+  files: string;
+  images: string;
+  createdAt: Date;
+};
+
+export type IChatFriend = {
+  id: string;
+  name: string;
+  email: string;
+  profile_picture: string;
+  lastMessage: ILastMessage;
 };

@@ -1,19 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { IoSend } from "react-icons/io5";
 import { useSendMessageMutation } from "@/features/message";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { SocketContext } from "@/context/SocketContext";
-import {
-  IMessage,
-  IMessagePayloadForSocket,
-} from "@/interfaces/message.interface";
+import { IMessagePayloadForSocket } from "@/interfaces/message.interface";
 import { acceptableFiles } from "@/constants/acceptableFiles";
 import { useRouter } from "next/router";
 import MessageFilePreview from "./MessageFilePreview";
-import MessageImagesPreview from "./MessageImagesPreview";
 import SmallLoader from "@/components/shared/SmallLoader";
 import validateFileSize from "@/utils/validateFileSize";
 import addNewFileToState from "@/utils/addNewFileToState";
@@ -21,11 +17,7 @@ import dynamic from "next/dynamic";
 const Dropdown: any = dynamic(() => import("antd/lib/dropdown"), {
   ssr: false,
 });
-const Button: any = dynamic(() => import("antd/lib/button"), {
-  ssr: false,
-});
 import {
-  FaMicrophone,
   FaImage,
   FaVideo,
   FaMusic,
@@ -33,6 +25,7 @@ import {
   FaPlusCircle,
 } from "react-icons/fa";
 import AudioRecorder from "@/components/shared/AudioRecorder";
+import MessageImagesPreview from "./MessageImagesPreview";
 
 type Inputs = {
   poster?: string;
@@ -46,8 +39,8 @@ type Inputs = {
 const MessageForm = ({ messageType }: { messageType: string }) => {
   const { query } = useRouter();
   const { data: userData } = useLoggedInUserQuery({});
-  const { socket, setRealTimeMessages }: any = useContext(SocketContext);
   const user: IUser = userData?.data;
+  const { socket, setRealTimeMessages }: any = useContext(SocketContext);
   const { register, handleSubmit, reset } = useForm<Inputs>({
     mode: "onChange",
   });
@@ -57,6 +50,7 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
   const [files, setFiles] = useState<FileList | undefined | null>(null);
   const [sendMessage, { isLoading }] = useSendMessageMutation();
   const [isMessage, setIsMessage] = useState<any>({ status: false, value: "" });
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleSendMessage: SubmitHandler<Inputs> = async (data) => {
     const formData = new FormData();
@@ -76,8 +70,11 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
     }
 
     // Append other data
+    const conversationId =
+      (query?.teamId as string) ||
+      (`${query?.participant}&${user?.id}` as string);
     formData.append("poster", user.id);
-    formData.append("conversationId", query?.teamId as string);
+    formData.append("conversationId", conversationId);
     formData.append("type", messageType);
     formData.append("text", data?.text || isMessage?.value);
 
@@ -94,7 +91,14 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
 
     if (result?.data?.success) {
       const message: IMessagePayloadForSocket = result?.data?.data;
-      socket.emit("team-message", message);
+      if (messageType === "one-to-one") {
+        socket.emit("one-to-one-message", {
+          receiverId: query?.participant,
+          message,
+        });
+      } else {
+        socket.emit("team-message", message);
+      }
       setRealTimeMessages((prev: IMessagePayloadForSocket[]) => [
         ...prev,
         message,
@@ -155,6 +159,36 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
         }
         const previewUrls = Array.from(newFiles).map((file) => file.name);
         setFilePreview((prev) => prev.concat(previewUrls));
+      }
+    }
+  };
+
+  const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isLoading) {
+      setIsMessage({
+        status: e.target.value ? true : false,
+        value: e.target.value,
+      });
+
+      // Emit typing event if messageType is "one-to-one"
+      if (messageType === "one-to-one" && query?.participant) {
+        socket.emit("typing-message", {
+          receiverId: query?.participant,
+          senderId: user?.id,
+        });
+
+        // Clear the previous timeout if user continues typing
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+        }
+
+        // Set a new timeout to emit stop-typing event after 2 seconds of inactivity
+        typingTimeoutRef.current = setTimeout(() => {
+          socket.emit("stop-typing-message", {
+            receiverId: query?.participant,
+            senderId: user?.id,
+          });
+        }, 2000);
       }
     }
   };
@@ -294,7 +328,7 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
   ];
 
   return (
-    <div className="p-1 lg:p-4 mb-14 lg:mb-0 bg-gray-100 border-t border-gray-300 flex  justify-between items-center relative">
+    <div className="p-1 lg:p-4 mb-14 lg:mb-0 bg-gray-100 border-t border-gray-300 flex justify-between items-center relative">
       {/* Image Preview Section */}
       {(imagePreview.length > 0 || filePreview.length > 0) && (
         <div className="flex flex-wrap gap-2 w-[97%] absolute bottom-16 bg-gray-300 p-2 rounded-md">
@@ -328,21 +362,13 @@ const MessageForm = ({ messageType }: { messageType: string }) => {
           </Dropdown>
           <AudioRecorder setFiles={setFiles} setFilePreview={setFilePreview} />
         </div>
-
         <input
           type="text"
           readOnly={isLoading}
           {...register("text")}
           name="text"
           placeholder="Type your message..."
-          onChange={(e) => {
-            if (!isLoading) {
-              setIsMessage({
-                status: e.target.value ? true : false,
-                value: e.target.value,
-              });
-            }
-          }}
+          onChange={handleTyping} // Emit typing and stop-typing events
           className={`border-2 p-2 rounded-md w-full bg-white text-gray-800 focus:outline-none ${
             isLoading
               ? "bg-gray-200 cursor-not-allowed"

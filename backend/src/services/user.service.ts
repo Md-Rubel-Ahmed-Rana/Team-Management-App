@@ -7,11 +7,160 @@ import { BcryptInstance } from "lib/bcrypt";
 import { JwtInstance } from "lib/jwt";
 import { HttpStatusInstance } from "lib/httpStatus";
 import { UserSelect } from "propertySelections";
+import { Message } from "@/models/message.model";
+import { Types } from "mongoose";
+import { IChatFriend, ILastMessage } from "@/interfaces/message.interface";
 
 class Service {
-  async getAllUsers(): Promise<any> {
+  async getAllUsers(): Promise<IUser[]> {
     const result = await User.find({}).select(UserSelect);
     return result;
+  }
+
+  async myChatFriends(userId: string): Promise<IChatFriend[]> {
+    try {
+      const objectId = Types.ObjectId.isValid(userId)
+        ? new Types.ObjectId(userId)
+        : null;
+
+      if (!objectId) {
+        throw new Error("Invalid userId format");
+      }
+
+      const distinctUserIds = await Message.aggregate([
+        {
+          $match: {
+            $or: [
+              { poster: objectId },
+              {
+                conversationId: {
+                  $regex: new RegExp(`^(${userId}&|${userId}$)`),
+                },
+              },
+            ],
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            uniqueUsers: {
+              $addToSet: {
+                $cond: [
+                  { $eq: ["$poster", objectId] },
+                  {
+                    $cond: [
+                      {
+                        $eq: [
+                          {
+                            $arrayElemAt: [
+                              { $split: ["$conversationId", "&"] },
+                              0,
+                            ],
+                          },
+                          userId,
+                        ],
+                      },
+                      {
+                        $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 1],
+                      },
+                      {
+                        $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 0],
+                      },
+                    ],
+                  },
+                  "$poster",
+                ],
+              },
+            },
+          },
+        },
+        {
+          $unwind: "$uniqueUsers",
+        },
+        {
+          $project: {
+            userId: "$uniqueUsers",
+          },
+        },
+      ]);
+
+      if (!distinctUserIds?.length) {
+        return [];
+      }
+
+      const userIds = distinctUserIds
+        ?.map((entry) => {
+          return Types.ObjectId.isValid(entry?.userId)
+            ? new Types.ObjectId(entry?.userId)
+            : null;
+        })
+        ?.filter((id) => id !== null);
+
+      // Fetch users corresponding to these user IDs
+      const users: IUser[] = await User.find({ _id: { $in: userIds } }).select({
+        name: 1,
+        profile_picture: 1,
+        email: 1,
+      });
+
+      // Fetch the latest message and include it in the response
+      const userDetailsWithLastMessage = await Promise.all(
+        users.map(async (user) => {
+          const lastMessageDoc: any = await Message.findOne({
+            $or: [
+              {
+                $and: [
+                  { poster: objectId },
+                  {
+                    conversationId: {
+                      $regex: `^${user?._id.toString()}&${userId}|${userId}&${user?._id.toString()}$`,
+                    },
+                  },
+                ],
+              },
+              {
+                $and: [
+                  { poster: user?._id },
+                  {
+                    conversationId: {
+                      $regex: `^${userId}&${user?._id.toString()}|${user?._id.toString()}&${userId}$`,
+                    },
+                  },
+                ],
+              },
+            ],
+          }).sort({ createdAt: -1 });
+
+          const lastMessage: ILastMessage = {
+            text: lastMessageDoc?.text,
+            files: lastMessageDoc?.files,
+            images: lastMessageDoc?.images,
+            createdAt: lastMessageDoc?.createdAt,
+          };
+
+          const friend: IChatFriend = {
+            id: user?._id.toString(),
+            name: user?.name,
+            email: user?.email,
+            profile_picture: user?.profile_picture,
+            lastMessage,
+          };
+          return friend;
+        })
+      );
+
+      // Sort users based on the creation date of the most recent message
+      userDetailsWithLastMessage.sort((a, b) => {
+        const dateA = a.lastMessage?.createdAt || new Date(0);
+        const dateB = b.lastMessage?.createdAt || new Date(0);
+        return dateB.getTime() - dateA.getTime();
+      });
+
+      return userDetailsWithLastMessage.filter((user) => user.id !== userId);
+    } catch (error) {
+      console.error("Error fetching chat friends:", error);
+      throw new Error("Failed to fetch chat friends.");
+    }
   }
 
   async register(user: IUser): Promise<void> {

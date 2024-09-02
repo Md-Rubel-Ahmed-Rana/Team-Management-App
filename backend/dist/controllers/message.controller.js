@@ -40,6 +40,16 @@ class Controller extends rootController_1.default {
                 data: messages,
             });
         }));
+        this.getOneToOneMessagesWithType = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const conversationId = req.params.conversationId;
+            const messages = yield message_service_1.MessageService.getOneToOneMessagesWithType(conversationId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Messages found",
+                data: messages,
+            });
+        }));
         this.getMessage = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const messageId = req.params.id;
             const message = yield message_service_1.MessageService.getMessage(messageId);

@@ -2,8 +2,10 @@ import { HiPencilAlt } from "react-icons/hi";
 import { FaTrashAlt } from "react-icons/fa";
 import { useDeleteMessageMutation } from "@/features/message";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import MessageEdit from "./MessageEdit";
+import { SocketContext } from "@/context/SocketContext";
+import { useRouter } from "next/router";
 
 type Props = {
   messageText: string;
@@ -11,12 +13,18 @@ type Props = {
 };
 
 const MessageActions = ({ messageId, messageText }: Props) => {
+  const { socket }: any = useContext(SocketContext);
   const [isEditMessage, setIsEditMessage] = useState(false);
   const [deleteMessage] = useDeleteMessageMutation();
+  const { query } = useRouter();
 
   const handleDeleteMessage = async () => {
     const result: any = await deleteMessage(messageId);
     if (result?.data?.success) {
+      socket.emit("deleted-message", {
+        receiverId: query?.participant || query?.teamId,
+        messageId,
+      });
       toast.success("Message deleted");
     }
     if (result?.error) {
