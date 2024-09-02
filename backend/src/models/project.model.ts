@@ -4,13 +4,14 @@ import { Schema, model } from "mongoose";
 const projectSchema = new Schema<IProject>(
   {
     team: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
       ref: "Team",
     },
     user: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
+      ref: "User",
     },
     name: {
       type: String,

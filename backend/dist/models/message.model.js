@@ -9,13 +9,12 @@ const messageSchema = new mongoose_1.Schema({
         required: true,
     },
     conversationId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: "Team",
+        type: String,
         required: true,
     },
     type: {
         type: String,
-        enum: ["announcement", "resources", "discussion"],
+        enum: ["announcement", "resources", "discussion", "one-to-one"],
     },
     text: {
         type: String,

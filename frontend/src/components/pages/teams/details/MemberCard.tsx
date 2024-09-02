@@ -4,6 +4,7 @@ import { useRemoveTeamMemberMutation } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import { ITeamDetailsMember } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
+import Link from "next/link";
 import { useContext } from "react";
 import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
@@ -98,11 +99,15 @@ const MemberCard = ({ member, memberType, teamId }: IProps) => {
 
   return (
     <div key={member?.id} className="flex items-center gap-2">
-      <img
-        src={member?.profile_picture}
-        alt={member?.name}
-        className="rounded-full h-16 w-16 ring-1"
-      />
+      <Link
+        href={`/messages/chats/${member?.id}?participantId=${member?.id}&name=${member.name}&email=${member.email}&profile_picture=${member?.profile_picture}`}
+      >
+        <img
+          src={member?.profile_picture}
+          alt={member?.name}
+          className="rounded-full h-16 w-16 ring-1"
+        />
+      </Link>
       <div>
         <p className="text-lg font-medium flex items-center gap-3">
           <span>{member?.name}</span>

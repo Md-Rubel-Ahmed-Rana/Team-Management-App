@@ -29,6 +29,20 @@ class Controller extends RootController {
       data: messages,
     });
   });
+  getOneToOneMessagesWithType = this.catchAsync(
+    async (req: Request, res: Response) => {
+      const conversationId = req.params.conversationId;
+      const messages = await MessageService.getOneToOneMessagesWithType(
+        conversationId
+      );
+      this.apiResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Messages found",
+        data: messages,
+      });
+    }
+  );
 
   getMessage = this.catchAsync(async (req: Request, res: Response) => {
     const messageId = req.params.id;

@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import NotificationModal from "../pages/notifications";
 import { useGetUnreadNotificationsCountQuery } from "@/features/notification";
 import { SocketContext } from "@/context/SocketContext";
+import { SiMessenger } from "react-icons/si";
 const Dropdown: any = dynamic(() => import("antd/lib/dropdown"), {
   ssr: false,
   loading: () => <FaBars className="text-2xl" />,
@@ -124,10 +125,6 @@ const Navbar = () => {
             <Link className="m-2" href="/docs/guides">
               Guides
             </Link>
-            <Link className="m-2" href="/docs/apis">
-              APIs
-            </Link>
-
             {!user?.email && (
               <>
                 <Link className="m-2" href="/signup">
@@ -159,6 +156,9 @@ const Navbar = () => {
                     Projects
                   </Button>
                 </Dropdown>
+                <Link href={"/messages/chats"} className="">
+                  <SiMessenger className="text-xl" />
+                </Link>
                 <button
                   onClick={() => setShowNotification(true)}
                   className="relative  p-2 border-2 rounded-full"
@@ -168,6 +168,7 @@ const Navbar = () => {
                     {notificationCount}
                   </small>
                 </button>
+
                 <Link
                   href={`/dashboard/profile?${queries}`}
                   className={`${
