@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { SocketContext } from "@/context/SocketContext";
 import {
   useGetMyChatFriendsQuery,
@@ -6,7 +7,6 @@ import {
 import { IChatFriend } from "@/interfaces/message.interface";
 import { IUser } from "@/interfaces/user.interface";
 import { useRouter } from "next/router";
-import React, { useState, useEffect, useContext } from "react";
 import { MdMessage } from "react-icons/md";
 
 const FriendList = () => {
@@ -16,126 +16,136 @@ const FriendList = () => {
   const { data: usersList } = useGetMyChatFriendsQuery(user?.id);
   const router = useRouter();
   const { query } = router;
+
   const participantId = query?.participantId as string;
-  const [friends, setFriends] = useState<IChatFriend[]>(usersList?.data || []);
+  const participantName = query?.name as string;
+  const participantProfilePicture = query?.profile_picture as string;
+
+  const [friends, setFriends] = useState<IChatFriend[]>([]);
   const [currentFriend, setCurrentFriend] = useState<IChatFriend | null>(null);
   const [onTypingFriends, setOnTypingFriends] = useState<string[]>([]);
 
+  // Initialize friends and currentFriend state
   useEffect(() => {
-    setFriends(
-      usersList?.data?.filter(
-        (friend: IChatFriend) => friend?.id !== query?.participantId
-      )
-    );
-    const currentUser = usersList?.data.find(
-      (user: IUser) => user?.id === query?.participantId
-    );
-    setCurrentFriend(currentUser);
-  }, [usersList, query?.participantId]);
+    if (usersList?.data) {
+      setFriends(
+        usersList.data.filter(
+          (friend: IChatFriend) => friend.id !== participantId
+        )
+      );
+      setCurrentFriend(
+        usersList.data.find((user: IUser) => user.id === participantId) || null
+      );
+    }
+  }, [usersList, participantId]);
 
+  // Handle selecting a user
   const handleSelectUser = (selectedUser: IChatFriend) => {
-    setFriends((prevFriends: IChatFriend[]) =>
-      prevFriends.filter(
-        (friend: IChatFriend) => friend?.id !== selectedUser?.id
-      )
+    setFriends((prevFriends) =>
+      prevFriends.filter((friend) => friend.id !== selectedUser.id)
     );
-
-    // Navigate to the chat page
     router.push(
-      `/messages/chats/${selectedUser?.id}?participantId=${selectedUser?.id}&name=${selectedUser.name}&email=${selectedUser?.email}&profile_picture=${selectedUser?.profile_picture}`
+      `/messages/chats/${selectedUser.id}?participantId=${selectedUser.id}&name=${selectedUser.name}&email=${selectedUser.email}&profile_picture=${selectedUser.profile_picture}`
     );
   };
 
-  // receive typing event from socket
-  useEffect(() => {
-    const handleMessage = (senderId: string) => {
-      console.log(`This sender '${senderId}' is typing`);
-      if (!onTypingFriends?.includes(senderId)) {
-        setOnTypingFriends((prev: string[]) => [...prev, senderId]);
-      }
-    };
-    socket?.on("typing-message", handleMessage);
-    return () => {
-      socket?.off("typing-message", handleMessage);
-    };
-  }, [socket]);
-
-  // receive stop typing event from socket
-  useEffect(() => {
-    const handleMessage = (senderId: string) => {
-      console.log(`This sender '${senderId}' has stopped typing.`);
-      if (!onTypingFriends?.includes(senderId)) {
-        const remaining = onTypingFriends.filter(
-          (friend) => friend !== senderId
-        );
-        setOnTypingFriends(remaining);
+  // Handle typing and stop-typing events
+  const handleTyping = useCallback((senderId: string, isTyping: boolean) => {
+    setOnTypingFriends((prev) => {
+      const typingSet = new Set(prev);
+      if (isTyping) {
+        typingSet.add(senderId);
       } else {
-        setOnTypingFriends((prev: string[]) => [...prev, senderId]);
+        typingSet.delete(senderId);
       }
-    };
-    socket?.on("stop-typing-message", handleMessage);
+      return Array.from(typingSet);
+    });
+  }, []);
+
+  // socket event listeners
+  useEffect(() => {
+    socket?.on("typing-message", (senderId: string) =>
+      handleTyping(senderId, true)
+    );
+    socket?.on("stop-typing-message", (senderId: string) =>
+      handleTyping(senderId, false)
+    );
+
     return () => {
-      socket?.off("stop-typing-message", handleMessage);
+      socket?.off("typing-message");
+      socket?.off("stop-typing-message");
     };
-  }, [socket]);
+  }, [socket, handleTyping]);
 
   return (
     <ul className="flex flex-col gap-1 mt-1 h-[92vh]">
-      {query?.participantId && (
+      {participantId && (
         <li className="flex items-center gap-2 p-[6.5px] bg-blue-500 text-white border-b border-s-2 border-gray-300">
-          <img
-            className="h-10 w-10 rounded-full ring-2"
-            src={query?.profile_picture as string}
-            alt="profile"
-          />
+          {participantProfilePicture ? (
+            <img
+              className="h-10 w-10 rounded-full ring-2"
+              src={participantProfilePicture}
+              alt="profile"
+            />
+          ) : (
+            <h3 className="h-10 w-10 text-black text-3xl rounded-full ring-2 flex justify-center items-center">
+              {participantName?.slice(0, 1)?.toUpperCase()}
+            </h3>
+          )}
           <div>
             <h2 className="text-sm lg:text-md font-bold -mb-2">
-              {query?.name}
+              {participantName}
             </h2>
             <small className="text-[10px] lg:text-md">
               {onTypingFriends.includes(participantId)
                 ? "Typing..."
                 : currentFriend?.lastMessage?.text
                 ? `${
-                    currentFriend?.lastMessage?.text.length > 20
-                      ? currentFriend?.lastMessage?.text.slice(0, 20) + "..."
-                      : currentFriend?.lastMessage?.text
+                    currentFriend.lastMessage.text.length > 20
+                      ? currentFriend.lastMessage.text.slice(0, 20) + "..."
+                      : currentFriend.lastMessage.text
                   }`
-                : "No text"}
+                : "Files"}
             </small>
           </div>
         </li>
       )}
 
-      {friends?.map((friend: IChatFriend) => (
+      {friends.map((friend: IChatFriend) => (
         <li
-          key={friend?.id}
+          key={friend.id}
           onClick={() => handleSelectUser(friend)}
           className="flex items-center gap-2 p-[6.5px] cursor-pointer lg:bg-gray-100 border-b border-s-2 border-gray-300"
         >
-          <img
-            className="h-10 w-10 rounded-full ring-2"
-            src={friend?.profile_picture as string}
-            alt="profile"
-          />
+          {friend.profile_picture ? (
+            <img
+              className="h-10 w-10 rounded-full ring-2"
+              src={friend.profile_picture}
+              alt="profile"
+            />
+          ) : (
+            <h3 className="h-10 w-10 text-black text-3xl rounded-full ring-2 flex justify-center items-center">
+              {friend.name.slice(0, 1).toUpperCase()}
+            </h3>
+          )}
+
           <div className="flex justify-between flex-col gap-2">
             <h2 className="text-sm lg:text-md font-bold -mb-2">
-              {friend?.name}
+              {friend.name}
             </h2>
             <p>
-              {onTypingFriends.includes(friend?.id) ? (
+              {onTypingFriends.includes(friend.id) ? (
                 <small className="text-green-400 text-md font-serif">
                   Typing...
                 </small>
               ) : (
                 <small>
-                  {friend?.lastMessage?.text
+                  {friend.lastMessage?.text
                     ? `${
-                        friend?.lastMessage?.text.length > 20
-                          ? friend?.lastMessage?.text.slice(0, 20) + "..."
-                          : friend?.lastMessage?.text
-                      }
-                      `
+                        friend.lastMessage.text.length > 20
+                          ? friend.lastMessage.text.slice(0, 20) + "..."
+                          : friend.lastMessage.text
+                      }`
                     : "No text"}
                 </small>
               )}
@@ -144,9 +154,9 @@ const FriendList = () => {
         </li>
       ))}
 
-      {friends?.length <= 0 && (
-        <>
-          <main className="flex-grow flex flex-col justify-center items-center h-[90vh] w-full bg-white  shadow-lg p-8 block lg:hidden">
+      {friends.length <= 0 && (
+        <main className="block lg:hidden">
+          <div className="flex-grow flex flex-col justify-center items-center h-[90vh] w-full bg-white  shadow-lg p-8 ">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-gray-800 mb-2">
                 Welcome to your Messages
@@ -159,8 +169,8 @@ const FriendList = () => {
                 <MdMessage className="text-6xl text-blue-500 mb-4" />
               </button>
             </div>
-          </main>
-        </>
+          </div>
+        </main>
       )}
     </ul>
   );

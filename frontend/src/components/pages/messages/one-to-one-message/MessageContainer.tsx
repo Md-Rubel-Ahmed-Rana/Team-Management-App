@@ -1,16 +1,58 @@
 /* eslint-disable @next/next/no-img-element */
+import React, { useContext, useEffect } from "react";
 import { SocketContext } from "@/context/SocketContext";
 import { useGetOneToOneMessagesQuery } from "@/features/message";
 import {
   IMessage,
   IMessagePayloadForSocket,
 } from "@/interfaces/message.interface";
-import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import MessageCard from "../common/MessageCard";
 import MessageSkeleton from "@/components/skeletons/MessageSkeleton";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
+
+// Function to handle new messages
+const handleNewMessage = (
+  data: IMessagePayloadForSocket,
+  setRealTimeMessages: React.Dispatch<
+    React.SetStateAction<IMessagePayloadForSocket[]>
+  >
+) => {
+  setRealTimeMessages((prev: IMessagePayloadForSocket[]) => [...prev, data]);
+};
+
+// Function to handle updated messages
+const handleUpdatedMessage = (
+  data: IMessagePayloadForSocket,
+  setRealTimeMessages: React.Dispatch<
+    React.SetStateAction<IMessagePayloadForSocket[]>
+  >
+) => {
+  setRealTimeMessages((prevMessages: IMessagePayloadForSocket[]) => {
+    const findIndex = prevMessages.findIndex(
+      (message) => message?.id === data?.id
+    );
+    if (findIndex !== -1) {
+      const updatedMessages = [...prevMessages];
+      updatedMessages[findIndex] = data;
+      return updatedMessages;
+    }
+    return prevMessages;
+  });
+};
+
+// Function to handle deleted messages
+const handleDeletedMessage = (
+  messageId: string,
+  setRealTimeMessages: React.Dispatch<
+    React.SetStateAction<IMessagePayloadForSocket[]>
+  >
+) => {
+  setRealTimeMessages((prevMessages: IMessagePayloadForSocket[]) =>
+    prevMessages.filter((message) => message.id !== messageId)
+  );
+};
 
 const MessageContainer = () => {
   const { socket, realTimeMessages, setRealTimeMessages }: any =
@@ -22,60 +64,26 @@ const MessageContainer = () => {
     `${query?.participant}&${user?.id}`
   );
 
-  // receive new message from socket
+  // Socket event listeners
   useEffect(() => {
-    const handleMessage = (data: IMessagePayloadForSocket) => {
-      setRealTimeMessages((prev: IMessagePayloadForSocket[]) => [
-        ...prev,
-        data,
-      ]);
-    };
-    socket?.on("one-to-one-message", handleMessage);
+    socket?.on("one-to-one-message", (data: IMessagePayloadForSocket) =>
+      handleNewMessage(data, setRealTimeMessages)
+    );
+    socket?.on("updated-message", (data: IMessagePayloadForSocket) =>
+      handleUpdatedMessage(data, setRealTimeMessages)
+    );
+    socket?.on("deleted-message", (messageId: string) =>
+      handleDeletedMessage(messageId, setRealTimeMessages)
+    );
+
     return () => {
-      socket?.off("one-to-one-message", handleMessage);
+      socket?.off("one-to-one-message", handleNewMessage);
+      socket?.off("updated-message", handleUpdatedMessage);
+      socket?.off("deleted-message", handleDeletedMessage);
     };
-  }, [setRealTimeMessages, socket]);
+  }, [socket, setRealTimeMessages]);
 
-  // receive edited/updated message from socket
-  useEffect(() => {
-    const handleMessage = (data: IMessagePayloadForSocket) => {
-      // Find the index of the message to update
-      const findIndex = realTimeMessages.findIndex(
-        (message: IMessagePayloadForSocket) => message?.id === data?.id
-      );
-
-      // If the message exists, update it
-      if (findIndex !== -1) {
-        const updatedMessages = [...realTimeMessages];
-        updatedMessages[findIndex] = data;
-
-        // Set the updated messages array
-        setRealTimeMessages(updatedMessages);
-      }
-    };
-
-    socket?.on("updated-message", handleMessage);
-    return () => {
-      socket?.off("updated-message", handleMessage);
-    };
-  }, [realTimeMessages, setRealTimeMessages, socket]);
-
-  // receive deleted message id  and remove it from message list
-  useEffect(() => {
-    const handleMessage = (messageId: string) => {
-      console.log("Deleted message id: ", messageId);
-      const remaining = realTimeMessages?.filter(
-        (message: IMessagePayloadForSocket) => message.id !== messageId
-      );
-      setRealTimeMessages(remaining);
-    };
-    socket?.on("deleted-message", handleMessage);
-    return () => {
-      socket?.off("deleted-message", handleMessage);
-    };
-  }, [setRealTimeMessages, socket]);
-
-  // Keep updated messages in state whenever messageData or messageType changes
+  // Load messages when the component mounts or query changes
   useEffect(() => {
     if (!isLoading) {
       setRealTimeMessages(messageData?.data || []);
