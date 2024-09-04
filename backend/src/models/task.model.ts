@@ -1,5 +1,6 @@
 import { ITask } from "@/interfaces/task.interface";
 import { Schema, model } from "mongoose";
+import { Project } from "./project.model";
 
 const taskSchema = new Schema<ITask>(
   {
@@ -36,5 +37,12 @@ const taskSchema = new Schema<ITask>(
     },
   }
 );
+
+// Middleware to increment project in the Team schema
+taskSchema.post("save", async function (doc) {
+  await Project.findByIdAndUpdate(doc.project, {
+    $inc: { tasks: 1 },
+  });
+});
 
 export const Task = model("Task", taskSchema);

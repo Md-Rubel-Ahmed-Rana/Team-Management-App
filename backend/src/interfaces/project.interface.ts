@@ -1,14 +1,25 @@
 import { Types } from "mongoose";
-import { IUser } from "./user.interface";
-import { ITeam } from "./team.interface";
+import { IGetUser } from "./user.interface";
 
 export type IProject = {
-  _id?: Types.ObjectId;
-  team: Types.ObjectId | ITeam["_id"];
-  user: Types.ObjectId | IUser["_id"];
+  team: Types.ObjectId;
+  user: Types.ObjectId;
   name: string;
   category: string;
-  members: Types.ObjectId | IUser["_id"];
-  createdAt?: Date;
-  updatedAt?: Date;
+  members: Types.ObjectId[];
+  leaveRequests: Types.ObjectId[];
+  tasks: number;
+};
+
+export type IGetProject = {
+  id: string;
+  team: string;
+  user: string;
+  name: string;
+  category: string;
+  members: IGetUser[];
+  leaveRequests: IGetUser[];
+  tasks: number;
+  createdAt: Date;
+  updatedAt: Date;
 };

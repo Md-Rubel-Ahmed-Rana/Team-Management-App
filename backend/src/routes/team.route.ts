@@ -13,27 +13,37 @@ router.post(
   TeamController.createTeam
 );
 
-router.get(
-  "/my-teams/dropdown/:adminId",
-  TeamController.getMyTeamListForDropdown
-);
+router.get("/", TeamController.getAllTeams);
 
-router.get("/cards/my-teams/:adminId", TeamController.getMyTeamsForCard);
+router.get("/single/:id", TeamController.getSingleTeam);
 
-router.get(
-  "/cards/joined-teams/:memberId",
-  TeamController.getJoinedTeamsForCard
-);
+router.get("/my-teams/:adminId", TeamController.getMyTeams);
 
-router.get("/active-members/:teamId", TeamController.getActiveMembers);
-
-router.get("/details/:teamId", TeamController.getSingleTeamWithDetails);
-
-router.get("/single/:id", TeamController.getTeam);
+router.get("/joined-teams/:memberId", TeamController.getJoinedTeams);
 
 router.delete("/delete/:id", TeamController.deleteTeam);
 
-router.patch("/remove-member/:teamId/:memberId", TeamController.removeMember);
+router.post(
+  "/send-leave-request/:teamId/:memberId",
+  TeamController.sendLeaveRequest
+);
+
+router.post(
+  "/cancel-leave-request/:teamId/:memberId",
+  TeamController.cancelLeaveRequest
+);
+
+router.post(
+  "/reject-leave-request/:teamId/:memberId",
+  TeamController.rejectLeaveRequest
+);
+
+router.post(
+  "/accept-leave-request/:teamId/:memberId",
+  TeamController.acceptLeaveRequest
+);
+
+router.delete("/remove-member/:teamId/:memberId", TeamController.removeMember);
 
 router.patch(
   "/update/:id",

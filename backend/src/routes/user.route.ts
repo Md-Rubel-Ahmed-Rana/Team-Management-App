@@ -1,5 +1,6 @@
 import { UserController } from "@/controllers/user.controller";
 import { upload, uploadSingleFile } from "@/middlewares/cloudinary";
+import userCacheMiddleware from "@/middlewares/userCacheMiddleware";
 import validateRequest from "@/middlewares/validateRequest";
 import { UserValidationSchema } from "@/validations/user.validation";
 import { Router } from "express";
@@ -12,11 +13,15 @@ router.post(
   UserController.register
 );
 
-router.get("/", UserController.getAllUsers);
+router.get("/", userCacheMiddleware.all, UserController.getAllUsers);
 
 router.get("/my-chat-friends/:id", UserController.myChatFriends);
 
-router.get("/single/:id", UserController.getSingleUserById);
+router.get(
+  "/single/:id",
+  userCacheMiddleware.single,
+  UserController.getSingleUserById
+);
 
 router.patch(
   "/update/:id",

@@ -1,4 +1,4 @@
-import { IUser } from "@/interfaces/user.interface";
+import { IGetUser, IUser } from "@/interfaces/user.interface";
 import User from "@/models/user.model";
 import ApiError from "@/shared/apiError";
 import { config } from "@/configurations/envConfig";
@@ -10,11 +10,32 @@ import { UserSelect } from "propertySelections";
 import { Message } from "@/models/message.model";
 import { Types } from "mongoose";
 import { IChatFriend, ILastMessage } from "@/interfaces/message.interface";
+import { CacheServiceInstance } from "./cache.service";
 
 class Service {
-  async getAllUsers(): Promise<IUser[]> {
+  // Temporarily using as alternative of DTO
+  private sanitizer(user: any): IGetUser {
+    return {
+      id: String(user?._id),
+      name: user?.name,
+      email: user?.email,
+      department: user?.department || "",
+      designation: user?.designation || "",
+      phoneNumber: user?.phoneNumber || "",
+      profile_picture: user?.profile_picture || "",
+      presentAddress: user?.presentAddress || "",
+      permanentAddress: user?.permanentAddress || "",
+      country: user?.country || "",
+      createdAt: user?.createdAt,
+      updatedAt: user?.updatedAt,
+    };
+  }
+
+  async getAllUsers(): Promise<IGetUser[]> {
     const result = await User.find({}).select(UserSelect);
-    return result;
+    const dtoUsers = result.map((user: any) => this.sanitizer(user));
+    await CacheServiceInstance.user.setAllUsersToCache(dtoUsers);
+    return dtoUsers;
   }
 
   async myChatFriends(userId: string): Promise<IChatFriend[]> {
@@ -177,16 +198,18 @@ class Service {
     const hashedPassword = await BcryptInstance.hash(user.password);
     user.password = hashedPassword;
 
-    await User.create(user);
+    const newUser = await User.create(user);
+    const dtoUser = this.sanitizer(newUser);
+    await CacheServiceInstance.user.addNewUserToCache(dtoUser);
   }
 
-  async findUserById(id: string): Promise<any> {
+  async findUserById(id: string): Promise<IGetUser> {
     const user = await User.findById(id).select(UserSelect);
     if (!user) {
       throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found");
     }
 
-    return user;
+    return this.sanitizer(user);
   }
 
   async findUserByEmail(email: string): Promise<any> {
@@ -199,13 +222,14 @@ class Service {
   }
 
   async updateUser(id: string, data: Partial<IUser>): Promise<any> {
-    const result = await User.findByIdAndUpdate(
+    const result: any = await User.findByIdAndUpdate(
       id,
       { $set: { ...data } },
       { new: true }
     ).select(UserSelect);
-
-    return result;
+    const dtoUser = this.sanitizer(result);
+    await CacheServiceInstance.user.updateUserInCache(dtoUser);
+    return dtoUser;
   }
 
   async forgetPassword(email: string) {

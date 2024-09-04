@@ -23,7 +23,8 @@ const user_service_1 = require("./user.service");
 class Service {
     sendInvitation(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const team = yield team_service_1.TeamService.getTeamById(teamId);
+            var _a;
+            const team = yield team_service_1.TeamService.getSingleTeam(teamId);
             yield team_model_1.default.findByIdAndUpdate(teamId, {
                 $addToSet: { pendingMembers: memberId },
             }, { new: true });
@@ -33,7 +34,7 @@ class Service {
                 type: enums_1.NotificationEnums.TEAM_INVITATION,
                 content: `Exciting news! You've been invited to join the team "${team === null || team === void 0 ? void 0 : team.name}" in the "${team === null || team === void 0 ? void 0 : team.category}" category. We believe your skills and passion will be a perfect fit. Let’s achieve great things together!`,
                 receiver: memberId,
-                sender: team === null || team === void 0 ? void 0 : team.admin,
+                sender: (_a = team === null || team === void 0 ? void 0 : team.admin) === null || _a === void 0 ? void 0 : _a.id,
                 link: `${envConfig_1.config.app.frontendDomain}/dashboard/invitations?userId=${memberId}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
             };
             yield notification_service_1.NotificationService.createNotification(notifyObject);
@@ -41,7 +42,8 @@ class Service {
     }
     rejectInvitation(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const team = yield team_service_1.TeamService.getTeamById(teamId);
+            var _a;
+            const team = yield team_service_1.TeamService.getSingleTeam(teamId);
             yield team_model_1.default.findByIdAndUpdate(teamId, {
                 $pull: { pendingMembers: memberId },
             }, { new: true });
@@ -50,7 +52,7 @@ class Service {
                 title: "Team invitation rejected",
                 type: enums_1.NotificationEnums.TEAM_INVITATION_REJECTED,
                 content: `${member === null || member === void 0 ? void 0 : member.name} has declined the invitation to join your team "${team === null || team === void 0 ? void 0 : team.name}" in the "${team === null || team === void 0 ? void 0 : team.category}" category. You may want to reach out or invite someone else to fill the position.`,
-                receiver: team === null || team === void 0 ? void 0 : team.admin,
+                receiver: (_a = team === null || team === void 0 ? void 0 : team.admin) === null || _a === void 0 ? void 0 : _a.id,
                 sender: memberId,
                 link: `${envConfig_1.config.app.frontendDomain}/teams/details/${teamId}?team_name=${team === null || team === void 0 ? void 0 : team.name}&team_category=${team === null || team === void 0 ? void 0 : team.category}&team_description=${team.description}`,
             };
@@ -59,7 +61,8 @@ class Service {
     }
     cancelInvitation(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const team = yield team_service_1.TeamService.getTeamById(teamId);
+            var _a;
+            const team = yield team_service_1.TeamService.getSingleTeam(teamId);
             yield team_model_1.default.findByIdAndUpdate(teamId, {
                 $pull: { pendingMembers: memberId },
             }, { new: true });
@@ -69,7 +72,7 @@ class Service {
                 type: enums_1.NotificationEnums.TEAM_INVITATION_CANCELED,
                 content: `The invitation to join the team "${team === null || team === void 0 ? void 0 : team.name}" in the "${team === null || team === void 0 ? void 0 : team.category}" category has been canceled. We hope to collaborate in the future.`,
                 receiver: memberId,
-                sender: team === null || team === void 0 ? void 0 : team.admin,
+                sender: (_a = team === null || team === void 0 ? void 0 : team.admin) === null || _a === void 0 ? void 0 : _a.id,
                 link: `${envConfig_1.config.app.frontendDomain}/dashboard/invitations?userId=${memberId}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
             };
             yield notification_service_1.NotificationService.createNotification(notifyObject);
@@ -77,7 +80,8 @@ class Service {
     }
     acceptInvitation(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const team = yield team_service_1.TeamService.getTeamById(teamId);
+            var _a;
+            const team = yield team_service_1.TeamService.getSingleTeam(teamId);
             yield team_model_1.default.findByIdAndUpdate(teamId, {
                 $addToSet: { activeMembers: memberId },
                 $pull: { pendingMembers: memberId },
@@ -87,7 +91,7 @@ class Service {
                 title: "Team invitation accepted",
                 type: enums_1.NotificationEnums.TEAM_INVITATION_ACCEPTED,
                 content: `Great news! ${member === null || member === void 0 ? void 0 : member.name} has accepted the invitation to join your team "${team === null || team === void 0 ? void 0 : team.name}" in the "${team === null || team === void 0 ? void 0 : team.category}" category. Get ready to collaborate and achieve great things together!`,
-                receiver: team === null || team === void 0 ? void 0 : team.admin,
+                receiver: (_a = team === null || team === void 0 ? void 0 : team.admin) === null || _a === void 0 ? void 0 : _a.id,
                 sender: memberId,
                 link: `${envConfig_1.config.app.frontendDomain}/teams/details/${teamId}?team_name=${team === null || team === void 0 ? void 0 : team.name}&team_category=${team === null || team === void 0 ? void 0 : team.category}&team_description=${team.description}`,
             };
