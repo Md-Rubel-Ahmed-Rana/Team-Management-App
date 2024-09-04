@@ -2,10 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationRoutes = void 0;
 const notification_controller_1 = require("@/controllers/notification.controller");
-const redisCache_1 = require("@/middlewares/redisCache");
 const express_1 = require("express");
 const router = (0, express_1.Router)();
-router.get("/single/:userId", redisCache_1.RedisCacheService.findNotification());
 router.get("/unread/count/:userId", notification_controller_1.NotificationController.getUnreadNotificationCount);
 router.post("/send", notification_controller_1.NotificationController.send);
 router.get("/my-notifications/:receiverId", notification_controller_1.NotificationController.getNotificationsByReceiverId);
@@ -13,5 +11,4 @@ router.patch("/status/read/:id", notification_controller_1.NotificationControlle
 router.patch("/mark-all-as-read/:userId", notification_controller_1.NotificationController.markAllAsRead);
 router.delete("/delete/single/:id", notification_controller_1.NotificationController.deleteSingleNotification);
 router.post("/delete/many", notification_controller_1.NotificationController.deleteManyNotifications);
-router.patch("/update/:userId", redisCache_1.RedisCacheService.updateNotification());
 exports.NotificationRoutes = router;

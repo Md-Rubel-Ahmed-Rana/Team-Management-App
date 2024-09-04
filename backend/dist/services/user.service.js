@@ -23,11 +23,31 @@ const httpStatus_1 = require("lib/httpStatus");
 const propertySelections_1 = require("propertySelections");
 const message_model_1 = require("@/models/message.model");
 const mongoose_1 = require("mongoose");
+const cache_service_1 = require("./cache.service");
 class Service {
+    // Temporarily using as alternative of DTO
+    sanitizer(user) {
+        return {
+            id: String(user === null || user === void 0 ? void 0 : user._id),
+            name: user === null || user === void 0 ? void 0 : user.name,
+            email: user === null || user === void 0 ? void 0 : user.email,
+            department: (user === null || user === void 0 ? void 0 : user.department) || "",
+            designation: (user === null || user === void 0 ? void 0 : user.designation) || "",
+            phoneNumber: (user === null || user === void 0 ? void 0 : user.phoneNumber) || "",
+            profile_picture: (user === null || user === void 0 ? void 0 : user.profile_picture) || "",
+            presentAddress: (user === null || user === void 0 ? void 0 : user.presentAddress) || "",
+            permanentAddress: (user === null || user === void 0 ? void 0 : user.permanentAddress) || "",
+            country: (user === null || user === void 0 ? void 0 : user.country) || "",
+            createdAt: user === null || user === void 0 ? void 0 : user.createdAt,
+            updatedAt: user === null || user === void 0 ? void 0 : user.updatedAt,
+        };
+    }
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield user_model_1.default.find({}).select(propertySelections_1.UserSelect);
-            return result;
+            const dtoUsers = result.map((user) => this.sanitizer(user));
+            yield cache_service_1.CacheServiceInstance.user.setAllUsersToCache(dtoUsers);
+            return dtoUsers;
         });
     }
     myChatFriends(userId) {
@@ -176,7 +196,9 @@ class Service {
             }
             const hashedPassword = yield bcrypt_1.BcryptInstance.hash(user.password);
             user.password = hashedPassword;
-            yield user_model_1.default.create(user);
+            const newUser = yield user_model_1.default.create(user);
+            const dtoUser = this.sanitizer(newUser);
+            yield cache_service_1.CacheServiceInstance.user.addNewUserToCache(dtoUser);
         });
     }
     findUserById(id) {
@@ -185,7 +207,7 @@ class Service {
             if (!user) {
                 throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found");
             }
-            return user;
+            return this.sanitizer(user);
         });
     }
     findUserByEmail(email) {
@@ -200,7 +222,9 @@ class Service {
     updateUser(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield user_model_1.default.findByIdAndUpdate(id, { $set: Object.assign({}, data) }, { new: true }).select(propertySelections_1.UserSelect);
-            return result;
+            const dtoUser = this.sanitizer(result);
+            yield cache_service_1.CacheServiceInstance.user.updateUserInCache(dtoUser);
+            return dtoUser;
         });
     }
     forgetPassword(email) {

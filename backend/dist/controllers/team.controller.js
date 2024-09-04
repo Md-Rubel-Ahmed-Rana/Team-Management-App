@@ -30,58 +30,8 @@ class Controller extends rootController_1.default {
                 data: result,
             });
         }));
-        this.getActiveMembers = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const id = req.params.teamId;
-            const result = yield team_service_1.TeamService.getActiveMembers(id);
-            this.apiResponse(res, {
-                statusCode: http_status_1.default.OK,
-                success: true,
-                message: "Team members found",
-                data: result,
-            });
-        }));
-        this.getMyTeamsForCard = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const id = req.params.adminId;
-            const result = yield team_service_1.TeamService.getMyTeamsForCard(id);
-            this.apiResponse(res, {
-                statusCode: http_status_1.default.OK,
-                success: true,
-                message: "My Team cards found",
-                data: result,
-            });
-        }));
-        this.getJoinedTeamsForCard = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const id = req.params.memberId;
-            const result = yield team_service_1.TeamService.getJoinedTeamsForCard(id);
-            this.apiResponse(res, {
-                statusCode: http_status_1.default.OK,
-                success: true,
-                message: "Joined Team cards found",
-                data: result,
-            });
-        }));
-        this.getSingleTeamWithDetails = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const id = req.params.teamId;
-            const result = yield team_service_1.TeamService.getSingleTeamWithDetails(id);
-            this.apiResponse(res, {
-                statusCode: http_status_1.default.OK,
-                success: true,
-                message: "Team details found",
-                data: result,
-            });
-        }));
-        this.getMyTeamListForDropdown = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const id = req.params.adminId;
-            const result = yield team_service_1.TeamService.getMyTeamListForDropdown(id);
-            this.apiResponse(res, {
-                statusCode: http_status_1.default.OK,
-                success: true,
-                message: "Teams found",
-                data: result,
-            });
-        }));
-        this.getTeam = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const result = yield team_service_1.TeamService.getTeam(req.params.id);
+        this.getSingleTeam = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield team_service_1.TeamService.getSingleTeam(req.params.id);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,
@@ -89,10 +39,41 @@ class Controller extends rootController_1.default {
                 data: result,
             });
         }));
+        this.getAllTeams = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield team_service_1.TeamService.getAllTeams();
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Teams found",
+                data: result,
+            });
+        }));
+        this.getMyTeams = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const adminId = (_a = req.params) === null || _a === void 0 ? void 0 : _a.adminId;
+            const result = yield team_service_1.TeamService.getMyTeams(adminId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Teams found",
+                data: result,
+            });
+        }));
+        this.getJoinedTeams = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const memberId = (_a = req.params) === null || _a === void 0 ? void 0 : _a.memberId;
+            const result = yield team_service_1.TeamService.getJoinedTeams(memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Teams found",
+                data: result,
+            });
+        }));
         this.updateTeam = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const id = req.params.id;
             if (req.link) {
-                const team = yield team_service_1.TeamService.getTeamById(id);
+                const team = yield team_service_1.TeamService.getSingleTeam(id);
                 const teamLogo = team === null || team === void 0 ? void 0 : team.image;
                 if (teamLogo) {
                     const public_id = (0, getCloudinaryFilePublicIdFromUrl_1.default)(teamLogo);
@@ -125,6 +106,46 @@ class Controller extends rootController_1.default {
                 success: true,
                 message: "Team deleted successfully",
                 data: result,
+            });
+        }));
+        this.sendLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { teamId, memberId } = req.params;
+            yield team_service_1.TeamService.sendLeaveRequest(teamId, memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Your leave request has been sent to admin!",
+                data: null,
+            });
+        }));
+        this.cancelLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { teamId, memberId } = req.params;
+            yield team_service_1.TeamService.cancelLeaveRequest(teamId, memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Your leave request has been cancelled!",
+                data: null,
+            });
+        }));
+        this.rejectLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { teamId, memberId } = req.params;
+            yield team_service_1.TeamService.rejectLeaveRequest(teamId, memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Leave request has been rejected!",
+                data: null,
+            });
+        }));
+        this.acceptLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { teamId, memberId } = req.params;
+            yield team_service_1.TeamService.acceptLeaveRequest(teamId, memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Leave request has been accepted! This member has been removed.",
+                data: null,
             });
         }));
         this.removeMember = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {

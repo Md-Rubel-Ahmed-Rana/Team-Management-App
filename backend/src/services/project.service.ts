@@ -40,7 +40,7 @@ class Service {
 
     const promises = result.map(async (project) => {
       const [team, user] = await Promise.all([
-        TeamService.getTeamById(project.team),
+        TeamService.getSingleTeam(project.team),
         UserService.findUserById(project.user),
       ]);
 
@@ -50,7 +50,7 @@ class Service {
         category: project?.category,
         createdAt: project?.createdAt,
         user: { name: user?.name, id: user?.id },
-        team: { name: team?.name, id: team?._id },
+        team: { name: team?.name, id: team?.id },
         members: project?.members?.length,
         tasks: project?.tasks,
       };
@@ -62,12 +62,12 @@ class Service {
 
   async assignedProjects(memberId: string): Promise<any> {
     const result = await Project.find({ members: memberId });
-    const promises = result.map(async (project) => {
+    const promises = result.map(async (project: any) => {
       const projectId = project?._id as any;
       const teamId = project?.team as any;
       const userId = project?.user as any;
       const [team, user, tasks] = await Promise.all([
-        TeamService.getTeamById(teamId),
+        TeamService.getSingleTeam(teamId),
         UserService.findUserById(userId),
         TaskService.getTasksByProjectId(projectId),
       ]);
@@ -78,7 +78,7 @@ class Service {
         category: project?.category,
         createdAt: project?.createdAt,
         user: { name: user?.name, id: user?.id },
-        team: { name: team?.name, id: team?._id },
+        team: { name: team?.name, id: team?.id },
         members: Array.isArray(project?.members) ? project.members.length : 0,
         tasks: tasks?.length,
       };

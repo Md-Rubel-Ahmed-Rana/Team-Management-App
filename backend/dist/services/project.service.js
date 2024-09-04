@@ -54,7 +54,7 @@ class Service {
             const promises = result.map((project) => __awaiter(this, void 0, void 0, function* () {
                 var _a;
                 const [team, user] = yield Promise.all([
-                    team_service_1.TeamService.getTeamById(project.team),
+                    team_service_1.TeamService.getSingleTeam(project.team),
                     user_service_1.UserService.findUserById(project.user),
                 ]);
                 return {
@@ -63,7 +63,7 @@ class Service {
                     category: project === null || project === void 0 ? void 0 : project.category,
                     createdAt: project === null || project === void 0 ? void 0 : project.createdAt,
                     user: { name: user === null || user === void 0 ? void 0 : user.name, id: user === null || user === void 0 ? void 0 : user.id },
-                    team: { name: team === null || team === void 0 ? void 0 : team.name, id: team === null || team === void 0 ? void 0 : team._id },
+                    team: { name: team === null || team === void 0 ? void 0 : team.name, id: team === null || team === void 0 ? void 0 : team.id },
                     members: (_a = project === null || project === void 0 ? void 0 : project.members) === null || _a === void 0 ? void 0 : _a.length,
                     tasks: project === null || project === void 0 ? void 0 : project.tasks,
                 };
@@ -80,7 +80,7 @@ class Service {
                 const teamId = project === null || project === void 0 ? void 0 : project.team;
                 const userId = project === null || project === void 0 ? void 0 : project.user;
                 const [team, user, tasks] = yield Promise.all([
-                    team_service_1.TeamService.getTeamById(teamId),
+                    team_service_1.TeamService.getSingleTeam(teamId),
                     user_service_1.UserService.findUserById(userId),
                     task_service_1.TaskService.getTasksByProjectId(projectId),
                 ]);
@@ -90,7 +90,7 @@ class Service {
                     category: project === null || project === void 0 ? void 0 : project.category,
                     createdAt: project === null || project === void 0 ? void 0 : project.createdAt,
                     user: { name: user === null || user === void 0 ? void 0 : user.name, id: user === null || user === void 0 ? void 0 : user.id },
-                    team: { name: team === null || team === void 0 ? void 0 : team.name, id: team === null || team === void 0 ? void 0 : team._id },
+                    team: { name: team === null || team === void 0 ? void 0 : team.name, id: team === null || team === void 0 ? void 0 : team.id },
                     members: Array.isArray(project === null || project === void 0 ? void 0 : project.members) ? project.members.length : 0,
                     tasks: tasks === null || tasks === void 0 ? void 0 : tasks.length,
                 };

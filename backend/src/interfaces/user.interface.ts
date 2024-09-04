@@ -15,3 +15,18 @@ export type IUser = {
   createdAt?: Date; // after created
   updatedAt?: Date; // after created
 };
+
+export type IGetUser = {
+  id: string;
+  name: string;
+  email: string;
+  profile_picture: string;
+  department: string;
+  designation: string;
+  phoneNumber: string;
+  permanentAddress: string;
+  presentAddress: string;
+  country: string;
+  createdAt: Date;
+  updatedAt: Date;
+};

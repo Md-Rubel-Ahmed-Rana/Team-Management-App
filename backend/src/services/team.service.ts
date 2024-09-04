@@ -1,7 +1,6 @@
-import { ITeam } from "@/interfaces/team.interface";
+import { IGetTeam, ITeam } from "@/interfaces/team.interface";
 import { Project } from "@/models/project.model";
 import Team from "@/models/team.model";
-import { TeamLeaveRequest } from "@/models/teamLeaveRequest.model";
 import ApiError from "@/shared/apiError";
 import httpStatus from "http-status";
 import { NotificationService } from "./notification.service";
@@ -14,190 +13,90 @@ import { INotification } from "@/interfaces/notification.interface";
 import { NotificationEnums } from "enums";
 import { config } from "@/configurations/envConfig";
 import { UserService } from "./user.service";
+import { IGetUser } from "@/interfaces/user.interface";
+import { IGetProject } from "@/interfaces/project.interface";
 
 class Service {
-  async createTeam(data: ITeam): Promise<any> {
-    const isExist = await Team.findOne({ name: data?.name });
-    if (isExist) {
-      throw new ApiError(httpStatus.CONFLICT, "This team already exist");
-    } else {
-      const result = await Team.create(data);
-      const populatedResult = await result.populate([
-        {
-          path: "activeMembers",
-          model: "User",
-          select: UserSelect,
-        },
-        {
-          path: "pendingMembers",
-          model: "User",
-          select: UserSelect,
-        },
-        {
-          path: "admin",
-          model: "User",
-          select: UserSelect,
-        },
-      ]);
-      return populatedResult;
-    }
+  // Temporarily using as alternative of DTO
+  private userSanitizer(user: any): IGetUser {
+    return {
+      id: String(user?._id),
+      name: user?.name,
+      email: user?.email,
+      department: user?.department || "",
+      designation: user?.designation || "",
+      phoneNumber: user?.phoneNumber || "",
+      profile_picture: user?.profile_picture || "",
+      presentAddress: user?.presentAddress || "",
+      permanentAddress: user?.permanentAddress || "",
+      country: user?.country || "",
+      createdAt: user?.createdAt,
+      updatedAt: user?.updatedAt,
+    };
   }
 
-  async getMyTeamListForDropdown(adminId: string): Promise<any> {
-    const result = await Team.find({ admin: adminId }).select({ name: 1 });
-    return result;
+  private projectSanitizer(project: any): IGetProject {
+    const members = project?.members?.map((user: IGetUser) =>
+      this.userSanitizer(user)
+    );
+    const leaveRequests = project?.leaveRequests?.map((user: IGetUser) =>
+      this.userSanitizer(user)
+    );
+    return {
+      id: String(project?._id),
+      team: project?.team,
+      user: project?.user,
+      name: project?.name,
+      category: project?.category,
+      members: members,
+      leaveRequests: leaveRequests,
+      tasks: project?.tasks || 0,
+      createdAt: project?.createdAt,
+      updatedAt: project?.updatedAt,
+    };
   }
 
-  async getActiveMembers(teamId: string): Promise<any> {
-    const result = await Team.findById(teamId)
-      .select({ activeMembers: 1, name: 1 })
-      .populate([
-        {
-          path: "activeMembers",
-          model: "User",
-          select: UserSelect,
-        },
-      ]);
-
-    return result;
-  }
-
-  async getMyTeamsForCard(adminId: string): Promise<any> {
-    const objectIdAdmin = new Types.ObjectId(adminId);
-    const result = await Team.aggregate([
-      {
-        $match: { admin: objectIdAdmin },
-      },
-      {
-        $addFields: {
-          activeMembers: { $size: "$activeMembers" },
-          pendingMembers: { $size: "$pendingMembers" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          id: "$_id",
-          name: 1,
-          category: 1,
-          description: 1,
-          image: 1,
-          admin: 1,
-          activeMembers: 1,
-          pendingMembers: 1,
-          projects: 1,
-        },
-      },
-    ]);
-
-    const promises = result.map(async (team) => {
-      const [projects] = await Promise.all([
-        ProjectService.getProjectByTeamId(team?.id),
-      ]);
-
-      return {
-        id: team?.id,
-        name: team?.name,
-        category: team?.category,
-        description: team?.description,
-        image: team?.image,
-        admin: team?.admin,
-        activeMembers: team?.activeMembers,
-        pendingMembers: team?.pendingMembers,
-        projects: projects?.length,
-      };
-    });
-
-    const mappedResult = await Promise.all(promises);
-    return mappedResult;
-  }
-
-  async getJoinedTeamsForCard(memberId: string): Promise<any> {
-    const objectIdMember = new Types.ObjectId(memberId);
-    const result = await Team.aggregate([
-      {
-        $match: { activeMembers: objectIdMember },
-      },
-      {
-        $addFields: {
-          activeMembers: { $size: "$activeMembers" },
-          pendingMembers: { $size: "$pendingMembers" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          id: "$_id",
-          name: 1,
-          category: 1,
-          description: 1,
-          image: 1,
-          admin: 1,
-          activeMembers: 1,
-          pendingMembers: 1,
-          projects: 1,
-        },
-      },
-    ]);
-
-    const promises = result.map(async (team) => {
-      const [projects] = await Promise.all([
-        ProjectService.getProjectByTeamId(team?.id),
-      ]);
-
-      return {
-        id: team?.id,
-        name: team?.name,
-        category: team?.category,
-        description: team?.description,
-        image: team?.image,
-        admin: team?.admin,
-        activeMembers: team?.activeMembers,
-        pendingMembers: team?.pendingMembers,
-        projects: projects?.length,
-      };
-    });
-
-    const mappedResult = await Promise.all(promises);
-    return mappedResult;
-  }
-
-  async getSingleTeamWithDetails(teamId: string) {
-    const team = await Team.findById(teamId).populate([
-      {
-        path: "activeMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "pendingMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "admin",
-        model: "User",
-        select: UserSelect,
-      },
-    ]);
-
-    const projects = await ProjectService.getProjectByTeamId(team?.id);
-
-    const teamDetails = {
-      id: team?.id,
+  private teamSanitizer(team: any): IGetTeam {
+    const admin = this.userSanitizer(team?.admin);
+    const projects = team.projects?.map((project: IGetProject) =>
+      this.projectSanitizer(project)
+    );
+    const leaveRequests = team?.leaveRequests?.map((user: IGetUser) =>
+      this.userSanitizer(user)
+    );
+    const activeMembers = team?.activeMembers?.map((user: IGetUser) =>
+      this.userSanitizer(user)
+    );
+    const pendingMembers = team?.pendingMembers?.map((user: IGetUser) =>
+      this.userSanitizer(user)
+    );
+    return {
+      id: String(team?._id),
       name: team?.name,
       category: team?.category,
       description: team?.description,
-      image: team?.image,
-      admin: team?.admin,
-      activeMembers: team?.activeMembers,
-      pendingMembers: team?.pendingMembers,
+      image: team?.image || "",
+      admin: admin,
       projects: projects,
+      leaveRequests: leaveRequests,
+      activeMembers: activeMembers,
+      pendingMembers: pendingMembers,
+      createdAt: team?.createdAt,
+      updatedAt: team?.updatedAt,
     };
-    return teamDetails;
   }
 
-  async getTeamById(id: string): Promise<any> {
+  async createTeam(data: ITeam): Promise<any> {
+    const isExist = await Team.findOne({ name: data?.name });
+    if (isExist) {
+      throw new ApiError(
+        httpStatus.CONFLICT,
+        "This team name is already exist"
+      );
+    }
+  }
+
+  async getSingleTeam(id: string): Promise<IGetTeam> {
     const result = await Team.findById(id).populate([
       {
         path: "activeMembers",
@@ -214,12 +113,22 @@ class Service {
         model: "User",
         select: UserSelect,
       },
+      {
+        path: "leaveRequests",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "projects",
+        model: "Project",
+      },
     ]);
-    return result;
+    const dtoData = this.teamSanitizer(result);
+    return dtoData;
   }
 
-  async getTeam(id: string): Promise<any> {
-    const result = await Team.findById(id).populate([
+  async getAllTeams(): Promise<any> {
+    const teams = await Team.find({}).populate([
       {
         path: "activeMembers",
         model: "User",
@@ -235,8 +144,80 @@ class Service {
         model: "User",
         select: UserSelect,
       },
+      {
+        path: "leaveRequests",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "projects",
+        model: "Project",
+      },
     ]);
-    return result;
+    const dtoData = teams?.map((team) => this.teamSanitizer(team));
+    return dtoData;
+  }
+
+  async getMyTeams(adminId: string): Promise<any> {
+    const teams = await Team.find({ admin: adminId }).populate([
+      {
+        path: "activeMembers",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "pendingMembers",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "admin",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "leaveRequests",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "projects",
+        model: "Project",
+      },
+    ]);
+    const dtoData = teams?.map((team) => this.teamSanitizer(team));
+    return dtoData;
+  }
+
+  async getJoinedTeams(memberId: string): Promise<any> {
+    const teams = await Team.find({ activeMembers: memberId }).populate([
+      {
+        path: "activeMembers",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "pendingMembers",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "admin",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "leaveRequests",
+        model: "User",
+        select: UserSelect,
+      },
+      {
+        path: "projects",
+        model: "Project",
+      },
+    ]);
+    const dtoData = teams?.map((team) => this.teamSanitizer(team));
+    return dtoData;
   }
 
   async updateTeam(
@@ -304,7 +285,7 @@ class Service {
     session.startTransaction();
 
     try {
-      const team: any = await this.getTeamById(id);
+      const team: any = await Team.findById(id);
       if (!team) {
         throw new ApiError(httpStatus.NOT_FOUND, "Team Not Found!");
       }
@@ -349,6 +330,93 @@ class Service {
     }
   }
 
+  async sendLeaveRequest(teamId: string, memberId: string) {
+    const team: any = await Team.updateOne(
+      { _id: teamId },
+      { $push: { leaveRequests: memberId } }
+    );
+
+    const admin = await UserService.findUserById(team?.admin);
+    const notifyObject: INotification = {
+      title: "Team Leave Request",
+      type: NotificationEnums.TEAM_LEFT,
+      sender: memberId,
+      receiver: admin?.id,
+      content: `You have received a new request from a team member to leave the team. Please review the request and take appropriate action.`,
+      link: `${config.app.frontendDomain}/dashboard/leave-requests?userId=${admin?.id}&name=${admin?.name}&email=${admin?.email}`,
+    };
+
+    // Send notification to the admin
+    await NotificationService.createNotification(notifyObject);
+  }
+
+  async cancelLeaveRequest(teamId: string, memberId: string) {
+    console.log({ teamId, memberId });
+    const team: any = await Team.updateOne(
+      { _id: teamId },
+      { $pull: { leaveRequests: memberId } }
+    );
+    const admin = await UserService.findUserById(team?.admin);
+    const notifyObject: INotification = {
+      title: "Team Leave Request",
+      type: NotificationEnums.TEAM_LEFT,
+      sender: memberId,
+      receiver: admin?.id,
+      content: `Team Leave Request Cancelled`,
+      link: `${config.app.frontendDomain}/dashboard/leave-requests?userId=${admin?.id}&name=${admin?.name}&email=${admin?.email}`,
+    };
+
+    // Send notification to the admin
+    await NotificationService.createNotification(notifyObject);
+  }
+
+  async rejectLeaveRequest(teamId: string, memberId: string) {
+    const team: any = await Team.updateOne(
+      { _id: teamId },
+      { $pull: { leaveRequests: memberId } }
+    );
+    const member = await UserService.findUserById(memberId);
+    const notifyObject: INotification = {
+      title: "Leave Request Rejected",
+      type: NotificationEnums.TEAM_LEFT,
+      sender: team.admin,
+      receiver: memberId,
+      content: `Your request to leave the team "${team?.name}" has been declined by the admin.`,
+      link: `${config.app.frontendDomain}/teams/joined-teams?userId=${member?.id}&name=${member?.name}&email=${member?.email}`,
+    };
+
+    // Send notification to the member
+    await NotificationService.createNotification(notifyObject);
+  }
+
+  async acceptLeaveRequest(teamId: string, memberId: string) {
+    console.log({ teamId, memberId });
+    const team: any = await Team.updateOne(
+      { _id: teamId },
+      { $pull: { leaveRequests: memberId, activeMembers: memberId } },
+      { new: true }
+    );
+    // Remove this member from projects by member ID
+    await Project.updateMany(
+      { team: teamId },
+      { $pull: { members: { memberId: memberId } } }
+    );
+
+    if (team && team?.admin) {
+      const member = await UserService.findUserById(memberId);
+      const notifyObject: INotification = {
+        title:
+          "Your Leave Request Accepted And You Have Been Removed from a Team",
+        type: NotificationEnums.TEAM_MEMBER_REMOVED,
+        content: `Thank you for the time and effort you dedicated to the team "${team?.name}" in the "${team?.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
+        receiver: memberId,
+        sender: team?.admin,
+        link: `${config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
+      };
+      await NotificationService.createNotification(notifyObject);
+    }
+  }
+
   async removeMember(teamId: string, memberId: string): Promise<void> {
     // Remove member from team
     await Team.updateOne(
@@ -362,12 +430,6 @@ class Service {
     await Project.updateMany(
       { team: teamId },
       { $pull: { members: { memberId: memberId } } }
-    );
-
-    // Update leave request for team
-    await TeamLeaveRequest.findOneAndUpdate(
-      { team: teamId, member: memberId },
-      { $set: { status: "accepted" } }
     );
 
     if (team && team?.admin) {

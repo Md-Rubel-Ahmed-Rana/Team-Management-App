@@ -22,16 +22,32 @@ const teamSchema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "User",
     },
+    projects: [
+        {
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "Project",
+            default: [],
+        },
+    ],
+    leaveRequests: [
+        {
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "User",
+            default: [],
+        },
+    ],
     activeMembers: [
         {
             type: mongoose_1.Schema.Types.ObjectId,
             ref: "User",
+            default: [],
         },
     ],
     pendingMembers: [
         {
             type: mongoose_1.Schema.Types.ObjectId,
             ref: "User",
+            default: [],
         },
     ],
 }, {

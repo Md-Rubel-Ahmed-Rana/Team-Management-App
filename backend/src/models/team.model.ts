@@ -23,16 +23,32 @@ const teamSchema = new Schema<ITeam>(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    projects: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Project",
+        default: [],
+      },
+    ],
+    leaveRequests: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
     activeMembers: [
       {
         type: Schema.Types.ObjectId,
         ref: "User",
+        default: [],
       },
     ],
     pendingMembers: [
       {
         type: Schema.Types.ObjectId,
         ref: "User",
+        default: [],
       },
     ],
   },

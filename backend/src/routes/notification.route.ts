@@ -1,10 +1,7 @@
 import { NotificationController } from "@/controllers/notification.controller";
-import { RedisCacheService } from "@/middlewares/redisCache";
 import { Router } from "express";
 
 const router = Router();
-
-router.get("/single/:userId", RedisCacheService.findNotification());
 
 router.get(
   "/unread/count/:userId",
@@ -28,7 +25,5 @@ router.delete(
 );
 
 router.post("/delete/many", NotificationController.deleteManyNotifications);
-
-router.patch("/update/:userId", RedisCacheService.updateNotification());
 
 export const NotificationRoutes = router;
