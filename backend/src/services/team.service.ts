@@ -18,57 +18,19 @@ import { IGetProject } from "@/interfaces/project.interface";
 
 class Service {
   // Temporarily using as alternative of DTO
-  private userSanitizer(user: any): IGetUser {
-    return {
-      id: String(user?._id),
-      name: user?.name,
-      email: user?.email,
-      department: user?.department || "",
-      designation: user?.designation || "",
-      phoneNumber: user?.phoneNumber || "",
-      profile_picture: user?.profile_picture || "",
-      presentAddress: user?.presentAddress || "",
-      permanentAddress: user?.permanentAddress || "",
-      country: user?.country || "",
-      createdAt: user?.createdAt,
-      updatedAt: user?.updatedAt,
-    };
-  }
-
-  private projectSanitizer(project: any): IGetProject {
-    const members = project?.members?.map((user: IGetUser) =>
-      this.userSanitizer(user)
-    );
-    const leaveRequests = project?.leaveRequests?.map((user: IGetUser) =>
-      this.userSanitizer(user)
-    );
-    return {
-      id: String(project?._id),
-      team: project?.team,
-      user: project?.user,
-      name: project?.name,
-      category: project?.category,
-      members: members,
-      leaveRequests: leaveRequests,
-      tasks: project?.tasks || 0,
-      createdAt: project?.createdAt,
-      updatedAt: project?.updatedAt,
-    };
-  }
-
   private teamSanitizer(team: any): IGetTeam {
-    const admin = this.userSanitizer(team?.admin);
+    const admin = UserService.userSanitizer(team?.admin);
     const projects = team.projects?.map((project: IGetProject) =>
-      this.projectSanitizer(project)
+      ProjectService.projectSanitizer(project)
     );
     const leaveRequests = team?.leaveRequests?.map((user: IGetUser) =>
-      this.userSanitizer(user)
+      UserService.userSanitizer(user)
     );
     const activeMembers = team?.activeMembers?.map((user: IGetUser) =>
-      this.userSanitizer(user)
+      UserService.userSanitizer(user)
     );
     const pendingMembers = team?.pendingMembers?.map((user: IGetUser) =>
-      this.userSanitizer(user)
+      UserService.userSanitizer(user)
     );
     return {
       id: String(team?._id),

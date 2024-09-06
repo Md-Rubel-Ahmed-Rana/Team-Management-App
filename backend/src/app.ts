@@ -24,7 +24,7 @@ appMiddlewares(app);
 // initialize passport session
 initiatePassportSession(app);
 
-// app health check
+// app health check default/root route
 healthCheck(app);
 
 // api endpoints

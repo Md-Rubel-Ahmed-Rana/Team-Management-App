@@ -38,6 +38,15 @@ class Controller extends rootController_1.default {
                 data: projects,
             });
         }));
+        this.getAllProjects = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const projects = yield project_service_1.ProjectService.getAllProjects();
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Projects found",
+                data: projects,
+            });
+        }));
         this.assignedProjects = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const memberId = req.params.memberId;
             const projects = yield project_service_1.ProjectService.assignedProjects(memberId);
@@ -68,9 +77,9 @@ class Controller extends rootController_1.default {
                 data: result,
             });
         }));
-        this.getSingleProject = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getSingleProjectById = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const id = req.params.id;
-            const result = yield project_service_1.ProjectService.getSingleProject(id);
+            const result = yield project_service_1.ProjectService.getSingleProjectById(id);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,
@@ -79,7 +88,7 @@ class Controller extends rootController_1.default {
             });
         }));
         this.addMember = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { projectId, role, memberId } = req.body;
+            const { projectId, memberId } = req.params;
             const result = yield project_service_1.ProjectService.addMember(projectId, memberId);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
@@ -89,13 +98,53 @@ class Controller extends rootController_1.default {
             });
         }));
         this.removeMember = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { projectId, memberId } = req.body;
+            const { projectId, memberId } = req.params;
             const result = yield project_service_1.ProjectService.removeMember(projectId, memberId);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,
                 success: true,
                 message: "Member removed successfully",
                 data: result,
+            });
+        }));
+        this.sendLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { projectId, memberId } = req.params;
+            yield project_service_1.ProjectService.sendLeaveRequest(projectId, memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Your leave request has been sent to admin!",
+                data: null,
+            });
+        }));
+        this.cancelLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { projectId, memberId } = req.params;
+            yield project_service_1.ProjectService.cancelLeaveRequest(projectId, memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Your leave request cancelled",
+                data: null,
+            });
+        }));
+        this.acceptLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { projectId, memberId } = req.params;
+            yield project_service_1.ProjectService.acceptLeaveRequest(projectId, memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Leave request accepted",
+                data: null,
+            });
+        }));
+        this.rejectLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { projectId, memberId } = req.params;
+            yield project_service_1.ProjectService.rejectLeaveRequest(projectId, memberId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Leave request rejected",
+                data: null,
             });
         }));
     }
