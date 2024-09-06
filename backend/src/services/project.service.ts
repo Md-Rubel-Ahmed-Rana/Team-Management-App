@@ -1,91 +1,62 @@
 import { INotification } from "@/interfaces/notification.interface";
-import { IProject } from "@/interfaces/project.interface";
+import { IGetProject, IProject } from "@/interfaces/project.interface";
 import { Project } from "@/models/project.model";
 import ApiError from "@/shared/apiError";
 import httpStatus from "http-status";
 import { NotificationService } from "./notification.service";
 import { ProjectLeaveRequest } from "@/models/projectLeaveRequest.model";
-import { TeamService } from "./team.service";
 import { UserService } from "./user.service";
 import { TaskService } from "./task.service";
 import mongoose, { Types } from "mongoose";
 import { TeamSelect, UserSelect } from "propertySelections";
 import { NotificationEnums } from "enums";
 import { config } from "@/configurations/envConfig";
+import { IGetUser } from "@/interfaces/user.interface";
 
 class Service {
+  public projectSanitizer(project: any): IGetProject {
+    const members = project?.members?.map((user: IGetUser) =>
+      UserService.userSanitizer(user)
+    );
+    const leaveRequests = project?.leaveRequests?.map((user: IGetUser) =>
+      UserService.userSanitizer(user)
+    );
+    return {
+      id: String(project?._id),
+      team: project?.team,
+      user: project?.user,
+      name: project?.name,
+      category: project?.category,
+      members: members || [],
+      leaveRequests: leaveRequests || [],
+      tasks: project?.tasks || 0,
+      createdAt: project?.createdAt,
+      updatedAt: project?.updatedAt,
+    };
+  }
+
   async createProject(data: IProject): Promise<void> {
-    await Project.create(data);
+    const newProject = await Project.create(data);
+    const dtoProject = this.projectSanitizer(newProject);
+    // keep/store the project on cache
   }
 
-  async myProjects(userId: string): Promise<any> {
-    const result = await Project.aggregate([
-      {
-        $match: { user: userId },
-      },
-      {
-        $lookup: {
-          from: "tasks",
-          localField: "_id",
-          foreignField: "project",
-          as: "tasks",
-        },
-      },
-      {
-        $addFields: {
-          tasks: { $size: "$tasks" },
-        },
-      },
-    ]);
-
-    const promises = result.map(async (project) => {
-      const [team, user] = await Promise.all([
-        TeamService.getSingleTeam(project.team),
-        UserService.findUserById(project.user),
-      ]);
-
-      return {
-        id: project?._id,
-        name: project?.name,
-        category: project?.category,
-        createdAt: project?.createdAt,
-        user: { name: user?.name, id: user?.id },
-        team: { name: team?.name, id: team?.id },
-        members: project?.members?.length,
-        tasks: project?.tasks,
-      };
-    });
-
-    const mappedResult = await Promise.all(promises);
-    return mappedResult;
+  async getAllProjects(): Promise<IGetProject[]> {
+    const projects = await Project.find({});
+    const dtoData = projects?.map((project) => this.projectSanitizer(project));
+    return dtoData;
   }
 
-  async assignedProjects(memberId: string): Promise<any> {
-    const result = await Project.find({ members: memberId });
-    const promises = result.map(async (project: any) => {
-      const projectId = project?._id as any;
-      const teamId = project?.team as any;
-      const userId = project?.user as any;
-      const [team, user, tasks] = await Promise.all([
-        TeamService.getSingleTeam(teamId),
-        UserService.findUserById(userId),
-        TaskService.getTasksByProjectId(projectId),
-      ]);
+  async myProjects(userId: string): Promise<IGetProject[]> {
+    const projects = await Project.find({ user: userId });
+    const dtoData = projects?.map((project) => this.projectSanitizer(project));
+    return dtoData;
+  }
 
-      return {
-        id: project?._id,
-        name: project?.name,
-        category: project?.category,
-        createdAt: project?.createdAt,
-        user: { name: user?.name, id: user?.id },
-        team: { name: team?.name, id: team?.id },
-        members: Array.isArray(project?.members) ? project.members.length : 0,
-        tasks: tasks?.length,
-      };
-    });
-
-    const mappedResult = await Promise.all(promises);
-    return mappedResult;
+  async assignedProjects(memberId: string): Promise<IGetProject[]> {
+    const projects = await Project.find({ members: memberId });
+    const dtoData = projects?.map((project) => this.projectSanitizer(project));
+    return dtoData;
   }
 
   async updateProject(
@@ -121,7 +92,9 @@ class Service {
         ])
         .session(session);
 
-      if (updatedProject?.members && updatedProject?.members?.length > 0) {
+      const dtoData = this.projectSanitizer(updatedProject);
+
+      if (dtoData?.members && dtoData?.members?.length > 0) {
         const changeDetails = [];
         if (name) changeDetails.push(`"${project?.name}" to "${name}"`);
         if (category) changeDetails.push(`category to "${category}"`);
@@ -129,14 +102,14 @@ class Service {
 
         // Send notifications to all members about the updates
         await Promise.all(
-          updatedProject?.members.map(async (member: any) => {
+          dtoData?.members.map(async (member: IGetUser) => {
             const notifyObject: INotification = {
               title: "Project Updated",
               type: NotificationEnums.PROJECT_UPDATED,
-              receiver: member?._id, // member
-              sender: updatedProject?.user, // admin
+              receiver: member?.id,
+              sender: updatedProject?.user,
               content: `Dear ${member?.name}, the project "${project?.name}" has been updated. The ${changes} have been changed. Thank you for staying up to date with these changes!`,
-              link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?._id}&name=${member?.name}&email=${member?.email}`,
+              link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?.id}&name=${member?.name}&email=${member?.email}`,
             };
             await NotificationService.createNotification(notifyObject, session);
           })
@@ -144,6 +117,8 @@ class Service {
       }
       // Commit the transaction
       await session.commitTransaction();
+
+      // keep the updated project on cache
       return project?.members;
     } catch (error) {
       // Abort the transaction in case of an error
@@ -155,22 +130,22 @@ class Service {
     }
   }
 
-  async deleteProject(id: string): Promise<Types.ObjectId[]> {
+  async deleteProject(id: string): Promise<string[]> {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-      const project = await this.getSingleProject(id);
+      const project: IGetProject = await this.getSingleProjectById(id);
       if (project?.members && project?.members.length > 0) {
         const projectDetails = `project "${project?.name}" in the ${project?.category} category`;
         await Promise.all(
-          project?.members?.map(async (member: any) => {
+          project?.members?.map(async (member) => {
             const notifyObject: INotification = {
               title: "Project Deleted",
               type: NotificationEnums.PROJECT_DELETED,
-              receiver: member?._id,
+              receiver: member?.id,
               sender: project?.user,
               content: `Dear ${member?.name}, the ${projectDetails} has been successfully completed and removed from the system. We truly appreciate your hard work and dedication throughout this project. We look forward to collaborating with you on future projects!`,
-              link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?._id}&name=${member?.name}&email=${member?.email}`,
+              link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?.id}&name=${member?.name}&email=${member?.email}`,
             };
             await NotificationService.createNotification(notifyObject, session);
           })
@@ -180,7 +155,9 @@ class Service {
       await Project.findByIdAndDelete(id).session(session);
       await TaskService.deleteTasksByProjectId(id, session);
       await session.commitTransaction();
-      return project?.members.map((member: any) => member?.id);
+
+      // delete this project from cache
+      return project?.members.map((member) => member?.id);
     } catch (error) {
       await session.abortTransaction();
       throw new ApiError(httpStatus.BAD_REQUEST, "Project wasn't deleted");
@@ -196,22 +173,23 @@ class Service {
     const deletableProjects: any = await Project.find({ team: teamId }).session(
       session
     );
-
-    if (deletableProjects && deletableProjects?.length > 0) {
-      for (const project of deletableProjects) {
-        const projectId: any = project?._id;
+    const projects: IGetProject[] = deletableProjects?.map((project: any) =>
+      this.projectSanitizer(project)
+    );
+    if (projects && projects?.length > 0) {
+      for (const project of projects) {
         // Notify all members about the project deletion
         if (project?.members && project?.members?.length > 0) {
           const projectDetails = `project "${project?.name}" in the ${project?.category} category`;
           await Promise.all(
-            project?.members?.map(async (member: any) => {
+            project?.members?.map(async (member) => {
               const notifyObject: INotification = {
                 title: "Project Deleted",
                 type: NotificationEnums.PROJECT_DELETED,
-                receiver: member?._id,
+                receiver: member?.id,
                 sender: project?.user,
                 content: `Dear ${member?.name}, the ${projectDetails} has been successfully completed and removed from the system. We truly appreciate your hard work and dedication throughout this project. We look forward to collaborating with you on future projects!`,
-                link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?._id}&name=${member?.name}&email=${member?.email}`,
+                link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?.id}&name=${member?.name}&email=${member?.email}`,
               };
               await NotificationService.createNotification(
                 notifyObject,
@@ -221,42 +199,39 @@ class Service {
           );
         }
 
-        await TaskService.deleteTasksByProjectId(projectId, session);
+        await TaskService.deleteTasksByProjectId(project?.id, session);
       }
-
       await Project.deleteMany({
         team: teamId,
       }).session(session);
+
+      // update projects on cache
     }
   }
 
-  async getProjectByTeamId(teamId: string): Promise<any> {
-    const data = await Project.find({ team: teamId }).populate([
+  async getProjectByTeamId(teamId: string): Promise<IGetProject[]> {
+    const projects = await Project.find({ team: teamId }).populate([
       {
         path: "members",
         model: "User",
         select: UserSelect,
       },
     ]);
-
-    return data;
+    const dtoData = projects?.map((project) => this.projectSanitizer(project));
+    return dtoData;
   }
 
-  async getSingleProject(id: string): Promise<any> {
+  async getSingleProjectById(id: string): Promise<IGetProject> {
     const result = await Project.findById(id).populate([
       {
         path: "members",
         model: "User",
         select: UserSelect,
       },
-      {
-        path: "team",
-        model: "Team",
-        select: TeamSelect,
-      },
     ]);
 
-    return result;
+    const dtoData = this.projectSanitizer(result);
+    return dtoData;
   }
 
   async addMember(projectId: string, memberId: string): Promise<void> {
@@ -298,6 +273,8 @@ class Service {
       };
       await NotificationService.createNotification(notifyObject);
     }
+
+    // update member count on cache
   }
 
   async removeMember(projectId: string, memberId: string): Promise<void> {
@@ -333,6 +310,87 @@ class Service {
       };
       await NotificationService.createNotification(notifyObject);
     }
+
+    // update member count on cache
+  }
+
+  async sendLeaveRequest(projectId: string, memberId: string) {
+    const project: any = await Project.findByIdAndUpdate(projectId, {
+      $push: { leaveRequests: memberId },
+    });
+    const member = await UserService.findUserById(memberId);
+    const admin = await UserService.findUserById(project?.user);
+    const notifyObject: INotification = {
+      title: "Project Leave Request",
+      type: NotificationEnums.PROJECT_LEAVE_REQUEST,
+      sender: member.id,
+      receiver: admin.id,
+      content: `Dear ${admin?.name}, ${member?.name} has requested to leave the project "${project?.name}" in the ${project?.category} category. Please review their request and take the necessary actions.`,
+      link: `${config.app.frontendDomain}/dashboard/leave-requests?userId=${
+        admin?.id || admin?.id
+      }&name=${admin?.name}&email=${admin?.email}`,
+    };
+
+    // Send notification to the admin
+    await NotificationService.createNotification(notifyObject);
+  }
+  async cancelLeaveRequest(projectId: string, memberId: string) {
+    const project: any = await Project.findByIdAndUpdate(projectId, {
+      $pull: { leaveRequests: memberId },
+    });
+    const member = await UserService.findUserById(memberId);
+    const admin = await UserService.findUserById(project?.user);
+    const notifyObject: INotification = {
+      title: "Project Leave Request Cancelled",
+      type: NotificationEnums.PROJECT_LEAVE_REQUEST,
+      sender: member.id,
+      receiver: admin.id,
+      content: `Dear ${admin?.name}, ${member?.name} has cancelled  leave request "${project?.name}" in the ${project?.category} category. And decided not to leave from this project.`,
+      link: `${config.app.frontendDomain}/dashboard/leave-requests?userId=${admin?.id}&name=${admin?.name}&email=${admin?.email}`,
+    };
+
+    // Send notification to the admin
+    await NotificationService.createNotification(notifyObject);
+  }
+
+  async acceptLeaveRequest(projectId: string, memberId: string) {
+    const project: any = await Project.findByIdAndUpdate(projectId, {
+      $pull: { leaveRequests: memberId, members: memberId },
+    });
+    const member = await UserService.findUserById(memberId);
+    const admin = await UserService.findUserById(project?.user);
+    const notifyObject: INotification = {
+      title: "Project Leave Request Accepted",
+      type: NotificationEnums.PROJECT_LEAVE_REQUEST,
+      sender: admin?.id,
+      receiver: member?.id,
+      content: `Dear ${member?.name}, ${admin?.name} has accepted your leave request "${project?.name}" in the ${project?.category} category. And decided to leave and remove you from this project.`,
+      link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?.id}&name=${member?.name}&email=${member?.email}`,
+    };
+
+    // Send notification to the admin
+    await NotificationService.createNotification(notifyObject);
+
+    // update project member count on cache
+  }
+
+  async rejectLeaveRequest(projectId: string, memberId: string) {
+    const project: any = await Project.findByIdAndUpdate(projectId, {
+      $pull: { leaveRequests: memberId },
+    });
+    const member = await UserService.findUserById(memberId);
+    const admin = await UserService.findUserById(project?.user);
+    const notifyObject: INotification = {
+      title: "Project Leave Request Rejected",
+      type: NotificationEnums.PROJECT_LEAVE_REQUEST,
+      sender: admin?.id,
+      receiver: member?.id,
+      content: `Dear ${member?.name}, ${admin?.name} has rejected leave request "${project?.name}" in the ${project?.category} category. And decided not to leave from this project.`,
+      link: `${config.app.frontendDomain}/projects/joined-projects?userId=${member?.id}&name=${member?.name}&email=${member?.email}`,
+    };
+
+    // Send notification to the admin
+    await NotificationService.createNotification(notifyObject);
   }
 }
 

@@ -14,7 +14,7 @@ import { CacheServiceInstance } from "./cache.service";
 
 class Service {
   // Temporarily using as alternative of DTO
-  private sanitizer(user: any): IGetUser {
+  public userSanitizer(user: any): IGetUser {
     return {
       id: String(user?._id),
       name: user?.name,
@@ -33,7 +33,7 @@ class Service {
 
   async getAllUsers(): Promise<IGetUser[]> {
     const result = await User.find({}).select(UserSelect);
-    const dtoUsers = result.map((user: any) => this.sanitizer(user));
+    const dtoUsers = result.map((user: any) => this.userSanitizer(user));
     await CacheServiceInstance.user.setAllUsersToCache(dtoUsers);
     return dtoUsers;
   }
@@ -199,7 +199,7 @@ class Service {
     user.password = hashedPassword;
 
     const newUser = await User.create(user);
-    const dtoUser = this.sanitizer(newUser);
+    const dtoUser = this.userSanitizer(newUser);
     await CacheServiceInstance.user.addNewUserToCache(dtoUser);
   }
 
@@ -209,30 +209,28 @@ class Service {
       throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found");
     }
 
-    return this.sanitizer(user);
+    return this.userSanitizer(user);
   }
 
-  async findUserByEmail(email: string): Promise<any> {
+  async findUserByEmail(email: string): Promise<IGetUser> {
     const user = await User.findOne({ email: email }).select(UserSelect);
     if (!user) {
       throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found");
     }
-
-    return user;
+    return this.userSanitizer(user);
   }
 
-  async updateUser(id: string, data: Partial<IUser>): Promise<any> {
+  async updateUser(id: string, data: Partial<IUser>): Promise<void> {
     const result: any = await User.findByIdAndUpdate(
       id,
       { $set: { ...data } },
       { new: true }
     ).select(UserSelect);
-    const dtoUser = this.sanitizer(result);
+    const dtoUser = this.userSanitizer(result);
     await CacheServiceInstance.user.updateUserInCache(dtoUser);
-    return dtoUser;
   }
 
-  async forgetPassword(email: string) {
+  async forgetPassword(email: string): Promise<any> {
     const isUserExist = await User.findOne({ email: email }).select(UserSelect);
 
     if (!isUserExist) {
@@ -254,7 +252,7 @@ class Service {
     }
   }
 
-  async resetPassword(userId: string, password: string) {
+  async resetPassword(userId: string, password: string): Promise<any> {
     const hashedPassword = await BcryptInstance.hash(password);
     await User.findByIdAndUpdate(userId, {
       $set: { password: hashedPassword },

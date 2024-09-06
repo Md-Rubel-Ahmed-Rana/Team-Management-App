@@ -26,7 +26,7 @@ const mongoose_1 = require("mongoose");
 const cache_service_1 = require("./cache.service");
 class Service {
     // Temporarily using as alternative of DTO
-    sanitizer(user) {
+    userSanitizer(user) {
         return {
             id: String(user === null || user === void 0 ? void 0 : user._id),
             name: user === null || user === void 0 ? void 0 : user.name,
@@ -45,7 +45,7 @@ class Service {
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield user_model_1.default.find({}).select(propertySelections_1.UserSelect);
-            const dtoUsers = result.map((user) => this.sanitizer(user));
+            const dtoUsers = result.map((user) => this.userSanitizer(user));
             yield cache_service_1.CacheServiceInstance.user.setAllUsersToCache(dtoUsers);
             return dtoUsers;
         });
@@ -197,7 +197,7 @@ class Service {
             const hashedPassword = yield bcrypt_1.BcryptInstance.hash(user.password);
             user.password = hashedPassword;
             const newUser = yield user_model_1.default.create(user);
-            const dtoUser = this.sanitizer(newUser);
+            const dtoUser = this.userSanitizer(newUser);
             yield cache_service_1.CacheServiceInstance.user.addNewUserToCache(dtoUser);
         });
     }
@@ -207,7 +207,7 @@ class Service {
             if (!user) {
                 throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found");
             }
-            return this.sanitizer(user);
+            return this.userSanitizer(user);
         });
     }
     findUserByEmail(email) {
@@ -216,15 +216,14 @@ class Service {
             if (!user) {
                 throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found");
             }
-            return user;
+            return this.userSanitizer(user);
         });
     }
     updateUser(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield user_model_1.default.findByIdAndUpdate(id, { $set: Object.assign({}, data) }, { new: true }).select(propertySelections_1.UserSelect);
-            const dtoUser = this.sanitizer(result);
+            const dtoUser = this.userSanitizer(result);
             yield cache_service_1.CacheServiceInstance.user.updateUserInCache(dtoUser);
-            return dtoUser;
         });
     }
     forgetPassword(email) {

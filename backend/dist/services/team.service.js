@@ -28,46 +28,13 @@ const envConfig_1 = require("@/configurations/envConfig");
 const user_service_1 = require("./user.service");
 class Service {
     // Temporarily using as alternative of DTO
-    userSanitizer(user) {
-        return {
-            id: String(user === null || user === void 0 ? void 0 : user._id),
-            name: user === null || user === void 0 ? void 0 : user.name,
-            email: user === null || user === void 0 ? void 0 : user.email,
-            department: (user === null || user === void 0 ? void 0 : user.department) || "",
-            designation: (user === null || user === void 0 ? void 0 : user.designation) || "",
-            phoneNumber: (user === null || user === void 0 ? void 0 : user.phoneNumber) || "",
-            profile_picture: (user === null || user === void 0 ? void 0 : user.profile_picture) || "",
-            presentAddress: (user === null || user === void 0 ? void 0 : user.presentAddress) || "",
-            permanentAddress: (user === null || user === void 0 ? void 0 : user.permanentAddress) || "",
-            country: (user === null || user === void 0 ? void 0 : user.country) || "",
-            createdAt: user === null || user === void 0 ? void 0 : user.createdAt,
-            updatedAt: user === null || user === void 0 ? void 0 : user.updatedAt,
-        };
-    }
-    projectSanitizer(project) {
-        var _a, _b;
-        const members = (_a = project === null || project === void 0 ? void 0 : project.members) === null || _a === void 0 ? void 0 : _a.map((user) => this.userSanitizer(user));
-        const leaveRequests = (_b = project === null || project === void 0 ? void 0 : project.leaveRequests) === null || _b === void 0 ? void 0 : _b.map((user) => this.userSanitizer(user));
-        return {
-            id: String(project === null || project === void 0 ? void 0 : project._id),
-            team: project === null || project === void 0 ? void 0 : project.team,
-            user: project === null || project === void 0 ? void 0 : project.user,
-            name: project === null || project === void 0 ? void 0 : project.name,
-            category: project === null || project === void 0 ? void 0 : project.category,
-            members: members,
-            leaveRequests: leaveRequests,
-            tasks: (project === null || project === void 0 ? void 0 : project.tasks) || 0,
-            createdAt: project === null || project === void 0 ? void 0 : project.createdAt,
-            updatedAt: project === null || project === void 0 ? void 0 : project.updatedAt,
-        };
-    }
     teamSanitizer(team) {
         var _a, _b, _c, _d;
-        const admin = this.userSanitizer(team === null || team === void 0 ? void 0 : team.admin);
-        const projects = (_a = team.projects) === null || _a === void 0 ? void 0 : _a.map((project) => this.projectSanitizer(project));
-        const leaveRequests = (_b = team === null || team === void 0 ? void 0 : team.leaveRequests) === null || _b === void 0 ? void 0 : _b.map((user) => this.userSanitizer(user));
-        const activeMembers = (_c = team === null || team === void 0 ? void 0 : team.activeMembers) === null || _c === void 0 ? void 0 : _c.map((user) => this.userSanitizer(user));
-        const pendingMembers = (_d = team === null || team === void 0 ? void 0 : team.pendingMembers) === null || _d === void 0 ? void 0 : _d.map((user) => this.userSanitizer(user));
+        const admin = user_service_1.UserService.userSanitizer(team === null || team === void 0 ? void 0 : team.admin);
+        const projects = (_a = team.projects) === null || _a === void 0 ? void 0 : _a.map((project) => project_service_1.ProjectService.projectSanitizer(project));
+        const leaveRequests = (_b = team === null || team === void 0 ? void 0 : team.leaveRequests) === null || _b === void 0 ? void 0 : _b.map((user) => user_service_1.UserService.userSanitizer(user));
+        const activeMembers = (_c = team === null || team === void 0 ? void 0 : team.activeMembers) === null || _c === void 0 ? void 0 : _c.map((user) => user_service_1.UserService.userSanitizer(user));
+        const pendingMembers = (_d = team === null || team === void 0 ? void 0 : team.pendingMembers) === null || _d === void 0 ? void 0 : _d.map((user) => user_service_1.UserService.userSanitizer(user));
         return {
             id: String(team === null || team === void 0 ? void 0 : team._id),
             name: team === null || team === void 0 ? void 0 : team.name,
