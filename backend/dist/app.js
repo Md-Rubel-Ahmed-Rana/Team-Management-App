@@ -24,7 +24,7 @@ const io = new socket_io_1.Server(server, {
 (0, appMiddlewares_1.default)(app);
 // initialize passport session
 (0, passport_session_1.initiatePassportSession)(app);
-// app health check
+// app health check default/root route
 (0, healthCheck_1.default)(app);
 // api endpoints
 app.use(root_route_1.RootRoutes);

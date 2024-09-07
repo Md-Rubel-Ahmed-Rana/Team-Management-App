@@ -1,16 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
-import { useGetMyTeamsCardQuery } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import TeamContainer from "../common/TeamContainer";
 import TeamSkeleton from "@/components/skeletons/TeamSkeleton";
+import { useGetMyTeamsQuery } from "@/features/team";
 
 const MyTeamsContainer = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
-  const { data: teamData, isLoading } = useGetMyTeamsCardQuery(user?.id);
-
+  const { data: teamData, isLoading } = useGetMyTeamsQuery(user?.id);
   return (
     <section className="p-5">
       <div className="lg:flex justify-between">

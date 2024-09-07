@@ -5,7 +5,7 @@ import MessageForm from "../../../components/pages/messages/common/MessageForm";
 import MessageSidebar from "../../../components/pages/messages/team-message/MessageSidebar";
 import MessageContainer from "../../../components/pages/messages/team-message/MessageContainer";
 import { SocketContext } from "@/context/SocketContext";
-import { useSingleTeamQuery } from "@/features/team";
+import { useGetSingleTeamQuery } from "@/features/team";
 import isAuthenticate from "@/components/HOC/isAuthenticate";
 
 const MessagesPage = () => {
@@ -14,7 +14,7 @@ const MessagesPage = () => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const { socket, realTimeMessages, setRealTimeMessages }: any =
     useContext(SocketContext);
-  const { data: singleTeam } = useSingleTeamQuery(query.teamId);
+  const { data: singleTeam } = useGetSingleTeamQuery(query?.teamId);
 
   // Scroll to the bottom when new messages arrive
   const scrollToBottom = useCallback(() => {

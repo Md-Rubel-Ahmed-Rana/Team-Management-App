@@ -11,6 +11,11 @@ import MessageCard from "../common/MessageCard";
 import MessageSkeleton from "@/components/skeletons/MessageSkeleton";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
+import {
+  handleDeletedMessage,
+  handleNewMessage,
+  handleUpdatedMessage,
+} from "../common/utilFunctions";
 
 // Function to handle new messages
 const handleNewMessage = (
@@ -61,11 +66,12 @@ const MessageContainer = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const { data: messageData, isLoading } = useGetOneToOneMessagesQuery(
-    `${query?.participant}&${user?.id}`
+    `${query?.participantId}&${user?.id}`
   );
 
   // Socket event listeners
   useEffect(() => {
+<<<<<<< HEAD
     socket?.on("one-to-one-message", (data: IMessagePayloadForSocket) =>
       handleNewMessage(data, setRealTimeMessages)
     );
@@ -75,13 +81,34 @@ const MessageContainer = () => {
     socket?.on("deleted-message", (messageId: string) =>
       handleDeletedMessage(messageId, setRealTimeMessages)
     );
+=======
+    socket?.on("one-to-one-message", (data: IMessagePayloadForSocket) => {
+      const conversionId = `${user.id}&${query?.participantId}`;
+      if (conversionId.toString() === data?.conversationId.toString()) {
+        console.log("one-to-one-message", data);
+        handleNewMessage(data, setRealTimeMessages);
+      }
+    });
+    socket?.on("updated-message", (data: IMessagePayloadForSocket) => {
+      console.log("updated-message", data);
+      handleUpdatedMessage(data, setRealTimeMessages);
+    });
+    socket?.on("deleted-message", (messageId: string) => {
+      console.log("deleted-message", messageId);
+      handleDeletedMessage(messageId, setRealTimeMessages);
+    });
+>>>>>>> 0180cf08ac2da4946a4bd2db995b5ed846f5775f
 
     return () => {
       socket?.off("one-to-one-message", handleNewMessage);
       socket?.off("updated-message", handleUpdatedMessage);
       socket?.off("deleted-message", handleDeletedMessage);
     };
+<<<<<<< HEAD
   }, [socket, setRealTimeMessages]);
+=======
+  }, [socket, realTimeMessages, setRealTimeMessages]);
+>>>>>>> 0180cf08ac2da4946a4bd2db995b5ed846f5775f
 
   // Load messages when the component mounts or query changes
   useEffect(() => {

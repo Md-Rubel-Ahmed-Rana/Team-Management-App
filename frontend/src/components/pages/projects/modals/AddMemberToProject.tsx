@@ -2,11 +2,12 @@ import React, { Fragment, useContext, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Select from "react-select";
 import { useAddMemberMutation } from "@/features/project";
-import { useGetActiveMembersQuery, useSingleTeamQuery } from "@/features/team";
+import { useGetSingleTeamQuery } from "@/features/team";
 import { IUser } from "@/interfaces/user.interface";
 import customStyles from "@/utils/reactSelectCustomStyle";
 import { SocketContext } from "@/context/SocketContext";
 import toast from "react-hot-toast";
+import { ITeam } from "@/interfaces/team.interface";
 
 type Props = {
   isOpen: boolean;
@@ -28,10 +29,9 @@ const AddMemberToProject = ({
 
   const [addNewMember, { isLoading }] = useAddMemberMutation();
   const [newMember, setNewMember] = useState({ label: "", value: "" });
-  const { data: singleTeam } = useSingleTeamQuery(teamId);
-  const team = singleTeam?.data;
-  const { data: memberData } = useGetActiveMembersQuery(teamId);
-  const members = memberData?.data?.activeMembers?.map((member: IUser) => ({
+  const { data: singleTeam } = useGetSingleTeamQuery(teamId);
+  const team = singleTeam?.data as ITeam;
+  const members = team.activeMembers?.map((member: IUser) => ({
     value: member?.id,
     label: member?.name,
   }));

@@ -1,15 +1,14 @@
-import { useGetJoinedTeamsCardQuery } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import TeamContainer from "../common/TeamContainer";
 import TeamSkeleton from "@/components/skeletons/TeamSkeleton";
+import { useGetJoinedTeamsQuery } from "@/features/team";
 
 const JoinedTeamsContainer = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user = userData?.data;
-  const { data: teamData, isLoading } = useGetJoinedTeamsCardQuery(user?.id);
-  console.log({ JoinedTeams: teamData });
+  const { data: teamData, isLoading } = useGetJoinedTeamsQuery(user?.id);
   return (
     <section className="p-5">
       <div className="lg:flex justify-between">

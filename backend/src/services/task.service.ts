@@ -6,6 +6,7 @@ import mongoose, { Types } from "mongoose";
 import { config } from "@/configurations/envConfig";
 import { NotificationEnums } from "enums";
 import ApiError from "@/shared/apiError";
+import { ProjectService } from "./project.service";
 
 class Service {
   async createTask(taskData: ITask): Promise<INewTaskForSocket> {
@@ -291,6 +292,8 @@ class Service {
           notifyObject.receiver = isTaskExist?.assignedTo?.id;
         }
         await NotificationService.createNotification(notifyObject);
+        // update tasks count on project cache
+        await ProjectService.decrementTaskCount(isTaskExist?.project?._id);
         return { receiverId: notifyObject.receiver };
       }
       await session.commitTransaction();
@@ -337,7 +340,7 @@ class Service {
         content: `The task "${task?.name}" has been deleted. Please take note of the change.`,
         receiver: task?.assignedTo?._id,
         sender: task?.assignedBy?._id,
-        link: "",
+        link: `${config.app.frontendDomain}/tasks/${projectId}`,
       };
 
       // Create the notification for the assignedTo member

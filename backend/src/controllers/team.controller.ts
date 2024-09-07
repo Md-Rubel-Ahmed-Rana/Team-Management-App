@@ -18,69 +18,9 @@ class Controller extends RootController {
       data: result,
     });
   });
-  getActiveMembers = this.catchAsync(async (req: Request, res: Response) => {
-    const id = req.params.teamId;
-    const result = await TeamService.getActiveMembers(id);
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Team members found",
-      data: result,
-    });
-  });
 
-  getMyTeamsForCard = this.catchAsync(async (req: Request, res: Response) => {
-    const id = req.params.adminId;
-    const result = await TeamService.getMyTeamsForCard(id);
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "My Team cards found",
-      data: result,
-    });
-  });
-
-  getJoinedTeamsForCard = this.catchAsync(
-    async (req: Request, res: Response) => {
-      const id = req.params.memberId;
-      const result = await TeamService.getJoinedTeamsForCard(id);
-      this.apiResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Joined Team cards found",
-        data: result,
-      });
-    }
-  );
-
-  getSingleTeamWithDetails = this.catchAsync(
-    async (req: Request, res: Response) => {
-      const id = req.params.teamId;
-      const result = await TeamService.getSingleTeamWithDetails(id);
-      this.apiResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Team details found",
-        data: result,
-      });
-    }
-  );
-
-  getMyTeamListForDropdown = this.catchAsync(
-    async (req: Request, res: Response) => {
-      const id = req.params.adminId;
-      const result = await TeamService.getMyTeamListForDropdown(id);
-      this.apiResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Teams found",
-        data: result,
-      });
-    }
-  );
-
-  getTeam = this.catchAsync(async (req: Request, res: Response) => {
-    const result = await TeamService.getTeam(req.params.id);
+  getSingleTeam = this.catchAsync(async (req: Request, res: Response) => {
+    const result = await TeamService.getSingleTeam(req.params.id);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
@@ -89,10 +29,42 @@ class Controller extends RootController {
     });
   });
 
+  getAllTeams = this.catchAsync(async (req: Request, res: Response) => {
+    const result = await TeamService.getAllTeams();
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Teams found",
+      data: result,
+    });
+  });
+
+  getMyTeams = this.catchAsync(async (req: Request, res: Response) => {
+    const adminId = req.params?.adminId;
+    const result = await TeamService.getMyTeams(adminId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Teams found",
+      data: result,
+    });
+  });
+
+  getJoinedTeams = this.catchAsync(async (req: Request, res: Response) => {
+    const memberId = req.params?.memberId;
+    const result = await TeamService.getJoinedTeams(memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Teams found",
+      data: result,
+    });
+  });
+
   updateTeam = this.catchAsync(async (req: Request, res: Response) => {
     const id = req.params.id;
     if (req.link) {
-      const team = await TeamService.getTeamById(id);
+      const team = await TeamService.getSingleTeam(id);
       const teamLogo = team?.image;
       if (teamLogo) {
         const public_id = extractCloudinaryPublicId(teamLogo);
@@ -128,6 +100,51 @@ class Controller extends RootController {
       success: true,
       message: "Team deleted successfully",
       data: result,
+    });
+  });
+
+  sendLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
+    const { teamId, memberId } = req.params;
+    await TeamService.sendLeaveRequest(teamId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Your leave request has been sent to admin!",
+      data: null,
+    });
+  });
+
+  cancelLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
+    const { teamId, memberId } = req.params;
+    await TeamService.cancelLeaveRequest(teamId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Your leave request has been cancelled!",
+      data: null,
+    });
+  });
+
+  rejectLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
+    const { teamId, memberId } = req.params;
+    console.log({ teamId, memberId });
+    await TeamService.rejectLeaveRequest(teamId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Leave request has been rejected!",
+      data: null,
+    });
+  });
+
+  acceptLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
+    const { teamId, memberId } = req.params;
+    await TeamService.acceptLeaveRequest(teamId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Leave request has been accepted! This member has been removed.",
+      data: null,
     });
   });
 

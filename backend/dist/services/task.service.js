@@ -19,6 +19,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const envConfig_1 = require("@/configurations/envConfig");
 const enums_1 = require("enums");
 const apiError_1 = __importDefault(require("@/shared/apiError"));
+const project_service_1 = require("./project.service");
 class Service {
     createTask(taskData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -234,7 +235,7 @@ class Service {
     }
     deleteTask(taskId, updaterId) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d, _e;
+            var _a, _b, _c, _d, _e, _f;
             const session = yield mongoose_1.default.startSession();
             session.startTransaction();
             try {
@@ -272,6 +273,8 @@ class Service {
                         notifyObject.receiver = (_e = isTaskExist === null || isTaskExist === void 0 ? void 0 : isTaskExist.assignedTo) === null || _e === void 0 ? void 0 : _e.id;
                     }
                     yield notification_service_1.NotificationService.createNotification(notifyObject);
+                    // update tasks count on project cache
+                    yield project_service_1.ProjectService.decrementTaskCount((_f = isTaskExist === null || isTaskExist === void 0 ? void 0 : isTaskExist.project) === null || _f === void 0 ? void 0 : _f._id);
                     return { receiverId: notifyObject.receiver };
                 }
                 yield session.commitTransaction();
@@ -316,7 +319,7 @@ class Service {
                     content: `The task "${task === null || task === void 0 ? void 0 : task.name}" has been deleted. Please take note of the change.`,
                     receiver: (_a = task === null || task === void 0 ? void 0 : task.assignedTo) === null || _a === void 0 ? void 0 : _a._id,
                     sender: (_b = task === null || task === void 0 ? void 0 : task.assignedBy) === null || _b === void 0 ? void 0 : _b._id,
-                    link: "",
+                    link: `${envConfig_1.config.app.frontendDomain}/tasks/${projectId}`,
                 };
                 // Create the notification for the assignedTo member
                 yield notification_service_1.NotificationService.createNotification(notifyObject, session);

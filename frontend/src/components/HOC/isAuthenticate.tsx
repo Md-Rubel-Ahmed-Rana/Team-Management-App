@@ -22,7 +22,7 @@ const isAuthenticate = (WrappedComponent: any) => {
 
     if (error) {
       return (
-        <div className="flex items-center justify-center h-[60vh] lg:h-[80vh] w-screen bg-gray-100">
+        <div className="flex items-center justify-center h-screen w-screen bg-gray-100">
           <h1 className="text-lg lg:text-3xl font-bold">
             Your are not authenticated!
           </h1>
