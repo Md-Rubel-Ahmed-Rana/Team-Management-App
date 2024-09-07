@@ -1,5 +1,6 @@
 import { TeamController } from "@/controllers/team.controller";
 import { upload, uploadSingleFile } from "@/middlewares/cloudinary";
+import teamCacheMiddleware from "@/middlewares/teamCacheMiddleware";
 import validateRequest from "@/middlewares/validateRequest";
 import { TeamValidationSchema } from "@/validations/team.validation";
 import { Router } from "express";
@@ -13,13 +14,25 @@ router.post(
   TeamController.createTeam
 );
 
-router.get("/", TeamController.getAllTeams);
+router.get("/", teamCacheMiddleware.all, TeamController.getAllTeams);
 
-router.get("/single/:id", TeamController.getSingleTeam);
+router.get(
+  "/single/:id",
+  teamCacheMiddleware.single,
+  TeamController.getSingleTeam
+);
 
-router.get("/my-teams/:adminId", TeamController.getMyTeams);
+router.get(
+  "/my-teams/:adminId",
+  teamCacheMiddleware.myTeams,
+  TeamController.getMyTeams
+);
 
-router.get("/joined-teams/:memberId", TeamController.getJoinedTeams);
+router.get(
+  "/joined-teams/:memberId",
+  teamCacheMiddleware.joinedTeams,
+  TeamController.getJoinedTeams
+);
 
 router.delete("/delete/:id", TeamController.deleteTeam);
 

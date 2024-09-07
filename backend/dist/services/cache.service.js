@@ -45,6 +45,16 @@ class CacheService {
             getAllTeamsFromCache: () => __awaiter(this, void 0, void 0, function* () {
                 return yield this.getAll(this.cacheKeys.team);
             }),
+            getMyTeamsFromCache: (adminId) => __awaiter(this, void 0, void 0, function* () {
+                const teams = yield this.getAll(this.cacheKeys.team);
+                const myTeams = teams === null || teams === void 0 ? void 0 : teams.filter((team) => { var _a; return ((_a = team === null || team === void 0 ? void 0 : team.admin) === null || _a === void 0 ? void 0 : _a.id) === adminId; });
+                return myTeams;
+            }),
+            joinedTeams: (memberId) => __awaiter(this, void 0, void 0, function* () {
+                const teams = yield this.getAll(this.cacheKeys.team);
+                const myTeams = teams === null || teams === void 0 ? void 0 : teams.filter((team) => { var _a; return (_a = team === null || team === void 0 ? void 0 : team.activeMembers) === null || _a === void 0 ? void 0 : _a.some((member) => (member === null || member === void 0 ? void 0 : member.id) === memberId); });
+                return myTeams;
+            }),
             getSingleTeamFromCache: (teamId) => __awaiter(this, void 0, void 0, function* () {
                 return yield this.getOne(this.cacheKeys.team, teamId);
             }),
@@ -60,10 +70,26 @@ class CacheService {
             deleteTeamFromCache: (teamId) => __awaiter(this, void 0, void 0, function* () {
                 yield this.deleteItem(this.cacheKeys.team, teamId);
             }),
+            deleteAllTeamFromCache: () => __awaiter(this, void 0, void 0, function* () {
+                yield this.deleteAll(this.cacheKeys.team);
+            }),
         };
         this.project = {
             getAllProjectsFromCache: () => __awaiter(this, void 0, void 0, function* () {
                 return yield this.getAll(this.cacheKeys.project);
+            }),
+            deleteAllProjectFromCache: () => __awaiter(this, void 0, void 0, function* () {
+                yield this.deleteAll(this.cacheKeys.project);
+            }),
+            getMyProjectsFromCache: (userId) => __awaiter(this, void 0, void 0, function* () {
+                const projects = yield this.getAll(this.cacheKeys.project);
+                const myProjects = projects === null || projects === void 0 ? void 0 : projects.filter((project) => (project === null || project === void 0 ? void 0 : project.user) === userId);
+                return myProjects;
+            }),
+            getAssignedProjectsFromCache: (memberId) => __awaiter(this, void 0, void 0, function* () {
+                const projects = yield this.getAll(this.cacheKeys.project);
+                const assignedProjects = projects === null || projects === void 0 ? void 0 : projects.filter((project) => { var _a; return (_a = project === null || project === void 0 ? void 0 : project.members) === null || _a === void 0 ? void 0 : _a.some((member) => (member === null || member === void 0 ? void 0 : member.id) === memberId); });
+                return assignedProjects;
             }),
             getSingleProjectFromCache: (projectId) => __awaiter(this, void 0, void 0, function* () {
                 return yield this.getOne(this.cacheKeys.project, projectId);

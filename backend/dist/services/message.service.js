@@ -52,6 +52,95 @@ class Service {
             return result;
         });
     }
+    getDistinctUserIds(objectId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const distinctUserIds = yield message_model_1.Message.aggregate([
+                {
+                    $match: {
+                        $or: [
+                            { poster: objectId },
+                            {
+                                conversationId: {
+                                    $regex: new RegExp(`^(${userId}&|${userId}$)`),
+                                },
+                            },
+                        ],
+                    },
+                },
+                {
+                    $group: {
+                        _id: null,
+                        uniqueUsers: {
+                            $addToSet: {
+                                $cond: [
+                                    { $eq: ["$poster", objectId] },
+                                    {
+                                        $cond: [
+                                            {
+                                                $eq: [
+                                                    {
+                                                        $arrayElemAt: [
+                                                            { $split: ["$conversationId", "&"] },
+                                                            0,
+                                                        ],
+                                                    },
+                                                    userId,
+                                                ],
+                                            },
+                                            {
+                                                $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 1],
+                                            },
+                                            {
+                                                $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 0],
+                                            },
+                                        ],
+                                    },
+                                    "$poster",
+                                ],
+                            },
+                        },
+                    },
+                },
+                {
+                    $unwind: "$uniqueUsers",
+                },
+                {
+                    $project: {
+                        userId: "$uniqueUsers",
+                    },
+                },
+            ]);
+            return distinctUserIds;
+        });
+    }
+    getLastMessage(objectId, userId, user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const lastMessages = yield message_model_1.Message.findOne({
+                $or: [
+                    {
+                        $and: [
+                            { poster: objectId },
+                            {
+                                conversationId: {
+                                    $regex: `^${user === null || user === void 0 ? void 0 : user.id.toString()}&${userId}|${userId}&${user === null || user === void 0 ? void 0 : user.id.toString()}$`,
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        $and: [
+                            { poster: user === null || user === void 0 ? void 0 : user.id },
+                            {
+                                conversationId: {
+                                    $regex: `^${userId}&${user === null || user === void 0 ? void 0 : user.id.toString()}|${user === null || user === void 0 ? void 0 : user.id.toString()}&${userId}$`,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            }).sort({ createdAt: -1 });
+        });
+    }
     getOneToOneMessagesWithType(conversationId) {
         return __awaiter(this, void 0, void 0, function* () {
             const ids = conversationId.split("&");

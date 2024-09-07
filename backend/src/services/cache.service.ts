@@ -103,6 +103,20 @@ class CacheService {
     getAllTeamsFromCache: async (): Promise<IGetTeam[] | null> => {
       return await this.getAll<IGetTeam>(this.cacheKeys.team);
     },
+    getMyTeamsFromCache: async (
+      adminId: string
+    ): Promise<IGetTeam[] | undefined> => {
+      const teams = await this.getAll<IGetTeam>(this.cacheKeys.team);
+      const myTeams = teams?.filter((team) => team?.admin?.id === adminId);
+      return myTeams;
+    },
+    joinedTeams: async (memberId: string): Promise<IGetTeam[] | undefined> => {
+      const teams = await this.getAll<IGetTeam>(this.cacheKeys.team);
+      const myTeams = teams?.filter((team) =>
+        team?.activeMembers?.some((member) => member?.id === memberId)
+      );
+      return myTeams;
+    },
     getSingleTeamFromCache: async (
       teamId: string
     ): Promise<IGetTeam | null> => {
@@ -120,11 +134,37 @@ class CacheService {
     deleteTeamFromCache: async (teamId: string): Promise<void> => {
       await this.deleteItem(this.cacheKeys.team, teamId);
     },
+    deleteAllTeamFromCache: async () => {
+      await this.deleteAll(this.cacheKeys.team);
+    },
   };
 
   project = {
     getAllProjectsFromCache: async (): Promise<IGetProject[] | null> => {
       return await this.getAll<IGetProject>(this.cacheKeys.project);
+    },
+    deleteAllProjectFromCache: async () => {
+      await this.deleteAll(this.cacheKeys.project);
+    },
+    getMyProjectsFromCache: async (
+      userId: string
+    ): Promise<IGetProject[] | undefined> => {
+      const projects = await this.getAll<IGetProject>(this.cacheKeys.project);
+      const myProjects = projects?.filter(
+        (project) => project?.user === userId
+      );
+      return myProjects;
+    },
+    getAssignedProjectsFromCache: async (
+      memberId: string
+    ): Promise<IGetProject[] | undefined> => {
+      const projects = await this.getAll<IGetProject>(this.cacheKeys.project);
+
+      const assignedProjects = projects?.filter((project) =>
+        project?.members?.some((member) => member?.id === memberId)
+      );
+
+      return assignedProjects;
     },
     getSingleProjectFromCache: async (
       projectId: string

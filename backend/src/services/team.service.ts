@@ -1,5 +1,4 @@
 import { IGetTeam, ITeam } from "@/interfaces/team.interface";
-import { Project } from "@/models/project.model";
 import Team from "@/models/team.model";
 import ApiError from "@/shared/apiError";
 import httpStatus from "http-status";
@@ -15,10 +14,38 @@ import { config } from "@/configurations/envConfig";
 import { UserService } from "./user.service";
 import { IGetUser } from "@/interfaces/user.interface";
 import { IGetProject } from "@/interfaces/project.interface";
+import { CacheServiceInstance } from "./cache.service";
+
+export const teamPopulate = [
+  {
+    path: "activeMembers",
+    model: "User",
+    select: UserSelect,
+  },
+  {
+    path: "pendingMembers",
+    model: "User",
+    select: UserSelect,
+  },
+  {
+    path: "admin",
+    model: "User",
+    select: UserSelect,
+  },
+  {
+    path: "leaveRequests",
+    model: "User",
+    select: UserSelect,
+  },
+  {
+    path: "projects",
+    model: "Project",
+  },
+];
 
 class Service {
   // Temporarily using as alternative of DTO
-  private teamSanitizer(team: any): IGetTeam {
+  public teamSanitizer(team: any): IGetTeam {
     const admin = UserService.userSanitizer(team?.admin);
     const projects = team.projects?.map((project: IGetProject) =>
       ProjectService.projectSanitizer(project)
@@ -48,7 +75,7 @@ class Service {
     };
   }
 
-  async createTeam(data: ITeam): Promise<any> {
+  async createTeam(data: ITeam): Promise<void> {
     const isExist = await Team.findOne({ name: data?.name });
     if (isExist) {
       throw new ApiError(
@@ -56,128 +83,36 @@ class Service {
         "This team name is already exist"
       );
     }
+    const newTeam = await Team.create(data);
+    const populatedData = await newTeam.populate(teamPopulate);
+    const dtoData = this.teamSanitizer(populatedData);
+    // store the new team on cache
+    await CacheServiceInstance.team.addNewTeamToCache(dtoData);
   }
 
   async getSingleTeam(id: string): Promise<IGetTeam> {
-    const result = await Team.findById(id).populate([
-      {
-        path: "activeMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "pendingMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "admin",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "leaveRequests",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "projects",
-        model: "Project",
-      },
-    ]);
+    const result = await Team.findById(id).populate(teamPopulate);
     const dtoData = this.teamSanitizer(result);
     return dtoData;
   }
 
   async getAllTeams(): Promise<any> {
-    const teams = await Team.find({}).populate([
-      {
-        path: "activeMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "pendingMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "admin",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "leaveRequests",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "projects",
-        model: "Project",
-      },
-    ]);
+    const teams = await Team.find({}).populate(teamPopulate);
     const dtoData = teams?.map((team) => this.teamSanitizer(team));
+    await CacheServiceInstance.team.setAllTeamsToCache(dtoData);
     return dtoData;
   }
 
   async getMyTeams(adminId: string): Promise<any> {
-    const teams = await Team.find({ admin: adminId }).populate([
-      {
-        path: "activeMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "pendingMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "admin",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "leaveRequests",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "projects",
-        model: "Project",
-      },
-    ]);
+    const teams = await Team.find({ admin: adminId }).populate(teamPopulate);
     const dtoData = teams?.map((team) => this.teamSanitizer(team));
     return dtoData;
   }
 
   async getJoinedTeams(memberId: string): Promise<any> {
-    const teams = await Team.find({ activeMembers: memberId }).populate([
-      {
-        path: "activeMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "pendingMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "admin",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "leaveRequests",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "projects",
-        model: "Project",
-      },
-    ]);
+    const teams = await Team.find({ activeMembers: memberId }).populate(
+      teamPopulate
+    );
     const dtoData = teams?.map((team) => this.teamSanitizer(team));
     return dtoData;
   }
@@ -196,27 +131,15 @@ class Service {
       ...(isExistTeam?.pendingMembers || []),
     ];
     // Update the team data
-    const team: any = await Team.findByIdAndUpdate(
+    const updatedTeam: any = await Team.findByIdAndUpdate(
       id,
       { $set: { ...data } },
       { new: true }
-    ).populate([
-      {
-        path: "activeMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "pendingMembers",
-        model: "User",
-        select: UserSelect,
-      },
-      {
-        path: "admin",
-        model: "User",
-        select: UserSelect,
-      },
-    ]);
+    ).populate(teamPopulate);
+
+    const team = this.teamSanitizer(updatedTeam);
+    // store the updated team on cache
+    await CacheServiceInstance.team.updateTeamInCache(team);
 
     if (isExistTeam?.name !== data?.name) {
       // Notify all members about the name change
@@ -226,20 +149,33 @@ class Service {
       ];
 
       await Promise.all(
-        allMembers.map(async (member: any) => {
+        allMembers.map(async (member: IGetUser) => {
           const notifyObject: INotification = {
             title: "Team Name Updated",
             type: NotificationEnums.TEAM_UPDATED,
-            receiver: member?._id,
-            sender: team?.admin,
+            receiver: member?.id,
+            sender: team?.admin.id,
             content: `Dear ${member?.name}, the team name has been updated. The team "${isExistTeam?.name}" is now named "${data?.name}". Thank you for staying up to date with these changes!`,
-            link: `${config.app.frontendDomain}/teams/joined-teams?userId=${member?._id}&name=${member?.name}&email=${member?.email}`,
+            link: `${config.app.frontendDomain}/teams/joined-teams?userId=${member?.id}&name=${member?.name}&email=${member?.email}`,
           };
           await NotificationService.createNotification(notifyObject);
         })
       );
+
       return members;
     }
+  }
+
+  async removeAProject(teamId: string, projectId: string) {
+    const updatedTeam = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $pull: { projects: projectId },
+      },
+      { new: true }
+    ).populate(teamPopulate);
+    const dtoData = this.teamSanitizer(updatedTeam);
+    await CacheServiceInstance.team.updateTeamInCache(dtoData);
   }
 
   async deleteTeam(id: string): Promise<Types.ObjectId[]> {
@@ -264,6 +200,9 @@ class Service {
 
       // Delete the team
       await Team.findByIdAndDelete(id).session(session);
+
+      // delete the team from cache
+      await CacheServiceInstance.team.deleteTeamFromCache(id);
 
       // Delete related projects
       await ProjectService.deleteProjectsByTeamId(id, session);
@@ -292,20 +231,56 @@ class Service {
     }
   }
 
-  async sendLeaveRequest(teamId: string, memberId: string) {
-    const team: any = await Team.updateOne(
-      { _id: teamId },
-      { $push: { leaveRequests: memberId } }
-    );
+  async removeMember(teamId: string, memberId: string): Promise<void> {
+    // Remove member from team
+    const updatedTeam = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $pull: { activeMembers: memberId },
+      },
+      { new: true }
+    ).populate(teamPopulate);
 
-    const admin = await UserService.findUserById(team?.admin);
+    const team = this.teamSanitizer(updatedTeam);
+    // store the updated team on cache
+    await CacheServiceInstance.team.updateTeamInCache(team);
+
+    // Remove this member from projects by member ID
+    await ProjectService.removeAMemberFromAllProjects(teamId, memberId);
+
+    const member = await UserService.findUserById(memberId);
+    const notifyObject: INotification = {
+      title: "You Have Been Removed from a Team",
+      type: NotificationEnums.TEAM_MEMBER_REMOVED,
+      content: `Thank you for the time and effort you dedicated to the team "${team?.name}" in the "${team?.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
+      receiver: memberId,
+      sender: team?.admin.id,
+      link: `${config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
+    };
+    await NotificationService.createNotification(notifyObject);
+  }
+
+  // leave request specific methods
+  async sendLeaveRequest(teamId: string, memberId: string) {
+    const team: any = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $push: { leaveRequests: memberId },
+      },
+      { new: true }
+    ).populate(teamPopulate);
+
+    const dtoData = this.teamSanitizer(team);
+    // store the updated team on cache
+    await CacheServiceInstance.team.updateTeamInCache(dtoData);
+
     const notifyObject: INotification = {
       title: "Team Leave Request",
       type: NotificationEnums.TEAM_LEFT,
       sender: memberId,
-      receiver: admin?.id,
+      receiver: team?.admin?.id,
       content: `You have received a new request from a team member to leave the team. Please review the request and take appropriate action.`,
-      link: `${config.app.frontendDomain}/dashboard/leave-requests?userId=${admin?.id}&name=${admin?.name}&email=${admin?.email}`,
+      link: `${config.app.frontendDomain}/dashboard/leave-requests?userId=${team?.admin?.id}&name=${team?.admin?.name}&email=${team?.admin?.email}`,
     };
 
     // Send notification to the admin
@@ -313,19 +288,23 @@ class Service {
   }
 
   async cancelLeaveRequest(teamId: string, memberId: string) {
-    console.log({ teamId, memberId });
-    const team: any = await Team.updateOne(
-      { _id: teamId },
-      { $pull: { leaveRequests: memberId } }
-    );
-    const admin = await UserService.findUserById(team?.admin);
+    const updatedTeam: any = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $pull: { leaveRequests: memberId },
+      },
+      { new: true }
+    ).populate(teamPopulate);
+    const team = this.teamSanitizer(updatedTeam);
+    // store the updated team on cache
+    await CacheServiceInstance.team.updateTeamInCache(team);
     const notifyObject: INotification = {
       title: "Team Leave Request",
       type: NotificationEnums.TEAM_LEFT,
       sender: memberId,
-      receiver: admin?.id,
+      receiver: team?.admin?.id,
       content: `Team Leave Request Cancelled`,
-      link: `${config.app.frontendDomain}/dashboard/leave-requests?userId=${admin?.id}&name=${admin?.name}&email=${admin?.email}`,
+      link: `${config.app.frontendDomain}/dashboard/leave-requests?userId=${team?.admin?.id}&name=${team?.admin?.name}&email=${team?.admin?.email}`,
     };
 
     // Send notification to the admin
@@ -333,15 +312,22 @@ class Service {
   }
 
   async rejectLeaveRequest(teamId: string, memberId: string) {
-    const team: any = await Team.updateOne(
-      { _id: teamId },
-      { $pull: { leaveRequests: memberId } }
-    );
+    const updatedTeam: any = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $pull: { leaveRequests: memberId },
+      },
+      { new: true }
+    ).populate(teamPopulate);
+    const team = this.teamSanitizer(updatedTeam);
+    // store the updated team on cache
+    await CacheServiceInstance.team.updateTeamInCache(team);
+
     const member = await UserService.findUserById(memberId);
     const notifyObject: INotification = {
       title: "Leave Request Rejected",
       type: NotificationEnums.TEAM_LEFT,
-      sender: team.admin,
+      sender: team?.admin?.id,
       receiver: memberId,
       content: `Your request to leave the team "${team?.name}" has been declined by the admin.`,
       link: `${config.app.frontendDomain}/teams/joined-teams?userId=${member?.id}&name=${member?.name}&email=${member?.email}`,
@@ -352,60 +338,110 @@ class Service {
   }
 
   async acceptLeaveRequest(teamId: string, memberId: string) {
-    console.log({ teamId, memberId });
-    const team: any = await Team.updateOne(
-      { _id: teamId },
+    const updatedTeam: any = await Team.findByIdAndUpdate(
+      teamId,
       { $pull: { leaveRequests: memberId, activeMembers: memberId } },
       { new: true }
-    );
-    // Remove this member from projects by member ID
-    await Project.updateMany(
-      { team: teamId },
-      { $pull: { members: { memberId: memberId } } }
-    );
+    ).populate(teamPopulate);
 
-    if (team && team?.admin) {
-      const member = await UserService.findUserById(memberId);
-      const notifyObject: INotification = {
-        title:
-          "Your Leave Request Accepted And You Have Been Removed from a Team",
-        type: NotificationEnums.TEAM_MEMBER_REMOVED,
-        content: `Thank you for the time and effort you dedicated to the team "${team?.name}" in the "${team?.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
-        receiver: memberId,
-        sender: team?.admin,
-        link: `${config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
-      };
-      await NotificationService.createNotification(notifyObject);
-    }
+    // Remove this member from projects by member ID
+    await ProjectService.removeAMemberFromAllProjects(teamId, memberId);
+    // store the updated team on cache
+    const team = this.teamSanitizer(updatedTeam);
+    await CacheServiceInstance.team.updateTeamInCache(team);
+
+    const member = await UserService.findUserById(memberId);
+    const notifyObject: INotification = {
+      title:
+        "Your Leave Request Accepted And You Have Been Removed from a Team",
+      type: NotificationEnums.TEAM_MEMBER_REMOVED,
+      content: `Thank you for the time and effort you dedicated to the team "${team?.name}" in the "${team?.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
+      receiver: memberId,
+      sender: team?.admin.id,
+      link: `${config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
+    };
+    await NotificationService.createNotification(notifyObject);
   }
 
-  async removeMember(teamId: string, memberId: string): Promise<void> {
-    // Remove member from team
-    await Team.updateOne(
-      { _id: teamId },
-      { $pull: { activeMembers: memberId } }
+  // invitation specific methods
+  async acceptInviteAndAddNewMember(
+    teamId: string,
+    memberId: string
+  ): Promise<IGetTeam> {
+    const updatedTeam = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $push: { activeMembers: memberId },
+        $pull: { pendingMembers: memberId },
+      },
+      { new: true }
+    ).populate(teamPopulate);
+    const team = this.teamSanitizer(updatedTeam);
+    // store the updated team on cache
+    await CacheServiceInstance.team.updateTeamInCache(team);
+    return team;
+  }
+
+  async sendAddMemberToPending(
+    teamId: string,
+    memberId: string
+  ): Promise<IGetTeam> {
+    const updatedTeam = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $push: { pendingMembers: memberId },
+      },
+      { new: true }
+    ).populate(teamPopulate);
+    // store the updated team on cache
+    const team = this.teamSanitizer(updatedTeam);
+    await CacheServiceInstance.team.updateTeamInCache(team);
+
+    return team;
+  }
+
+  async rejectAndRemoveMemberFromPending(
+    teamId: string,
+    memberId: string
+  ): Promise<IGetTeam> {
+    const updatedTeam = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $pull: { pendingMembers: memberId },
+      },
+      { new: true }
+    ).populate(teamPopulate);
+    // store the updated team on cache
+    const team = this.teamSanitizer(updatedTeam);
+    await CacheServiceInstance.team.updateTeamInCache(team);
+    return team;
+  }
+
+  async cancelAndRemoveFromPending(
+    teamId: string,
+    memberId: string
+  ): Promise<IGetTeam> {
+    const updatedTeam = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $pull: { pendingMembers: memberId },
+      },
+      { new: true }
+    ).populate(teamPopulate);
+
+    // store the updated team on cache
+    const team = this.teamSanitizer(updatedTeam);
+    await CacheServiceInstance.team.updateTeamInCache(team);
+
+    return team;
+  }
+
+  async getMyPendingInvitations(memberId: string): Promise<IGetTeam[]> {
+    const teams: any = await Team.find({ pendingMembers: memberId }).populate(
+      teamPopulate
     );
-
-    const team = await Team.findById(teamId);
-
-    // Remove this member from projects by member ID
-    await Project.updateMany(
-      { team: teamId },
-      { $pull: { members: { memberId: memberId } } }
-    );
-
-    if (team && team?.admin) {
-      const member = await UserService.findUserById(memberId);
-      const notifyObject: INotification = {
-        title: "You Have Been Removed from a Team",
-        type: NotificationEnums.TEAM_MEMBER_REMOVED,
-        content: `Thank you for the time and effort you dedicated to the team "${team?.name}" in the "${team?.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
-        receiver: memberId,
-        sender: team?.admin,
-        link: `${config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member?.name}&email=${member?.email}`,
-      };
-      await NotificationService.createNotification(notifyObject);
-    }
+    const dtoData = teams?.map((team: any) => this.teamSanitizer(team));
+    return dtoData;
   }
 }
 export const TeamService = new Service();

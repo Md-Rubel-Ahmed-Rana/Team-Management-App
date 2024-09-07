@@ -1,6 +1,5 @@
 import { IUser } from "@/interfaces/user.interface";
 import { IJwtPayload } from "@/interfaces/util";
-import User from "@/models/user.model";
 import { JwtInstance } from "lib/jwt";
 import { UserService } from "./user.service";
 import ApiError from "@/shared/apiError";
@@ -23,9 +22,9 @@ class Service {
       const refreshToken = await JwtInstance.generateRefreshToken(jwtPayload);
       return { accessToken, refreshToken };
     } else {
-      const result = await User.create(data);
-      jwtPayload.id = result._id;
-      jwtPayload.email = result.email;
+      const result = await UserService.register(data);
+      jwtPayload.id = result?._id;
+      jwtPayload.email = result?.email;
       const accessToken = await JwtInstance.generateAccessToken(jwtPayload);
       const refreshToken = await JwtInstance.generateRefreshToken(jwtPayload);
       return { accessToken, refreshToken };
@@ -40,24 +39,22 @@ class Service {
     email: string,
     password: string
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const isExist = await User.findOne({
-      email,
-    });
+    const isExist = await UserService.findUserByEmailWithPassword(email);
     if (!isExist) {
       throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found!");
     }
 
     const isMatchedPassword = await BcryptInstance.compare(
       password,
-      isExist.password
+      isExist?.password
     );
     if (!isMatchedPassword) {
       throw new ApiError(401, "Password doesn't match");
     }
 
     const jwtPayload = {
-      id: isExist._id,
-      email: isExist.email,
+      id: isExist?._id,
+      email: isExist?.email,
     };
 
     const accessToken = await JwtInstance.generateAccessToken(jwtPayload);
