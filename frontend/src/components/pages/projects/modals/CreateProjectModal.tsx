@@ -4,11 +4,12 @@ import Select from "react-select";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import { useGetMyTeamsForDropdownQuery } from "@/features/team";
+import { useGetMyTeamsQuery } from "@/features/team";
 import { INewProject } from "@/interfaces/project.interface";
 import { useCreateProjectMutation } from "@/features/project";
 import customStyles from "@/utils/reactSelectCustomStyle";
 import toast from "react-hot-toast";
+import { ITeam } from "@/interfaces/team.interface";
 
 const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
   const closeModal = () => {
@@ -16,7 +17,8 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
   };
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: teamData } = useGetMyTeamsForDropdownQuery(user?.id);
+  const { data: teamData } = useGetMyTeamsQuery(user?.id);
+  const myTeams = teamData?.data as ITeam[];
   const [selectedTeam, setSelectedTeam] = useState<{
     label: string;
     value: string;
@@ -85,8 +87,8 @@ const CreateProjectModal = ({ isOpen, setIsOpen }: any) => {
                       <Select
                         required
                         options={
-                          teamData?.data &&
-                          teamData?.data?.map((team: any) => ({
+                          myTeams &&
+                          myTeams?.map((team: any) => ({
                             value: team?.id,
                             label: team?.name,
                           }))

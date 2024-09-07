@@ -1,7 +1,7 @@
 type Props = {
   url: string;
   extension: string;
-  posterUrl?: string; // Optional poster image
+  posterUrl?: string;
 };
 
 const MessageVideoPlayer = ({ url, extension, posterUrl }: Props) => {

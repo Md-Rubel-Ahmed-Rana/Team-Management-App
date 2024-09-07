@@ -2,7 +2,6 @@ import { useCreateTeamMutation } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import { INewTeam } from "@/interfaces/team.interface";
 import { useRouter } from "next/router";
-import Swal from "sweetalert2";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import validateFileSize from "@/utils/validateFileSize";

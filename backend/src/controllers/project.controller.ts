@@ -24,6 +24,15 @@ class Controller extends RootController {
       data: projects,
     });
   });
+  getAllProjects = this.catchAsync(async (req: Request, res: Response) => {
+    const projects = await ProjectService.getAllProjects();
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Projects found",
+      data: projects,
+    });
+  });
 
   assignedProjects = this.catchAsync(async (req: Request, res: Response) => {
     const memberId = req.params.memberId;
@@ -58,19 +67,21 @@ class Controller extends RootController {
     });
   });
 
-  getSingleProject = this.catchAsync(async (req: Request, res: Response) => {
-    const id = req.params.id;
-    const result = await ProjectService.getSingleProject(id);
-    this.apiResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Project found",
-      data: result,
-    });
-  });
+  getSingleProjectById = this.catchAsync(
+    async (req: Request, res: Response) => {
+      const id = req.params.id;
+      const result = await ProjectService.getSingleProjectById(id);
+      this.apiResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Project found",
+        data: result,
+      });
+    }
+  );
 
   addMember = this.catchAsync(async (req: Request, res: Response) => {
-    const { projectId, role, memberId } = req.body;
+    const { projectId, memberId } = req.params;
     const result = await ProjectService.addMember(projectId, memberId);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
@@ -81,13 +92,57 @@ class Controller extends RootController {
   });
 
   removeMember = this.catchAsync(async (req: Request, res: Response) => {
-    const { projectId, memberId } = req.body;
+    const { projectId, memberId } = req.params;
     const result = await ProjectService.removeMember(projectId, memberId);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: "Member removed successfully",
       data: result,
+    });
+  });
+
+  sendLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
+    const { projectId, memberId } = req.params;
+    await ProjectService.sendLeaveRequest(projectId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Your leave request has been sent to admin!",
+      data: null,
+    });
+  });
+
+  cancelLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
+    const { projectId, memberId } = req.params;
+    await ProjectService.cancelLeaveRequest(projectId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Your leave request cancelled",
+      data: null,
+    });
+  });
+
+  acceptLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
+    const { projectId, memberId } = req.params;
+    await ProjectService.acceptLeaveRequest(projectId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Leave request accepted",
+      data: null,
+    });
+  });
+
+  rejectLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
+    const { projectId, memberId } = req.params;
+    await ProjectService.rejectLeaveRequest(projectId, memberId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Leave request rejected",
+      data: null,
     });
   });
 }

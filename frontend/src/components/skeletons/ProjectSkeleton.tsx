@@ -17,7 +17,7 @@ const ProjectSkeleton = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
       {loading &&
-        [1, 2, 3, 4].map((card) => (
+        [1, 2, 3, 4, 5, 6, 7, 8].map((card) => (
           <div
             key={card}
             className="border border-gray-500 p-2 lg:p-5 rounded-md flex flex-col justify-between gap-1"

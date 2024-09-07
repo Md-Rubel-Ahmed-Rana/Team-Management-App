@@ -196,7 +196,7 @@ const Navbar = () => {
           <div className="flex items-center justify-between">
             <Dropdown
               menu={{ items: navItemsForMobile.reverse() }}
-              placement="bottom"
+              placement="bottomLeft"
               arrow
               className="p-0"
             >

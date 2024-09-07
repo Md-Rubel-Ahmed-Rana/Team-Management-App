@@ -16,28 +16,37 @@ const userSchema = new mongoose_1.Schema({
     },
     department: {
         type: String,
+        required: false,
+        default: "",
     },
     designation: {
         type: String,
+        required: false,
+        default: "",
     },
     phoneNumber: {
         type: String,
         required: false,
+        default: "",
     },
     permanentAddress: {
         type: String,
         required: false,
+        default: "",
     },
     presentAddress: {
         type: String,
         required: false,
+        default: "",
     },
     country: {
         type: String,
         required: false,
+        default: "",
     },
     password: {
         type: String,
+        default: "",
     },
 }, {
     timestamps: true,

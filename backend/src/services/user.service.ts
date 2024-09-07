@@ -1,4 +1,4 @@
-import { IUser } from "@/interfaces/user.interface";
+import { IGetUser, IUser } from "@/interfaces/user.interface";
 import User from "@/models/user.model";
 import ApiError from "@/shared/apiError";
 import { config } from "@/configurations/envConfig";
@@ -7,14 +7,35 @@ import { BcryptInstance } from "lib/bcrypt";
 import { JwtInstance } from "lib/jwt";
 import { HttpStatusInstance } from "lib/httpStatus";
 import { UserSelect } from "propertySelections";
-import { Message } from "@/models/message.model";
 import { Types } from "mongoose";
 import { IChatFriend, ILastMessage } from "@/interfaces/message.interface";
+import { CacheServiceInstance } from "./cache.service";
+import { MessageService } from "./message.service";
 
 class Service {
-  async getAllUsers(): Promise<IUser[]> {
+  // Temporarily using as alternative of DTO
+  public userSanitizer(user: any): IGetUser {
+    return {
+      id: String(user?._id),
+      name: user?.name,
+      email: user?.email,
+      department: user?.department || "",
+      designation: user?.designation || "",
+      phoneNumber: user?.phoneNumber || "",
+      profile_picture: user?.profile_picture || "",
+      presentAddress: user?.presentAddress || "",
+      permanentAddress: user?.permanentAddress || "",
+      country: user?.country || "",
+      createdAt: user?.createdAt,
+      updatedAt: user?.updatedAt,
+    };
+  }
+
+  async getAllUsers(): Promise<IGetUser[]> {
     const result = await User.find({}).select(UserSelect);
-    return result;
+    const dtoUsers = result.map((user: any) => this.userSanitizer(user));
+    await CacheServiceInstance.user.setAllUsersToCache(dtoUsers);
+    return dtoUsers;
   }
 
   async myChatFriends(userId: string): Promise<IChatFriend[]> {
@@ -27,62 +48,10 @@ class Service {
         throw new Error("Invalid userId format");
       }
 
-      const distinctUserIds = await Message.aggregate([
-        {
-          $match: {
-            $or: [
-              { poster: objectId },
-              {
-                conversationId: {
-                  $regex: new RegExp(`^(${userId}&|${userId}$)`),
-                },
-              },
-            ],
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            uniqueUsers: {
-              $addToSet: {
-                $cond: [
-                  { $eq: ["$poster", objectId] },
-                  {
-                    $cond: [
-                      {
-                        $eq: [
-                          {
-                            $arrayElemAt: [
-                              { $split: ["$conversationId", "&"] },
-                              0,
-                            ],
-                          },
-                          userId,
-                        ],
-                      },
-                      {
-                        $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 1],
-                      },
-                      {
-                        $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 0],
-                      },
-                    ],
-                  },
-                  "$poster",
-                ],
-              },
-            },
-          },
-        },
-        {
-          $unwind: "$uniqueUsers",
-        },
-        {
-          $project: {
-            userId: "$uniqueUsers",
-          },
-        },
-      ]);
+      const distinctUserIds = await MessageService.getDistinctUserIds(
+        objectId,
+        userId
+      );
 
       if (!distinctUserIds?.length) {
         return [];
@@ -97,39 +66,17 @@ class Service {
         ?.filter((id) => id !== null);
 
       // Fetch users corresponding to these user IDs
-      const users: IUser[] = await User.find({ _id: { $in: userIds } }).select({
-        name: 1,
-        profile_picture: 1,
-        email: 1,
-      });
+      const usersData = await User.find({ _id: { $in: userIds } });
+      const dtoUsers = usersData?.map((user) => this.userSanitizer(user));
 
       // Fetch the latest message and include it in the response
       const userDetailsWithLastMessage = await Promise.all(
-        users.map(async (user) => {
-          const lastMessageDoc: any = await Message.findOne({
-            $or: [
-              {
-                $and: [
-                  { poster: objectId },
-                  {
-                    conversationId: {
-                      $regex: `^${user?._id.toString()}&${userId}|${userId}&${user?._id.toString()}$`,
-                    },
-                  },
-                ],
-              },
-              {
-                $and: [
-                  { poster: user?._id },
-                  {
-                    conversationId: {
-                      $regex: `^${userId}&${user?._id.toString()}|${user?._id.toString()}&${userId}$`,
-                    },
-                  },
-                ],
-              },
-            ],
-          }).sort({ createdAt: -1 });
+        dtoUsers.map(async (user) => {
+          const lastMessageDoc: any = await MessageService.getLastMessage(
+            objectId,
+            userId,
+            user
+          );
 
           const lastMessage: ILastMessage = {
             text: lastMessageDoc?.text,
@@ -139,7 +86,7 @@ class Service {
           };
 
           const friend: IChatFriend = {
-            id: user?._id.toString(),
+            id: user?.id,
             name: user?.name,
             email: user?.email,
             profile_picture: user?.profile_picture,
@@ -156,14 +103,14 @@ class Service {
         return dateB.getTime() - dateA.getTime();
       });
 
-      return userDetailsWithLastMessage.filter((user) => user.id !== userId);
+      return userDetailsWithLastMessage;
     } catch (error) {
       console.error("Error fetching chat friends:", error);
       throw new Error("Failed to fetch chat friends.");
     }
   }
 
-  async register(user: IUser): Promise<void> {
+  async register(user: IUser): Promise<any> {
     const isExist = await User.findOne({
       email: user?.email,
     });
@@ -177,38 +124,47 @@ class Service {
     const hashedPassword = await BcryptInstance.hash(user.password);
     user.password = hashedPassword;
 
-    await User.create(user);
+    const newUser = await User.create(user);
+    const dtoUser = this.userSanitizer(newUser);
+    await CacheServiceInstance.user.addNewUserToCache(dtoUser);
+    return newUser;
   }
 
-  async findUserById(id: string): Promise<any> {
+  async findUserById(id: string): Promise<IGetUser> {
     const user = await User.findById(id).select(UserSelect);
     if (!user) {
       throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found");
     }
 
-    return user;
+    return this.userSanitizer(user);
   }
 
-  async findUserByEmail(email: string): Promise<any> {
+  async findUserByEmail(email: string): Promise<IGetUser> {
     const user = await User.findOne({ email: email }).select(UserSelect);
     if (!user) {
       throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found");
     }
-
+    return this.userSanitizer(user);
+  }
+  async findUserByEmailWithPassword(email: string): Promise<any> {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      throw new ApiError(HttpStatusInstance.NOT_FOUND, "User not found");
+    }
     return user;
   }
 
-  async updateUser(id: string, data: Partial<IUser>): Promise<any> {
-    const result = await User.findByIdAndUpdate(
+  async updateUser(id: string, data: Partial<IUser>): Promise<void> {
+    const result: any = await User.findByIdAndUpdate(
       id,
       { $set: { ...data } },
       { new: true }
     ).select(UserSelect);
-
-    return result;
+    const dtoUser = this.userSanitizer(result);
+    await CacheServiceInstance.user.updateUserInCache(dtoUser);
   }
 
-  async forgetPassword(email: string) {
+  async forgetPassword(email: string): Promise<any> {
     const isUserExist = await User.findOne({ email: email }).select(UserSelect);
 
     if (!isUserExist) {
@@ -230,7 +186,7 @@ class Service {
     }
   }
 
-  async resetPassword(userId: string, password: string) {
+  async resetPassword(userId: string, password: string): Promise<any> {
     const hashedPassword = await BcryptInstance.hash(password);
     await User.findByIdAndUpdate(userId, {
       $set: { password: hashedPassword },

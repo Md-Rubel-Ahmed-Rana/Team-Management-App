@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
-const user_model_1 = __importDefault(require("@/models/user.model"));
 const jwt_1 = require("lib/jwt");
 const user_service_1 = require("./user.service");
 const apiError_1 = __importDefault(require("@/shared/apiError"));
@@ -35,9 +34,9 @@ class Service {
                 return { accessToken, refreshToken };
             }
             else {
-                const result = yield user_model_1.default.create(data);
-                jwtPayload.id = result._id;
-                jwtPayload.email = result.email;
+                const result = yield user_service_1.UserService.register(data);
+                jwtPayload.id = result === null || result === void 0 ? void 0 : result._id;
+                jwtPayload.email = result === null || result === void 0 ? void 0 : result.email;
                 const accessToken = yield jwt_1.JwtInstance.generateAccessToken(jwtPayload);
                 const refreshToken = yield jwt_1.JwtInstance.generateRefreshToken(jwtPayload);
                 return { accessToken, refreshToken };
@@ -52,19 +51,17 @@ class Service {
     }
     login(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isExist = yield user_model_1.default.findOne({
-                email,
-            });
+            const isExist = yield user_service_1.UserService.findUserByEmailWithPassword(email);
             if (!isExist) {
                 throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found!");
             }
-            const isMatchedPassword = yield bcrypt_1.BcryptInstance.compare(password, isExist.password);
+            const isMatchedPassword = yield bcrypt_1.BcryptInstance.compare(password, isExist === null || isExist === void 0 ? void 0 : isExist.password);
             if (!isMatchedPassword) {
                 throw new apiError_1.default(401, "Password doesn't match");
             }
             const jwtPayload = {
-                id: isExist._id,
-                email: isExist.email,
+                id: isExist === null || isExist === void 0 ? void 0 : isExist._id,
+                email: isExist === null || isExist === void 0 ? void 0 : isExist.email,
             };
             const accessToken = yield jwt_1.JwtInstance.generateAccessToken(jwtPayload);
             const refreshToken = yield jwt_1.JwtInstance.generateRefreshToken(jwtPayload);
