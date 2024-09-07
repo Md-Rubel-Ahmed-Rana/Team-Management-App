@@ -1,6 +1,6 @@
 import GetHead from "@/utils/Head";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useRef, useState, useCallback } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import MessageForm from "../../../components/pages/messages/common/MessageForm";
 import { SocketContext } from "@/context/SocketContext";
 import isAuthenticate from "@/components/HOC/isAuthenticate";
