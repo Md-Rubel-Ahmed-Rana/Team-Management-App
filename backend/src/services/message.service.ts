@@ -2,7 +2,9 @@ import {
   IMessage,
   IMessagePayloadForSocket,
 } from "@/interfaces/message.interface";
+import { IGetUser } from "@/interfaces/user.interface";
 import { Message } from "@/models/message.model";
+import { Types } from "mongoose";
 import { UserSelect } from "propertySelections";
 
 export class Service {
@@ -53,6 +55,101 @@ export class Service {
       select: UserSelect,
     });
     return result;
+  }
+
+  async getDistinctUserIds(
+    objectId: Types.ObjectId,
+    userId: string
+  ): Promise<{ userId: string }[]> {
+    const distinctUserIds = await Message.aggregate([
+      {
+        $match: {
+          $or: [
+            { poster: objectId },
+            {
+              conversationId: {
+                $regex: new RegExp(`^(${userId}&|${userId}$)`),
+              },
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          uniqueUsers: {
+            $addToSet: {
+              $cond: [
+                { $eq: ["$poster", objectId] },
+                {
+                  $cond: [
+                    {
+                      $eq: [
+                        {
+                          $arrayElemAt: [
+                            { $split: ["$conversationId", "&"] },
+                            0,
+                          ],
+                        },
+                        userId,
+                      ],
+                    },
+                    {
+                      $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 1],
+                    },
+                    {
+                      $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 0],
+                    },
+                  ],
+                },
+                "$poster",
+              ],
+            },
+          },
+        },
+      },
+      {
+        $unwind: "$uniqueUsers",
+      },
+      {
+        $project: {
+          userId: "$uniqueUsers",
+        },
+      },
+    ]);
+
+    return distinctUserIds;
+  }
+
+  async getLastMessage(
+    objectId: Types.ObjectId,
+    userId: string,
+    user: IGetUser
+  ) {
+    const lastMessages = await Message.findOne({
+      $or: [
+        {
+          $and: [
+            { poster: objectId },
+            {
+              conversationId: {
+                $regex: `^${user?.id.toString()}&${userId}|${userId}&${user?.id.toString()}$`,
+              },
+            },
+          ],
+        },
+        {
+          $and: [
+            { poster: user?.id },
+            {
+              conversationId: {
+                $regex: `^${userId}&${user?.id.toString()}|${user?.id.toString()}&${userId}$`,
+              },
+            },
+          ],
+        },
+      ],
+    }).sort({ createdAt: -1 });
   }
 
   async getOneToOneMessagesWithType(conversationId: string) {

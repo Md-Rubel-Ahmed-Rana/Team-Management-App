@@ -1,4 +1,5 @@
 import { ProjectController } from "@/controllers/project.controller";
+import projectCacheMiddleware from "@/middlewares/projectCacheMiddleware";
 import validateRequest from "@/middlewares/validateRequest";
 import { ProjectValidationSchema } from "@/validations/project.validation";
 import { Router } from "express";
@@ -10,11 +11,19 @@ router.post(
   ProjectController.createProject
 );
 
-router.get("/", ProjectController.getAllProjects);
+router.get("/", projectCacheMiddleware.all, ProjectController.getAllProjects);
 
-router.get("/my-projects/:userId", ProjectController.myProjects);
+router.get(
+  "/my-projects/:userId",
+  projectCacheMiddleware.myProjects,
+  ProjectController.myProjects
+);
 
-router.get("/assigned-projects/:memberId", ProjectController.assignedProjects);
+router.get(
+  "/assigned-projects/:memberId",
+  projectCacheMiddleware.assignedProjects,
+  ProjectController.assignedProjects
+);
 
 router.patch(
   "/update/:id",

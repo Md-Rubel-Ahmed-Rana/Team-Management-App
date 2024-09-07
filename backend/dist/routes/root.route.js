@@ -9,7 +9,6 @@ const payment_route_1 = require("./payment.route");
 const plan_route_1 = require("./plan.route");
 const project_route_1 = require("./project.route");
 const task_route_1 = require("./task.route");
-const projectLeaveRequest_route_1 = require("./projectLeaveRequest.route");
 const mail_route_1 = require("./mail.route");
 const message_route_1 = require("./message.route");
 const notification_route_1 = require("./notification.route");
@@ -24,7 +23,6 @@ router.use("/payment", jwt_1.JwtInstance.verifyToken, payment_route_1.PaymentRou
 router.use("/plan", plan_route_1.PlanRoutes);
 router.use("/project", jwt_1.JwtInstance.verifyToken, project_route_1.ProjectRoutes);
 router.use("/task", jwt_1.JwtInstance.verifyToken, task_route_1.TaskRoutes);
-router.use("/leave-project", jwt_1.JwtInstance.verifyToken, projectLeaveRequest_route_1.ProjectLeaveRequestRoutes);
 router.use("/mail", mail_route_1.MailRoutes);
 router.use("/message", jwt_1.JwtInstance.verifyToken, message_route_1.MessageRoutes);
 router.use("/notification", jwt_1.JwtInstance.verifyToken, notification_route_1.NotificationRoutes);

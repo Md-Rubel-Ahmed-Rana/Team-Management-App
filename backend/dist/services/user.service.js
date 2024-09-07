@@ -21,9 +21,9 @@ const bcrypt_1 = require("lib/bcrypt");
 const jwt_1 = require("lib/jwt");
 const httpStatus_1 = require("lib/httpStatus");
 const propertySelections_1 = require("propertySelections");
-const message_model_1 = require("@/models/message.model");
 const mongoose_1 = require("mongoose");
 const cache_service_1 = require("./cache.service");
+const message_service_1 = require("./message.service");
 class Service {
     // Temporarily using as alternative of DTO
     userSanitizer(user) {
@@ -60,62 +60,7 @@ class Service {
                 if (!objectId) {
                     throw new Error("Invalid userId format");
                 }
-                const distinctUserIds = yield message_model_1.Message.aggregate([
-                    {
-                        $match: {
-                            $or: [
-                                { poster: objectId },
-                                {
-                                    conversationId: {
-                                        $regex: new RegExp(`^(${userId}&|${userId}$)`),
-                                    },
-                                },
-                            ],
-                        },
-                    },
-                    {
-                        $group: {
-                            _id: null,
-                            uniqueUsers: {
-                                $addToSet: {
-                                    $cond: [
-                                        { $eq: ["$poster", objectId] },
-                                        {
-                                            $cond: [
-                                                {
-                                                    $eq: [
-                                                        {
-                                                            $arrayElemAt: [
-                                                                { $split: ["$conversationId", "&"] },
-                                                                0,
-                                                            ],
-                                                        },
-                                                        userId,
-                                                    ],
-                                                },
-                                                {
-                                                    $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 1],
-                                                },
-                                                {
-                                                    $arrayElemAt: [{ $split: ["$conversationId", "&"] }, 0],
-                                                },
-                                            ],
-                                        },
-                                        "$poster",
-                                    ],
-                                },
-                            },
-                        },
-                    },
-                    {
-                        $unwind: "$uniqueUsers",
-                    },
-                    {
-                        $project: {
-                            userId: "$uniqueUsers",
-                        },
-                    },
-                ]);
+                const distinctUserIds = yield message_service_1.MessageService.getDistinctUserIds(objectId, userId);
                 if (!(distinctUserIds === null || distinctUserIds === void 0 ? void 0 : distinctUserIds.length)) {
                     return [];
                 }
@@ -125,37 +70,11 @@ class Service {
                         : null;
                 })) === null || _a === void 0 ? void 0 : _a.filter((id) => id !== null);
                 // Fetch users corresponding to these user IDs
-                const users = yield user_model_1.default.find({ _id: { $in: userIds } }).select({
-                    name: 1,
-                    profile_picture: 1,
-                    email: 1,
-                });
+                const usersData = yield user_model_1.default.find({ _id: { $in: userIds } });
+                const dtoUsers = usersData === null || usersData === void 0 ? void 0 : usersData.map((user) => this.userSanitizer(user));
                 // Fetch the latest message and include it in the response
-                const userDetailsWithLastMessage = yield Promise.all(users.map((user) => __awaiter(this, void 0, void 0, function* () {
-                    const lastMessageDoc = yield message_model_1.Message.findOne({
-                        $or: [
-                            {
-                                $and: [
-                                    { poster: objectId },
-                                    {
-                                        conversationId: {
-                                            $regex: `^${user === null || user === void 0 ? void 0 : user._id.toString()}&${userId}|${userId}&${user === null || user === void 0 ? void 0 : user._id.toString()}$`,
-                                        },
-                                    },
-                                ],
-                            },
-                            {
-                                $and: [
-                                    { poster: user === null || user === void 0 ? void 0 : user._id },
-                                    {
-                                        conversationId: {
-                                            $regex: `^${userId}&${user === null || user === void 0 ? void 0 : user._id.toString()}|${user === null || user === void 0 ? void 0 : user._id.toString()}&${userId}$`,
-                                        },
-                                    },
-                                ],
-                            },
-                        ],
-                    }).sort({ createdAt: -1 });
+                const userDetailsWithLastMessage = yield Promise.all(dtoUsers.map((user) => __awaiter(this, void 0, void 0, function* () {
+                    const lastMessageDoc = yield message_service_1.MessageService.getLastMessage(objectId, userId, user);
                     const lastMessage = {
                         text: lastMessageDoc === null || lastMessageDoc === void 0 ? void 0 : lastMessageDoc.text,
                         files: lastMessageDoc === null || lastMessageDoc === void 0 ? void 0 : lastMessageDoc.files,
@@ -163,7 +82,7 @@ class Service {
                         createdAt: lastMessageDoc === null || lastMessageDoc === void 0 ? void 0 : lastMessageDoc.createdAt,
                     };
                     const friend = {
-                        id: user === null || user === void 0 ? void 0 : user._id.toString(),
+                        id: user === null || user === void 0 ? void 0 : user.id,
                         name: user === null || user === void 0 ? void 0 : user.name,
                         email: user === null || user === void 0 ? void 0 : user.email,
                         profile_picture: user === null || user === void 0 ? void 0 : user.profile_picture,
@@ -199,6 +118,7 @@ class Service {
             const newUser = yield user_model_1.default.create(user);
             const dtoUser = this.userSanitizer(newUser);
             yield cache_service_1.CacheServiceInstance.user.addNewUserToCache(dtoUser);
+            return newUser;
         });
     }
     findUserById(id) {
@@ -217,6 +137,15 @@ class Service {
                 throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found");
             }
             return this.userSanitizer(user);
+        });
+    }
+    findUserByEmailWithPassword(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield user_model_1.default.findOne({ email: email });
+            if (!user) {
+                throw new apiError_1.default(httpStatus_1.HttpStatusInstance.NOT_FOUND, "User not found");
+            }
+            return user;
         });
     }
     updateUser(id, data) {

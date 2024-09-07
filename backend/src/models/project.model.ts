@@ -1,6 +1,8 @@
 import { IProject } from "@/interfaces/project.interface";
 import { Schema, model } from "mongoose";
 import Team from "./team.model";
+import { teamPopulate, TeamService } from "@/services/team.service";
+import { CacheServiceInstance } from "@/services/cache.service";
 
 const projectSchema = new Schema<IProject>(
   {
@@ -43,9 +45,15 @@ const projectSchema = new Schema<IProject>(
 
 // Middleware to increment project in the Team schema
 projectSchema.post("save", async function (doc) {
-  await Team.findByIdAndUpdate(doc.team, {
-    $push: { projects: doc._id },
-  });
+  const updatedProject = await Team.findByIdAndUpdate(
+    doc.team,
+    {
+      $push: { projects: doc._id },
+    },
+    { new: true }
+  ).populate(teamPopulate);
+  const dtoData = TeamService.teamSanitizer(updatedProject);
+  await CacheServiceInstance.team.updateTeamInCache(dtoData);
 });
 
 export const Project = model("Project", projectSchema);

@@ -12,8 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TeamService = void 0;
-const project_model_1 = require("@/models/project.model");
+exports.TeamService = exports.teamPopulate = void 0;
 const team_model_1 = __importDefault(require("@/models/team.model"));
 const apiError_1 = __importDefault(require("@/shared/apiError"));
 const http_status_1 = __importDefault(require("http-status"));
@@ -26,6 +25,33 @@ const propertySelections_1 = require("propertySelections");
 const enums_1 = require("enums");
 const envConfig_1 = require("@/configurations/envConfig");
 const user_service_1 = require("./user.service");
+const cache_service_1 = require("./cache.service");
+exports.teamPopulate = [
+    {
+        path: "activeMembers",
+        model: "User",
+        select: propertySelections_1.UserSelect,
+    },
+    {
+        path: "pendingMembers",
+        model: "User",
+        select: propertySelections_1.UserSelect,
+    },
+    {
+        path: "admin",
+        model: "User",
+        select: propertySelections_1.UserSelect,
+    },
+    {
+        path: "leaveRequests",
+        model: "User",
+        select: propertySelections_1.UserSelect,
+    },
+    {
+        path: "projects",
+        model: "Project",
+    },
+];
 class Service {
     // Temporarily using as alternative of DTO
     teamSanitizer(team) {
@@ -56,132 +82,38 @@ class Service {
             if (isExist) {
                 throw new apiError_1.default(http_status_1.default.CONFLICT, "This team name is already exist");
             }
+            const newTeam = yield team_model_1.default.create(data);
+            const populatedData = yield newTeam.populate(exports.teamPopulate);
+            const dtoData = this.teamSanitizer(populatedData);
+            // store the new team on cache
+            yield cache_service_1.CacheServiceInstance.team.addNewTeamToCache(dtoData);
         });
     }
     getSingleTeam(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield team_model_1.default.findById(id).populate([
-                {
-                    path: "activeMembers",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "pendingMembers",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "admin",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "leaveRequests",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "projects",
-                    model: "Project",
-                },
-            ]);
+            const result = yield team_model_1.default.findById(id).populate(exports.teamPopulate);
             const dtoData = this.teamSanitizer(result);
             return dtoData;
         });
     }
     getAllTeams() {
         return __awaiter(this, void 0, void 0, function* () {
-            const teams = yield team_model_1.default.find({}).populate([
-                {
-                    path: "activeMembers",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "pendingMembers",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "admin",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "leaveRequests",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "projects",
-                    model: "Project",
-                },
-            ]);
+            const teams = yield team_model_1.default.find({}).populate(exports.teamPopulate);
             const dtoData = teams === null || teams === void 0 ? void 0 : teams.map((team) => this.teamSanitizer(team));
+            yield cache_service_1.CacheServiceInstance.team.setAllTeamsToCache(dtoData);
             return dtoData;
         });
     }
     getMyTeams(adminId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const teams = yield team_model_1.default.find({ admin: adminId }).populate([
-                {
-                    path: "activeMembers",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "pendingMembers",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "admin",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "leaveRequests",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "projects",
-                    model: "Project",
-                },
-            ]);
+            const teams = yield team_model_1.default.find({ admin: adminId }).populate(exports.teamPopulate);
             const dtoData = teams === null || teams === void 0 ? void 0 : teams.map((team) => this.teamSanitizer(team));
             return dtoData;
         });
     }
     getJoinedTeams(memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const teams = yield team_model_1.default.find({ activeMembers: memberId }).populate([
-                {
-                    path: "activeMembers",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "pendingMembers",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "admin",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "leaveRequests",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "projects",
-                    model: "Project",
-                },
-            ]);
+            const teams = yield team_model_1.default.find({ activeMembers: memberId }).populate(exports.teamPopulate);
             const dtoData = teams === null || teams === void 0 ? void 0 : teams.map((team) => this.teamSanitizer(team));
             return dtoData;
         });
@@ -197,23 +129,10 @@ class Service {
                 ...((isExistTeam === null || isExistTeam === void 0 ? void 0 : isExistTeam.pendingMembers) || []),
             ];
             // Update the team data
-            const team = yield team_model_1.default.findByIdAndUpdate(id, { $set: Object.assign({}, data) }, { new: true }).populate([
-                {
-                    path: "activeMembers",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "pendingMembers",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-                {
-                    path: "admin",
-                    model: "User",
-                    select: propertySelections_1.UserSelect,
-                },
-            ]);
+            const updatedTeam = yield team_model_1.default.findByIdAndUpdate(id, { $set: Object.assign({}, data) }, { new: true }).populate(exports.teamPopulate);
+            const team = this.teamSanitizer(updatedTeam);
+            // store the updated team on cache
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(team);
             if ((isExistTeam === null || isExistTeam === void 0 ? void 0 : isExistTeam.name) !== (data === null || data === void 0 ? void 0 : data.name)) {
                 // Notify all members about the name change
                 const allMembers = [
@@ -224,15 +143,24 @@ class Service {
                     const notifyObject = {
                         title: "Team Name Updated",
                         type: enums_1.NotificationEnums.TEAM_UPDATED,
-                        receiver: member === null || member === void 0 ? void 0 : member._id,
-                        sender: team === null || team === void 0 ? void 0 : team.admin,
+                        receiver: member === null || member === void 0 ? void 0 : member.id,
+                        sender: team === null || team === void 0 ? void 0 : team.admin.id,
                         content: `Dear ${member === null || member === void 0 ? void 0 : member.name}, the team name has been updated. The team "${isExistTeam === null || isExistTeam === void 0 ? void 0 : isExistTeam.name}" is now named "${data === null || data === void 0 ? void 0 : data.name}". Thank you for staying up to date with these changes!`,
-                        link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${member === null || member === void 0 ? void 0 : member._id}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
+                        link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${member === null || member === void 0 ? void 0 : member.id}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
                     };
                     yield notification_service_1.NotificationService.createNotification(notifyObject);
                 })));
                 return members;
             }
+        });
+    }
+    removeAProject(teamId, projectId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updatedTeam = yield team_model_1.default.findByIdAndUpdate(teamId, {
+                $pull: { projects: projectId },
+            }, { new: true }).populate(exports.teamPopulate);
+            const dtoData = this.teamSanitizer(updatedTeam);
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(dtoData);
         });
     }
     deleteTeam(id) {
@@ -255,6 +183,8 @@ class Service {
                 }
                 // Delete the team
                 yield team_model_1.default.findByIdAndDelete(id).session(session);
+                // delete the team from cache
+                yield cache_service_1.CacheServiceInstance.team.deleteTeamFromCache(id);
                 // Delete related projects
                 yield project_service_1.ProjectService.deleteProjectsByTeamId(id, session);
                 yield Promise.all(members.map((member) => __awaiter(this, void 0, void 0, function* () {
@@ -280,17 +210,46 @@ class Service {
             }
         });
     }
+    removeMember(teamId, memberId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Remove member from team
+            const updatedTeam = yield team_model_1.default.findByIdAndUpdate(teamId, {
+                $pull: { activeMembers: memberId },
+            }, { new: true }).populate(exports.teamPopulate);
+            const team = this.teamSanitizer(updatedTeam);
+            // store the updated team on cache
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(team);
+            // Remove this member from projects by member ID
+            yield project_service_1.ProjectService.removeAMemberFromAllProjects(teamId, memberId);
+            const member = yield user_service_1.UserService.findUserById(memberId);
+            const notifyObject = {
+                title: "You Have Been Removed from a Team",
+                type: enums_1.NotificationEnums.TEAM_MEMBER_REMOVED,
+                content: `Thank you for the time and effort you dedicated to the team "${team === null || team === void 0 ? void 0 : team.name}" in the "${team === null || team === void 0 ? void 0 : team.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
+                receiver: memberId,
+                sender: team === null || team === void 0 ? void 0 : team.admin.id,
+                link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
+            };
+            yield notification_service_1.NotificationService.createNotification(notifyObject);
+        });
+    }
+    // leave request specific methods
     sendLeaveRequest(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const team = yield team_model_1.default.updateOne({ _id: teamId }, { $push: { leaveRequests: memberId } });
-            const admin = yield user_service_1.UserService.findUserById(team === null || team === void 0 ? void 0 : team.admin);
+            var _a, _b, _c, _d;
+            const team = yield team_model_1.default.findByIdAndUpdate(teamId, {
+                $push: { leaveRequests: memberId },
+            }, { new: true }).populate(exports.teamPopulate);
+            const dtoData = this.teamSanitizer(team);
+            // store the updated team on cache
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(dtoData);
             const notifyObject = {
                 title: "Team Leave Request",
                 type: enums_1.NotificationEnums.TEAM_LEFT,
                 sender: memberId,
-                receiver: admin === null || admin === void 0 ? void 0 : admin.id,
+                receiver: (_a = team === null || team === void 0 ? void 0 : team.admin) === null || _a === void 0 ? void 0 : _a.id,
                 content: `You have received a new request from a team member to leave the team. Please review the request and take appropriate action.`,
-                link: `${envConfig_1.config.app.frontendDomain}/dashboard/leave-requests?userId=${admin === null || admin === void 0 ? void 0 : admin.id}&name=${admin === null || admin === void 0 ? void 0 : admin.name}&email=${admin === null || admin === void 0 ? void 0 : admin.email}`,
+                link: `${envConfig_1.config.app.frontendDomain}/dashboard/leave-requests?userId=${(_b = team === null || team === void 0 ? void 0 : team.admin) === null || _b === void 0 ? void 0 : _b.id}&name=${(_c = team === null || team === void 0 ? void 0 : team.admin) === null || _c === void 0 ? void 0 : _c.name}&email=${(_d = team === null || team === void 0 ? void 0 : team.admin) === null || _d === void 0 ? void 0 : _d.email}`,
             };
             // Send notification to the admin
             yield notification_service_1.NotificationService.createNotification(notifyObject);
@@ -298,16 +257,20 @@ class Service {
     }
     cancelLeaveRequest(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log({ teamId, memberId });
-            const team = yield team_model_1.default.updateOne({ _id: teamId }, { $pull: { leaveRequests: memberId } });
-            const admin = yield user_service_1.UserService.findUserById(team === null || team === void 0 ? void 0 : team.admin);
+            var _a, _b, _c, _d;
+            const updatedTeam = yield team_model_1.default.findByIdAndUpdate(teamId, {
+                $pull: { leaveRequests: memberId },
+            }, { new: true }).populate(exports.teamPopulate);
+            const team = this.teamSanitizer(updatedTeam);
+            // store the updated team on cache
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(team);
             const notifyObject = {
                 title: "Team Leave Request",
                 type: enums_1.NotificationEnums.TEAM_LEFT,
                 sender: memberId,
-                receiver: admin === null || admin === void 0 ? void 0 : admin.id,
+                receiver: (_a = team === null || team === void 0 ? void 0 : team.admin) === null || _a === void 0 ? void 0 : _a.id,
                 content: `Team Leave Request Cancelled`,
-                link: `${envConfig_1.config.app.frontendDomain}/dashboard/leave-requests?userId=${admin === null || admin === void 0 ? void 0 : admin.id}&name=${admin === null || admin === void 0 ? void 0 : admin.name}&email=${admin === null || admin === void 0 ? void 0 : admin.email}`,
+                link: `${envConfig_1.config.app.frontendDomain}/dashboard/leave-requests?userId=${(_b = team === null || team === void 0 ? void 0 : team.admin) === null || _b === void 0 ? void 0 : _b.id}&name=${(_c = team === null || team === void 0 ? void 0 : team.admin) === null || _c === void 0 ? void 0 : _c.name}&email=${(_d = team === null || team === void 0 ? void 0 : team.admin) === null || _d === void 0 ? void 0 : _d.email}`,
             };
             // Send notification to the admin
             yield notification_service_1.NotificationService.createNotification(notifyObject);
@@ -315,12 +278,18 @@ class Service {
     }
     rejectLeaveRequest(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const team = yield team_model_1.default.updateOne({ _id: teamId }, { $pull: { leaveRequests: memberId } });
+            var _a;
+            const updatedTeam = yield team_model_1.default.findByIdAndUpdate(teamId, {
+                $pull: { leaveRequests: memberId },
+            }, { new: true }).populate(exports.teamPopulate);
+            const team = this.teamSanitizer(updatedTeam);
+            // store the updated team on cache
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(team);
             const member = yield user_service_1.UserService.findUserById(memberId);
             const notifyObject = {
                 title: "Leave Request Rejected",
                 type: enums_1.NotificationEnums.TEAM_LEFT,
-                sender: team.admin,
+                sender: (_a = team === null || team === void 0 ? void 0 : team.admin) === null || _a === void 0 ? void 0 : _a.id,
                 receiver: memberId,
                 content: `Your request to leave the team "${team === null || team === void 0 ? void 0 : team.name}" has been declined by the admin.`,
                 link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${member === null || member === void 0 ? void 0 : member.id}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
@@ -331,43 +300,75 @@ class Service {
     }
     acceptLeaveRequest(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log({ teamId, memberId });
-            const team = yield team_model_1.default.updateOne({ _id: teamId }, { $pull: { leaveRequests: memberId, activeMembers: memberId } }, { new: true });
+            const updatedTeam = yield team_model_1.default.findByIdAndUpdate(teamId, { $pull: { leaveRequests: memberId, activeMembers: memberId } }, { new: true }).populate(exports.teamPopulate);
             // Remove this member from projects by member ID
-            yield project_model_1.Project.updateMany({ team: teamId }, { $pull: { members: { memberId: memberId } } });
-            if (team && (team === null || team === void 0 ? void 0 : team.admin)) {
-                const member = yield user_service_1.UserService.findUserById(memberId);
-                const notifyObject = {
-                    title: "Your Leave Request Accepted And You Have Been Removed from a Team",
-                    type: enums_1.NotificationEnums.TEAM_MEMBER_REMOVED,
-                    content: `Thank you for the time and effort you dedicated to the team "${team === null || team === void 0 ? void 0 : team.name}" in the "${team === null || team === void 0 ? void 0 : team.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
-                    receiver: memberId,
-                    sender: team === null || team === void 0 ? void 0 : team.admin,
-                    link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
-                };
-                yield notification_service_1.NotificationService.createNotification(notifyObject);
-            }
+            yield project_service_1.ProjectService.removeAMemberFromAllProjects(teamId, memberId);
+            // store the updated team on cache
+            const team = this.teamSanitizer(updatedTeam);
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(team);
+            const member = yield user_service_1.UserService.findUserById(memberId);
+            const notifyObject = {
+                title: "Your Leave Request Accepted And You Have Been Removed from a Team",
+                type: enums_1.NotificationEnums.TEAM_MEMBER_REMOVED,
+                content: `Thank you for the time and effort you dedicated to the team "${team === null || team === void 0 ? void 0 : team.name}" in the "${team === null || team === void 0 ? void 0 : team.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
+                receiver: memberId,
+                sender: team === null || team === void 0 ? void 0 : team.admin.id,
+                link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
+            };
+            yield notification_service_1.NotificationService.createNotification(notifyObject);
         });
     }
-    removeMember(teamId, memberId) {
+    // invitation specific methods
+    acceptInviteAndAddNewMember(teamId, memberId) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Remove member from team
-            yield team_model_1.default.updateOne({ _id: teamId }, { $pull: { activeMembers: memberId } });
-            const team = yield team_model_1.default.findById(teamId);
-            // Remove this member from projects by member ID
-            yield project_model_1.Project.updateMany({ team: teamId }, { $pull: { members: { memberId: memberId } } });
-            if (team && (team === null || team === void 0 ? void 0 : team.admin)) {
-                const member = yield user_service_1.UserService.findUserById(memberId);
-                const notifyObject = {
-                    title: "You Have Been Removed from a Team",
-                    type: enums_1.NotificationEnums.TEAM_MEMBER_REMOVED,
-                    content: `Thank you for the time and effort you dedicated to the team "${team === null || team === void 0 ? void 0 : team.name}" in the "${team === null || team === void 0 ? void 0 : team.category}" category. Your contributions have been greatly appreciated. As we part ways, we wish you all the best in your future endeavors. If you have any questions or concerns, please feel free to reach out to the team admin.`,
-                    receiver: memberId,
-                    sender: team === null || team === void 0 ? void 0 : team.admin,
-                    link: `${envConfig_1.config.app.frontendDomain}/teams/joined-teams?userId=${memberId}&name=${member === null || member === void 0 ? void 0 : member.name}&email=${member === null || member === void 0 ? void 0 : member.email}`,
-                };
-                yield notification_service_1.NotificationService.createNotification(notifyObject);
-            }
+            const updatedTeam = yield team_model_1.default.findByIdAndUpdate(teamId, {
+                $push: { activeMembers: memberId },
+                $pull: { pendingMembers: memberId },
+            }, { new: true }).populate(exports.teamPopulate);
+            const team = this.teamSanitizer(updatedTeam);
+            // store the updated team on cache
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(team);
+            return team;
+        });
+    }
+    sendAddMemberToPending(teamId, memberId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updatedTeam = yield team_model_1.default.findByIdAndUpdate(teamId, {
+                $push: { pendingMembers: memberId },
+            }, { new: true }).populate(exports.teamPopulate);
+            // store the updated team on cache
+            const team = this.teamSanitizer(updatedTeam);
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(team);
+            return team;
+        });
+    }
+    rejectAndRemoveMemberFromPending(teamId, memberId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updatedTeam = yield team_model_1.default.findByIdAndUpdate(teamId, {
+                $pull: { pendingMembers: memberId },
+            }, { new: true }).populate(exports.teamPopulate);
+            // store the updated team on cache
+            const team = this.teamSanitizer(updatedTeam);
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(team);
+            return team;
+        });
+    }
+    cancelAndRemoveFromPending(teamId, memberId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updatedTeam = yield team_model_1.default.findByIdAndUpdate(teamId, {
+                $pull: { pendingMembers: memberId },
+            }, { new: true }).populate(exports.teamPopulate);
+            // store the updated team on cache
+            const team = this.teamSanitizer(updatedTeam);
+            yield cache_service_1.CacheServiceInstance.team.updateTeamInCache(team);
+            return team;
+        });
+    }
+    getMyPendingInvitations(memberId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const teams = yield team_model_1.default.find({ pendingMembers: memberId }).populate(exports.teamPopulate);
+            const dtoData = teams === null || teams === void 0 ? void 0 : teams.map((team) => this.teamSanitizer(team));
+            return dtoData;
         });
     }
 }

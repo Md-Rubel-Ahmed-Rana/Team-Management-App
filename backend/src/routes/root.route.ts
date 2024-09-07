@@ -6,7 +6,6 @@ import { PaymentRoutes } from "./payment.route";
 import { PlanRoutes } from "./plan.route";
 import { ProjectRoutes } from "./project.route";
 import { TaskRoutes } from "./task.route";
-import { ProjectLeaveRequestRoutes } from "./projectLeaveRequest.route";
 import { MailRoutes } from "./mail.route";
 import { MessageRoutes } from "./message.route";
 import { NotificationRoutes } from "./notification.route";
@@ -30,12 +29,6 @@ router.use("/plan", PlanRoutes);
 router.use("/project", JwtInstance.verifyToken, ProjectRoutes);
 
 router.use("/task", JwtInstance.verifyToken, TaskRoutes);
-
-router.use(
-  "/leave-project",
-  JwtInstance.verifyToken,
-  ProjectLeaveRequestRoutes
-);
 
 router.use("/mail", MailRoutes);
 
