@@ -10,21 +10,6 @@ const projectApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["project"] as any,
     }),
-    deleteProject: builder.mutation({
-      query: (id: string) => ({
-        method: "DELETE",
-        url: `/project/delete/${id}`,
-      }),
-      invalidatesTags: ["project"] as any,
-    }),
-    updateProject: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `/project/update/${id}`,
-        method: "PATCH",
-        body: data,
-      }),
-      invalidatesTags: ["project"] as any,
-    }),
     myProjects: builder.query({
       query: (userId) => ({
         url: `/project/my-projects/${userId}`,
@@ -37,6 +22,21 @@ const projectApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["project"] as any,
     }),
+    updateProject: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/project/update/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["project"] as any,
+    }),
+    deleteProject: builder.mutation({
+      query: (id: string) => ({
+        method: "DELETE",
+        url: `/project/delete/${id}`,
+      }),
+      invalidatesTags: ["project"] as any,
+    }),
     getSingleProject: builder.query({
       query: (id) => ({
         url: `/project/single/${id}`,
@@ -45,54 +45,70 @@ const projectApi = apiSlice.injectEndpoints({
       invalidatesTags: ["task"] as any,
     }),
     addMember: builder.mutation({
-      query: (data) => ({
-        url: "/project/add-member",
+      query: ({ projectId, memberId }) => ({
+        url: `/project/add-member/${projectId}/${memberId}`,
         method: "POST",
-        body: data,
       }),
       invalidatesTags: ["project"] as any,
     }),
     removeMember: builder.mutation({
-      query: (data) => ({
-        url: "/project/remove-member",
+      query: ({ projectId, memberId }) => ({
+        url: `/project/remove-member/${projectId}/${memberId}`,
         method: "POST",
-        body: data,
       }),
       invalidatesTags: ["project"] as any,
     }),
-    leaveProjectRequest: builder.mutation({
-      query: (data) => ({
-        url: "/leave-project/send-request",
+    sendProjectLeaveRequest: builder.mutation({
+      query: ({
+        projectId,
+        memberId,
+      }: {
+        projectId: string;
+        memberId: string;
+      }) => ({
+        url: `/project/send-leave-request/${projectId}/${memberId}`,
         method: "POST",
-        body: data,
       }),
       invalidatesTags: ["project"] as any,
     }),
-    ignoreProjectLeaveRequest: builder.mutation({
-      query: (requestId) => ({
-        url: `/leave-project/ignore/${requestId}`,
-        method: "PATCH",
+    cancelProjectLeaveRequest: builder.mutation({
+      query: ({
+        projectId,
+        memberId,
+      }: {
+        projectId: string;
+        memberId: string;
+      }) => ({
+        url: `/project/cancel-leave-request/${projectId}/${memberId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["project"] as any,
+    }),
+    rejectProjectLeaveRequest: builder.mutation({
+      query: ({
+        projectId,
+        memberId,
+      }: {
+        projectId: string;
+        memberId: string;
+      }) => ({
+        url: `/project/reject-leave-request/${projectId}/${memberId}`,
+        method: "POST",
       }),
       invalidatesTags: ["project"] as any,
     }),
     acceptProjectLeaveRequest: builder.mutation({
-      query: ({ projectId, memberId }) => ({
-        url: `/leave-project/accept/${projectId}/${memberId}`,
-        method: "PATCH",
+      query: ({
+        projectId,
+        memberId,
+      }: {
+        projectId: string;
+        memberId: string;
+      }) => ({
+        url: `/project/accept-leave-request/${projectId}/${memberId}`,
+        method: "POST",
       }),
       invalidatesTags: ["project"] as any,
-    }),
-    getLeaveProjectRequestsByAdmin: builder.query({
-      query: (adminId) => ({
-        url: `/leave-project/all/${adminId}`,
-      }),
-      providesTags: ["project"] as any,
-    }),
-    getMemberLeaveProjectRequest: builder.query({
-      query: (memberId) => ({
-        url: `/leave-project/member-request/${memberId}`,
-      }),
-      providesTags: ["project"] as any,
     }),
   }),
 });
@@ -100,15 +116,14 @@ const projectApi = apiSlice.injectEndpoints({
 export const {
   useCreateProjectMutation,
   useMyProjectsQuery,
-  useAddMemberMutation,
-  useGetSingleProjectQuery,
-  useUpdateProjectMutation,
   useAssignedProjectsQuery,
-  useRemoveMemberMutation,
-  useLeaveProjectRequestMutation,
-  useGetLeaveProjectRequestsByAdminQuery,
-  useIgnoreProjectLeaveRequestMutation,
-  useGetMemberLeaveProjectRequestQuery,
+  useUpdateProjectMutation,
   useDeleteProjectMutation,
+  useGetSingleProjectQuery,
+  useAddMemberMutation,
+  useRemoveMemberMutation,
+  useSendProjectLeaveRequestMutation,
+  useCancelProjectLeaveRequestMutation,
+  useRejectProjectLeaveRequestMutation,
   useAcceptProjectLeaveRequestMutation,
 } = projectApi;

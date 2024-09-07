@@ -278,9 +278,9 @@ class Service {
       title: "Team Leave Request",
       type: NotificationEnums.TEAM_LEFT,
       sender: memberId,
-      receiver: team?.admin?.id,
+      receiver: dtoData?.admin?.id,
       content: `You have received a new request from a team member to leave the team. Please review the request and take appropriate action.`,
-      link: `${config.app.frontendDomain}/dashboard/leave-requests?userId=${team?.admin?.id}&name=${team?.admin?.name}&email=${team?.admin?.email}`,
+      link: `${config.app.frontendDomain}/dashboard/leave-requests?userId=${dtoData?.admin?.id}&name=${team?.admin?.name}&email=${dtoData?.admin?.email}`,
     };
 
     // Send notification to the admin

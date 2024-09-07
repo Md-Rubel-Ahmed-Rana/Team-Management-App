@@ -103,7 +103,7 @@ class Service {
         return dateB.getTime() - dateA.getTime();
       });
 
-      return userDetailsWithLastMessage.filter((user) => user.id !== userId);
+      return userDetailsWithLastMessage;
     } catch (error) {
       console.error("Error fetching chat friends:", error);
       throw new Error("Failed to fetch chat friends.");

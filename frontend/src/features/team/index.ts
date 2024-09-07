@@ -11,12 +11,25 @@ const teamApi = apiSlice.injectEndpoints({
       invalidatesTags: ["team"] as any,
     }),
 
-    removeTeamMember: builder.mutation({
-      query: ({ teamId, memberId }) => ({
-        method: "PATCH",
-        url: `/team/remove-member/${teamId}/${memberId}`,
+    getMyTeams: builder.query({
+      query: (adminId) => ({
+        url: `/team/my-teams/${adminId}`,
       }),
-      invalidatesTags: ["team"] as any,
+      providesTags: ["team"] as any,
+    }),
+
+    getJoinedTeams: builder.query({
+      query: (memberId) => ({
+        url: `/team/joined-teams/${memberId}`,
+      }),
+      providesTags: ["team"] as any,
+    }),
+
+    getSingleTeam: builder.query({
+      query: (id) => ({
+        url: `/team/single/${id}`,
+      }),
+      providesTags: ["team"] as any,
     }),
 
     updateTeam: builder.mutation({
@@ -27,54 +40,6 @@ const teamApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["team"] as any,
     }),
-    getMyTeamsForDropdown: builder.query({
-      query: (adminId) => ({
-        url: `/team/my-teams/dropdown/${adminId}`,
-      }),
-      providesTags: ["team"] as any,
-    }),
-
-    getMyTeamsCard: builder.query({
-      query: (adminId: string) => ({
-        url: `/team/cards/my-teams/${adminId}`,
-      }),
-      providesTags: ["team"] as any,
-    }),
-
-    getJoinedTeamsCard: builder.query({
-      query: (memberId: string) => ({
-        url: `/team/cards/joined-teams/${memberId}`,
-      }),
-      providesTags: ["team"] as any,
-    }),
-
-    getTeamDetails: builder.query({
-      query: (teamId: string) => ({
-        url: `/team/details/${teamId}`,
-      }),
-      providesTags: ["team"] as any,
-    }),
-
-    joinedTeams: builder.query({
-      query: (id) => ({
-        url: `/team/joined-teams/${id}`,
-      }),
-      providesTags: ["team"] as any,
-    }),
-
-    getActiveMembers: builder.query({
-      query: (id) => ({
-        url: `/team/active-members/${id}`,
-      }),
-      providesTags: ["team"] as any,
-    }),
-
-    singleTeam: builder.query({
-      query: (id) => ({
-        url: `/team/single/${id}`,
-      }),
-      providesTags: ["team"] as any,
-    }),
 
     deleteTeam: builder.mutation({
       query: (id: string) => ({
@@ -83,68 +48,55 @@ const teamApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["team"] as any,
     }),
-    getTeams: builder.query({
-      query: (id) => ({
-        url: `/api/team/my-team?admin=${id}`,
-      }),
-      providesTags: ["team"] as any,
-    }),
 
-    leaveTeamRequest: builder.mutation({
-      query: (data) => ({
-        url: "/leave-team/send-request",
-        method: "POST",
-        body: data,
+    removeTeamMember: builder.mutation({
+      query: ({ teamId, memberId }) => ({
+        method: "DELETE",
+        url: `/team/remove-member/${teamId}/${memberId}`,
       }),
       invalidatesTags: ["team"] as any,
     }),
-
-    ignoreTeamLeaveRequest: builder.mutation({
-      query: (requestId) => ({
-        url: `/leave-team/ignore/${requestId}`,
-        method: "PATCH",
+    sendTeamLeaveRequest: builder.mutation({
+      query: ({ teamId, memberId }: { teamId: string; memberId: string }) => ({
+        url: `/team/send-leave-request/${teamId}/${memberId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["team"] as any,
+    }),
+    cancelTeamLeaveRequest: builder.mutation({
+      query: ({ teamId, memberId }: { teamId: string; memberId: string }) => ({
+        url: `/team/cancel-leave-request/${teamId}/${memberId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["team"] as any,
+    }),
+    rejectTeamLeaveRequest: builder.mutation({
+      query: ({ teamId, memberId }: { teamId: string; memberId: string }) => ({
+        url: `/team/reject-leave-request/${teamId}/${memberId}`,
+        method: "POST",
       }),
       invalidatesTags: ["team"] as any,
     }),
     acceptTeamLeaveRequest: builder.mutation({
-      query: ({ teamId, memberId }) => ({
-        url: `/leave-team/accept/${teamId}/${memberId}`,
-        method: "PATCH",
+      query: ({ teamId, memberId }: { teamId: string; memberId: string }) => ({
+        url: `/team/accept-leave-request/${teamId}/${memberId}`,
+        method: "POST",
       }),
       invalidatesTags: ["team"] as any,
-    }),
-
-    getLeaveTeamRequestsByAdmin: builder.query({
-      query: (adminId) => ({
-        url: `/leave-team/all/${adminId}`,
-      }),
-      providesTags: ["team"] as any,
-    }),
-    getMemberLeaveTeamRequest: builder.query({
-      query: (memberId) => ({
-        url: `/leave-team/member-request/${memberId}`,
-      }),
-      providesTags: ["team"] as any,
     }),
   }),
 });
 
 export const {
   useCreateTeamMutation,
-  useGetMyTeamsForDropdownQuery,
-  useGetTeamsQuery,
-  useSingleTeamQuery,
-  useJoinedTeamsQuery,
-  useGetActiveMembersQuery,
-  useRemoveTeamMemberMutation,
-  useLeaveTeamRequestMutation,
-  useGetLeaveTeamRequestsByAdminQuery,
-  useIgnoreTeamLeaveRequestMutation,
-  useGetMemberLeaveTeamRequestQuery,
+  useGetMyTeamsQuery,
+  useGetJoinedTeamsQuery,
+  useGetSingleTeamQuery,
   useUpdateTeamMutation,
   useDeleteTeamMutation,
-  useGetMyTeamsCardQuery,
-  useGetJoinedTeamsCardQuery,
-  useGetTeamDetailsQuery,
+  useRemoveTeamMemberMutation,
+  useSendTeamLeaveRequestMutation,
+  useCancelTeamLeaveRequestMutation,
+  useRejectTeamLeaveRequestMutation,
   useAcceptTeamLeaveRequestMutation,
 } = teamApi;

@@ -125,8 +125,8 @@ export class Service {
     objectId: Types.ObjectId,
     userId: string,
     user: IGetUser
-  ) {
-    const lastMessages = await Message.findOne({
+  ): Promise<IMessage | null> {
+    const lastMessage = await Message.findOne({
       $or: [
         {
           $and: [
@@ -150,6 +150,8 @@ export class Service {
         },
       ],
     }).sort({ createdAt: -1 });
+
+    return lastMessage;
   }
 
   async getOneToOneMessagesWithType(conversationId: string) {

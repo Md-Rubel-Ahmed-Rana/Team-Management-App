@@ -7,8 +7,8 @@ import MessageFiles from "./MessageFiles";
 import { formattedDate } from "@/utils/formattedDate";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-import { useSingleTeamQuery } from "@/features/team";
 import { useRouter } from "next/router";
+import { useGetSingleTeamQuery } from "@/features/team";
 
 type Props = {
   message: IMessage;
@@ -18,7 +18,7 @@ const MessageCard = ({ message }: Props) => {
   const { query } = useRouter();
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: singleTeam } = useSingleTeamQuery(query.teamId);
+  const { data: singleTeam } = useGetSingleTeamQuery(query?.teamId);
   const team = singleTeam?.data;
   return (
     <div key={message?.id} className="mx-auto border-b py-6">

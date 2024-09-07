@@ -43,20 +43,52 @@ class CacheService {
         };
         this.team = {
             getAllTeamsFromCache: () => __awaiter(this, void 0, void 0, function* () {
-                return yield this.getAll(this.cacheKeys.team);
+                const teams = yield this.getAll(this.cacheKeys.team);
+                if (!teams) {
+                    return undefined;
+                }
+                else {
+                    const teamsWithProjects = yield Promise.all(teams.map((team) => __awaiter(this, void 0, void 0, function* () {
+                        return (Object.assign(Object.assign({}, team), { projects: yield this.project.getProjectByTeamId(team.id) }));
+                    })));
+                    return teamsWithProjects;
+                }
             }),
             getMyTeamsFromCache: (adminId) => __awaiter(this, void 0, void 0, function* () {
                 const teams = yield this.getAll(this.cacheKeys.team);
                 const myTeams = teams === null || teams === void 0 ? void 0 : teams.filter((team) => { var _a; return ((_a = team === null || team === void 0 ? void 0 : team.admin) === null || _a === void 0 ? void 0 : _a.id) === adminId; });
-                return myTeams;
+                if (!myTeams) {
+                    return undefined;
+                }
+                else {
+                    const teamsWithProjects = yield Promise.all(myTeams.map((team) => __awaiter(this, void 0, void 0, function* () {
+                        return (Object.assign(Object.assign({}, team), { projects: yield this.project.getProjectByTeamId(team.id) }));
+                    })));
+                    return teamsWithProjects;
+                }
             }),
             joinedTeams: (memberId) => __awaiter(this, void 0, void 0, function* () {
                 const teams = yield this.getAll(this.cacheKeys.team);
                 const myTeams = teams === null || teams === void 0 ? void 0 : teams.filter((team) => { var _a; return (_a = team === null || team === void 0 ? void 0 : team.activeMembers) === null || _a === void 0 ? void 0 : _a.some((member) => (member === null || member === void 0 ? void 0 : member.id) === memberId); });
-                return myTeams;
+                if (!myTeams) {
+                    return undefined;
+                }
+                else {
+                    const teamsWithProjects = yield Promise.all(myTeams.map((team) => __awaiter(this, void 0, void 0, function* () {
+                        return (Object.assign(Object.assign({}, team), { projects: yield this.project.getProjectByTeamId(team.id) }));
+                    })));
+                    return teamsWithProjects;
+                }
             }),
             getSingleTeamFromCache: (teamId) => __awaiter(this, void 0, void 0, function* () {
-                return yield this.getOne(this.cacheKeys.team, teamId);
+                const team = yield this.getOne(this.cacheKeys.team, teamId);
+                if (team) {
+                    const teamWithProjects = Object.assign(Object.assign({}, team), { projects: yield this.project.getProjectByTeamId(team === null || team === void 0 ? void 0 : team.id) });
+                    return teamWithProjects;
+                }
+                else {
+                    return null;
+                }
             }),
             setAllTeamsToCache: (teams) => __awaiter(this, void 0, void 0, function* () {
                 yield this.setAll(this.cacheKeys.team, teams);
@@ -90,6 +122,16 @@ class CacheService {
                 const projects = yield this.getAll(this.cacheKeys.project);
                 const assignedProjects = projects === null || projects === void 0 ? void 0 : projects.filter((project) => { var _a; return (_a = project === null || project === void 0 ? void 0 : project.members) === null || _a === void 0 ? void 0 : _a.some((member) => (member === null || member === void 0 ? void 0 : member.id) === memberId); });
                 return assignedProjects;
+            }),
+            getProjectByTeamId: (teamId) => __awaiter(this, void 0, void 0, function* () {
+                const projects = yield this.project.getAllProjectsFromCache();
+                if (projects) {
+                    const teamProjects = projects.filter((project) => (project === null || project === void 0 ? void 0 : project.team) === teamId);
+                    return teamProjects;
+                }
+                else {
+                    return [];
+                }
             }),
             getSingleProjectFromCache: (projectId) => __awaiter(this, void 0, void 0, function* () {
                 return yield this.getOne(this.cacheKeys.project, projectId);

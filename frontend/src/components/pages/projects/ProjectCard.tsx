@@ -1,6 +1,6 @@
 import { IProject } from "@/interfaces/project.interface";
 import moment from "moment";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import EditProjectModal from "./modals/EditProjectModal";
 import Link from "next/link";
 import AddMemberToProject from "./modals/AddMemberToProject";
@@ -8,8 +8,22 @@ import RemoveMemberFromProject from "./modals/RemoveMemberFromProject";
 import { IUser } from "@/interfaces/user.interface";
 import ProjectDeleteModal from "./modals/ProjectDeleteModal";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useLeaveProjectRequestMutation } from "@/features/project";
-import ProjectActions from "./ProjectActions";
+import { ITeam } from "@/interfaces/team.interface";
+import { useGetSingleTeamQuery } from "@/features/team";
+import SingleLineSkeleton from "@/components/skeletons/SingleLineSkeleton";
+import Swal from "sweetalert2";
+import { useSendProjectLeaveRequestMutation } from "@/features/project";
+import toast from "react-hot-toast";
+import { MenuProps } from "antd";
+import { SocketContext } from "@/context/SocketContext";
+import { useLoggedInUserQuery } from "@/features/user";
+import dynamic from "next/dynamic";
+const Dropdown: any = dynamic(() => import("antd/lib/dropdown"), {
+  ssr: false,
+});
+const Button: any = dynamic(() => import("antd/lib/button"), {
+  ssr: false,
+});
 
 type Props = {
   project: IProject;
@@ -17,47 +31,177 @@ type Props = {
 };
 
 const ProjectCard = ({ project }: Props) => {
+  const { socket }: any = useContext(SocketContext);
+  const { data: userData } = useLoggedInUserQuery({});
+  const user: IUser = userData?.data;
   const [isDeleteProject, setIsDeleteProject] = useState(false);
   const [isEditProject, setIsEditProject] = useState(false);
   const [isAddMember, setIsAddMember] = useState(false);
   const [isRemoveMember, setIsRemoveMember] = useState(false);
-  const [showActions, setShowActions] = useState(false);
-  const { id, name, category, team, user, members, tasks, createdAt } = project;
+
+  const { id, name, category, team, members, tasks, createdAt } = project;
+  const { data, isLoading } = useGetSingleTeamQuery(team);
+  const singleTeam = data?.data as ITeam;
+
+  const leaveRequestIds = project?.leaveRequests?.map((member) => member?.id);
+  const [leaveRequest] = useSendProjectLeaveRequestMutation();
+
+  const handleLeaveRequest = async () => {
+    Swal.fire({
+      title: "So sad",
+      text: "Are you sure to leave from this project?",
+      showCancelButton: true,
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+    }).then((result) => {
+      if (result?.isConfirmed) {
+        handleSendLeaveRequest({
+          projectId: project?.id,
+          memberId: user?.id,
+        });
+      }
+    });
+  };
+
+  const handleSendLeaveRequest = async (data: {
+    projectId: string;
+    memberId: string;
+  }) => {
+    const result: any = await leaveRequest(data);
+    if (result?.data?.success) {
+      toast.success(
+        result?.data?.message || "Your leave request has been sent to admin"
+      );
+      socket.emit("notification", project?.user);
+    } else {
+      toast.success(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Failed to send leave request!"
+      );
+    }
+  };
+
+  const actions: MenuProps["items"] = [
+    {
+      key: "1",
+      label:
+        user?.id === project?.user ? (
+          <Button
+            type="default"
+            className="w-full"
+            onClick={() => {
+              setIsAddMember(true);
+            }}
+          >
+            Add Member
+          </Button>
+        ) : null,
+    },
+    {
+      key: "2",
+      label:
+        user?.id === project?.user ? (
+          <Button
+            className="w-full"
+            type="default"
+            onClick={() => {
+              setIsRemoveMember(true);
+            }}
+          >
+            Remove Member
+          </Button>
+        ) : null,
+    },
+    {
+      key: "3",
+      label:
+        user?.id === project?.user ? (
+          <Button
+            onClick={() => {
+              setIsEditProject(true);
+            }}
+            className="w-full"
+            type="default"
+          >
+            Edit Project
+          </Button>
+        ) : null,
+    },
+    {
+      key: "4",
+      label:
+        user?.id === project?.user ? (
+          <Button
+            className="w-full"
+            type="default"
+            onClick={() => {
+              setIsDeleteProject(true);
+            }}
+          >
+            Delete
+          </Button>
+        ) : null,
+    },
+    {
+      key: "5",
+      label:
+        user?.id !== project?.user && !leaveRequestIds?.includes(user?.id) ? (
+          <Button
+            className="w-full"
+            type="default"
+            onClick={handleLeaveRequest}
+          >
+            Request to leave
+          </Button>
+        ) : null,
+    },
+    {
+      key: "6",
+      label:
+        user?.id !== project?.user && leaveRequestIds?.includes(user?.id) ? (
+          <Button className="w-full" type="default">
+            Cancel leave request
+          </Button>
+        ) : null,
+    },
+  ].filter((action) => action.label !== null);
 
   return (
     <>
       <div className="border border-gray-500 p-2 lg:p-5 rounded-md flex flex-col justify-between gap-1">
         <div className="flex justify-between items-start relative">
           <span className="font-semibold">{name}</span>
-          <BsThreeDotsVertical
-            onClick={() => setShowActions((prev) => !prev)}
-            title="Click to edit/delete project"
-            className="cursor-pointer font-semibold text-xl"
-          />
-
-          {showActions && (
-            <ProjectActions
-              project={project}
-              setShowActions={setShowActions}
-              setIsAddMember={setIsAddMember}
-              setIsDeleteProject={setIsDeleteProject}
-              setIsEditProject={setIsEditProject}
-              setIsRemoveMember={setIsRemoveMember}
-            />
-          )}
+          <Dropdown
+            menu={{ items: actions }}
+            placement="bottomRight"
+            arrow
+            className="border border-blue-600 px-1"
+          >
+            <Button type="text">
+              <BsThreeDotsVertical className="text-lg" />
+            </Button>
+          </Dropdown>
         </div>
         <h6 className="font-sans text-gray-500">{category}</h6>
-        <h5>Team: {team?.name}</h5>
-        <h5>Admin: {user?.name}</h5>
+        <h5>
+          {isLoading ? <SingleLineSkeleton /> : `Team: ${singleTeam?.name}`}
+        </h5>
+        <h5>
+          {isLoading ? (
+            <SingleLineSkeleton />
+          ) : (
+            `Admin: ${singleTeam?.admin?.name}`
+          )}
+        </h5>
         <p>Tasks: {tasks} </p>
-        <p>Members: {members} </p>
+        <p>Members: {members?.length} </p>
         <p className="flex items-center gap-1">
-          <span> Issued:</span>
+          <span> Created:</span>
           <span className="text-sm text-gray-500">
             {moment(createdAt).fromNow()}
           </span>
         </p>
-
         <div className="flex justify-between items-center gap-2 mt-2">
           <Link
             href={`/tasks/${id}?project_name=${name}&project_id=${id}&project_category=${category}`}
@@ -72,8 +216,8 @@ const ProjectCard = ({ project }: Props) => {
         <ProjectDeleteModal
           isOpen={isDeleteProject}
           setIsOpen={setIsDeleteProject}
-          projectId={project.id}
-          projectName={project.name}
+          projectId={project?.id}
+          projectName={project?.name}
         />
       )}
       {isEditProject && (
@@ -88,7 +232,7 @@ const ProjectCard = ({ project }: Props) => {
           isOpen={isAddMember}
           setIsOpen={setIsAddMember}
           projectId={project.id}
-          teamId={project?.team?.id}
+          teamId={project?.team}
         />
       )}
 
@@ -97,7 +241,7 @@ const ProjectCard = ({ project }: Props) => {
           isRemove={isRemoveMember}
           setIsRemove={setIsRemoveMember}
           projectId={project.id}
-          teamId={project?.team?.id}
+          teamId={project?.team}
         />
       )}
     </>

@@ -1,17 +1,16 @@
-import { useGetLeaveTeamRequestsByAdminQuery } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import React from "react";
-import LeaveRequestCard from "./LeaveRequestCard";
 import LeaveRequestSkeleton from "@/components/skeletons/LeavRequestSkeleton";
+import { useGetMyTeamsQuery } from "@/features/team";
+import { ITeam } from "@/interfaces/team.interface";
+import LeaveRequestList from "./LeaveRequestList";
 
 const TeamLeaveRequest = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
-  const { data: requestsData, isLoading } = useGetLeaveTeamRequestsByAdminQuery(
-    user?.id
-  );
-  const requests: [] = requestsData?.data;
+  const { data: requestsData, isLoading } = useGetMyTeamsQuery(user?.id);
+  const teams: ITeam[] = requestsData?.data;
 
   return (
     <div>
@@ -19,9 +18,9 @@ const TeamLeaveRequest = () => {
         <LeaveRequestSkeleton />
       ) : (
         <>
-          {requests?.length > 0 ? (
-            requests?.map((request: any) => (
-              <LeaveRequestCard key={request?.id} data={request} />
+          {teams?.length > 0 ? (
+            teams?.map((team) => (
+              <LeaveRequestList key={team.id} item={team} itemType="team" />
             ))
           ) : (
             <p>No leave requests</p>

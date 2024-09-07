@@ -97,7 +97,7 @@ class Service {
                     const dateB = ((_b = b.lastMessage) === null || _b === void 0 ? void 0 : _b.createdAt) || new Date(0);
                     return dateB.getTime() - dateA.getTime();
                 });
-                return userDetailsWithLastMessage.filter((user) => user.id !== userId);
+                return userDetailsWithLastMessage;
             }
             catch (error) {
                 console.error("Error fetching chat friends:", error);
