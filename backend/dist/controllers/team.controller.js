@@ -130,6 +130,7 @@ class Controller extends rootController_1.default {
         }));
         this.rejectLeaveRequest = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
             const { teamId, memberId } = req.params;
+            console.log({ teamId, memberId });
             yield team_service_1.TeamService.rejectLeaveRequest(teamId, memberId);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,

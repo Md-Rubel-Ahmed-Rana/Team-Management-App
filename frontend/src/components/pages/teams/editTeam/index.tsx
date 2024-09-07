@@ -1,5 +1,5 @@
 import { SocketContext } from "@/context/SocketContext";
-import { useUpdateTeamMutation, useSingleTeamQuery } from "@/features/team";
+import { useUpdateTeamMutation, useGetSingleTeamQuery } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import { INewTeam } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
@@ -26,7 +26,7 @@ const TeamEditPage = () => {
     },
   });
 
-  const { data: teamData } = useSingleTeamQuery(id as string);
+  const { data: teamData } = useGetSingleTeamQuery(id as string);
   const [updateTeam] = useUpdateTeamMutation();
 
   useEffect(() => {

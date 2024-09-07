@@ -115,7 +115,7 @@ class Service {
     }
     getLastMessage(objectId, userId, user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const lastMessages = yield message_model_1.Message.findOne({
+            const lastMessage = yield message_model_1.Message.findOne({
                 $or: [
                     {
                         $and: [
@@ -139,6 +139,7 @@ class Service {
                     },
                 ],
             }).sort({ createdAt: -1 });
+            return lastMessage;
         });
     }
     getOneToOneMessagesWithType(conversationId) {

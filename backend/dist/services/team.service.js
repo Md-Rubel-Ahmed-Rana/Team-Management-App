@@ -247,9 +247,9 @@ class Service {
                 title: "Team Leave Request",
                 type: enums_1.NotificationEnums.TEAM_LEFT,
                 sender: memberId,
-                receiver: (_a = team === null || team === void 0 ? void 0 : team.admin) === null || _a === void 0 ? void 0 : _a.id,
+                receiver: (_a = dtoData === null || dtoData === void 0 ? void 0 : dtoData.admin) === null || _a === void 0 ? void 0 : _a.id,
                 content: `You have received a new request from a team member to leave the team. Please review the request and take appropriate action.`,
-                link: `${envConfig_1.config.app.frontendDomain}/dashboard/leave-requests?userId=${(_b = team === null || team === void 0 ? void 0 : team.admin) === null || _b === void 0 ? void 0 : _b.id}&name=${(_c = team === null || team === void 0 ? void 0 : team.admin) === null || _c === void 0 ? void 0 : _c.name}&email=${(_d = team === null || team === void 0 ? void 0 : team.admin) === null || _d === void 0 ? void 0 : _d.email}`,
+                link: `${envConfig_1.config.app.frontendDomain}/dashboard/leave-requests?userId=${(_b = dtoData === null || dtoData === void 0 ? void 0 : dtoData.admin) === null || _b === void 0 ? void 0 : _b.id}&name=${(_c = team === null || team === void 0 ? void 0 : team.admin) === null || _c === void 0 ? void 0 : _c.name}&email=${(_d = dtoData === null || dtoData === void 0 ? void 0 : dtoData.admin) === null || _d === void 0 ? void 0 : _d.email}`,
             };
             // Send notification to the admin
             yield notification_service_1.NotificationService.createNotification(notifyObject);

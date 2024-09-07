@@ -1,7 +1,4 @@
-import {
-  useAssignedProjectsQuery,
-  useMyProjectsQuery,
-} from "@/features/project";
+import { useAssignedProjectsQuery } from "@/features/project";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import ProjectCard from "./ProjectCard";

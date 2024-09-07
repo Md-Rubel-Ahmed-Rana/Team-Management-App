@@ -2,7 +2,6 @@ import { SocketContext } from "@/context/SocketContext";
 import { useCancelPendingInvitationMutation } from "@/features/invitation";
 import { useRemoveTeamMemberMutation } from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
-import { ITeamDetailsMember } from "@/interfaces/team.interface";
 import { IUser } from "@/interfaces/user.interface";
 import Link from "next/link";
 import { useContext } from "react";
@@ -11,12 +10,13 @@ import { FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 type IProps = {
-  member: ITeamDetailsMember;
+  member: IUser;
   memberType: string;
   teamId: string;
+  adminId: string;
 };
 
-const MemberCard = ({ member, memberType, teamId }: IProps) => {
+const MemberCard = ({ member, memberType, teamId, adminId }: IProps) => {
   const { socket }: any = useContext(SocketContext);
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
@@ -112,14 +112,13 @@ const MemberCard = ({ member, memberType, teamId }: IProps) => {
         <p className="text-lg font-medium flex items-center gap-3">
           <span>{member?.name}</span>
 
-          {user?.id === member?.id ||
-            (memberType !== "admin" && (
-              <FaTrash
-                onClick={handleDetectMemberType}
-                className="cursor-pointer text-red-400"
-                title="Click to remove/cancel member"
-              />
-            ))}
+          {user?.id === adminId && memberType !== "admin" && (
+            <FaTrash
+              onClick={handleDetectMemberType}
+              className="cursor-pointer text-red-400"
+              title="Click to remove/cancel member"
+            />
+          )}
         </p>
         <p className="text-sm text-gray-600">{member?.email}</p>
       </div>

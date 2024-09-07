@@ -1,17 +1,16 @@
 export type IUser = {
   id: string;
   name: string;
-  profile_picture: string;
   email: string;
+  profile_picture: string;
   department: string;
   designation: string;
   phoneNumber: string;
   permanentAddress: string;
   presentAddress: string;
   country: string;
-  password: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export const userInitData: IUser = {
@@ -25,7 +24,6 @@ export const userInitData: IUser = {
   permanentAddress: "",
   presentAddress: "",
   country: "",
-  password: "",
-  createdAt: "",
-  updatedAt: "",
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };

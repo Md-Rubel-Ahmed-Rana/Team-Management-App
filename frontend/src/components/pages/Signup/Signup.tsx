@@ -3,21 +3,29 @@ import Swal from "sweetalert2";
 import { useState } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useRouter } from "next/router";
-import { IUser } from "@/interfaces/user.interface";
 import { useCreateUserMutation } from "@/features/user";
 import SocialLogin from "@/components/socialLogin";
+
+type Inputs = {
+  name: string;
+  email: string;
+  department: string;
+  designation: string;
+  phoneNumber: string;
+  password: string;
+};
 
 const Signup = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IUser>({ mode: "onChange" });
+  } = useForm<Inputs>({ mode: "onChange" });
   const router = useRouter();
   const [createUser, { isLoading }] = useCreateUserMutation();
   const [togglePassword, setTogglePassword] = useState(false);
 
-  const handleRegister: SubmitHandler<IUser> = async (data) => {
+  const handleRegister: SubmitHandler<Inputs> = async (data) => {
     const result: any = await createUser(data);
     if (
       !result?.error?.data?.success &&

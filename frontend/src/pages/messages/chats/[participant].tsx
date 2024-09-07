@@ -9,7 +9,19 @@ import MessageContainer from "@/components/pages/messages/one-to-one-message/Mes
 import { useGetSingleUserQuery, useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { FaArrowLeft } from "react-icons/fa";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+import { MenuProps } from "antd";
+import toast from "react-hot-toast";
+const Dropdown: any = dynamic(() => import("antd/lib/dropdown"), {
+  ssr: false,
+  loading: () => <BsThreeDotsVertical className="text-2xl" />,
+});
+const Button: any = dynamic(() => import("antd/lib/button"), {
+  ssr: false,
+  loading: () => <BsThreeDotsVertical className="text-2xl" />,
+});
 
 const MessagesPage = () => {
   const router = useRouter();
@@ -60,6 +72,38 @@ const MessagesPage = () => {
     scrollToBottom(messagesContainerRefMobile);
   }, [realTimeMessages, socket, setRealTimeMessages]);
 
+  const actions: MenuProps["items"] = [
+    {
+      key: "1",
+      label: (
+        <Button
+          onClick={() =>
+            toast.success(
+              "Feature not available. Stay with us to get this feature. Thank you!"
+            )
+          }
+          type="default"
+        >
+          Clear chat
+        </Button>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <Button
+          onClick={() =>
+            toast.success(
+              "Feature not available. Stay with us to get this feature. Thank you!"
+            )
+          }
+          type="default"
+        >
+          Delete chat
+        </Button>
+      ),
+    },
+  ];
   return (
     <>
       <GetHead
@@ -72,39 +116,51 @@ const MessagesPage = () => {
         <div className="flex justify-center items-center h-screen w-full bg-gray-100">
           <MessageSidebar />
           <main className="flex-grow flex flex-col h-full w-full">
-            <div className="flex items-center gap-2 p-[6.5px] bg-gray-200 border-b border-s-2 border-gray-300">
-              <img
-                className="h-12 w-12 rounded-full ring-2"
-                src={
-                  (query?.profile_picture as string) ||
-                  participant?.profile_picture
-                }
-                alt={`User profile picture - ${
-                  query?.name || participant?.name
-                }`}
-              />
-              <div>
-                <h2 className="text-sm lg:text-xl font-bold text-gray-700 -mb-2">
-                  {`${query?.name || participant?.name} ${
-                    participantId === user.id ? "(You)" : ""
+            <div className="flex justify-between items-center gap-2 p-[6.5px] bg-gray-200 border-b border-s-2 border-gray-300">
+              <div className="flex  items-center gap-2">
+                <img
+                  className="h-12 w-12 rounded-full ring-2"
+                  src={
+                    (query?.profile_picture as string) ||
+                    participant?.profile_picture
+                  }
+                  alt={`User profile picture - ${
+                    query?.name || participant?.name
                   }`}
-                </h2>
-                {participantId === user?.id ? (
-                  <small className="text-[10px] lg:text-md">
-                    Message yourself
-                  </small>
-                ) : (
-                  <>
-                    {participant?.designation && (
-                      <small className="text-[10px] lg:text-md">
-                        {onTypingFriends.includes(participantId)
-                          ? "Typing..."
-                          : participant?.designation}
-                      </small>
-                    )}
-                  </>
-                )}
+                />
+                <div>
+                  <h2 className="text-sm lg:text-xl font-bold text-gray-700 -mb-2">
+                    {`${query?.name || participant?.name} ${
+                      participantId === user.id ? "(You)" : ""
+                    }`}
+                  </h2>
+                  {participantId === user?.id ? (
+                    <small className="text-[10px] lg:text-md">
+                      Message yourself
+                    </small>
+                  ) : (
+                    <>
+                      {participant?.designation && (
+                        <small className="text-[10px] lg:text-md">
+                          {onTypingFriends.includes(participantId)
+                            ? "Typing..."
+                            : participant?.designation}
+                        </small>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
+              <Dropdown
+                menu={{ items: actions }}
+                placement="bottomRight"
+                arrow
+                className="p-0"
+              >
+                <Button type="text">
+                  <BsThreeDotsVertical className="text-2xl" />
+                </Button>
+              </Dropdown>
             </div>
             <div
               ref={messagesContainerRefDesktop}

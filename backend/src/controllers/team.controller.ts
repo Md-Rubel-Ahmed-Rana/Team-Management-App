@@ -127,6 +127,7 @@ class Controller extends RootController {
 
   rejectLeaveRequest = this.catchAsync(async (req: Request, res: Response) => {
     const { teamId, memberId } = req.params;
+    console.log({ teamId, memberId });
     await TeamService.rejectLeaveRequest(teamId, memberId);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,

@@ -11,48 +11,11 @@ import MessageCard from "../common/MessageCard";
 import MessageSkeleton from "@/components/skeletons/MessageSkeleton";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
-
-// Function to handle new messages
-const handleNewMessage = (
-  data: IMessagePayloadForSocket,
-  setRealTimeMessages: React.Dispatch<
-    React.SetStateAction<IMessagePayloadForSocket[]>
-  >
-) => {
-  setRealTimeMessages((prev: IMessagePayloadForSocket[]) => [...prev, data]);
-};
-
-// Function to handle updated messages
-const handleUpdatedMessage = (
-  data: IMessagePayloadForSocket,
-  setRealTimeMessages: React.Dispatch<
-    React.SetStateAction<IMessagePayloadForSocket[]>
-  >
-) => {
-  setRealTimeMessages((prevMessages: IMessagePayloadForSocket[]) => {
-    const findIndex = prevMessages.findIndex(
-      (message) => message?.id === data?.id
-    );
-    if (findIndex !== -1) {
-      const updatedMessages = [...prevMessages];
-      updatedMessages[findIndex] = data;
-      return updatedMessages;
-    }
-    return prevMessages;
-  });
-};
-
-// Function to handle deleted messages
-const handleDeletedMessage = (
-  messageId: string,
-  setRealTimeMessages: React.Dispatch<
-    React.SetStateAction<IMessagePayloadForSocket[]>
-  >
-) => {
-  setRealTimeMessages((prevMessages: IMessagePayloadForSocket[]) =>
-    prevMessages.filter((message) => message.id !== messageId)
-  );
-};
+import {
+  handleDeletedMessage,
+  handleNewMessage,
+  handleUpdatedMessage,
+} from "../common/utilFunctions";
 
 const MessageContainer = () => {
   const { socket, realTimeMessages, setRealTimeMessages }: any =
@@ -61,27 +24,33 @@ const MessageContainer = () => {
   const { data: userData } = useLoggedInUserQuery({});
   const user: IUser = userData?.data;
   const { data: messageData, isLoading } = useGetOneToOneMessagesQuery(
-    `${query?.participant}&${user?.id}`
+    `${query?.participantId}&${user?.id}`
   );
 
   // Socket event listeners
   useEffect(() => {
-    socket?.on("one-to-one-message", (data: IMessagePayloadForSocket) =>
-      handleNewMessage(data, setRealTimeMessages)
-    );
-    socket?.on("updated-message", (data: IMessagePayloadForSocket) =>
-      handleUpdatedMessage(data, setRealTimeMessages)
-    );
-    socket?.on("deleted-message", (messageId: string) =>
-      handleDeletedMessage(messageId, setRealTimeMessages)
-    );
+    socket?.on("one-to-one-message", (data: IMessagePayloadForSocket) => {
+      const conversionId = `${user.id}&${query?.participantId}`;
+      if (conversionId.toString() === data?.conversationId.toString()) {
+        console.log("one-to-one-message", data);
+        handleNewMessage(data, setRealTimeMessages);
+      }
+    });
+    socket?.on("updated-message", (data: IMessagePayloadForSocket) => {
+      console.log("updated-message", data);
+      handleUpdatedMessage(data, setRealTimeMessages);
+    });
+    socket?.on("deleted-message", (messageId: string) => {
+      console.log("deleted-message", messageId);
+      handleDeletedMessage(messageId, setRealTimeMessages);
+    });
 
     return () => {
       socket?.off("one-to-one-message", handleNewMessage);
       socket?.off("updated-message", handleUpdatedMessage);
       socket?.off("deleted-message", handleDeletedMessage);
     };
-  }, [socket, setRealTimeMessages]);
+  }, [socket, realTimeMessages, setRealTimeMessages]);
 
   // Load messages when the component mounts or query changes
   useEffect(() => {

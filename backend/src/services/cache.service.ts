@@ -100,27 +100,67 @@ class CacheService {
   };
 
   team = {
-    getAllTeamsFromCache: async (): Promise<IGetTeam[] | null> => {
-      return await this.getAll<IGetTeam>(this.cacheKeys.team);
+    getAllTeamsFromCache: async (): Promise<IGetTeam[] | undefined> => {
+      const teams = await this.getAll<IGetTeam>(this.cacheKeys.team);
+      if (!teams) {
+        return undefined;
+      } else {
+        const teamsWithProjects = await Promise.all(
+          teams.map(async (team) => ({
+            ...team,
+            projects: await this.project.getProjectByTeamId(team.id),
+          }))
+        );
+        return teamsWithProjects;
+      }
     },
     getMyTeamsFromCache: async (
       adminId: string
     ): Promise<IGetTeam[] | undefined> => {
       const teams = await this.getAll<IGetTeam>(this.cacheKeys.team);
       const myTeams = teams?.filter((team) => team?.admin?.id === adminId);
-      return myTeams;
+      if (!myTeams) {
+        return undefined;
+      } else {
+        const teamsWithProjects = await Promise.all(
+          myTeams.map(async (team) => ({
+            ...team,
+            projects: await this.project.getProjectByTeamId(team.id),
+          }))
+        );
+        return teamsWithProjects;
+      }
     },
     joinedTeams: async (memberId: string): Promise<IGetTeam[] | undefined> => {
       const teams = await this.getAll<IGetTeam>(this.cacheKeys.team);
       const myTeams = teams?.filter((team) =>
         team?.activeMembers?.some((member) => member?.id === memberId)
       );
-      return myTeams;
+      if (!myTeams) {
+        return undefined;
+      } else {
+        const teamsWithProjects = await Promise.all(
+          myTeams.map(async (team) => ({
+            ...team,
+            projects: await this.project.getProjectByTeamId(team.id),
+          }))
+        );
+        return teamsWithProjects;
+      }
     },
     getSingleTeamFromCache: async (
       teamId: string
     ): Promise<IGetTeam | null> => {
-      return await this.getOne<IGetTeam>(this.cacheKeys.team, teamId);
+      const team = await this.getOne<IGetTeam>(this.cacheKeys.team, teamId);
+      if (team) {
+        const teamWithProjects = {
+          ...team,
+          projects: await this.project.getProjectByTeamId(team?.id),
+        };
+        return teamWithProjects;
+      } else {
+        return null;
+      }
     },
     setAllTeamsToCache: async (teams: IGetTeam[]): Promise<void> => {
       await this.setAll<IGetTeam>(this.cacheKeys.team, teams);
@@ -165,6 +205,17 @@ class CacheService {
       );
 
       return assignedProjects;
+    },
+    getProjectByTeamId: async (teamId: string): Promise<IGetProject[] | []> => {
+      const projects = await this.project.getAllProjectsFromCache();
+      if (projects) {
+        const teamProjects = projects.filter(
+          (project: IGetProject) => project?.team === teamId
+        );
+        return teamProjects;
+      } else {
+        return [];
+      }
     },
     getSingleProjectFromCache: async (
       projectId: string
