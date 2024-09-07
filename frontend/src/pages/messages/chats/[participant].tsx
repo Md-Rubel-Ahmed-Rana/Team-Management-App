@@ -9,9 +9,6 @@ import MessageContainer from "@/components/pages/messages/one-to-one-message/Mes
 import { useGetSingleUserQuery, useLoggedInUserQuery } from "@/features/user";
 import { IUser } from "@/interfaces/user.interface";
 import { FaArrowLeft } from "react-icons/fa";
-<<<<<<< HEAD
-import Link from "next/link";
-=======
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -25,7 +22,6 @@ const Button: any = dynamic(() => import("antd/lib/button"), {
   ssr: false,
   loading: () => <BsThreeDotsVertical className="text-2xl" />,
 });
->>>>>>> 0180cf08ac2da4946a4bd2db995b5ed846f5775f
 
 const MessagesPage = () => {
   const router = useRouter();
@@ -49,35 +45,6 @@ const MessagesPage = () => {
         setOnTypingFriends((prev) => [...prev, senderId]);
       }
     };
-<<<<<<< HEAD
-
-    const handleStopTyping = (senderId: string) => {
-      console.log(`This sender '${senderId}' has stopped typing.`);
-      setOnTypingFriends((prev) => prev.filter((id) => id !== senderId));
-    };
-
-    socket?.on("typing-message", handleTyping);
-    socket?.on("stop-typing-message", handleStopTyping);
-
-    return () => {
-      socket?.off("typing-message", handleTyping);
-      socket?.off("stop-typing-message", handleStopTyping);
-    };
-  }, [socket, onTypingFriends]);
-
-  // keep user visibility at bottom always
-  useEffect(() => {
-    const scrollToBottom = (ref: React.RefObject<HTMLDivElement>) => {
-      if (ref.current) {
-        ref.current.scrollTop = ref.current.scrollHeight;
-      }
-    };
-
-    scrollToBottom(messagesContainerRefDesktop);
-    scrollToBottom(messagesContainerRefMobile);
-  }, [realTimeMessages, socket, setRealTimeMessages]);
-=======
->>>>>>> 0180cf08ac2da4946a4bd2db995b5ed846f5775f
 
     const handleStopTyping = (senderId: string) => {
       console.log(`This sender '${senderId}' has stopped typing.`);
@@ -149,40 +116,6 @@ const MessagesPage = () => {
         <div className="flex justify-center items-center h-screen w-full bg-gray-100">
           <MessageSidebar />
           <main className="flex-grow flex flex-col h-full w-full">
-<<<<<<< HEAD
-            <div className="flex items-center gap-2 p-[6.5px] bg-gray-200 border-b border-s-2 border-gray-300">
-              <img
-                className="h-12 w-12 rounded-full ring-2"
-                src={
-                  (query?.profile_picture as string) ||
-                  participant?.profile_picture
-                }
-                alt={`User profile picture - ${
-                  query?.name || participant?.name
-                }`}
-              />
-              <div>
-                <h2 className="text-sm lg:text-xl font-bold text-gray-700 -mb-2">
-                  {`${query?.name || participant?.name} ${
-                    participantId === user.id ? "(You)" : ""
-                  }`}
-                </h2>
-                {participantId === user?.id ? (
-                  <small className="text-[10px] lg:text-md">
-                    Message yourself
-                  </small>
-                ) : (
-                  <>
-                    {participant?.designation && (
-                      <small className="text-[10px] lg:text-md">
-                        {onTypingFriends.includes(participantId)
-                          ? "Typing..."
-                          : participant?.designation}
-                      </small>
-                    )}
-                  </>
-                )}
-=======
             <div className="flex justify-between items-center gap-2 p-[6.5px] bg-gray-200 border-b border-s-2 border-gray-300">
               <div className="flex  items-center gap-2">
                 <img
@@ -217,7 +150,6 @@ const MessagesPage = () => {
                     </>
                   )}
                 </div>
->>>>>>> 0180cf08ac2da4946a4bd2db995b5ed846f5775f
               </div>
               <Dropdown
                 menu={{ items: actions }}
