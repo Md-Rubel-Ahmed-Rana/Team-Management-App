@@ -17,11 +17,14 @@ const stripe_1 = __importDefault(require("stripe"));
 const dotenv_1 = require("dotenv");
 const plan_model_1 = require("@/models/plan.model");
 const payment_model_1 = require("@/models/payment.model");
+const envConfig_1 = require("@/configurations/envConfig");
+const package_service_1 = require("./package.service");
 (0, dotenv_1.config)();
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY);
 class Service {
     checkout(items) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const plan = yield plan_model_1.Plan.findById(items[0].package);
             const storedData = items.map((item) => {
                 if (item === null || item === void 0 ? void 0 : item.quantity) {
@@ -45,16 +48,22 @@ class Service {
                 payment_method_types: ["card"],
                 mode: "payment",
                 line_items: storedData,
-                success_url: process.env.SUCCESS_URL,
-                cancel_url: process.env.CANCEL_URL,
+                success_url: envConfig_1.config.stripe.successUrl,
+                cancel_url: envConfig_1.config.stripe.cancelUrl,
             });
             // store payment data in database
             const paymentData = items.map((item) => ({
                 user: item.user,
-                package: item.package,
+                package: item === null || item === void 0 ? void 0 : item.package,
                 sessionId: session === null || session === void 0 ? void 0 : session.id,
+                sessionUrl: session === null || session === void 0 ? void 0 : session.url,
             }));
-            yield payment_model_1.Payment.create(paymentData);
+            console.log({ paymentData });
+            const newPayment = yield payment_model_1.Payment.create(paymentData);
+            console.log({ newPayment });
+            const newPackage = yield package_service_1.PackageService.addNewPackage((_a = items[0]) === null || _a === void 0 ? void 0 : _a.user, plan === null || plan === void 0 ? void 0 : plan.id, (_b = newPayment[0]) === null || _b === void 0 ? void 0 : _b._id);
+            console.log({ newPackage });
+            // create a notification for new payment and new package
             return { url: session.url };
         });
     }
@@ -63,6 +72,20 @@ class Service {
             switch (event.type) {
                 case "checkout.session.completed":
                     const payment = event.data.object;
+                    // make the payment status as success
+                    console.log("Received payment data from webhook as completed event", payment);
+                    break;
+                case "checkout.session.async_payment_failed":
+                    const paymentFailed = event.data.object;
+                    console.log("Payment failed", paymentFailed);
+                    break;
+                case "checkout.session.async_payment_succeeded":
+                    const AsyncPaymentSucceeded = event.data.object;
+                    console.log("Async payment succeed", AsyncPaymentSucceeded);
+                    break;
+                case "checkout.session.expired":
+                    const checkoutSessionExpired = event.data.object;
+                    console.log("Payment time expired", checkoutSessionExpired);
                     break;
                 default:
                     console.log(`Unhandled event type ${event.type}`);

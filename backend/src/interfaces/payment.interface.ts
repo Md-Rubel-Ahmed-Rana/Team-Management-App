@@ -5,5 +5,6 @@ export type IPayment = {
   paymentAmount: number;
   package: Types.ObjectId;
   sessionId: string;
+  sessionUrl: string;
   status: string;
 };
