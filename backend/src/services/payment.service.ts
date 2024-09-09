@@ -9,7 +9,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 class Service {
   async checkout(items: any) {
-    const plan = await Plan.findById(items[0].package);
+    const plan = await Plan.findById(items[0]?.package);
     const storedData = items.map((item: any) => {
       if (item?.quantity) {
         item.quantity = item.quantity >= 1 ? item.quantity : 1;
@@ -45,24 +45,18 @@ class Service {
       sessionUrl: session?.url,
     }));
 
-    console.log({ paymentData });
-
     const newPayment: any = await Payment.create(paymentData);
-    console.log({ newPayment });
-    const newPackage = await PackageService.addNewPackage(
+    await PackageService.addNewPackage(
       items[0]?.user,
       plan?.id,
       newPayment[0]?._id
     );
-    console.log({ newPackage });
 
     // create a notification for new payment and new package
-
     return { url: session.url };
   }
 
   async makePaymentStatusSuccess(sessionId: string) {
-    console.log({ sessionId });
     await Payment.updateOne(
       { sessionId: sessionId },
       { $set: { status: "success" } }
@@ -75,23 +69,6 @@ class Service {
         const payment = event.data.object;
         const sessionId = payment?.id;
         await this.makePaymentStatusSuccess(sessionId);
-        // make the payment status as success
-        console.log(
-          "Received payment data from webhook as completed event",
-          payment
-        );
-        break;
-      case "checkout.session.async_payment_failed":
-        const paymentFailed = event.data.object;
-        console.log("Payment failed", paymentFailed);
-        break;
-      case "checkout.session.async_payment_succeeded":
-        const AsyncPaymentSucceeded = event.data.object;
-        console.log("Async payment succeed", AsyncPaymentSucceeded);
-        break;
-      case "checkout.session.expired":
-        const checkoutSessionExpired = event.data.object;
-        console.log("Payment time expired", checkoutSessionExpired);
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);
@@ -103,7 +80,6 @@ class Service {
       path: "plan",
       model: "Plan",
     });
-
     return payments;
   }
 }

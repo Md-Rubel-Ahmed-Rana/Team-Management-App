@@ -11,6 +11,7 @@ import { MessageRoutes } from "./message.route";
 import { NotificationRoutes } from "./notification.route";
 import { AuthRoutes } from "./auth.routes";
 import { JwtInstance } from "lib/jwt";
+import { PackageRoutes } from "./package.route";
 
 const router = Router();
 
@@ -23,6 +24,8 @@ router.use("/team", JwtInstance.verifyToken, TeamRoutes);
 router.use("/invitation", JwtInstance.verifyToken, InvitationRoutes);
 
 router.use("/payment", PaymentRoutes);
+
+router.use("/package", PackageRoutes);
 
 router.use("/plan", PlanRoutes);
 

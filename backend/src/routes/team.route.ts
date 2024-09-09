@@ -1,5 +1,6 @@
 import { TeamController } from "@/controllers/team.controller";
 import { upload, uploadSingleFile } from "@/middlewares/cloudinary";
+import packageLimitMiddleware from "@/middlewares/packageLimitMiddleware";
 import teamCacheMiddleware from "@/middlewares/teamCacheMiddleware";
 import validateRequest from "@/middlewares/validateRequest";
 import { TeamValidationSchema } from "@/validations/team.validation";
@@ -8,6 +9,7 @@ const router = Router();
 
 router.post(
   "/create",
+  packageLimitMiddleware.teamCreate,
   upload.single("file"),
   uploadSingleFile("team-logos"),
   validateRequest(TeamValidationSchema.createTeamValidation),

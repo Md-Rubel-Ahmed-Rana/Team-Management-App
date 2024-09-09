@@ -103,13 +103,13 @@ class Service {
     return dtoData;
   }
 
-  async getMyTeams(adminId: string): Promise<any> {
+  async getMyTeams(adminId: string): Promise<IGetTeam[]> {
     const teams = await Team.find({ admin: adminId }).populate(teamPopulate);
     const dtoData = teams?.map((team) => this.teamSanitizer(team));
     return dtoData;
   }
 
-  async getJoinedTeams(memberId: string): Promise<any> {
+  async getJoinedTeams(memberId: string): Promise<IGetTeam[]> {
     const teams = await Team.find({ activeMembers: memberId }).populate(
       teamPopulate
     );
