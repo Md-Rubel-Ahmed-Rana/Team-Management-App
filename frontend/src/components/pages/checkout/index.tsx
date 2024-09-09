@@ -24,7 +24,7 @@ const CheckoutPage = () => {
   const TAX_PERCENT = 1; // 1%
 
   const calculatedPricing = useMemo(() => {
-    const price = pricingData?.data?.price || 0;
+    const price = plan?.price || 0;
 
     const discount = (DISCOUNT_PERCENT / 100) * price;
     const priceAfterDiscount = price - discount;
@@ -46,9 +46,9 @@ const CheckoutPage = () => {
   const handleCheckout = async () => {
     const payment: IPlanItem[] = [
       {
-        id: plan.id,
-        user: user.id,
-        name: plan.plan,
+        id: plan?.id,
+        user: user?.id,
+        name: plan?.plan,
         price: Number(calculatedPricing.subtotal),
         quantity: 1,
       },
@@ -80,7 +80,7 @@ const CheckoutPage = () => {
               <strong>Name:</strong> Plan Package
             </p>
             <p>
-              <strong>Type:</strong> {plan.plan}
+              <strong>Type:</strong> {plan?.plan}
             </p>
             <p>
               <strong>Price:</strong> ${plan?.price}
