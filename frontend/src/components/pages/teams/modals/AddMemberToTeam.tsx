@@ -23,7 +23,8 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
   const [newMember, setNewMember] = useState({ label: "", value: "" });
   const [page, setPage] = useState(1);
   const { data: users } = useGetUsersQuery([]);
-  const [sendInvitation] = useSendInvitationMutation();
+  const [sendInvitation, { isLoading: isSendingInvite }] =
+    useSendInvitationMutation();
 
   const remainingUsers = users?.data?.filter((user: any) => {
     const isInActive = team?.activeMembers?.some(
@@ -63,7 +64,12 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
       // send invitation notification
       socket.emit("notification", selectedMember?.id);
     } else {
-      toast.error(result?.data?.message || "Failed send team invitation");
+      toast.error(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Failed send team invitation"
+      );
+      closeModal();
     }
   };
 
@@ -184,16 +190,26 @@ const AddMemberToTeam = ({ isOpen, setIsOpen, team }: Props) => {
                         <button
                           onClick={closeModal}
                           type="button"
-                          className="border-2  w-full  hover:bg-gray-300 rounded-full px-3 py-2  text-sm "
+                          disabled={isSendingInvite}
+                          className={`border-2  w-full ${
+                            isSendingInvite
+                              ? "bg-gray-600 hover:bg-gray-700 text-white cursor-not-allowed"
+                              : ""
+                          }  hover:bg-gray-300 rounded-full px-3 py-2  text-sm`}
                         >
-                          Cancel
+                          {isSendingInvite ? "Loading..." : "Cancel"}
                         </button>
                         <button
                           onClick={handleSendInvitation}
                           type="button"
-                          className="border outline-none rounded-full px-3 w-full  py-2 bg-blue-600 hover:bg-blue-700 text-white text-md"
+                          disabled={isSendingInvite}
+                          className={`border outline-none rounded-full px-3 w-full  py-2 ${
+                            isSendingInvite
+                              ? "bg-gray-600 hover:bg-gray-700  cursor-not-allowed"
+                              : "bg-blue-600 hover:bg-blue-700"
+                          } text-white text-md`}
                         >
-                          Invite
+                          {isSendingInvite ? "Sending..." : "Invite"}
                         </button>
                       </div>
                     </div>

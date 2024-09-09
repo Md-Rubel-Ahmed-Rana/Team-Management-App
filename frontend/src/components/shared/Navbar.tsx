@@ -122,8 +122,8 @@ const Navbar = () => {
           </button>
         ) : (
           <div className="lg:flex hidden  items-center gap-4">
-            <Link className="m-2" href="/docs/guides">
-              Guides
+            <Link className="m-2" href="/pricing">
+              Pricing
             </Link>
             {!user?.email && (
               <>
