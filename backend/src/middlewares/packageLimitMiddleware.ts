@@ -13,11 +13,7 @@ const packageLimitMiddleware = {
       const myTeams = await TeamService.getMyTeams(userId);
       const teamCount = currentPackage?.limit?.team?.teamCount || 0;
       // Early return to avoid nesting
-<<<<<<< HEAD
-      if (!myTeams || myTeams.length < teamCount) {
-=======
       if (!myTeams || myTeams?.length < teamCount) {
->>>>>>> 1c53476927925accfedd745a99cc27fa87b81c2d
         return next();
       }
       return res.status(httpStatus.UNAUTHORIZED).json({
@@ -43,18 +39,6 @@ const packageLimitMiddleware = {
 
     if (currentPackage) {
       const myTeams = await TeamService.getMyTeams(userId);
-<<<<<<< HEAD
-      const teamCount = currentPackage?.limit?.team?.teamCount || 0;
-
-      if (!myTeams || myTeams.length < teamCount) {
-        return next();
-      }
-
-      const team = myTeams.find((team) => team.id === teamId);
-      const teamMemberCount = currentPackage?.limit?.team?.memberCount || 0;
-
-      if (team && team?.activeMembers?.length >= teamMemberCount) {
-=======
       const team = myTeams.find((team) => team?.id === teamId);
       const teamMemberCount = currentPackage?.limit?.team?.memberCount || 0;
       console.log({
@@ -64,7 +48,6 @@ const packageLimitMiddleware = {
 
       if (team && team?.activeMembers?.length >= teamMemberCount) {
         console.log("// prevent to add new member");
->>>>>>> 1c53476927925accfedd745a99cc27fa87b81c2d
         return res.status(httpStatus.UNAUTHORIZED).json({
           statusCode: httpStatus.UNAUTHORIZED,
           success: false,
@@ -72,11 +55,6 @@ const packageLimitMiddleware = {
             "You have exceeded the maximum team member limit. Please upgrade your plan.",
         });
       }
-<<<<<<< HEAD
-
-=======
-      console.log("// Allow to add new member");
->>>>>>> 1c53476927925accfedd745a99cc27fa87b81c2d
       return next();
     } else {
       return res.status(httpStatus.UNAUTHORIZED).json({
@@ -96,20 +74,10 @@ const packageLimitMiddleware = {
       const myProjects = await ProjectService.myProjects(userId);
       const projectCount = currentPackage?.limit?.projectCount || 0;
 
-<<<<<<< HEAD
       if (!myProjects || myProjects.length < projectCount) {
         return next();
       }
 
-=======
-      console.log({ projectCount, myProjects: myProjects.length });
-
-      if (!myProjects || myProjects.length < projectCount) {
-        console.log("Allow user to create project");
-        return next();
-      }
-      console.log("Prevent user to create project");
->>>>>>> 1c53476927925accfedd745a99cc27fa87b81c2d
       return res.status(httpStatus.UNAUTHORIZED).json({
         statusCode: httpStatus.UNAUTHORIZED,
         success: false,
