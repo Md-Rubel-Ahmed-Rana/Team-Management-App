@@ -22,7 +22,7 @@ router.use("/team", JwtInstance.verifyToken, TeamRoutes);
 
 router.use("/invitation", JwtInstance.verifyToken, InvitationRoutes);
 
-router.use("/payment", JwtInstance.verifyToken, PaymentRoutes);
+router.use("/payment", PaymentRoutes);
 
 router.use("/plan", PlanRoutes);
 
