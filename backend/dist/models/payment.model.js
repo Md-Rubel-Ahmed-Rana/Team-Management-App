@@ -16,6 +16,10 @@ const paymentSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    sessionUrl: {
+        type: String,
+        required: true,
+    },
     status: {
         type: String,
         enum: ["success", "failed"],

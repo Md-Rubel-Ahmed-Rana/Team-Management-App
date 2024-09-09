@@ -1,5 +1,6 @@
 import { IPlan } from "@/interfaces/plan.interface";
 import { Plan } from "@/models/plan.model";
+import { Types } from "mongoose";
 
 class Service {
   async getPlans(): Promise<any> {
@@ -14,7 +15,7 @@ class Service {
     return result;
   }
 
-  async getSinglePlan(id: string): Promise<any> {
+  async getSinglePlan(id: Types.ObjectId | string): Promise<any> {
     const result = await Plan.findById(id);
     return result;
   }
