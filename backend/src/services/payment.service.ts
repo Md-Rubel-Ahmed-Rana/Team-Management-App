@@ -2,6 +2,8 @@ import Stripe from "stripe";
 import { config } from "dotenv";
 import { Plan } from "@/models/plan.model";
 import { Payment } from "@/models/payment.model";
+import { config as envConfig } from "@/configurations/envConfig";
+import { PackageService } from "./package.service";
 config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
@@ -31,18 +33,30 @@ class Service {
       payment_method_types: ["card"],
       mode: "payment",
       line_items: storedData,
-      success_url: process.env.SUCCESS_URL as string,
-      cancel_url: process.env.CANCEL_URL as string,
+      success_url: envConfig.stripe.successUrl,
+      cancel_url: envConfig.stripe.cancelUrl,
     });
 
     // store payment data in database
     const paymentData = items.map((item: any) => ({
       user: item.user,
-      package: item.package,
+      package: item?.package,
       sessionId: session?.id,
+      sessionUrl: session?.url,
     }));
 
-    await Payment.create(paymentData);
+    console.log({ paymentData });
+
+    const newPayment: any = await Payment.create(paymentData);
+    console.log({ newPayment });
+    const newPackage = await PackageService.addNewPackage(
+      items[0]?.user,
+      plan?.id,
+      newPayment[0]?._id
+    );
+    console.log({ newPackage });
+
+    // create a notification for new payment and new package
 
     return { url: session.url };
   }
@@ -51,6 +65,23 @@ class Service {
     switch (event.type) {
       case "checkout.session.completed":
         const payment = event.data.object;
+        // make the payment status as success
+        console.log(
+          "Received payment data from webhook as completed event",
+          payment
+        );
+        break;
+      case "checkout.session.async_payment_failed":
+        const paymentFailed = event.data.object;
+        console.log("Payment failed", paymentFailed);
+        break;
+      case "checkout.session.async_payment_succeeded":
+        const AsyncPaymentSucceeded = event.data.object;
+        console.log("Async payment succeed", AsyncPaymentSucceeded);
+        break;
+      case "checkout.session.expired":
+        const checkoutSessionExpired = event.data.object;
+        console.log("Payment time expired", checkoutSessionExpired);
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);

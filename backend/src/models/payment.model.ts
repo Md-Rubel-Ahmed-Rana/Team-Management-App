@@ -16,6 +16,10 @@ const paymentSchema = new Schema<IPayment>(
       type: String,
       required: true,
     },
+    sessionUrl: {
+      type: String,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["success", "failed"],
