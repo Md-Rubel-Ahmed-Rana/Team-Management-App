@@ -53,8 +53,8 @@ class Service {
             });
             // store payment data in database
             const paymentData = items.map((item) => ({
-                user: item.user,
-                package: item === null || item === void 0 ? void 0 : item.package,
+                user: item === null || item === void 0 ? void 0 : item.user,
+                plan: item === null || item === void 0 ? void 0 : item.package,
                 sessionId: session === null || session === void 0 ? void 0 : session.id,
                 sessionUrl: session === null || session === void 0 ? void 0 : session.url,
             }));
@@ -69,7 +69,8 @@ class Service {
     }
     makePaymentStatusSuccess(sessionId) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield payment_model_1.Payment.findOne({ sessionId: sessionId }, { status: "success" });
+            console.log({ sessionId });
+            yield payment_model_1.Payment.updateOne({ sessionId: sessionId }, { $set: { status: "success" } });
         });
     }
     webHook(event) {
@@ -102,7 +103,7 @@ class Service {
     myPayments(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const payments = yield payment_model_1.Payment.find({ user: userId }).populate({
-                path: "package",
+                path: "plan",
                 model: "Plan",
             });
             return payments;

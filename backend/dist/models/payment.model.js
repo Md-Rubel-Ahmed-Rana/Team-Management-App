@@ -4,10 +4,10 @@ exports.Payment = void 0;
 const mongoose_1 = require("mongoose");
 const paymentSchema = new mongoose_1.Schema({
     user: {
-        type: String,
+        type: mongoose_1.Schema.Types.ObjectId,
         required: true,
     },
-    package: {
+    plan: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "Plan",
         required: true,
