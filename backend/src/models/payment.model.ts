@@ -4,10 +4,10 @@ import { Schema, model } from "mongoose";
 const paymentSchema = new Schema<IPayment>(
   {
     user: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
     },
-    package: {
+    plan: {
       type: Schema.Types.ObjectId,
       ref: "Plan",
       required: true,

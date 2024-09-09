@@ -39,8 +39,8 @@ class Service {
 
     // store payment data in database
     const paymentData = items.map((item: any) => ({
-      user: item.user,
-      package: item?.package,
+      user: item?.user,
+      plan: item?.package,
       sessionId: session?.id,
       sessionUrl: session?.url,
     }));
@@ -62,7 +62,11 @@ class Service {
   }
 
   async makePaymentStatusSuccess(sessionId: string) {
-    await Payment.findOne({ sessionId: sessionId }, { status: "success" });
+    console.log({ sessionId });
+    await Payment.updateOne(
+      { sessionId: sessionId },
+      { $set: { status: "success" } }
+    );
   }
 
   async webHook(event: any) {
@@ -96,7 +100,7 @@ class Service {
 
   async myPayments(userId: string) {
     const payments = await Payment.find({ user: userId }).populate({
-      path: "package",
+      path: "plan",
       model: "Plan",
     });
 
