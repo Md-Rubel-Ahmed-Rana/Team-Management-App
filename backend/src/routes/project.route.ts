@@ -1,4 +1,5 @@
 import { ProjectController } from "@/controllers/project.controller";
+import packageLimitMiddleware from "@/middlewares/packageLimitMiddleware";
 import projectCacheMiddleware from "@/middlewares/projectCacheMiddleware";
 import validateRequest from "@/middlewares/validateRequest";
 import { ProjectValidationSchema } from "@/validations/project.validation";
@@ -7,6 +8,7 @@ const router = Router();
 
 router.post(
   "/create",
+  packageLimitMiddleware.projectCreate,
   validateRequest(ProjectValidationSchema.createZodSchema),
   ProjectController.createProject
 );

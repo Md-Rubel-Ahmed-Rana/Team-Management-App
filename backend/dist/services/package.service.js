@@ -22,7 +22,6 @@ class Service {
     addNewPackage(userId, planId, paymentId) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
-            console.log({ userId, planId, paymentId });
             // Fetch the plan first and handle not found
             const plan = yield plan_service_1.PlanService.getSinglePlan(planId);
             if (!plan) {
@@ -78,6 +77,25 @@ class Service {
                 session.endSession();
                 throw error;
             }
+        });
+    }
+    isPackageExist(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield package_model_1.Package.findOne({ user: userId });
+        });
+    }
+    getMyPackage(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield package_model_1.Package.findOne({ user: userId }).populate([
+                {
+                    path: "packages$.plan",
+                    model: "Plan",
+                },
+                {
+                    path: "packages$.paymentId",
+                    model: "Payment",
+                },
+            ]);
         });
     }
 }

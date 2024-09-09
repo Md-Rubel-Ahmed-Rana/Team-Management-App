@@ -7,20 +7,20 @@ exports.packagesData = {
             teamCount: 1,
             memberCount: 5,
         },
-        projectCount: 5,
+        projectCount: 3,
     },
     pro: {
         team: {
             teamCount: 5,
-            memberCount: 20,
+            memberCount: 50,
         },
-        projectCount: 50,
+        projectCount: 20,
     },
     enterprise: {
         team: {
-            teamCount: 99999,
-            memberCount: 99999999,
+            teamCount: 9999999999999,
+            memberCount: 9999999999,
         },
-        projectCount: 999999999,
+        projectCount: 999999999999999,
     },
 };

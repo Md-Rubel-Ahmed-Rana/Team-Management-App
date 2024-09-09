@@ -12,7 +12,6 @@ class Service {
     planId: Types.ObjectId | string,
     paymentId: Types.ObjectId | string
   ) {
-    console.log({ userId, planId, paymentId });
     // Fetch the plan first and handle not found
     const plan = await PlanService.getSinglePlan(planId);
     if (!plan) {
@@ -85,6 +84,21 @@ class Service {
       session.endSession();
       throw error;
     }
+  }
+  async isPackageExist(userId: string) {
+    return await Package.findOne({ user: userId });
+  }
+  async getMyPackage(userId: string) {
+    await Package.findOne({ user: userId }).populate([
+      {
+        path: "packages$.plan",
+        model: "Plan",
+      },
+      {
+        path: "packages$.paymentId",
+        model: "Payment",
+      },
+    ]);
   }
 }
 
