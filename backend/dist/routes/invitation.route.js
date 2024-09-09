@@ -8,7 +8,7 @@ const invitation_controller_1 = require("@/controllers/invitation.controller");
 const packageLimitMiddleware_1 = __importDefault(require("@/middlewares/packageLimitMiddleware"));
 const express_1 = require("express");
 const router = (0, express_1.Router)();
-router.post("/send/:teamId/:memberId", invitation_controller_1.InvitationController.sendInvitation);
+router.post("/send/:teamId/:memberId", packageLimitMiddleware_1.default.teamMemberAdd, invitation_controller_1.InvitationController.sendInvitation);
 router.get("/pending/:memberId", invitation_controller_1.InvitationController.pendingInvitation);
 router.post("/reject/:teamId/:memberId", invitation_controller_1.InvitationController.rejectInvitation);
 router.post("/accept/:teamId/:memberId", packageLimitMiddleware_1.default.teamMemberAdd, invitation_controller_1.InvitationController.acceptInvitation);

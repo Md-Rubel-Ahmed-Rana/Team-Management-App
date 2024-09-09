@@ -9,3 +9,11 @@ export type IPayment = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type IPlanItem = {
+  id: string;
+  user: string;
+  name: string;
+  price: number;
+  quantity: number;
+};

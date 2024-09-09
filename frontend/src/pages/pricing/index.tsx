@@ -1,25 +1,23 @@
-import isAuthenticate from "@/components/HOC/isAuthenticate";
-import CheckoutPage from "@/components/pages/checkout";
+import PricingSection from "@/components/pages/LandingPage/pricing/PricingSection";
 import RootLayout from "@/layout/RootLayout";
 import GetHead from "@/utils/Head";
-import { NextPageWithLayout } from "pages/_app";
 import React, { ReactElement } from "react";
 
-const CheckoutRoute: NextPageWithLayout = () => {
+const PricingPage = () => {
   return (
     <>
       <GetHead
-        title="Checkout: Team Manager"
+        title="Pricing: Team Manager"
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <CheckoutPage />;
+      <PricingSection />
     </>
   );
 };
 
-CheckoutRoute.getLayout = function (page: ReactElement) {
+PricingPage.getLayout = function (page: ReactElement) {
   return <RootLayout>{page}</RootLayout>;
 };
 
-export default isAuthenticate(CheckoutRoute);
+export default PricingPage;

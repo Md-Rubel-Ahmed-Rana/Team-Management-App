@@ -13,7 +13,7 @@ const packageLimitMiddleware = {
       const myTeams = await TeamService.getMyTeams(userId);
       const teamCount = currentPackage?.limit?.team?.teamCount || 0;
       // Early return to avoid nesting
-      if (!myTeams || myTeams.length < teamCount) {
+      if (!myTeams || myTeams?.length < teamCount) {
         return next();
       }
       return res.status(httpStatus.UNAUTHORIZED).json({
@@ -39,16 +39,15 @@ const packageLimitMiddleware = {
 
     if (currentPackage) {
       const myTeams = await TeamService.getMyTeams(userId);
-      const teamCount = currentPackage?.limit?.team?.teamCount || 0;
-
-      if (!myTeams || myTeams.length < teamCount) {
-        return next();
-      }
-
-      const team = myTeams.find((team) => team.id === teamId);
+      const team = myTeams.find((team) => team?.id === teamId);
       const teamMemberCount = currentPackage?.limit?.team?.memberCount || 0;
+      console.log({
+        teamMemberCount,
+        activeMembers: team?.activeMembers?.length,
+      });
 
       if (team && team?.activeMembers?.length >= teamMemberCount) {
+        console.log("// prevent to add new member");
         return res.status(httpStatus.UNAUTHORIZED).json({
           statusCode: httpStatus.UNAUTHORIZED,
           success: false,
@@ -56,7 +55,7 @@ const packageLimitMiddleware = {
             "You have exceeded the maximum team member limit. Please upgrade your plan.",
         });
       }
-
+      console.log("// Allow to add new member");
       return next();
     } else {
       return res.status(httpStatus.UNAUTHORIZED).json({
@@ -76,10 +75,13 @@ const packageLimitMiddleware = {
       const myProjects = await ProjectService.myProjects(userId);
       const projectCount = currentPackage?.limit?.projectCount || 0;
 
+      console.log({ projectCount, myProjects: myProjects.length });
+
       if (!myProjects || myProjects.length < projectCount) {
+        console.log("Allow user to create project");
         return next();
       }
-
+      console.log("Prevent user to create project");
       return res.status(httpStatus.UNAUTHORIZED).json({
         statusCode: httpStatus.UNAUTHORIZED,
         success: false,
