@@ -67,11 +67,18 @@ class Service {
             return { url: session.url };
         });
     }
+    makePaymentStatusSuccess(sessionId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield payment_model_1.Payment.findOne({ sessionId: sessionId }, { status: "success" });
+        });
+    }
     webHook(event) {
         return __awaiter(this, void 0, void 0, function* () {
             switch (event.type) {
                 case "checkout.session.completed":
                     const payment = event.data.object;
+                    const sessionId = payment === null || payment === void 0 ? void 0 : payment.id;
+                    yield this.makePaymentStatusSuccess(sessionId);
                     // make the payment status as success
                     console.log("Received payment data from webhook as completed event", payment);
                     break;

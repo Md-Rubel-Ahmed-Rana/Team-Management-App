@@ -61,10 +61,16 @@ class Service {
     return { url: session.url };
   }
 
+  async makePaymentStatusSuccess(sessionId: string) {
+    await Payment.findOne({ sessionId: sessionId }, { status: "success" });
+  }
+
   async webHook(event: any) {
     switch (event.type) {
       case "checkout.session.completed":
         const payment = event.data.object;
+        const sessionId = payment?.id;
+        await this.makePaymentStatusSuccess(sessionId);
         // make the payment status as success
         console.log(
           "Received payment data from webhook as completed event",
