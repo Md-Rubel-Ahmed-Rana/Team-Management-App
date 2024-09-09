@@ -67,7 +67,7 @@ const CheckoutPage = () => {
       <h2 className="text-3xl font-bold text-center mb-8">
         Confirm Your Purchase
       </h2>
-      {!isPlanLoading ? (
+      {isPlanLoading ? (
         <div className="max-w-[1000px] w-full mx-auto">
           <CheckoutSkeleton />
         </div>
