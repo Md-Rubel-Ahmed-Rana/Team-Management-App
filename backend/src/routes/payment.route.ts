@@ -1,9 +1,10 @@
 import { PaymentController } from "@/controllers/payment.controller";
 import express, { Router } from "express";
+import { JwtInstance } from "lib/jwt";
 
 const router = Router();
 
-router.post("/checkout", PaymentController.checkout);
+router.post("/checkout", JwtInstance.verifyToken, PaymentController.checkout);
 
 router.post(
   "/webhook",

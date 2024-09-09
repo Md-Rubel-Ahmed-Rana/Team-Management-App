@@ -19,7 +19,7 @@ router.use("/user", user_route_1.UserRoutes);
 router.use("/auth", auth_routes_1.AuthRoutes);
 router.use("/team", jwt_1.JwtInstance.verifyToken, team_route_1.TeamRoutes);
 router.use("/invitation", jwt_1.JwtInstance.verifyToken, invitation_route_1.InvitationRoutes);
-router.use("/payment", jwt_1.JwtInstance.verifyToken, payment_route_1.PaymentRoutes);
+router.use("/payment", payment_route_1.PaymentRoutes);
 router.use("/plan", plan_route_1.PlanRoutes);
 router.use("/project", jwt_1.JwtInstance.verifyToken, project_route_1.ProjectRoutes);
 router.use("/task", jwt_1.JwtInstance.verifyToken, task_route_1.TaskRoutes);
