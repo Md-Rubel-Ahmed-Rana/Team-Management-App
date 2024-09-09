@@ -8,3 +8,11 @@ export type IPayment = {
   sessionUrl: string;
   status: string;
 };
+
+export type IPlanItem = {
+  id: string;
+  user: string;
+  name: string;
+  price: number;
+  quantity: number;
+};

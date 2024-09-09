@@ -1,16 +1,24 @@
 import Stripe from "stripe";
 import { config } from "dotenv";
-import { Plan } from "@/models/plan.model";
 import { Payment } from "@/models/payment.model";
 import { config as envConfig } from "@/configurations/envConfig";
 import { PackageService } from "./package.service";
+<<<<<<< HEAD
+=======
+import { IPlanItem } from "@/interfaces/payment.interface";
+>>>>>>> 1c53476927925accfedd745a99cc27fa87b81c2d
 config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 class Service {
+<<<<<<< HEAD
   async checkout(items: any) {
     const plan = await Plan.findById(items[0]?.package);
     const storedData = items.map((item: any) => {
+=======
+  async checkout(items: IPlanItem[]) {
+    const storedData = items.map((item: IPlanItem) => {
+>>>>>>> 1c53476927925accfedd745a99cc27fa87b81c2d
       if (item?.quantity) {
         item.quantity = item.quantity >= 1 ? item.quantity : 1;
       } else {
@@ -21,9 +29,9 @@ class Service {
         price_data: {
           currency: "usd",
           product_data: {
-            name: plan?.plan,
+            name: item.name,
           },
-          unit_amount: plan && plan?.price * 100,
+          unit_amount: item?.price * 100,
         },
         quantity: item.quantity,
       };
@@ -38,18 +46,32 @@ class Service {
     });
 
     // store payment data in database
+<<<<<<< HEAD
     const paymentData = items.map((item: any) => ({
       user: item?.user,
       plan: item?.package,
+=======
+    const paymentData = items.map((item: IPlanItem) => ({
+      user: item?.user,
+      plan: item?.id,
+>>>>>>> 1c53476927925accfedd745a99cc27fa87b81c2d
       sessionId: session?.id,
       sessionUrl: session?.url,
     }));
 
+<<<<<<< HEAD
     const newPayment: any = await Payment.create(paymentData);
     await PackageService.addNewPackage(
       items[0]?.user,
       plan?.id,
       newPayment[0]?._id
+=======
+    const newPayment = await Payment.create(paymentData[0]);
+    await PackageService.addNewPackage(
+      items[0]?.user,
+      items[0]?.id,
+      newPayment?._id
+>>>>>>> 1c53476927925accfedd745a99cc27fa87b81c2d
     );
 
     // create a notification for new payment and new package

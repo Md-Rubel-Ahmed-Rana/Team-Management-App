@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentService = void 0;
 const stripe_1 = __importDefault(require("stripe"));
 const dotenv_1 = require("dotenv");
-const plan_model_1 = require("@/models/plan.model");
 const payment_model_1 = require("@/models/payment.model");
 const envConfig_1 = require("@/configurations/envConfig");
 const package_service_1 = require("./package.service");
@@ -24,8 +23,12 @@ const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY);
 class Service {
     checkout(items) {
         return __awaiter(this, void 0, void 0, function* () {
+<<<<<<< HEAD
             var _a, _b, _c;
             const plan = yield plan_model_1.Plan.findById((_a = items[0]) === null || _a === void 0 ? void 0 : _a.package);
+=======
+            var _a, _b;
+>>>>>>> 1c53476927925accfedd745a99cc27fa87b81c2d
             const storedData = items.map((item) => {
                 if (item === null || item === void 0 ? void 0 : item.quantity) {
                     item.quantity = item.quantity >= 1 ? item.quantity : 1;
@@ -37,9 +40,9 @@ class Service {
                     price_data: {
                         currency: "usd",
                         product_data: {
-                            name: plan === null || plan === void 0 ? void 0 : plan.plan,
+                            name: item.name,
                         },
-                        unit_amount: plan && (plan === null || plan === void 0 ? void 0 : plan.price) * 100,
+                        unit_amount: (item === null || item === void 0 ? void 0 : item.price) * 100,
                     },
                     quantity: item.quantity,
                 };
@@ -54,12 +57,21 @@ class Service {
             // store payment data in database
             const paymentData = items.map((item) => ({
                 user: item === null || item === void 0 ? void 0 : item.user,
+<<<<<<< HEAD
                 plan: item === null || item === void 0 ? void 0 : item.package,
                 sessionId: session === null || session === void 0 ? void 0 : session.id,
                 sessionUrl: session === null || session === void 0 ? void 0 : session.url,
             }));
             const newPayment = yield payment_model_1.Payment.create(paymentData);
             yield package_service_1.PackageService.addNewPackage((_b = items[0]) === null || _b === void 0 ? void 0 : _b.user, plan === null || plan === void 0 ? void 0 : plan.id, (_c = newPayment[0]) === null || _c === void 0 ? void 0 : _c._id);
+=======
+                plan: item === null || item === void 0 ? void 0 : item.id,
+                sessionId: session === null || session === void 0 ? void 0 : session.id,
+                sessionUrl: session === null || session === void 0 ? void 0 : session.url,
+            }));
+            const newPayment = yield payment_model_1.Payment.create(paymentData[0]);
+            yield package_service_1.PackageService.addNewPackage((_a = items[0]) === null || _a === void 0 ? void 0 : _a.user, (_b = items[0]) === null || _b === void 0 ? void 0 : _b.id, newPayment === null || newPayment === void 0 ? void 0 : newPayment._id);
+>>>>>>> 1c53476927925accfedd745a99cc27fa87b81c2d
             // create a notification for new payment and new package
             return { url: session.url };
         });

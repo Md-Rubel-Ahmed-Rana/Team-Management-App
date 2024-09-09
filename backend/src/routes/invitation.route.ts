@@ -4,7 +4,11 @@ import { Router } from "express";
 
 const router = Router();
 
-router.post("/send/:teamId/:memberId", InvitationController.sendInvitation);
+router.post(
+  "/send/:teamId/:memberId",
+  packageLimitMiddleware.teamMemberAdd,
+  InvitationController.sendInvitation
+);
 
 router.get("/pending/:memberId", InvitationController.pendingInvitation);
 
