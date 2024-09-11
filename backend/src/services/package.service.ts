@@ -4,9 +4,60 @@ import ApiError from "@/shared/apiError";
 import { packagesData } from "@/constants/packages";
 import httpStatus from "http-status";
 import { Package } from "@/models/package.model";
-import { INewPackage } from "@/interfaces/package.interface";
+import {
+  INewPackage,
+  IPackageData,
+  IPayment,
+  IPlan,
+  PackageDetail,
+} from "@/interfaces/package.interface";
 
 class Service {
+  public planSanitizer(plan: any): IPlan {
+    return {
+      id: String(plan?.id || plan?._id),
+      name: plan?.plan,
+      price: plan?.price,
+      features: plan?.features,
+    };
+  }
+
+  public paymentSanitizer(payment: any): IPayment {
+    return {
+      id: String(payment?.id || payment?._id),
+      user: payment?.user,
+      plan: payment?.plan,
+      paymentAmount: payment?.paymentAmount,
+      sessionId: payment?.sessionId,
+      sessionUrl: payment?.sessionUrl,
+      status: payment?.status,
+      createdAt: payment?.createdAt,
+      updatedAt: payment?.updatedAt,
+    };
+  }
+
+  public packageDetailSanitizer(pkgs: any): PackageDetail[] {
+    return pkgs?.map((pkg: any) => ({
+      id: String(pkg?.id || pkg?._id),
+      plan: this.planSanitizer(pkg?.plan),
+      limit: pkg?.limit,
+      payment: this.paymentSanitizer(pkg?.payment),
+      isCurrent: pkg?.isCurrent,
+      start: pkg?.start,
+      end: pkg?.end,
+    }));
+  }
+
+  public packageSanitizer(pkg: any): IPackageData {
+    return {
+      id: String(pkg?.id || pkg?._id),
+      user: pkg?.user,
+      packages: this.packageDetailSanitizer(pkg?.packages),
+      createdAt: pkg?.createdAt,
+      updatedAt: pkg?.updatedAt,
+    };
+  }
+
   async addNewPackage(
     userId: Types.ObjectId | string,
     planId: Types.ObjectId | string,
@@ -55,7 +106,7 @@ class Service {
                 plan: planId as Types.ObjectId,
                 isCurrent: true,
                 limit: packageData,
-                paymentId: paymentId as Types.ObjectId,
+                payment: paymentId as Types.ObjectId,
               },
             },
           },
@@ -70,7 +121,7 @@ class Service {
               plan: planId as Types.ObjectId,
               isCurrent: true,
               limit: packageData,
-              paymentId: paymentId as Types.ObjectId,
+              payment: paymentId as Types.ObjectId,
             },
           ],
         };
@@ -85,20 +136,15 @@ class Service {
       throw error;
     }
   }
+
   async isPackageExist(userId: string) {
     return await Package.findOne({ user: userId });
   }
-  async getMyPackage(userId: string) {
-    await Package.findOne({ user: userId }).populate([
-      {
-        path: "packages$.plan",
-        model: "Plan",
-      },
-      {
-        path: "packages$.paymentId",
-        model: "Payment",
-      },
-    ]);
+  async getMyPackage(userId: string): Promise<IPackageData> {
+    const myPackage = await Package.findOne({ user: userId })
+      .populate("packages.plan")
+      .populate("packages.payment");
+    return this.packageSanitizer(myPackage);
   }
 }
 

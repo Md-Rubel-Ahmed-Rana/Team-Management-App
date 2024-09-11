@@ -52,7 +52,7 @@ const LeaveRequestList = ({ item, itemType }: Props) => {
     },
   ];
 
-  return <Collapse items={items} className="lg:mr-10 lg:w-[70%] w-full" />;
+  return <Collapse items={items} className="w-full" />;
 };
 
 export default LeaveRequestList;

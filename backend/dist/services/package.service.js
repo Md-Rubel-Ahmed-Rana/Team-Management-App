@@ -19,6 +19,47 @@ const packages_1 = require("@/constants/packages");
 const http_status_1 = __importDefault(require("http-status"));
 const package_model_1 = require("@/models/package.model");
 class Service {
+    planSanitizer(plan) {
+        return {
+            id: String((plan === null || plan === void 0 ? void 0 : plan.id) || (plan === null || plan === void 0 ? void 0 : plan._id)),
+            name: plan === null || plan === void 0 ? void 0 : plan.plan,
+            price: plan === null || plan === void 0 ? void 0 : plan.price,
+            features: plan === null || plan === void 0 ? void 0 : plan.features,
+        };
+    }
+    paymentSanitizer(payment) {
+        return {
+            id: String((payment === null || payment === void 0 ? void 0 : payment.id) || (payment === null || payment === void 0 ? void 0 : payment._id)),
+            user: payment === null || payment === void 0 ? void 0 : payment.user,
+            plan: payment === null || payment === void 0 ? void 0 : payment.plan,
+            paymentAmount: payment === null || payment === void 0 ? void 0 : payment.paymentAmount,
+            sessionId: payment === null || payment === void 0 ? void 0 : payment.sessionId,
+            sessionUrl: payment === null || payment === void 0 ? void 0 : payment.sessionUrl,
+            status: payment === null || payment === void 0 ? void 0 : payment.status,
+            createdAt: payment === null || payment === void 0 ? void 0 : payment.createdAt,
+            updatedAt: payment === null || payment === void 0 ? void 0 : payment.updatedAt,
+        };
+    }
+    packageDetailSanitizer(pkgs) {
+        return pkgs === null || pkgs === void 0 ? void 0 : pkgs.map((pkg) => ({
+            id: String((pkg === null || pkg === void 0 ? void 0 : pkg.id) || (pkg === null || pkg === void 0 ? void 0 : pkg._id)),
+            plan: this.planSanitizer(pkg === null || pkg === void 0 ? void 0 : pkg.plan),
+            limit: pkg === null || pkg === void 0 ? void 0 : pkg.limit,
+            payment: this.paymentSanitizer(pkg === null || pkg === void 0 ? void 0 : pkg.payment),
+            isCurrent: pkg === null || pkg === void 0 ? void 0 : pkg.isCurrent,
+            start: pkg === null || pkg === void 0 ? void 0 : pkg.start,
+            end: pkg === null || pkg === void 0 ? void 0 : pkg.end,
+        }));
+    }
+    packageSanitizer(pkg) {
+        return {
+            id: String((pkg === null || pkg === void 0 ? void 0 : pkg.id) || (pkg === null || pkg === void 0 ? void 0 : pkg._id)),
+            user: pkg === null || pkg === void 0 ? void 0 : pkg.user,
+            packages: this.packageDetailSanitizer(pkg === null || pkg === void 0 ? void 0 : pkg.packages),
+            createdAt: pkg === null || pkg === void 0 ? void 0 : pkg.createdAt,
+            updatedAt: pkg === null || pkg === void 0 ? void 0 : pkg.updatedAt,
+        };
+    }
     addNewPackage(userId, planId, paymentId) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
@@ -49,7 +90,7 @@ class Service {
                                 plan: planId,
                                 isCurrent: true,
                                 limit: packageData,
-                                paymentId: paymentId,
+                                payment: paymentId,
                             },
                         },
                     }, { session });
@@ -63,7 +104,7 @@ class Service {
                                 plan: planId,
                                 isCurrent: true,
                                 limit: packageData,
-                                paymentId: paymentId,
+                                payment: paymentId,
                             },
                         ],
                     };
@@ -86,16 +127,10 @@ class Service {
     }
     getMyPackage(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield package_model_1.Package.findOne({ user: userId }).populate([
-                {
-                    path: "packages$.plan",
-                    model: "Plan",
-                },
-                {
-                    path: "packages$.paymentId",
-                    model: "Payment",
-                },
-            ]);
+            const myPackage = yield package_model_1.Package.findOne({ user: userId })
+                .populate("packages.plan")
+                .populate("packages.payment");
+            return this.packageSanitizer(myPackage);
         });
     }
 }

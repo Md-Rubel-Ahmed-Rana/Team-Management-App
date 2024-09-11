@@ -15,7 +15,14 @@ const paymentApi = apiSlice.injectEndpoints({
         url: `/payment/${userId}`,
       }),
     }),
+    myPackage: builder.query({
+      query: (userId) => ({
+        method: "GET",
+        url: `/package/my-package/${userId}`,
+      }),
+    }),
   }),
 });
 
-export const { useCheckoutMutation, useMyPaymentsQuery } = paymentApi;
+export const { useCheckoutMutation, useMyPaymentsQuery, useMyPackageQuery } =
+  paymentApi;

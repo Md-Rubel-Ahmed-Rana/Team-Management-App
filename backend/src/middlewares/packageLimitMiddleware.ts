@@ -7,7 +7,6 @@ import httpStatus from "http-status";
 const packageLimitMiddleware = {
   teamCreate: async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.id;
-    console.log({ userId });
     const currentPackage = await checkPackageAndGetCurrent(userId);
     if (currentPackage) {
       const myTeams = await TeamService.getMyTeams(userId);
@@ -41,13 +40,8 @@ const packageLimitMiddleware = {
       const myTeams = await TeamService.getMyTeams(userId);
       const team = myTeams.find((team) => team?.id === teamId);
       const teamMemberCount = currentPackage?.limit?.team?.memberCount || 0;
-      console.log({
-        teamMemberCount,
-        activeMembers: team?.activeMembers?.length,
-      });
 
       if (team && team?.activeMembers?.length >= teamMemberCount) {
-        console.log("// prevent to add new member");
         return res.status(httpStatus.UNAUTHORIZED).json({
           statusCode: httpStatus.UNAUTHORIZED,
           success: false,

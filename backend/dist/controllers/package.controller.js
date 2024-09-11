@@ -20,7 +20,8 @@ class Controller extends rootController_1.default {
     constructor() {
         super(...arguments);
         this.getMyPackage = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const userId = req.params.userId;
+            var _a;
+            const userId = (_a = req.params) === null || _a === void 0 ? void 0 : _a.userId;
             const myPackage = yield package_service_1.PackageService.getMyPackage(userId);
             this.apiResponse(res, {
                 statusCode: http_status_1.default.OK,

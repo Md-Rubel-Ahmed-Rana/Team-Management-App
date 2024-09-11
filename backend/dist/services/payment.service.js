@@ -53,6 +53,7 @@ class Service {
             const paymentData = items.map((item) => ({
                 user: item === null || item === void 0 ? void 0 : item.user,
                 plan: item === null || item === void 0 ? void 0 : item.id,
+                paymentAmount: item === null || item === void 0 ? void 0 : item.price,
                 sessionId: session === null || session === void 0 ? void 0 : session.id,
                 sessionUrl: session === null || session === void 0 ? void 0 : session.url,
             }));
