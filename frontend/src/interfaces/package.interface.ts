@@ -1,23 +1,3 @@
-import { Types } from "mongoose";
-
-export type IPackage = {
-  plan: Types.ObjectId;
-  payment: Types.ObjectId;
-  limit: {
-    team: {
-      teamCount: number;
-      memberCount: number;
-    };
-    projectCount: number;
-  };
-  isCurrent: boolean;
-};
-
-export type INewPackage = {
-  user: Types.ObjectId;
-  packages: IPackage[];
-};
-
 export type IPackageData = {
   id: string;
   user: string;
@@ -61,6 +41,6 @@ export type IPayment = {
   sessionId: string;
   sessionUrl: string;
   status: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 };

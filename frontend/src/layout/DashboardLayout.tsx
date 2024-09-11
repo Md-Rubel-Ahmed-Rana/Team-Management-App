@@ -1,4 +1,3 @@
-import DashboardSidebar from "@/components/pages/dashboard/DashboardSidebar";
 import React, { Suspense } from "react";
 
 type Props = {
@@ -14,14 +13,11 @@ const DashboardLayout = ({ children }: Props) => {
         </div>
       }
     >
-      <div className="flex gap-2 max-w-[1280px] w-full mx-auto mt-5">
-        <div className="w-1/5">
-          <DashboardSidebar />
-        </div>
-        <main className="w-4/5 flex-1 flex flex-col overflow-hidden px-2">
+      <main className="flex gap-2 max-w-[1280px] w-full mx-auto mt-5">
+        <section className="w-full flex-1 flex flex-col overflow-hidden px-2">
           {children}
-        </main>
-      </div>
+        </section>
+      </main>
     </Suspense>
   );
 };

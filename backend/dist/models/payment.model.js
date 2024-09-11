@@ -12,6 +12,10 @@ const paymentSchema = new mongoose_1.Schema({
         ref: "Plan",
         required: true,
     },
+    paymentAmount: {
+        type: Number,
+        required: true,
+    },
     sessionId: {
         type: String,
         required: true,

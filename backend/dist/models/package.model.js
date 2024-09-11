@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Package = exports.packageSchema = void 0;
 const mongoose_1 = require("mongoose");
+const dayjs_1 = __importDefault(require("dayjs"));
 exports.packageSchema = new mongoose_1.Schema({
     user: {
         type: mongoose_1.Schema.Types.ObjectId,
@@ -15,7 +19,7 @@ exports.packageSchema = new mongoose_1.Schema({
                 required: true,
                 ref: "Plan",
             },
-            paymentId: {
+            payment: {
                 type: mongoose_1.Schema.Types.ObjectId,
                 required: true,
                 ref: "Payment",
@@ -39,6 +43,16 @@ exports.packageSchema = new mongoose_1.Schema({
             isCurrent: {
                 type: Boolean,
                 default: true,
+            },
+            start: {
+                type: Date,
+                default: Date.now,
+                required: true,
+            },
+            end: {
+                type: Date,
+                default: () => (0, dayjs_1.default)().add(1, "month").toDate(),
+                required: true,
             },
         },
     ],

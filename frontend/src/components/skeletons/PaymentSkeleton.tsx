@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 const PaymentSkeleton = () => {
-  const [loading, setLoading] = useState(true);
   const [Skeleton, setSkeleton] = useState<any>(null);
 
   useEffect(() => {
@@ -15,30 +14,70 @@ const PaymentSkeleton = () => {
   }
 
   return (
-    <div className="flex justify-between w-12/12">
-      {loading && (
-        <div className="grid grid-cols-1 w-full">
+    <div className="w-12/12">
+      <div className="w-full">
+        <div className="flex justify-center items-center w-1/2 my-5">
+          <Skeleton
+            active
+            title={false}
+            paragraph={{ rows: 1 }}
+            className="w-full"
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {[1, 2, 3].map((invitation) => (
             <div
               key={invitation}
-              className="border-gray-300 border-b px-2 py-3   bg-white  "
+              className="border-gray-300 p-5 w-full  rounded-md bg-white"
             >
               <Skeleton
                 active
                 title={false}
                 paragraph={{ rows: 3 }}
-                className="w-[140px] lg:w-[500px]"
+                className="w-full"
               />
               <Skeleton
                 active
                 title={false}
                 paragraph={{ rows: 3 }}
-                className="w-[140px] lg:w-[500px] mt-5"
+                className="w-full"
               />
             </div>
           ))}
         </div>
-      )}
+      </div>
+      <hr className="mt-10" />
+      <div className="w-full mt-10">
+        <div className="flex justify-center items-center w-1/2 my-5">
+          <Skeleton
+            active
+            title={false}
+            paragraph={{ rows: 1 }}
+            className="w-full"
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {[1, 2, 3].map((invitation) => (
+            <div
+              key={invitation}
+              className="border-gray-300  p-5 w-full rounded-md bg-white"
+            >
+              <Skeleton
+                active
+                title={false}
+                paragraph={{ rows: 3 }}
+                className="w-full"
+              />
+              <Skeleton
+                active
+                title={false}
+                paragraph={{ rows: 3 }}
+                className="w-full"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

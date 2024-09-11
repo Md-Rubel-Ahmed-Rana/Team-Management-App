@@ -1,5 +1,6 @@
 import { INewPackage } from "@/interfaces/package.interface";
 import { model, Schema } from "mongoose";
+import dayjs from "dayjs";
 
 export const packageSchema = new Schema<INewPackage>(
   {
@@ -15,7 +16,7 @@ export const packageSchema = new Schema<INewPackage>(
           required: true,
           ref: "Plan",
         },
-        paymentId: {
+        payment: {
           type: Schema.Types.ObjectId,
           required: true,
           ref: "Payment",
@@ -39,6 +40,16 @@ export const packageSchema = new Schema<INewPackage>(
         isCurrent: {
           type: Boolean,
           default: true,
+        },
+        start: {
+          type: Date,
+          default: Date.now,
+          required: true,
+        },
+        end: {
+          type: Date,
+          default: () => dayjs().add(1, "month").toDate(),
+          required: true,
         },
       },
     ],

@@ -3,6 +3,6 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get("/my-package:/userId", PackageController.getMyPackage);
+router.get("/my-package/:userId", PackageController.getMyPackage);
 
 export const PackageRoutes = router;

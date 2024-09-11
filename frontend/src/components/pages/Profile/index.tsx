@@ -12,7 +12,7 @@ const Profile = () => {
   return (
     <>
       {!isEdit && (
-        <div>
+        <div className="lg:w-1/2 w-full mx-auto lg:shadow-md p-2 lg:p-10">
           <h1 className="text-2xl font-semibold">Profile</h1>
           <div className="mt-4 mb-7">
             {!user?.profile_picture && (

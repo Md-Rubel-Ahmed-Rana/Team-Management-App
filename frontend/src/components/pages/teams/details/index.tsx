@@ -25,7 +25,7 @@ const TeamDetails = () => {
           <div className="mt-8">
             <h3 className="text-xl font-semibold mb-4">Admin</h3>
             <MemberCard
-              member={team.admin}
+              member={team?.admin}
               memberType="admin"
               teamId={team?.id}
               adminId={team?.admin?.id}
@@ -35,9 +35,9 @@ const TeamDetails = () => {
           {/* Active Members */}
           <div className="mt-8">
             <h3 className="text-xl font-semibold mb-4">Active Members</h3>
-            {team.activeMembers.length > 0 ? (
+            {team?.activeMembers?.length > 0 ? (
               <TeamMembersContainer
-                members={team.activeMembers}
+                members={team?.activeMembers}
                 memberType="active"
                 teamId={team?.id}
                 adminId={team?.admin?.id}
@@ -49,9 +49,9 @@ const TeamDetails = () => {
           {/* pending Members */}
           <div className="mt-8">
             <h3 className="text-xl font-semibold mb-4">Pending Members</h3>
-            {team.pendingMembers.length > 0 ? (
+            {team?.pendingMembers?.length > 0 ? (
               <TeamMembersContainer
-                members={team.pendingMembers}
+                members={team?.pendingMembers}
                 memberType="pending"
                 teamId={team?.id}
                 adminId={team?.admin?.id}
