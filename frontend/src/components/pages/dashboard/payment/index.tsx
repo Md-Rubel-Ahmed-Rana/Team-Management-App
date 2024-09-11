@@ -22,7 +22,7 @@ const Payments = () => {
 
   return (
     <>
-      {!isLoading ? (
+      {isLoading ? (
         <PaymentSkeleton />
       ) : (
         <>
