@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 
 class Controller extends RootController {
   getMyPackage = this.catchAsync(async (req: Request, res: Response) => {
-    const userId = req.params.userId;
+    const userId = req.params?.userId;
     const myPackage = await PackageService.getMyPackage(userId);
     this.apiResponse(res, {
       statusCode: httpStatus.OK,

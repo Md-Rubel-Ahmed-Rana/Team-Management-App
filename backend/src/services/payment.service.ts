@@ -40,6 +40,7 @@ class Service {
     const paymentData = items.map((item: IPlanItem) => ({
       user: item?.user,
       plan: item?.id,
+      paymentAmount: item?.price,
       sessionId: session?.id,
       sessionUrl: session?.url,
     }));

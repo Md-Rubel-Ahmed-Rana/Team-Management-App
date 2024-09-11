@@ -9,7 +9,7 @@ const Button: any = dynamic(() => import("antd/lib/button"), {
 const LeaveRequests = () => {
   const [active, setActive] = useState("team");
   return (
-    <div className="lg:w-[76vw]">
+    <div className="w-full">
       <h3 className="text-lg lg:text-2xl">
         Your member requests to leave from team and project
       </h3>

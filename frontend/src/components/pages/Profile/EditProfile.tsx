@@ -59,7 +59,7 @@ const EditProfilePage = ({ setIsEdit }: { setIsEdit: any }) => {
 
   return (
     <>
-      <div className="w-[76vw] px-4">
+      <div className="lg:w-1/2 w-full mx-auto lg:shadow-md p-2 lg:p-10">
         <h1 className="text-2xl font-semibold">Edit Profile</h1>
         <form onSubmit={handleSubmit(handleEditProfile)} className="mt-4">
           <div className="mb-4 relative">

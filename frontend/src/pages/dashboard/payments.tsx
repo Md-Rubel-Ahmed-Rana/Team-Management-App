@@ -1,5 +1,5 @@
 import isAuthenticate from "@/components/HOC/isAuthenticate";
-import Payments from "@/components/pages/dashboard/payment/PaymentPage";
+import Payments from "@/components/pages/dashboard/payment";
 import DashboardLayout from "@/layout/DashboardLayout";
 import RootLayout from "@/layout/RootLayout";
 import GetHead from "@/utils/Head";
@@ -9,7 +9,7 @@ const PaymentsPage = () => {
   return (
     <>
       <GetHead
-        title="Profile: Team Manager"
+        title="Payments: Team Manager"
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />

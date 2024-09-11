@@ -81,7 +81,7 @@ const ChangePassword = () => {
     newPassword !== oldPassword;
 
   return (
-    <div className="flex items-center w-[76vw] justify-center  lg:p-5">
+    <div className="flex items-center w-full justify-center  lg:p-5">
       <div className=" bg-gray-100 p-3 lg:p-8 rounded shadow-md max-w-md w-full">
         <h1 className="text-lg lg:text-2xl font-bold mb-2">Change Password</h1>
         <p className="text-sm lg:text-md mb-2">
