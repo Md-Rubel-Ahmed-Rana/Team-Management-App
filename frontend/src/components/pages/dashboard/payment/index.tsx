@@ -17,7 +17,7 @@ const Payments = () => {
   const myPackage = packageData?.data as IPackageData;
 
   const currentPackage = myPackage?.packages?.find(
-    (pkg) => pkg.isCurrent === true
+    (pkg: any) => pkg.isCurrent === true
   ) as PackageDetail;
 
   return (
@@ -26,7 +26,7 @@ const Payments = () => {
         <PaymentSkeleton />
       ) : (
         <>
-          {myPackage && myPackage?.id ? (
+          {myPackage?.id !== "undefined" && (
             <div>
               {/* // current plan analysis */}
               <div className="bg-gray-50 rounded-lg p-5">
@@ -58,7 +58,9 @@ const Payments = () => {
                 </div>
               </div>
             </div>
-          ) : (
+          )}
+
+          {myPackage?.id === "undefined" && (
             <div className="h-[80vh] flex flex-col justify-center items-center">
               <p className="text-lg lg:text-2xl font-semibold">
                 You have not purchase any plan yet.

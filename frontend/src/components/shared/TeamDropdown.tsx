@@ -16,16 +16,16 @@ type Props = {
 const TeamDropdown = ({ queries }: Props) => {
   const teamItems: MenuProps["items"] = [
     {
-      key: "5",
+      key: "1",
       label: <Link href={`/teams/my-teams?${queries}`}>My Teams</Link>,
     },
     {
-      key: "6",
+      key: "2",
       label: <Link href={`/teams/joined-teams?${queries}`}>Joined Teams</Link>,
     },
   ];
   return (
-    <Dropdown menu={{ items: teamItems.reverse() }} placement="bottom" arrow>
+    <Dropdown menu={{ items: teamItems }} placement="bottom" arrow>
       <Button className="text-lg" type="text">
         Teams
       </Button>

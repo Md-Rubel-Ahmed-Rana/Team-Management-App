@@ -11,7 +11,9 @@ const PricingPage = () => {
         description="team management, project collaboration, task tracking, project details"
         keywords="team management, project collaboration, task tracking, project details"
       />
-      <PricingSection />
+      <div className="max-w-[1280px] w-full mx-auto h-screen">
+        <PricingSection />
+      </div>
     </>
   );
 };

@@ -1,5 +1,8 @@
 import { SocketContext } from "@/context/SocketContext";
-import { useSendProjectLeaveRequestMutation } from "@/features/project";
+import {
+  useCancelProjectLeaveRequestMutation,
+  useSendProjectLeaveRequestMutation,
+} from "@/features/project";
 import { useLoggedInUserQuery } from "@/features/user";
 import { IProject } from "@/interfaces/project.interface";
 import { IUser } from "@/interfaces/user.interface";
@@ -30,6 +33,7 @@ const ProjectActions = ({ project }: Props) => {
   const user: IUser = userData?.data;
   const leaveRequestIds = project?.leaveRequests?.map((member) => member?.id);
   const [leaveRequest] = useSendProjectLeaveRequestMutation();
+  const [cancelLeaveRequest] = useCancelProjectLeaveRequestMutation();
   const [isDeleteProject, setIsDeleteProject] = useState(false);
   const [isEditProject, setIsEditProject] = useState(false);
   const [isAddMember, setIsAddMember] = useState(false);
@@ -44,19 +48,16 @@ const ProjectActions = ({ project }: Props) => {
       confirmButtonText: "Yes",
     }).then((result) => {
       if (result?.isConfirmed) {
-        handleSendLeaveRequest({
-          projectId: project?.id,
-          memberId: user?.id,
-        });
+        handleSendLeaveRequest();
       }
     });
   };
 
-  const handleSendLeaveRequest = async (data: {
-    projectId: string;
-    memberId: string;
-  }) => {
-    const result: any = await leaveRequest(data);
+  const handleSendLeaveRequest = async () => {
+    const result: any = await leaveRequest({
+      projectId: project?.id,
+      memberId: user?.id,
+    });
     if (result?.data?.success) {
       toast.success(
         result?.data?.message || "Your leave request has been sent to admin"
@@ -67,6 +68,39 @@ const ProjectActions = ({ project }: Props) => {
         result?.data?.message ||
           result?.error?.data?.message ||
           "Failed to send leave request!"
+      );
+    }
+  };
+
+  const handleCancelLeaveRequest = async () => {
+    Swal.fire({
+      title: "Good Job!",
+      text: "Are you sure to cancel leave request?",
+      showCancelButton: true,
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+    }).then((result) => {
+      if (result?.isConfirmed) {
+        handleLeaveRequestCancel();
+      }
+    });
+  };
+
+  const handleLeaveRequestCancel = async () => {
+    const result: any = await cancelLeaveRequest({
+      projectId: project?.id,
+      memberId: user?.id,
+    });
+    if (result?.data?.success) {
+      toast.success(
+        result?.data?.message || "Your leave request has been cancelled!"
+      );
+      socket.emit("notification", project?.user);
+    } else {
+      toast.success(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Failed to cancel leave request!"
       );
     }
   };
@@ -149,7 +183,11 @@ const ProjectActions = ({ project }: Props) => {
       key: "6",
       label:
         user?.id !== project?.user && leaveRequestIds?.includes(user?.id) ? (
-          <Button className="w-full" type="default">
+          <Button
+            onClick={handleCancelLeaveRequest}
+            className="w-full"
+            type="default"
+          >
             Cancel leave request
           </Button>
         ) : null,
