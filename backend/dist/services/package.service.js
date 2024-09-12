@@ -18,6 +18,7 @@ const apiError_1 = __importDefault(require("@/shared/apiError"));
 const packages_1 = require("@/constants/packages");
 const http_status_1 = __importDefault(require("http-status"));
 const package_model_1 = require("@/models/package.model");
+const payment_service_1 = require("./payment.service");
 class Service {
     planSanitizer(plan) {
         return {
@@ -131,6 +132,62 @@ class Service {
                 .populate("packages.plan")
                 .populate("packages.payment");
             return this.packageSanitizer(myPackage);
+        });
+    }
+    renewPackage(userId, planId, packageId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const plan = yield plan_service_1.PlanService.getSinglePlan(planId);
+            const items = [
+                {
+                    id: (plan === null || plan === void 0 ? void 0 : plan.id) || (plan === null || plan === void 0 ? void 0 : plan._id),
+                    user: userId,
+                    name: plan === null || plan === void 0 ? void 0 : plan.plan,
+                    price: plan === null || plan === void 0 ? void 0 : plan.price,
+                    quantity: 1,
+                },
+            ];
+            // Find the  package document
+            const myPackage = yield package_model_1.Package.findOne({ user: userId })
+                .populate("packages.plan")
+                .populate("packages.payment");
+            if (!myPackage) {
+                throw new Error("Package not found");
+            }
+            // Find the specific package to renew
+            const renewPackage = myPackage === null || myPackage === void 0 ? void 0 : myPackage.packages.find((pkg) => String((pkg === null || pkg === void 0 ? void 0 : pkg.id) || (pkg === null || pkg === void 0 ? void 0 : pkg._id)) === String(packageId));
+            if (!renewPackage) {
+                throw new Error("Package not found");
+            }
+            // Update start and end dates
+            const currentDate = new Date();
+            const previousEnd = new Date(renewPackage === null || renewPackage === void 0 ? void 0 : renewPackage.end);
+            // If the package is still active, extend from the previous end date
+            const startDate = previousEnd > currentDate ? previousEnd : currentDate;
+            const endDate = new Date(startDate);
+            endDate.setMonth(startDate.getMonth() + 1);
+            renewPackage.start = startDate;
+            renewPackage.end = endDate;
+            renewPackage.isCurrent = true;
+            // Set all other packages' `isCurrent` to false
+            myPackage.packages.forEach((pkg) => {
+                if (String((pkg === null || pkg === void 0 ? void 0 : pkg.id) || (pkg === null || pkg === void 0 ? void 0 : pkg._id)) !== String(packageId)) {
+                    pkg.isCurrent = false;
+                }
+            });
+            // Save the original document with updated packages
+            yield myPackage.save();
+            // Create new Stripe checkout session
+            const { sessionId, sessionUrl } = yield payment_service_1.PaymentService.stripeCheckout(items);
+            // Create a new payment record
+            const payment = {
+                user: userId,
+                paymentAmount: plan === null || plan === void 0 ? void 0 : plan.price,
+                plan: (plan === null || plan === void 0 ? void 0 : plan.id) || (plan === null || plan === void 0 ? void 0 : plan._id),
+                sessionId,
+                sessionUrl,
+            };
+            yield payment_service_1.PaymentService.createNewPayment(payment);
+            return { url: sessionUrl };
         });
     }
 }

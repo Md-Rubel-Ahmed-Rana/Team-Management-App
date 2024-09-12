@@ -3,12 +3,14 @@ import { config } from "dotenv";
 import { Payment } from "@/models/payment.model";
 import { config as envConfig } from "@/configurations/envConfig";
 import { PackageService } from "./package.service";
-import { IPlanItem } from "@/interfaces/payment.interface";
+import { IPayment, IPlanItem } from "@/interfaces/payment.interface";
 config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 class Service {
-  async checkout(items: IPlanItem[]) {
+  async stripeCheckout(
+    items: IPlanItem[]
+  ): Promise<{ sessionId: string; sessionUrl: string }> {
     const storedData = items.map((item: IPlanItem) => {
       if (item?.quantity) {
         item.quantity = item.quantity >= 1 ? item.quantity : 1;
@@ -28,7 +30,7 @@ class Service {
       };
     });
 
-    const session = await stripe.checkout.sessions.create({
+    const session: any = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       line_items: storedData,
@@ -36,24 +38,32 @@ class Service {
       cancel_url: envConfig.stripe.cancelUrl,
     });
 
+    // create a notification for new payment and new package
+    return { sessionId: session?.id, sessionUrl: session.url };
+  }
+
+  async createNewPayment(item: IPayment) {
+    return await Payment.create(item);
+  }
+
+  async checkout(items: IPlanItem[]): Promise<{ url: string }> {
+    const { sessionId, sessionUrl } = await this.stripeCheckout(items);
     // store payment data in database
     const paymentData = items.map((item: IPlanItem) => ({
       user: item?.user,
       plan: item?.id,
       paymentAmount: item?.price,
-      sessionId: session?.id,
-      sessionUrl: session?.url,
+      sessionId,
+      sessionUrl,
     }));
 
-    const newPayment = await Payment.create(paymentData[0]);
+    const newPayment = await this.createNewPayment(paymentData[0]);
     await PackageService.addNewPackage(
       items[0]?.user,
       items[0]?.id,
       newPayment?._id
     );
-
-    // create a notification for new payment and new package
-    return { url: session.url };
+    return { url: sessionUrl };
   }
 
   async makePaymentStatusSuccess(sessionId: string) {
