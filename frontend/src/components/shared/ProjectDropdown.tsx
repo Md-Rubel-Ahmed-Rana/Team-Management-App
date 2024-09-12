@@ -16,11 +16,11 @@ type Props = {
 const ProjectDropdown = ({ queries }: Props) => {
   const projectItems: MenuProps["items"] = [
     {
-      key: "7",
+      key: "1",
       label: <Link href={`/projects/my-projects?${queries}`}>My Projects</Link>,
     },
     {
-      key: "8",
+      key: "2",
       label: (
         <Link href={`/projects/joined-projects?${queries}`}>
           Joined Projects
@@ -29,7 +29,7 @@ const ProjectDropdown = ({ queries }: Props) => {
     },
   ];
   return (
-    <Dropdown menu={{ items: projectItems.reverse() }} placement="bottom" arrow>
+    <Dropdown menu={{ items: projectItems }} placement="bottom" arrow>
       <Button className="text-lg" type="text">
         Projects
       </Button>
