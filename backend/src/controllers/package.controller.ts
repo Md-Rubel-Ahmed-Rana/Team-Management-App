@@ -14,6 +14,16 @@ class Controller extends RootController {
       data: myPackage,
     });
   });
+  renewPackage = this.catchAsync(async (req: Request, res: Response) => {
+    const { userId, planId, packageId } = req.params;
+    const result = await PackageService.renewPackage(userId, planId, packageId);
+    this.apiResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Your package is being renewed",
+      data: result,
+    });
+  });
 }
 
 export const PackageController = new Controller();
