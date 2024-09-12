@@ -5,4 +5,9 @@ const router = Router();
 
 router.get("/my-package/:userId", PackageController.getMyPackage);
 
+router.patch(
+  "/renew/:userId/:planId/:packageId",
+  PackageController.renewPackage
+);
+
 export const PackageRoutes = router;
