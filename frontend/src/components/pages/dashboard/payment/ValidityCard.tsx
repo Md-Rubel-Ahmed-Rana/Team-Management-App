@@ -1,15 +1,11 @@
 import { PackageDetail } from "@/interfaces/package.interface";
-import dynamic from "next/dynamic";
 import dayjs from "dayjs";
 import { useLoggedInUserQuery } from "@/features/user";
 import { useGetMyTeamsQuery } from "@/features/team";
 import { ITeam } from "@/interfaces/team.interface";
 import { useMyProjectsQuery } from "@/features/project";
 import { IProject } from "@/interfaces/project.interface";
-
-const Button: any = dynamic(() => import("antd/lib/button"), {
-  ssr: false,
-});
+import RenewButton from "./RenewButton";
 
 type Props = {
   pkg: PackageDetail;
@@ -53,12 +49,7 @@ const ValidityCard = ({ pkg }: Props) => {
           Remaining: {remainingDays > 0 ? `${remainingDays} days` : "Expired"}
         </p>
       </div>
-      <Button
-        type="primary"
-        className={`px-5 py-2 rounded-md w-full text-white bg-blue-600`}
-      >
-        Renew Now
-      </Button>
+      <RenewButton pkg={pkg} />
     </div>
   );
 };

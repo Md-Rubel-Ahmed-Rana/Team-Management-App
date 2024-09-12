@@ -1,5 +1,8 @@
 import { SocketContext } from "@/context/SocketContext";
-import { useSendTeamLeaveRequestMutation } from "@/features/team";
+import {
+  useCancelTeamLeaveRequestMutation,
+  useSendTeamLeaveRequestMutation,
+} from "@/features/team";
 import { useLoggedInUserQuery } from "@/features/user";
 import { ITeam } from "@/interfaces/team.interface";
 import { MenuProps } from "antd";
@@ -12,6 +15,7 @@ import Swal from "sweetalert2";
 import AddMemberToTeam from "../modals/AddMemberToTeam";
 import RemoveMemberFromTeam from "../modals/RemoveMemberFromTeam";
 import TeamDeleteModal from "../modals/TeamDeleteModal";
+import { IUser } from "@/interfaces/user.interface";
 const Dropdown: any = dynamic(() => import("antd/lib/dropdown"), {
   ssr: false,
 });
@@ -26,8 +30,9 @@ type Props = {
 const TeamActions = ({ team }: Props) => {
   const { socket }: any = useContext(SocketContext);
   const { data: userData } = useLoggedInUserQuery({});
-  const user = userData?.data;
+  const user: IUser = userData?.data;
   const [leaveTeam] = useSendTeamLeaveRequestMutation();
+  const [cancelLeaveRequest] = useCancelTeamLeaveRequestMutation();
   const leaveRequestIds = team?.leaveRequests?.map((member) => member?.id);
   const [isAddMember, setIsAddMember] = useState(false);
   const [isRemoveMember, setIsRemoveMember] = useState(false);
@@ -42,19 +47,48 @@ const TeamActions = ({ team }: Props) => {
       confirmButtonText: "Yes",
     }).then((result) => {
       if (result.isConfirmed) {
-        leaveHandler({
-          teamId: team.id,
-          memberId: user?.id,
-        });
+        leaveHandler();
+      }
+    });
+  };
+  const handleCancelLeaveRequest = async () => {
+    Swal.fire({
+      title: "Great Job!",
+      text: "Are you sure to cancel leave request?",
+      showCancelButton: true,
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleLeaveRequestCancel();
       }
     });
   };
 
-  const leaveHandler = async (leaveData: {
-    teamId: string;
-    memberId: string;
-  }) => {
-    const result: any = await leaveTeam(leaveData);
+  const handleLeaveRequestCancel = async () => {
+    const result: any = await cancelLeaveRequest({
+      teamId: team?.id,
+      memberId: user?.id,
+    });
+    if (result?.data?.success) {
+      toast.success(
+        result?.data?.message || "Your leave request has been cancelled!"
+      );
+      socket.emit("notification", team?.admin?.id);
+    } else {
+      toast.success(
+        result?.data?.message ||
+          result?.error?.data?.message ||
+          "Failed to cancel leave request!"
+      );
+    }
+  };
+
+  const leaveHandler = async () => {
+    const result: any = await leaveTeam({
+      teamId: team?.id,
+      memberId: user?.id,
+    });
     if (result?.data?.success) {
       toast.success(
         result?.data?.message || "Your leave request has been sent to admin"
@@ -149,7 +183,7 @@ const TeamActions = ({ team }: Props) => {
           <Button
             className="w-full"
             type="default"
-            onClick={handleRequestToLeave}
+            onClick={handleCancelLeaveRequest}
           >
             Cancel leave request
           </Button>

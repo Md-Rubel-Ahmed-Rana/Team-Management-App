@@ -1,4 +1,5 @@
 import { PackageDetail } from "@/interfaces/package.interface";
+import RenewButton from "./RenewButton";
 
 type Props = {
   pkg: PackageDetail;
@@ -15,6 +16,7 @@ const OtherPackageCard = ({ pkg }: Props) => {
         <p>Projects: {pkg?.limit?.projectCount} </p>
         <p>Plan starts: {new Date(pkg.start)?.toDateString()} </p>
         <p>Plan ends: {new Date(pkg.end)?.toDateString()} </p>
+        <RenewButton pkg={pkg} />
       </div>
     </div>
   );
