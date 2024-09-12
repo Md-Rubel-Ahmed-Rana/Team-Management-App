@@ -21,9 +21,8 @@ const package_service_1 = require("./package.service");
 (0, dotenv_1.config)();
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY);
 class Service {
-    checkout(items) {
+    stripeCheckout(items) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
             const storedData = items.map((item) => {
                 if (item === null || item === void 0 ? void 0 : item.quantity) {
                     item.quantity = item.quantity >= 1 ? item.quantity : 1;
@@ -49,18 +48,30 @@ class Service {
                 success_url: envConfig_1.config.stripe.successUrl,
                 cancel_url: envConfig_1.config.stripe.cancelUrl,
             });
+            // create a notification for new payment and new package
+            return { sessionId: session === null || session === void 0 ? void 0 : session.id, sessionUrl: session.url };
+        });
+    }
+    createNewPayment(item) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield payment_model_1.Payment.create(item);
+        });
+    }
+    checkout(items) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            const { sessionId, sessionUrl } = yield this.stripeCheckout(items);
             // store payment data in database
             const paymentData = items.map((item) => ({
                 user: item === null || item === void 0 ? void 0 : item.user,
                 plan: item === null || item === void 0 ? void 0 : item.id,
                 paymentAmount: item === null || item === void 0 ? void 0 : item.price,
-                sessionId: session === null || session === void 0 ? void 0 : session.id,
-                sessionUrl: session === null || session === void 0 ? void 0 : session.url,
+                sessionId,
+                sessionUrl,
             }));
-            const newPayment = yield payment_model_1.Payment.create(paymentData[0]);
+            const newPayment = yield this.createNewPayment(paymentData[0]);
             yield package_service_1.PackageService.addNewPackage((_a = items[0]) === null || _a === void 0 ? void 0 : _a.user, (_b = items[0]) === null || _b === void 0 ? void 0 : _b.id, newPayment === null || newPayment === void 0 ? void 0 : newPayment._id);
-            // create a notification for new payment and new package
-            return { url: session.url };
+            return { url: sessionUrl };
         });
     }
     makePaymentStatusSuccess(sessionId) {

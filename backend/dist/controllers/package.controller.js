@@ -30,6 +30,16 @@ class Controller extends rootController_1.default {
                 data: myPackage,
             });
         }));
+        this.renewPackage = this.catchAsync((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { userId, planId, packageId } = req.params;
+            const result = yield package_service_1.PackageService.renewPackage(userId, planId, packageId);
+            this.apiResponse(res, {
+                statusCode: http_status_1.default.OK,
+                success: true,
+                message: "Your package is being renewed",
+                data: result,
+            });
+        }));
     }
 }
 exports.PackageController = new Controller();

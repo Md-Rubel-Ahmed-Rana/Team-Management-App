@@ -15,6 +15,7 @@ const apiSlice = createApi({
     "invitation",
     "message",
     "notification",
+    "package",
   ] as any,
   endpoints: () => ({}),
 });

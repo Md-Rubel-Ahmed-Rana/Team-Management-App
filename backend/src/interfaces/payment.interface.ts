@@ -1,12 +1,12 @@
 import { Types } from "mongoose";
 
 export type IPayment = {
-  user: Types.ObjectId;
+  user: Types.ObjectId | string;
   paymentAmount: number;
-  plan: Types.ObjectId;
+  plan: Types.ObjectId | string;
   sessionId: string;
   sessionUrl: string;
-  status: string;
+  status?: string;
 };
 
 export type IPlanItem = {

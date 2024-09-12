@@ -11,6 +11,7 @@ import {
   IPlan,
   PackageDetail,
 } from "@/interfaces/package.interface";
+import { PaymentService } from "./payment.service";
 
 class Service {
   public planSanitizer(plan: any): IPlan {
@@ -140,11 +141,83 @@ class Service {
   async isPackageExist(userId: string) {
     return await Package.findOne({ user: userId });
   }
+
   async getMyPackage(userId: string): Promise<IPackageData> {
     const myPackage = await Package.findOne({ user: userId })
       .populate("packages.plan")
       .populate("packages.payment");
     return this.packageSanitizer(myPackage);
+  }
+
+  async renewPackage(userId: string, planId: string, packageId: string) {
+    const plan = await PlanService.getSinglePlan(planId);
+    const items = [
+      {
+        id: plan?.id || plan?._id,
+        user: userId,
+        name: plan?.plan,
+        price: plan?.price,
+        quantity: 1,
+      },
+    ];
+
+    // Find the  package document
+    const myPackage = await Package.findOne({ user: userId })
+      .populate("packages.plan")
+      .populate("packages.payment");
+
+    if (!myPackage) {
+      throw new Error("Package not found");
+    }
+
+    // Find the specific package to renew
+    const renewPackage: any = myPackage?.packages.find(
+      (pkg: any) => String(pkg?.id || pkg?._id) === String(packageId)
+    );
+
+    if (!renewPackage) {
+      throw new Error("Package not found");
+    }
+
+    // Update start and end dates
+    const currentDate = new Date();
+    const previousEnd = new Date(renewPackage?.end);
+
+    // If the package is still active, extend from the previous end date
+    const startDate = previousEnd > currentDate ? previousEnd : currentDate;
+    const endDate = new Date(startDate);
+    endDate.setMonth(startDate.getMonth() + 1);
+
+    renewPackage.start = startDate;
+    renewPackage.end = endDate;
+    renewPackage.isCurrent = true;
+
+    // Set all other packages' `isCurrent` to false
+    myPackage.packages.forEach((pkg: any) => {
+      if (String(pkg?.id || pkg?._id) !== String(packageId)) {
+        pkg.isCurrent = false;
+      }
+    });
+
+    // Save the original document with updated packages
+    await myPackage.save();
+
+    // Create new Stripe checkout session
+    const { sessionId, sessionUrl } = await PaymentService.stripeCheckout(
+      items
+    );
+
+    // Create a new payment record
+    const payment = {
+      user: userId,
+      paymentAmount: plan?.price,
+      plan: plan?.id || plan?._id,
+      sessionId,
+      sessionUrl,
+    };
+    await PaymentService.createNewPayment(payment);
+
+    return { url: sessionUrl };
   }
 }
 
